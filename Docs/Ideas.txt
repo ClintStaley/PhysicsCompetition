@@ -1,0 +1,33 @@
+Comments on WhiteBoxLearning
+
+ * We both agree it's quite sophisticated and nicely done.
+ * Jake didn't find the history or physical construction components compelling.
+   Liked CAD tool and especially the simulation. 
+ * Clint doesn't care for the CAD tool as it seems to invite rote incremental
+   parameter tweaking and it does all the math for you rather than requiring
+   you to do the computation.
+ * Both didn't care for rigid design parameters.
+
+What we could do that is different
+  * Open-ended creative problem that requires analysis
+  * Shape binpacking, rocket slalom (with various target points in maze), space division
+  * Jake suggested tower block building
+
+Other interesting properties
+  * Teamwork.  Couldn't see any need for the system to accommodate this
+    unless there was some model that didn't allow team members to readily
+	communicate on their own.
+  * Competition.  This seemed doable for many of the ideas
+    * For bin-packing, try to be the last one to place an item
+    * For space division, draw from limited pool of shapes
+	* For rocket slalom, try to grab as many targets as possible, or possibly
+	  some variation on Snake videogame
+  * Both liked Reddit's r/place, and would like to do some math/physics
+    version of this, but couldn't immediately come up with an idea.
+  * Speed, e.g. making bin packing into a Tetris-style game
+
+Open questions
+  * Way to make a crowdsourced physics/engineering activity?
+  * What specific concepts do we want to try to teach?
+ 
+ 
