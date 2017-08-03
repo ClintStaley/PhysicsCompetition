@@ -34,13 +34,11 @@ router.post('/', function(req, res) {
 });
 
 router.delete('/:cookie', function(req, res) {
-   var bugs = req.bugs;
    var ssnExists;
 
    if (req.validator.check(req.params.cookie === req.cookies[ssnUtil.cookieName]
-    || !bugs.noAdmSsnDel && req.session.isAdmin(), Tags.noPermission)) {
-      ssnExists = ssnUtil.deleteSession(
-       bugs.noSsnDel ? req.query.cookie : req.params.cookie);
+    ||  req.session.isAdmin(), Tags.noPermission)) {
+      ssnExists = ssnUtil.deleteSession(req.params.cookie);
       res.status(ssnExists ? 200 : 400).end();
    }
    req.cnn.release();

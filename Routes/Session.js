@@ -43,7 +43,7 @@ exports.makeSession = function makeSession(user, res) {
 // Export a function to log out a user, given an authToken
 exports.deleteSession = function(authToken) {
    var rtn = authToken in sessions;
-
+   console.log("Delete");
    delete sessions[authToken];
    return rtn;
 };

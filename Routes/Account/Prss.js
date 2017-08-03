@@ -10,13 +10,12 @@ router.get('/', function(req, res) {
    var clause = '';
    var fillers = [];
    var email = req.query.email;
-   var bugs = req.bugs;
 
    if (email) {
       clause = " where email like ?";
-      fillers.push(email + (bugs.noEmailPfx ? '' : '%'));
+      fillers.push(email + ('%'));
    }
-   if (!ssn.isAdmin() && !bugs.allGetsAllowed) {
+   if (!ssn.isAdmin()) {
       clause += (clause ? ' and' : ' where') + ' id = ?';
       fillers.push(ssn.id);
    }
@@ -74,7 +73,7 @@ router.get('/:id', function(req, res) {
               && prs.termsAccepted.getTime();
              prs.whenRegistered = prs.whenRegistered
               && prs.whenRegistered.getTime();
-             if (!req.bugs.showPwd)
+
                 delete prs.password;
              res.json(prsArr);
          }
@@ -95,7 +94,7 @@ router.put('/:id', function(req, res) {
    async.waterfall([
    function(cb) {
       if (
-        (req.bugs.badPrsPutOK || vld.checkPrsOK(req.params.id, cb)) &&
+        (vld.checkPrsOK(req.params.id, cb)) &&
         vld.hasOnlyFields(body,
         ["firstName", "lastName", "password", "oldPassword", "role"])
        .chain(!("password" in body) || body.password, Tags.badValue, ["password"])
@@ -123,14 +122,12 @@ router.put('/:id', function(req, res) {
 
 router.delete('/:id', function(req, res) {
    var vld = req.validator;
-   var bugs = req.bugs;
 
    if (vld.checkAdmin())
       req.cnn.query('DELETE from Person where id = ?',
-       [bugs.prsDelFails ? req.body.id : req.params.id],
+       [ req.params.id],
       function (err, result) {
-         if (bugs.prsDel200 ||
-          !err && vld.check(result.affectedRows, Tags.notFound))
+         if (!err && vld.check(result.affectedRows, Tags.notFound))
             res.status(200).end();
          req.cnn.release();
       });
