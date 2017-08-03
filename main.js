@@ -52,6 +52,8 @@ app.use('/Ssns', require('./Routes/Account/Ssns'));
 // Special debugging route for /DB DELETE.  Clears all table contents, resets all
 // auto_increment keys to start at 1, and reinserts one admin user.
 app.delete('/DB', function(req, res) {
+   var resetTables = ["Person"];
+
    if (!req.session.isAdmin()){ //&& !req.bugs.nonAdminDBDel) {
       req.cnn.release();
       res.status(403).end();
@@ -59,14 +61,14 @@ app.delete('/DB', function(req, res) {
    }
 
    // Callbacks to clear tables
-   var cbs = ["Conversation", "Message", "Person"].map(function(tblName) {
+   var cbs = resetTables.map(function(tblName) {
       return function(cb) {
          req.cnn.query("delete from " + tblName, cb);
       };
    });
 
    // Callbacks to reset increment bases
-   cbs = cbs.concat(["Conversation", "Message", "Person"].map(function(tblName) {
+   cbs = cbs.concat(resetTables.map(function(tblName) {
       return function(cb) {
          req.cnn.query("alter table " + tblName + " auto_increment = 1", cb);
       };
@@ -93,43 +95,6 @@ app.delete('/DB', function(req, res) {
       else
          res.status(200).end();
    });
-
-   /* Equivalent expanded code for instructional reference
-      async.series([
-         function(callback){
-            cnn.query('delete from Person`', callback);
-         },
-         function(callback){
-            cnn.query('delete from Conversation', callback);
-         },
-         function(callback){
-            cnn.query('delete from Message', callback);
-         },
-         function(callback){
-            cnn.query('alter table Person auto_increment = 1', callback);
-         },
-         function(callback){
-            cnn.query('alter table Conversation auto_increment = 1', callback);
-         },
-         function(callback){
-            cnn.query('alter table Message auto_increment = 1', callback);
-         },
-         function(callback){
-            cnn.query('INSERT INTO Person (firstName, lastName, email,' +
-                ' password, whenRegistered, role) VALUES ' +
-                '("Joe", "Admin", "adm@11.com","password", NOW(), 2);',
-             callback);
-         },
-         function(callback){
-            for (var session in Session.sessions)
-               delete Session.sessions[session];
-            res.send();
-         }
-      ],
-      function(err, status) {
-         console.log(err);
-      }
-   );*/
 });
 
 // Handler of last resort.  Send a 404 response and release connection
