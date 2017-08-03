@@ -5,7 +5,7 @@ var bodyParser = require('body-parser');
 var Session = require('./Routes/Session');
 var Validator = require('./Routes/Validator.js');
 var CnnPool = require('./Routes/CnnPool.js');
-var bugs = require('./Bugs.js');
+//var bugs = require('./Bugs.js');
 var async = require('async');
 
 var app = express();
@@ -26,7 +26,7 @@ app.use(cookieParser());
 app.use(Session.router);
 
 // Attach bugs object to req
-app.use(function(req, res, next) {req.bugs = bugs; next();});
+//app.use(function(req, res, next) {req.bugs = bugs; next();});
 
 // Check general login.  If OK, add Validator to |req| and continue processing,
 // otherwise respond immediately with 401 and noLogin error tag.
@@ -46,13 +46,13 @@ app.use(CnnPool.router);
 // Load all subroutes
 app.use('/Prss', require('./Routes/Account/Prss'));
 app.use('/Ssns', require('./Routes/Account/Ssns'));
-app.use('/Cnvs', require('./Routes/Conversation/Cnvs.js'));
-app.use('/Msgs', require('./Routes/Conversation/Msgs.js'));
+//app.use('/Cnvs', require('./Routes/Conversation/Cnvs.js'));
+//app.use('/Msgs', require('./Routes/Conversation/Msgs.js'));
 
 // Special debugging route for /DB DELETE.  Clears all table contents, resets all
 // auto_increment keys to start at 1, and reinserts one admin user.
 app.delete('/DB', function(req, res) {
-   if (!req.session.isAdmin() && !req.bugs.nonAdminDBDel) {
+   if (!req.session.isAdmin()){ //&& !req.bugs.nonAdminDBDel) {
       req.cnn.release();
       res.status(403).end();
       return;
@@ -135,7 +135,7 @@ app.delete('/DB', function(req, res) {
 // Handler of last resort.  Send a 404 response and release connection
 app.use(function(req, res) {
    res.status(404).end();
-   if (!bugs.no404Release)
+   //if (!bugs.no404Release)
       req.cnn.release();
 });
 
