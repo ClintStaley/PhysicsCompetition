@@ -14,12 +14,12 @@ var Session = function Session(user) {
    this.id = user.id;
    this.email = user.email;
    this.role = user.role;
-
+   
    this.loginTime = new Date().getTime();
    this.lastUsed = new Date().getTime();
 };
 
-Session.prototype.isAdmin = function() {
+Session.prototype.isAdmin = function () {
    return this.role === 1;
 };
 
@@ -33,15 +33,15 @@ Session.prototype.isAdmin = function() {
 exports.makeSession = function makeSession(user, res) {
    var authToken = crypto.randomBytes(16).toString('hex');  // Create random auth token
    var session = new Session(user);
-
-   res.cookie(cookieName, authToken, {maxAge: duration, httpOnly: true }); // 1
+   
+   res.cookie(cookieName, authToken, {maxAge: duration, httpOnly: true}); // 1
    sessions[authToken] = session;
-
+   
    return authToken;
 };
 
 // Export a function to log out a user, given an authToken
-exports.deleteSession = function(authToken) {
+exports.deleteSession = function (authToken) {
    var rtn = authToken in sessions;
    console.log("Delete");
    delete sessions[authToken];
@@ -52,7 +52,7 @@ exports.deleteSession = function(authToken) {
 // delete the Session if it has timed out, or attach the Session to |req| if it's current
 // If |req| has an attached Session after this process, then down-chain routes will
 // treat |req| as logged-in.
-exports.router = function(req, res, next) {
+exports.router = function (req, res, next) {
    console.log("Session Router!");
    // If we present a session cookie that corresponds with one in |sessions|...
    if (req.cookies[cookieName] && sessions[req.cookies[cookieName]]) {

@@ -1,7 +1,6 @@
-
 // Create a validator that draws its session from |req|, and reports
 // errors on |res|
-var Validator = function(req, res) {
+var Validator = function (req, res) {
    this.errors = [];   // Array of error objects having tag and params
    this.session = req.session;
    this.res = res;
@@ -36,10 +35,10 @@ Validator.Tags = {
 // and it may be relied upon to close a response with an appropriate error
 // list and call an error handler (e.g. a waterfall default function),
 // leaving the caller to cover the "good" case only.
-Validator.prototype.check = function(test, tag, params, cb) {
+Validator.prototype.check = function (test, tag, params, cb) {
    if (!test)
       this.errors.push({tag: tag, params: params});
-
+   
    if (this.errors.length) {
       if (this.res) {
          if (this.errors[0].tag === Validator.Tags.noPermission)
@@ -56,44 +55,44 @@ Validator.prototype.check = function(test, tag, params, cb) {
 
 // Somewhat like |check|, but designed to allow several chained checks
 // in a row, finalized by a check call.
-Validator.prototype.chain = function(test, tag, params) {
+Validator.prototype.chain = function (test, tag, params) {
    if (!test) {
       this.errors.push({tag: tag, params: params});
    }
    return this;
 };
 
-Validator.prototype.checkAdmin = function(cb) {
+Validator.prototype.checkAdmin = function (cb) {
    return this.check(this.session && this.session.isAdmin(),
-   Validator.Tags.noPermission, null, cb);
+      Validator.Tags.noPermission, null, cb);
 };
 
 // Validate that AU is the specified person or is an admin
-Validator.prototype.checkPrsOK = function(prsId, cb) {
+Validator.prototype.checkPrsOK = function (prsId, cb) {
    return this.check(this.session &&
-    (this.session.isAdmin() || this.session.id == prsId),
-    Validator.Tags.noPermission, null, cb);
+      (this.session.isAdmin() || this.session.id == prsId),
+      Validator.Tags.noPermission, null, cb);
 };
 
-Validator.prototype.hasOnlyFields = function(obj, fieldList) {
+Validator.prototype.hasOnlyFields = function (obj, fieldList) {
    var self = this;
-
-   Object.keys(obj).forEach(function(prop){
+   
+   Object.keys(obj).forEach(function (prop) {
       self.chain(fieldList.indexOf(prop) >= 0, Validator.Tags.forbiddenField, [prop]);
    });
-
+   
    return this;
 };
 
 // Check presence of truthy property in |obj| for all fields in fieldList
-Validator.prototype.hasFields = function(obj, fieldList, cb) {
+Validator.prototype.hasFields = function (obj, fieldList, cb) {
    var self = this;
-
-   fieldList.forEach(function(name) {
+   
+   fieldList.forEach(function (name) {
       self.chain(obj.hasOwnProperty(name) && obj[name] !== "" && obj[name]
-       !== null && obj[name] !== undefined, Validator.Tags.missingField, [name]);
+         !== null && obj[name] !== undefined, Validator.Tags.missingField, [name]);
    });
-
+   
    return this.check(true, null, null, cb);
 };
 

@@ -14,5 +14,12 @@ create table Person (
    unique key(email)
 );
 
+create table CompetitionType (
+   id int auto_increment primary key,
+   title varchar(30) not null,
+   description varchar(30) not null,
+   prmSchema varchar(50)
+);
+
 insert into Person (firstName, lastName, email,       password,   whenRegistered, role)
             VALUES ("Joe",     "Admin", "adm@11.com", "password", NOW(), 1);
