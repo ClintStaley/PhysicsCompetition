@@ -1,0 +1,219 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=windows-1252"/>
+	<title>Java Program Style Rules</title>
+	<meta name="generator" content="LibreOffice 5.1.3.2 (Windows)"/>
+	<meta name="created" content="00:00:00"/>
+	<meta name="changed" content="2017-05-06T08:37:12.250000000"/>
+	<style type="text/css">
+		p { color: #000000; font-family: "Times New Roman", serif; font-size: 12pt }
+		p.msonormal { margin-bottom: 0in; font-family: "Times New Roman", serif; font-size: 12pt }
+		pre.cjk { font-family: "NSimSun", monospace }
+	</style>
+</head>
+<body lang="en-US" dir="ltr">
+<p class="msonormal" align="center" style="margin-bottom: 0.2in"><font size="5" style="font-size: 20pt"><b>JavaScript</b></font>
+<font size="5" style="font-size: 20pt"><b>Program Style Rules</b></font></p>
+<p class="msonormal" align="center" style="margin-bottom: 0.2in"><b>Copyright
+1998-2014 Clinton Staley</b></p>
+<p class="msonormal" align="center" style="margin-bottom: 0.2in"><b>All
+Rights Reserved</b></p>
+<p class="msonormal" align="center" style="margin-bottom: 0.2in"><b>(Last
+update 5/5/17)</b></p>
+<p class="msonormal" style="margin-bottom: 0.2in"><font size="2" style="font-size: 11pt">The
+following style rules are mandatory for all programs submitted.
+Breaking a style rule will cause your program to bounce, and you will
+have to redo the code according to correct style. Because in-class
+examples were written according to earlier versions of this style
+sheet, some of them may differ from the rules here. Be sure your
+submitted code follows this style sheet when theres a difference.</font></p>
+<p class="msonormal" style="margin-bottom: 0.2in"><font size="3" style="font-size: 13pt"><b>1.
+Identifier Names</b></font></p>
+<p class="msonormal" style="margin-bottom: 0.2in"><font size="2" style="font-size: 11pt"><b>A.</b></font>
+<font size="2" style="font-size: 11pt">Use meaningful variable names.
+X, jj, and bobo don't mean as much as timeLeft, biggest, and
+whereNext. </font>
+</p>
+<p class="msonormal" style="margin-bottom: 0.2in"><font size="2" style="font-size: 11pt"><b>B</b></font><font size="2" style="font-size: 11pt">.
+Avoid single letter variable names, except as loop counters in
+for-loops</font><font size="2" style="font-size: 11pt"> when there's
+no reasonable alternative</font><font size="2" style="font-size: 11pt">.</font></p>
+<p class="msonormal" style="margin-bottom: 0.2in"><font size="2" style="font-size: 11pt"><b>C</b></font><font size="2" style="font-size: 11pt">.
+If you decide to abbreviate a commonly used term in variable or type
+names, use exactly the same abbreviation everywhere. (For instance,
+if the term &quot;category&quot; appeared often in variable or type
+names, you might abbreviate it </font><font size="2" style="font-size: 11pt"><i>everywhere</i></font>
+<font size="2" style="font-size: 11pt">to &quot;ctg&quot;.)</font></p>
+<p class="msonormal" style="margin-bottom: 0.2in"><font size="2" style="font-size: 11pt"><b>D</b></font><font size="2" style="font-size: 11pt">.
+In multiple-word names, use camelCase, with initial lowercase for
+local variables, and </font><font size="2" style="font-size: 11pt">simple
+globals.  Use initial caps for globals that are &quot;packages&quot;</font><font size="2" style="font-size: 11pt">
+containing other subobjects and constructors</font><font size="2" style="font-size: 11pt">
+and for constructor functions</font><font size="2" style="font-size: 11pt">
+themselves</font><font size="2" style="font-size: 11pt">.</font></p>
+<p class="msonormal" style="margin-bottom: 0.2in"><font size="3" style="font-size: 13pt"><b>2.
+Comments</b></font> <b>(for assignments requiring commenting &ndash;
+check first)</b></p>
+<p class="msonormal" style="margin-bottom: 0.2in"><font size="2" style="font-size: 11pt"><b>A.
+</b></font><font size="2" style="font-size: 11pt">Write comments for
+each method that is not baldly obvious (such as a simple accessor),
+including a description of what the function does, and what each
+parameter is for. If the function makes any special assumptions about
+the contents of the parameters, list these. Write comments for each
+class in the program, including descriptions of each member datum.
+Don't comment the obvious; concentrate on explaining the hard parts.
+</font>&nbsp;&nbsp;<font size="2" style="font-size: 11pt">Use JavaDoc
+notation for header comments.</font></p>
+<p class="msonormal" style="margin-bottom: 0.2in"><font size="2" style="font-size: 11pt"><b>B.
+</b></font><font size="2" style="font-size: 11pt">Comments must be
+</font><font size="2" style="font-size: 11pt"><b>clear</b></font><font size="2" style="font-size: 11pt">.
+A set of words in comment markers is not automatically a comment.
+Comments must be grammatical and correctly spelled.</font></p>
+<p class="msonormal" style="margin-bottom: 0.2in"><font size="2" style="font-size: 11pt"><b>C.
+</b></font><font size="2" style="font-size: 11pt">Put comments that
+exceed one or two lines in function headers, not in the code itself.
+You may mark a line with a number thus: // 1 , and discuss it in the
+function header. </font>
+</p>
+<p class="msonormal" style="margin-bottom: 0.2in"><font size="3" style="font-size: 13pt"><b>3.
+Function Design</b></font></p>
+<p class="msonormal" style="margin-bottom: 0.2in"><font size="2" style="font-size: 11pt"><b>A.</b></font>
+<font size="2" style="font-size: 11pt">Avoid parameter lists of more
+than 5. Group data into objects</font> <font size="2" style="font-size: 11pt">instead.
+For instance:</font></p>
+<p class="msonormal" style="margin-bottom: 0.2in"><font size="2" style="font-size: 11pt">void
+printStats(int total, int count, int mean, int median, float stddev)</font></p>
+<p class="msonormal" style="margin-bottom: 0.2in"><font size="2" style="font-size: 11pt">These
+parameters are related; they comprise a set of statistics. Instead of
+passing 5 items, group them into a single object parameter that can
+be passed JSON-style, with labels on each parameter.</font></p>
+<p class="msonormal" style="margin-bottom: 0.2in"><font size="2" style="font-size: 11pt"><b>B</b></font><font size="2" style="font-size: 11pt">.
+Functions must be at most 50 lines long, not counting blank lines,
+asserts, comments, or lines with only a single brace on them. Don't
+cram code together to satisfy this limit. Break up your functions
+instead.</font></p>
+<p class="msonormal" style="margin-bottom: 0.2in"><font size="2" style="font-size: 11pt"><b>C.
+</b></font><font size="2" style="font-size: 11pt">Place all local
+variable declarations at the top of the function, with a single blank
+line separating the locals from the code that follows.</font></p>
+<p class="msonormal" style="margin-bottom: 0.2in"><font size="4" style="font-size: 16pt"><b>4.
+Indentation, Line Length, Parens and Braces</b></font></p>
+<p class="msonormal" style="margin-bottom: 0.2in"><font size="2" style="font-size: 11pt"><b>A.</b></font>
+<font size="2" style="font-size: 11pt">Use 3 space indentation. </font>&nbsp;</p>
+<p class="msonormal" style="margin-bottom: 0.2in"><font size="2" style="font-size: 11pt"><b>B.</b></font>
+<font size="2" style="font-size: 11pt">Indent only one level for each
+nested if, while, or switch:</font></p>
+<p class="msonormal" style="margin-bottom: 0.2in"><font face="Courier New">while
+(...) {</font></p>
+<p class="msonormal" style="margin-bottom: 0.2in">&nbsp;&nbsp;&nbsp;<font face="Courier New">statement;</font></p>
+<p class="msonormal" style="margin-bottom: 0.2in">&nbsp;&nbsp;&nbsp;<font face="Courier New">if(...)
+{</font></p>
+<p class="msonormal" style="margin-bottom: 0.2in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font face="Courier New">statement;</font></p>
+<p class="msonormal" style="margin-bottom: 0.2in">&nbsp;&nbsp;&nbsp;<font face="Courier New">}</font></p>
+<p class="msonormal" style="margin-bottom: 0.2in"><font face="Courier New">}</font>
+</p>
+<p class="msonormal" style="margin-bottom: 0.2in"><font size="2" style="font-size: 11pt"><b>C</b></font><font size="2" style="font-size: 11pt">.
+Never let a line exceed 80 columns. If a line must be broken into
+two, indent the second part one space past the first column of the
+first part:&nbsp; Further continuation lines, if needed, stay at that
+same 1-space indent</font><font size="2" style="font-size: 11pt">. 
+This rule applies even in modern displays because it permits multiple
+parallel pages of code on a single screen without the need for
+horizontal scrolling.</font></p>
+<p class="msonormal" style="margin-bottom: 0.2in"><font face="Courier New">Big
+long line....</font></p>
+<p class="msonormal" style="margin-bottom: 0.2in">&nbsp;<font face="Courier New">with
+continuation line below</font></p>
+<p class="msonormal" style="margin-bottom: 0.2in">&nbsp;<font face="Courier New">and
+further continuation</font></p>
+<p class="msonormal" style="margin-bottom: 0.2in"><font size="2" style="font-size: 11pt"><b>D</b></font><font size="2" style="font-size: 11pt">.
+Indent both the then and else blocks of an if-statement, even if they
+are only one line long. Don't write: if (test) statement; However, it
+is acceptable to use conditional-and or conditional-or tests, e.g.
+&lt;if this is true&gt; &amp;&amp; &lt;then do this&gt;</font></p>
+<p class="msonormal" style="margin-bottom: 0.2in"><font size="2" style="font-size: 11pt"><b>E.</b></font>
+<font size="2" style="font-size: 11pt">Use blank lines to break up
+blocks of code. Your code should fall into groups of about 5-8 lines
+on average, separated by a blank line or a line with only a brace,
+and possibly started with a one or two line comment. Always put a
+blank line after the local declarations in a function. Don&rsquo;t
+put more than one blank line in a row. A single blank line at a time
+is enough to break up the flow of code properly.</font></p>
+<p class="msonormal" style="margin-bottom: 0.2in"><font size="2" style="font-size: 11pt"><b>F.</b></font>
+P<font size="2" style="font-size: 11pt">lace the opening brace at the
+end of the if, while, class, etc. line that it applies to, and place
+the closing brace on a line by itself</font><font size="2" style="font-size: 11pt">,
+or with other closing punctuation only (e.g. }); or },)</font><font size="2" style="font-size: 11pt">
+in the same column as the beginning of the opening line.</font></p>
+<p class="msonormal" style="margin-bottom: 0.2in"><font size="2" style="font-size: 11pt"><b>I.</b></font>
+<font size="2" style="font-size: 11pt">Branches of an else-if
+sequence must be indented at the same level, even though technically
+each else-if should be indented one level deeper than the preceding
+one.</font></p>
+<p class="msonormal" style="margin-bottom: 0.2in"><font size="2" style="font-size: 11pt"><b>J.
+</b></font><font size="2" style="font-size: 11pt">Do not put more
+than one statement on a line.</font></p>
+<p class="msonormal" style="margin-bottom: 0.2in"><font size="2" style="font-size: 11pt"><b>K.
+</b></font><font size="2" style="font-size: 11pt"><span style="font-weight: normal">If
+you call an anonymous function directly, parenthesize the anonymous
+function declaration, e.g. (function() {})() </span></font>
+</p>
+<p class="msonormal" style="margin-bottom: 0.2in"><b><font size="2" style="font-size: 11pt">L.
+</font></b><font size="2" style="font-size: 11pt"><span style="font-weight: normal">Callback
+functions at the end of a paramter list </span></font><font size="2" style="font-size: 11pt"><span style="font-weight: normal">may</span></font><font size="2" style="font-size: 11pt"><span style="font-weight: normal">
+start on the line after the initiating call, without indentation, as
+though the initiating call was a &quot;prefix header&quot; to the
+function.  This avoids excessive nesting without harming readability:</span></font></p>
+<pre class="western">fNeedsCallback(prm1, prm2, 
+function(x) {
+
+}
+</pre><p style="margin-bottom: 0in">
+<font color="#000000"><font face="Liberation Serif, serif"><font size="3" style="font-size: 12pt"><b>5.
+Spacing</b></font></font></font></p>
+<p class="msonormal" style="margin-bottom: 0.2in"><font size="2" style="font-size: 11pt"><b>A</b></font><font size="2" style="font-size: 11pt">.
+Use spaces to clarify your program and to break up long expressions,
+but don't overdo it. Put spaces after each comma, and around each
+keyword (note that &quot;if&quot;, &quot;while&quot; and &quot;for&quot;
+are keywords). Put a space after each semicolon in a for header and
+before any opening brace '{'. Never put a space </font><font size="2" style="font-size: 11pt"><i>before</i></font>
+<font size="2" style="font-size: 11pt">a comma or semicolon.</font></p>
+<p class="msonormal" style="margin-bottom: 0.2in"><font size="2" style="font-size: 11pt"><b>B</b></font><font size="2" style="font-size: 11pt">.
+Put spaces around operators, except in very large expressions where
+you may avoid them around the highest-priority operators. Dont have
+more than three variables or operators in a row without a blank
+space.</font></p>
+<p class="msonormal" style="margin-bottom: 0.2in"><font face="Courier New">Good:
+epsilon = 2*beta + gamma - delta*pi;</font></p>
+<p class="msonormal" style="margin-bottom: 0.2in"><font face="Courier New">Bad:
+epsilon=2*gamma-delta*pi;</font></p>
+<p class="msonormal" style="margin-bottom: 0.2in"><font size="2" style="font-size: 11pt"><b>C.
+</b></font><font size="2" style="font-size: 11pt"><i>Don't</i></font>
+<font size="2" style="font-size: 11pt">put space after an opening
+paren, or before a closing one. Do not put space between a function
+name and the opening paren for the parameter list.</font></p>
+<p class="msonormal" style="margin-bottom: 0.2in"><font size="3" style="font-size: 13pt"><b>6.
+Code Elegance</b></font></p>
+<p class="msonormal" style="margin-bottom: 0.2in"><font size="2" style="font-size: 11pt"><b>A.</b></font>
+<font size="2" style="font-size: 11pt">Do not use the clauses &quot;==
+true&quot; or &quot;== false&quot; in code. Use boolean variables as
+direct tests, as in &quot;if (mEmpty)&quot;, not in equality checks
+like &quot;if (mEmpty == true)&quot;.</font></p>
+<p class="msonormal" style="margin-bottom: 0.2in"><font size="2" style="font-size: 11pt"><b>B.
+</b></font><font size="2" style="font-size: 11pt">Do not write an
+if-else that can be replaced with a simple boolean expression. For
+instance:</font></p>
+<p class="msonormal" style="margin-bottom: 0.2in"><font face="Courier New"><font size="2" style="font-size: 9pt">if
+(val1 &lt; va2 &amp;&amp; mark == 0) </font></font>
+</p>
+<p class="msonormal" style="margin-bottom: 0.2in">&nbsp;&nbsp;
+<font face="Courier New"><font size="2" style="font-size: 9pt">oddTest
+= true;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+VS:&nbsp;&nbsp;&nbsp; oddTest = val1 &lt; val2 &amp;&amp; mark == 0;</font></font></p>
+<p class="msonormal" style="margin-bottom: 0.2in"><font face="Courier New"><font size="2" style="font-size: 9pt">else</font></font></p>
+<p class="msonormal" style="margin-bottom: 0.2in">&nbsp;&nbsp;
+<font face="Courier New"><font size="2" style="font-size: 9pt">oddTest
+= false;</font></font></p>
+</body>
+</html>
