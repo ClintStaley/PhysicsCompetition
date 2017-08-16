@@ -1,6 +1,5 @@
 var Express = require('express');
 var Tags = require('../Validator.js').Tags;
-var ssnUtil = require('../Session.js');
 var router = Express.Router({caseSensitive: true});
 var async = require('async');
 
@@ -83,8 +82,9 @@ router.put('/:id', function (req, res) {
       }
    },
    function (titleRes, fields, cb) {
+   console.log(titleRes);
       if (!body.title ||
-         vld.check(titleRes.length === 1, Tags.dupTitle, null, cb))
+         vld.check(!titleRes.length, Tags.dupTitle, null, cb))
          cnn.chkQry("update CompetitionType set ? where id = ?",
             [req.body, req.params.id], cb);
    },

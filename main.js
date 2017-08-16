@@ -49,14 +49,15 @@ app.use(CnnPool.router);
 app.use('/Prss', require('./Routes/Account/Prss'));
 app.use('/Ssns', require('./Routes/Account/Ssns'));
 app.use('/Ctps', require('./Routes/Competition/Ctps'));
-app.use('/Cmps', require('./Routes/Competition/Cmps'))
+app.use('/Cmps', require('./Routes/Competition/Cmps'));
+app.use('/Cmps/:cmpId/Teams', require('./Routes/Competition/Teams'));
 //app.use('/Cnvs', require('./Routes/Conversation/Cnvs.js'));
 //app.use('/Msgs', require('./Routes/Conversation/Msgs.js'));
 
 // Special debugging route for /DB DELETE.  Clears all table contents, resets all
 // auto_increment keys to start at 1, and reinserts one admin user.
 app.delete('/DB', function (req, res) {
-   var resetTables = ["Person","CompetitionType","Competition"];
+   var resetTables = ["Person","CompetitionType","Competition","Teams"];
    
    if (!req.session.isAdmin()) { //&& !req.bugs.nonAdminDBDel) {
       req.cnn.release();

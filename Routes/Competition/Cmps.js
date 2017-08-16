@@ -1,32 +1,25 @@
 var Express = require('express');
 var Tags = require('../Validator.js').Tags;
-var ssnUtil = require('../Session.js');
 var router = Express.Router({caseSensitive: true});
 var async = require('async');
 
 router.baseURL = '/Cmps';
 
 router.get('/', function (req, res) {
-   var vld = req.validator;  // Shorthands
    var email = req.query.email;
    var cnn = req.cnn;
+   var query = 'select * from Competition';
+   var fillers = [];
+   
+   if (email) {
+      query = 'select Competition.id,ownerId,ctpId,title,prms from Competition'
+       + ',Person where email = ? && Competition.ownerId = Person.id';
+      fillers.push(email);
+   }
    
    async.waterfall([
    function (cb) {
-      if (email)
-         cnn.chkQry('select * from Person where email = ?',
-            [email], cb);
-      else
-         cb(null, null, cb);
-   },
-   function (Owner, fields, cb) {
-      if (Owner) {
-         if (vld.check(Owner.length, Tags.badValue, null))
-            cnn.chkQry('select * from Competition where ownerId = ?'
-               , [Owner[0].id], cb);
-      }
-      else
-         cnn.chkQry('select * from Competition', null, cb);
+      cnn.chkQry(query,fillers, cb);
    },
    function (result, fields, cb) {
       res.json(result);
@@ -135,6 +128,5 @@ router.delete('/:id', function (req, res) {
       req.cnn.release();
    }
 });
-
 
 module.exports = router;
