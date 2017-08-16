@@ -5,7 +5,6 @@ var bodyParser = require('body-parser');
 var Session = require('./Routes/Session');
 var Validator = require('./Routes/Validator.js');
 var CnnPool = require('./Routes/CnnPool.js');
-//var bugs = require('./Bugs.js');
 var async = require('async');
 
 var app = express();
@@ -50,13 +49,14 @@ app.use(CnnPool.router);
 app.use('/Prss', require('./Routes/Account/Prss'));
 app.use('/Ssns', require('./Routes/Account/Ssns'));
 app.use('/Ctps', require('./Routes/Competition/Ctps'));
+app.use('/Cmps', require('./Routes/Competition/Cmps'))
 //app.use('/Cnvs', require('./Routes/Conversation/Cnvs.js'));
 //app.use('/Msgs', require('./Routes/Conversation/Msgs.js'));
 
 // Special debugging route for /DB DELETE.  Clears all table contents, resets all
 // auto_increment keys to start at 1, and reinserts one admin user.
 app.delete('/DB', function (req, res) {
-   var resetTables = ["Person","CompetitionType"];
+   var resetTables = ["Person","CompetitionType","Competition"];
    
    if (!req.session.isAdmin()) { //&& !req.bugs.nonAdminDBDel) {
       req.cnn.release();
