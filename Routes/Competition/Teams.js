@@ -100,14 +100,16 @@ router.delete('/:id', function (req, res) {
    
    async.waterfall([
    function (cb) {
-      cnn.chkQry('select ownerId from Competition where id = ?',
-         [req.params.cmpId], cb);
+      cnn.chkQry('select ownerId from Teams where id = ?',
+         [req.params.id], cb);
    },
    function (result, fields, cb) {
       if (vld.check(result && result.length , Tags.notFound, null, cb))
-         if (vld.checkPrsOK(result[0].ownerId),cb)
+         if (vld.checkPrsOK(result[0].ownerId),cb) {
+         console.log(req.session.id);
             req.cnn.query('delete from Teams where id = ? && cmpId = ?',
                [req.params.id, req.params.cmpId], cb);
+         }
    }],
    function (err, result) {
       if (!err && vld.check(result.affectedRows, Tags.notFound))

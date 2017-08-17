@@ -29,7 +29,7 @@ router.post('/', function (req, res) {
             if (vld.hasFields(body, ["content"], cb)) {
                body.cmpId = req.params.cmpId;
                body.teamId = req.params.teamId;
-               body.subTime = new Date().getTime();
+               body.subTime = new Date();
                cnn.chkQry('insert into Submits set ?', body, cb);
             }
          },
