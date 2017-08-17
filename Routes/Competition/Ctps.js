@@ -21,29 +21,30 @@ router.post('/', function (req, res) {
    var vld = req.validator;  // Shorthands
    var body = req.body;
    var cnn = req.cnn;
-
-   async.waterfall([
-   function (cb) {
-      if (vld.hasFields(body, ["title", "description"], cb) && vld.checkAdmin())
-      {
-         cnn.chkQry('select * from CompetitionType where title = ?',
-            body.title, cb);
-      }
-   },
-   function (existingCtp, fields, cb) {
-      // If no duplicates, insert new competitionType
-      if (vld.check(!existingCtp.length, Tags.dupTitle, null, cb)) {
-         cnn.chkQry('insert into CompetitionType set ?', body, cb);
-      }
-   },
-   function (result, fields, cb) {
-      // Return location of inserted competitionType
-      res.location(router.baseURL + '/' + result.insertId).end();
-      cb();
-   }],
-   function () {
+   if (vld.checkAdmin())
+      async.waterfall([
+      function (cb) {
+         if (vld.hasFields(body, ["title", "description"], cb)) {
+            cnn.chkQry('select * from CompetitionType where title = ?',
+               body.title, cb);
+         }
+      },
+      function (existingCtp, fields, cb) {
+         // If no duplicates, insert new competitionType
+         if (vld.check(!existingCtp.length, Tags.dupTitle, null, cb)) {
+            cnn.chkQry('insert into CompetitionType set ?', body, cb);
+         }
+      },
+      function (result, fields, cb) {
+         // Return location of inserted competitionType
+         res.location(router.baseURL + '/' + result.insertId).end();
+         cb();
+      }],
+      function () {
+         cnn.release();
+      });
+   else
       cnn.release();
-   });
 });
 
 router.get('/:id', function (req, res) {
@@ -82,7 +83,6 @@ router.put('/:id', function (req, res) {
       }
    },
    function (titleRes, fields, cb) {
-   console.log(titleRes);
       if (!body.title ||
          vld.check(!titleRes.length, Tags.dupTitle, null, cb))
          cnn.chkQry("update CompetitionType set ? where id = ?",
@@ -100,7 +100,7 @@ router.put('/:id', function (req, res) {
 router.delete('/:id', function (req, res) {
    var vld = req.validator;
    
-   if (vld.checkAdmin())
+   if (vld.checkAdmin()) {
       async.waterfall([
       function (cb) {
          req.cnn.query(
@@ -111,7 +111,6 @@ router.delete('/:id', function (req, res) {
             'delete from CompetitionType where id = ?', [req.params.id], cb);
       },
       function (result, err, cb) {
-         console.log(err);
          if (vld.check(!err && result.affectedRows, Tags.notFound))
             res.status(200).end();
          cb();
@@ -119,6 +118,11 @@ router.delete('/:id', function (req, res) {
       function () {
          req.cnn.release();
       });
+   }
+   else {
+      console.log("Right Here?");
+      req.cnn.release();
+   }
 });
 
 

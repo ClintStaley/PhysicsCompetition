@@ -74,16 +74,14 @@ router.put('/:id', function (req, res) {
    },
    function (qRes, fields, cb) {
       if (vld.check(qRes.length, Tags.notFound, null, cb)) {
-         if (body.teamName && vld.checkPrsOK(qRes.ownerId,cb))
-            cnn.chkQry("select * from Teams where teamName = ?",
-               [body.teamName], cb);
-         else
-            cb(null,null,cb);
+         if (body.teamName && vld.checkPrsOK(qRes[0].ownerId,cb))
+            cnn.chkQry("select * from Teams where teamName = ? && cmpId = ?",
+               [body.teamName,req.params.cmpId], cb);
       }
    },
    function (nameRes, fields, cb) {
       if (!body.teamName ||
-         vld.check(!nameRes.length, Tags.dupTitle, null, cb))
+            vld.check(nameRes  && !nameRes.length, Tags.dupTitle, null, cb))
          cnn.chkQry("update Teams set ? where id = ?",
             [req.body, req.params.id], cb);
    },
@@ -102,19 +100,18 @@ router.delete('/:id', function (req, res) {
    
    async.waterfall([
    function (cb) {
-      cnn.chkQry('select ownerId from Teams where id = ? && cmpId = ?',
-         [req.params.id,req.params.cmpId], cb);
+      cnn.chkQry('select ownerId from Competition where id = ?',
+         [req.params.cmpId], cb);
    },
    function (result, fields, cb) {
-      if (vld.check(result.length , Tags.notFound, null, cb))
-         if (vld.checkPrsOK(result[0].ownerId))
+      if (vld.check(result && result.length , Tags.notFound, null, cb))
+         if (vld.checkPrsOK(result[0].ownerId),cb)
             req.cnn.query('delete from Teams where id = ? && cmpId = ?',
                [req.params.id, req.params.cmpId], cb);
    }],
-   function (err, result,cb) {
+   function (err, result) {
       if (!err && vld.check(result.affectedRows, Tags.notFound))
          res.status(200).end();
-      console.log("Here");
       cnn.release();
    });
 });
