@@ -50,13 +50,13 @@ router.post('/', function (req, res) {
          }
       },
       function (existingCmp, fields, cb) {
-         // If no duplicates, insert new competitionType
+         // If no duplicates, insert new competition
          if (vld.check(!existingCmp.length, Tags.dupTitle, null, cb)) {
             cnn.chkQry('insert into Competition set ?', body, cb);
          }
       },
       function (result, fields, cb) {
-         // Return location of inserted competitionType
+         // Return location of inserted competition
          res.location(router.baseURL + '/' + result.insertId).end();
          cb();
       }],

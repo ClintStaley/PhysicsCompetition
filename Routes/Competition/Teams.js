@@ -22,6 +22,7 @@ router.post('/', function (req, res) {
    var ssn = req.session;
    var body = req.body;
    var cnn = req.cnn;
+   var MemberData = [];
    
    async.waterfall([
    function (cb) {
@@ -33,17 +34,23 @@ router.post('/', function (req, res) {
       }
    },
    function (existingTm, fields, cb) {
-      // If no duplicates, insert new competitionType
+      // If no duplicates, insert new Team
       if (vld.check(!existingTm.length, Tags.dupTitle, null, cb)) {
          cnn.chkQry('insert into Teams set ?', body, cb);
       }
    },
    function (result, fields, cb) {
-      // Return location of inserted competitionType
-      res.location(router.baseURL + '/' + result.insertId).end();
-      cb();
+      // Return location of inserted Team
+      res.location(router.baseURL + '/' + result.teamId);
+      
+      MemberData.personId = body.ownerId;
+      MemberData.teamId = result.insertId;
+
+      cnn.chkQry('insert into Members set personId = ?, teamId = ?',
+         [MemberData.personId,MemberData.teamId], cb);
    }],
    function () {
+      res.end();
       cnn.release();
    });
 });
@@ -105,11 +112,9 @@ router.delete('/:id', function (req, res) {
    },
    function (result, fields, cb) {
       if (vld.check(result && result.length , Tags.notFound, null, cb))
-         if (vld.checkPrsOK(result[0].ownerId),cb) {
-         console.log(req.session.id);
+         if (vld.checkPrsOK(result[0].ownerId, cb))
             req.cnn.query('delete from Teams where id = ? && cmpId = ?',
                [req.params.id, req.params.cmpId], cb);
-         }
    }],
    function (err, result) {
       if (!err && vld.check(result.affectedRows, Tags.notFound))

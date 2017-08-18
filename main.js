@@ -51,7 +51,10 @@ app.use('/Ssns', require('./Routes/Account/Ssns'));
 app.use('/Ctps', require('./Routes/Competition/Ctps'));
 app.use('/Cmps', require('./Routes/Competition/Cmps'));
 app.use('/Cmps/:cmpId/Teams', require('./Routes/Competition/Teams'));
-app.use('/Cmps/:cmpId/Teams/:teamId/Sbms', require('./Routes/Competition/Sbms'));
+app.use('/Cmps/:cmpId/Teams/:teamId/Sbms',
+      require('./Routes/Competition/Sbms'));
+app.use('/Cmps/:cmpId/Teams/:teamId/Mmbs',
+      require('./Routes/Competition/Mmbs'));
 //app.use('/Cnvs', require('./Routes/Conversation/Cnvs.js'));
 //app.use('/Msgs', require('./Routes/Conversation/Msgs.js'));
 

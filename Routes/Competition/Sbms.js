@@ -25,22 +25,22 @@ router.post('/', function (req, res) {
    var cnn = req.cnn;
    
    async.waterfall([
-         function (cb) {
-            if (vld.hasFields(body, ["content"], cb)) {
-               body.cmpId = req.params.cmpId;
-               body.teamId = req.params.teamId;
-               body.subTime = new Date();
-               cnn.chkQry('insert into Submits set ?', body, cb);
-            }
-         },
-         function (result, fields, cb) {
-            // Return location of inserted competitionType
-            res.location(router.baseURL + '/' + result.insertId).end();
-            cb();
-         }],
-      function () {
-         cnn.release();
-      });
+   function (cb) {
+      if (vld.hasFields(body, ["content"], cb)) {
+         body.cmpId = req.params.cmpId;
+         body.teamId = req.params.teamId;
+         body.subTime = new Date();
+         cnn.chkQry('insert into Submits set ?', body, cb);
+      }
+   },
+   function (result, fields, cb) {
+      // Return location of inserted Submissions
+      res.location(router.baseURL + '/' + result.insertId).end();
+      cb();
+   }],
+   function () {
+      cnn.release();
+   });
 });
 
 router.get('/:id', function (req, res) {

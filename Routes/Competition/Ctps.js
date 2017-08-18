@@ -104,10 +104,6 @@ router.delete('/:id', function (req, res) {
       async.waterfall([
       function (cb) {
          req.cnn.query(
-            'delete from Competition where ctpId  = ?', [req.params.id], cb);
-      },
-      function (err, result, cb) {
-         req.cnn.query(
             'delete from CompetitionType where id = ?', [req.params.id], cb);
       },
       function (result, err, cb) {
