@@ -1,6 +1,7 @@
 var Express = require('express');
 var Tags = require('../Validator.js').Tags;
 var router = Express.Router({caseSensitive: true});
+var validate = require('commonjs-utils/lib/json-schema').validate;
 var async = require('async');
 
 router.baseURL = '/Cmps';
@@ -45,14 +46,31 @@ router.post('/', function (req, res) {
       function (cb) {
          if (vld.hasFields(body, ["title", "ctpId", "prms"], cb)) {
             body.ownerId = ssn.id;
-            cnn.chkQry('select * from Competition where title = ? and ownerId = ?',
+            cnn.chkQry(
+               'select * from Competition where title = ? and ownerId = ?',
                [body.title, body.ownerId], cb);
          }
       },
       function (existingCmp, fields, cb) {
          // If no duplicates, insert new competition
          if (vld.check(!existingCmp.length, Tags.dupTitle, null, cb)) {
-            cnn.chkQry('insert into Competition set ?', body, cb);
+            console.log('#################################');
+               cnn.chkQry('select * from CompetitionType where id = ?',
+                  body.ctpId, cb);
+         }
+      },
+      function (Ctp, fields, cb) {
+         console.log(Ctp);
+         // If no duplicates, insert new competition
+         if (vld.check(Ctp && Ctp.length, Tags.NoCompType, null, cb)) {
+            console.log('#################################');
+            var validation = validate(JSON.parse(body.prms),
+                  JSON.parse(Ctp[0].prmSchema));
+            console.log(validation.valid);
+            if (vld.check(validation.valid, Tags.NoCompType, null, cb)) {
+            console.log('#################################');
+               cnn.chkQry('insert into Competition set ?', body, cb);
+            }
          }
       },
       function (result, fields, cb) {

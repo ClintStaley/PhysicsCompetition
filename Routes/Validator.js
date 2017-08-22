@@ -21,7 +21,8 @@ Validator.Tags = {
    dupEnrollment: "dupEnrollment",  // Duplicate enrollment
    forbiddenField: "forbiddenField",// Field in body not allowed
    badBodyFormat: "badBodyFormat",   // Body didn't parse as JSON
-   cantRemoveLeader: "CannotRemoveLeader"
+   cantRemoveLeader: "CannotRemoveLeader",
+   NoCompType: "CompetitionTypeDoesNotExist"
 };
 
 // Check |test|.  If false, add an error with tag and possibly empty array

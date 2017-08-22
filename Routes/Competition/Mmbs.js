@@ -34,7 +34,7 @@ router.post('/', function (req, res) {
    },
    function (result, fields, cb) {
       if (vld.check(ssn && (ssn.isAdmin() ||
-            (result && ssn.id == result[0].ownerId) || ssn.id == body.personId),
+            (result && result.length && ssn.id == result[0].ownerId) || ssn.id == body.personId),
             Tags.noPermission, null, cb)) {
          cnn.chkQry('select * from Members where personId = ? && teamId = ?',
             [body.personId,body.teamId], cb);
