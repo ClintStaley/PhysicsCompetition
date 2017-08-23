@@ -44,6 +44,7 @@ router.post('/', function (req, res) {
    if ( vld.checkAdmin())
       async.waterfall([
       function (cb) {
+         //Get dupTitles if they exist
          if (vld.hasFields(body, ["title", "ctpId", "prms"], cb)) {
             body.ownerId = ssn.id;
             cnn.chkQry(
@@ -52,24 +53,24 @@ router.post('/', function (req, res) {
          }
       },
       function (existingCmp, fields, cb) {
-         // If no duplicates, insert new competition
+         //check dupTitle
          if (vld.check(!existingCmp.length, Tags.dupTitle, null, cb)) {
-            console.log('#################################');
+            // get the prmSchema from Ctp
                cnn.chkQry('select * from CompetitionType where id = ?',
                   body.ctpId, cb);
          }
       },
       function (Ctp, fields, cb) {
-         console.log(Ctp);
          // If no duplicates, insert new competition
          if (vld.check(Ctp && Ctp.length, Tags.NoCompType, null, cb)) {
-            console.log('#################################');
-            var validation = validate(JSON.parse(body.prms),
+            try {
+               var validation = validate(JSON.parse(body.prms),
                   JSON.parse(Ctp[0].prmSchema));
-            console.log(validation.valid);
-            if (vld.check(validation.valid, Tags.NoCompType, null, cb)) {
-            console.log('#################################');
-               cnn.chkQry('insert into Competition set ?', body, cb);
+               if (vld.check(validation.valid, Tags.NoCompType, null, cb))
+                  cnn.chkQry('insert into Competition set ?', body, cb);
+            }
+            catch (exception){
+               vld.check(false, "no JSON", null, cb);
             }
          }
       },

@@ -55,8 +55,6 @@ app.use('/Cmps/:cmpId/Teams/:teamId/Sbms',
       require('./Routes/Competition/Sbms'));
 app.use('/Cmps/:cmpId/Teams/:teamId/Mmbs',
       require('./Routes/Competition/Mmbs'));
-//app.use('/Cnvs', require('./Routes/Conversation/Cnvs.js'));
-//app.use('/Msgs', require('./Routes/Conversation/Msgs.js'));
 
 // Special debugging route for /DB DELETE.  Clears all table contents, resets all
 // auto_increment keys to start at 1, and reinserts one admin user.
@@ -64,7 +62,7 @@ app.delete('/DB', function (req, res) {
    var resetTables =
          ["Person","CompetitionType","Competition","Teams","Submits"];
    
-   if (!req.session.isAdmin()) { //&& !req.bugs.nonAdminDBDel) {
+   if (!req.session.isAdmin()) {
       req.cnn.release();
       res.status(403).end();
       return;
@@ -110,7 +108,7 @@ app.delete('/DB', function (req, res) {
 // Handler of last resort.  Send a 404 response and release connection
 app.use(function (req, res) {
    res.status(404).end();
-   //if (!bugs.no404Release)
+
    req.cnn.release();
 });
 

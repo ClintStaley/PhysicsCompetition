@@ -26,6 +26,7 @@ router.post('/', function (req, res) {
    
    async.waterfall([
    function (cb) {
+      //
       if (vld.hasFields(body, ["personId"], cb)) {
          body.teamId = req.params.teamId;
          cnn.chkQry('select ownerId from Teams where id = ?',
@@ -33,13 +34,12 @@ router.post('/', function (req, res) {
       }
    },
    function (result, fields, cb) {
+      //check if post is from admin or team leader
       if (vld.check(ssn && (ssn.isAdmin() ||
-            (result && result.length && ssn.id == result[0].ownerId) || ssn.id == body.personId),
-            Tags.noPermission, null, cb)) {
+            (result && result.length && ssn.id == result[0].ownerId)
+            || ssn.id == body.personId), Tags.noPermission, null, cb))
          cnn.chkQry('select * from Members where personId = ? && teamId = ?',
             [body.personId,body.teamId], cb);
-         
-      }
    },
    function (result, fields, cb) {
       if (vld.check(result && !result.length, Tags.dupEnrollment, null, cb)) {
