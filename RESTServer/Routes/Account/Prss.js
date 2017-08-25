@@ -137,5 +137,31 @@ router.delete('/:id', function(req, res) {
    }
 });
 
+router.get('/:id/Teams', function(req, res) {
+   var vld = req.validator;
+   var teams = [];
+   
+   if (vld.checkAdmin()) {
+      async.waterfall([
+      function (cb) { // get all teams
+         req.cnn.chkQry('select cmpId,teamId from Teams,Members where ' +
+            'personId =  ? and teamId = Teams.id', [req.params.id], cb);
+      },
+      function (memberTeam, fields, cb) {  // create teams array
+         memberTeam.forEach(function (prop) {
+            teams.push("Cmps/" + prop.cmpId + "/Teams/" + prop.teamId);
+         });
+         res.json(teams);
+         cb();
+      }],
+      function () {
+         req.cnn.release();
+      });
+   }
+   else {
+      req.cnn.release();
+   }
+});
+
 
 module.exports = router;

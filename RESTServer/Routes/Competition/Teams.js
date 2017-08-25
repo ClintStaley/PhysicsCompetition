@@ -7,7 +7,7 @@ router.baseURL = '/Cmps/:cmpId/Teams';
 
 router.get('/', function (req, res) {
    
-   req.cnn.chkQry('select * from Teams where cmpId = ?', req.params.cmpId,
+   req.cnn.chkQry('select id,teamName,bestScore,lastSubmit,CanSubmit from Teams where cmpId = ?', req.params.cmpId,
    function (err, result) {
       res.json(result);
       
@@ -23,31 +23,80 @@ router.post('/', function (req, res) {
    var body = req.body;
    var cnn = req.cnn;
    var MemberData = [];
+   var curTeam;
+   var rules;
    
    async.waterfall([
    function (cb) {
+      //check for required field teamName
       if (vld.hasFields(body, ["teamName"], cb)) {
          body.ownerId = ssn.id;
          body.cmpId = req.params.cmpId;
+         //Check teamName availability
          cnn.chkQry('select * from Teams where teamName = ? and cmpId = ?',
             [body.teamName, body.cmpId ], cb);
       }
    },
    function (existingTm, fields, cb) {
-      // If no duplicates, insert new Team
+      // If no duplicates, check the cmp rules
       if (vld.check(!existingTm.length, Tags.dupTitle, null, cb)) {
+         cnn.chkQry('select * from Competition where id = ?', body.cmpId, cb);
+      }
+   },
+   function (Cmp, fields, cb) {
+      // save rules and the current team for future use
+      //create new team
+      if (vld.check(Cmp && Cmp.length, Tags.notFound, null, cb)) {
+         rules = Cmp[0].rules;
+         curTeam = Cmp[0].curTeam;
          cnn.chkQry('insert into Teams set ?', body, cb);
       }
    },
    function (result, fields, cb) {
       // Return location of inserted Team
       res.location(router.baseURL + '/' + result.teamId);
-      
+   
+      //save team data to include team leader as a member in member table
       MemberData.personId = body.ownerId;
       MemberData.teamId = result.insertId;
-
-      cnn.chkQry('insert into Members set personId = ?, teamId = ?',
-         [MemberData.personId,MemberData.teamId], cb);
+      
+      if (rules) {
+         //variable used to update created team
+         var nextTeam;
+         var canSubmit;
+         async.waterfall([
+         function (cb) {
+            //checks if there is a team that is ok to go
+            if (curTeam) {
+               //makes the recently created team the last team to go
+               nextTeam = curTeam;
+               canSubmit = false;
+               cnn.chkQry('update Teams set nextTeam = ? where nextTeam = ?',
+                  [result.insertId, curTeam], cb);
+            }
+            else {
+               //makes the team just created the current team
+               nextTeam = result.insertId;
+               canSubmit = true;
+               cnn.chkQry('update Competition set curTeam = ? where id = ?',
+                  [result.insertId, body.cmpId], cb);
+            }
+         }],
+         function () {
+            //updates team so that the canSubmit and nextTeam values are correct
+            cnn.chkQry('update Teams set nextTeam = ?,canSubmit = ? where id = ?',
+               [nextTeam, canSubmit, result.insertId],cb);
+         });
+      }
+      else{
+         //if the cmp has standard rules
+         cb(null,null,cb);
+      }
+   },
+   function (res, fields, cb) {
+      //put team leader into members
+   cnn.chkQry('insert into Members set personId = ?, teamId = ?',
+      [MemberData.personId,MemberData.teamId], cb);
    }],
    function () {
       res.end();
@@ -104,17 +153,49 @@ router.put('/:id', function (req, res) {
 router.delete('/:id', function (req, res) {
    var vld = req.validator;
    var cnn = req.cnn;
+   var nextTeam;
+   var otherTeams;
    
    async.waterfall([
    function (cb) {
-      cnn.chkQry('select ownerId from Teams where id = ?',
+      //get data on the correct team
+      cnn.chkQry('select * from Teams where id = ?',
          [req.params.id], cb);
    },
    function (result, fields, cb) {
+      //checks teh team exists
       if (vld.check(result && result.length , Tags.notFound, null, cb))
-         if (vld.checkPrsOK(result[0].ownerId, cb))
-            req.cnn.query('delete from Teams where id = ? && cmpId = ?',
-               [req.params.id, req.params.cmpId], cb);
+         if (vld.checkPrsOK(result[0].ownerId, cb)) {
+            nextTeam = result[0].nextTeam;
+            otherTeams = !(nextTeam == req.params.id);
+            cnn.query('select * from Competition where id = ?',
+               [req.params.cmpId], cb);
+         }
+   },
+   function (Cmp, fields, cb) {
+      //checks teh competition rules, or if the cutTeam pointer needs to change
+      if (!Cmp[0].rules || !(Cmp[0].curTeam == req.params.id))
+         cb(null, null, cb);
+      else if (!otherTeams) //checks if the curTeam needs to be null
+         cnn.chkQry('update Competition set curTeam = ? where id = ?',
+            [null, Cmp[0].id], cb);
+      else
+         cnn.chkQry('update Competition set curTeam = ? where id = ?',
+            [nextTeam, Cmp[0].id], cb);
+   },
+   function (updRes, fields, cb) {
+      //if there are other teams update the team pointing ot the now deleted team
+      if (otherTeams){
+         cnn.chkQry('update Teams set nextTeam = ? where nextTeam = ?',
+            [nextTeam, req.params.id], cb);
+      }
+      else
+         cb(null,null,cb);
+   },
+   function (updRes, fields, cb) {
+      //delete the team
+      req.cnn.query('delete from Teams where id = ? && cmpId = ?',
+         [req.params.id, req.params.cmpId], cb);
    }],
    function (err, result) {
       if (!err && vld.check(result.affectedRows, Tags.notFound))

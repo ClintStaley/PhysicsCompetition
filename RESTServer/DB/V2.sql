@@ -1,4 +1,6 @@
 
+
+
 drop database if exists VCSdb;
 create database VCSdb;
 use VCSdb;
@@ -28,6 +30,8 @@ create table Competition (
    ctpId int not null,
    title varchar(80) not null,
    prms varchar(20000) not null,
+   rules int default 0,
+   curTeam int,
    
    constraint FKCompetition_ctpId foreign key (ctpId) references
     CompetitionType(id) on delete cascade on update cascade,
@@ -42,7 +46,9 @@ create table Teams (
    teamName varchar(80) not null,
    cmpId int not null,
    ownerId int not null,
-   lastSubmit datetime,
+   lastSubmit datetime default null,
+   canSubmit boolean default true,
+   nextTeam int,
    
    constraint FKTeams_cmpId foreign key (cmpId) references
     Competition(id) on delete cascade on update cascade,
@@ -55,7 +61,8 @@ create table Teams (
 create table Submits (
    id int auto_increment primary key,
    cmpId int not null,
-   content varchar(20000) Not Null,
+   content varchar(2000) Not Null,
+   response varchar(2000),
    teamId int not null,
    score int,
    subTime datetime,
@@ -83,6 +90,14 @@ create table Members (
 
 insert into Person (firstName, lastName, email,       password,   whenRegistered, role)
             VALUES ("Joe",     "Admin", "adm@11.com", "password", NOW(), 1);
+            
+select * from Person;
+select * from CompetitionType;
+select * from Competition;
+select * from Teams;
+select * from Members;
+select * from Submits;
+
             
             
             

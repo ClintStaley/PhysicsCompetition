@@ -45,7 +45,7 @@ router.post('/', function (req, res) {
       async.waterfall([
       function (cb) {
          //Get dupTitles if they exist
-         if (vld.hasFields(body, ["title", "ctpId", "prms"], cb)) {
+         if (vld.hasOnlyFields(body, ["title", "ctpId", "prms", "rules"], cb)) {
             body.ownerId = ssn.id;
             cnn.chkQry(
                'select * from Competition where title = ? and ownerId = ?',
