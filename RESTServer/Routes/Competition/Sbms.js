@@ -23,20 +23,15 @@ router.get('/', function (req, res) {
    });
 });
 
-//WORK IN PROGRESS
 router.post('/', function (req, res) {
    var vld = req.validator;  // Shorthands
    var body = req.body;
    var cnn = req.cnn;
-   console.log("1");
+ 
    async.waterfall([
    function (cb) {
       if (vld.hasOnlyFields(body, ["content","response"], cb)) {
-         console.log("2");
-         
-         //WEIRD
-         if (vld.check(( vld.isAdmin() || !body.response),Tags.forbiddenField,null,cb)) {
-            console.log("3");
+         if (vld.check(( !body.response || vld.checkAdmin()),Tags.forbiddenField,null,cb)) {
             body.cmpId = req.params.cmpId;
             body.teamId = req.params.teamId;
             body.subTime = new Date();
@@ -45,7 +40,6 @@ router.post('/', function (req, res) {
       }
    },
    function (result, fields, cb) {
-      console.log("4");
       // Return location of inserted Submissions
       res.location(router.baseURL + '/' + result.insertId).end();
       cb();
