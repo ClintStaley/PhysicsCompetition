@@ -30,8 +30,9 @@ router.post('/', function (req, res) {
  
    async.waterfall([
    function (cb) {
-      if (vld.hasOnlyFields(body, ["content","response"], cb)) {
-         if (vld.check(( !body.response || vld.checkAdmin()),Tags.forbiddenField,null,cb)) {
+      if (vld.hasOnlyFields(body, ["content"], cb)) {
+         if (vld.check(( !body.response || vld.checkAdmin()),
+               Tags.forbiddenField,null,cb)) {
             body.cmpId = req.params.cmpId;
             body.teamId = req.params.teamId;
             body.subTime = new Date();
@@ -59,6 +60,40 @@ router.get('/:id', function (req, res) {
          res.json(teamArr);
       }
       req.cnn.release();
+   });
+});
+
+router.put('/:id', function (req, res) {
+   var vld = req.validator;  // Shorthands
+   var body = req.body;
+   var cnn = req.cnn;
+   
+   async.waterfall([
+   function (cb) {
+      if (vld.hasOnlyFields(body, ["response"], cb)) {
+         if (vld.checkAdmin(cb)) {
+            body.cmpId = req.params.cmpId;
+            body.teamId = req.params.teamId;
+            body.subTime = new Date();
+            cnn.chkQry('select * from Submits where id = ? && cmpId = ? &&' +
+               ' teamId = ?', [req.params.id,req.params.cmpId,req.params.teamId]
+               , cb);
+         }
+      }
+   },
+   function (result, err, cb) {
+      if (vld.check(result && result.length , Tags.notFound, null, cb))
+         cnn.query("update Submits set ? where id = ?",[req.body, req.params.id]
+            ,cb);
+   },
+   function (result, fields, cb) {
+      // Return location of inserted Submissions
+      res.location(router.baseURL + '/' + result.insertId).end();
+      cb();
+   }],
+   function () {
+      res.status(200);
+      cnn.release();
    });
 });
 

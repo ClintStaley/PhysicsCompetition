@@ -8,14 +8,23 @@ router.baseURL = '/Cmps';
 
 router.get('/', function (req, res) {
    var email = req.query.email;
+   var CtpId = req.query.CompetitionType;
    var cnn = req.cnn;
    var query = 'select * from Competition';
    var fillers = [];
    
    if (email) {
       query = 'select Competition.id,ownerId,ctpId,title,prms from Competition'
-       + ',Person where email = ? && Competition.ownerId = Person.id';
+         + ',Person where email = ? && Competition.ownerId = Person.id';
       fillers.push(email);
+      if (CtpId) {
+         query = query + ' && ctpId = ?';
+         fillers.push(CtpId);
+      }
+   }
+   else if (CtpId) {
+      query = query + ' where ctpId = ?';
+      fillers.push(CtpId);
    }
    
    async.waterfall([
@@ -150,6 +159,29 @@ router.delete('/:id', function (req, res) {
    }
    else {
       req.cnn.release();
+   }
+});
+
+router.get('/:id/WaitingSbms', function (req, res) {
+   var vld = req.validator;
+   var cnn = req.cnn;
+   var num = req.query.num;
+   
+   if (vld.checkAdmin()) {
+      cnn.query('select * from Submits where cmpId = ? and response is null ' +
+         'order by subTime DESC',
+         [req.params.id],
+      function (err, result) {
+         if (vld.check(result.length, Tags.notFound)) {
+            if (num || num == 0)
+               result = result.slice(0, num);
+            res.json(result);
+         }
+         cnn.release();
+      });
+   }
+   else {
+      cnn.release();
    }
 });
 
