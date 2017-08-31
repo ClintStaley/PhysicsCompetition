@@ -54,8 +54,11 @@ exports.deleteSession = function (authToken) {
 // treat |req| as logged-in.
 exports.router = function (req, res, next) {
    console.log("Session Router!");
+   console.log(req.cookies);
+   console.log("Cookie is " + req.cookies[cookieName]);
    // If we present a session cookie that corresponds with one in |sessions|...
    if (req.cookies[cookieName] && sessions[req.cookies[cookieName]]) {
+      console.log("Cookie is " + cookieName);
       // If the session was last used more than |duration| mS ago..
       if (sessions[req.cookies[cookieName]].lastUsed < new Date().getTime() - duration) {
          delete sessions[req.cookies[cookieName]];

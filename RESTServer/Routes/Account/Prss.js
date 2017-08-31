@@ -31,10 +31,7 @@ router.post('/', function(req, res) {
    var body = req.body;
    var admin = req.session && req.session.isAdmin();
    var cnn = req.cnn;
-
-// CAS FIX Didn't we say to drop this?
-   if (admin && !body.password)
-      body.password = "*";                       // Blocking password
+   
    body.whenRegistered = new Date();
 
    async.waterfall([
