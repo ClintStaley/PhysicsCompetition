@@ -57,7 +57,7 @@ router.get('/:id', function (req, res) {
         , [req.params.id,req.params.cmpId,req.params.teamId],
    function (err, teamArr) {
       if (vld.check(teamArr.length, Tags.notFound)) {
-         res.json(teamArr);
+         res.json(teamArr[0]);
       }
       req.cnn.release();
    });

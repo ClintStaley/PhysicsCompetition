@@ -101,7 +101,7 @@ router.get('/:id', function (req, res) {
    req.cnn.query('select * from Competition where id = ?', [req.params.id],
    function (err, cmpArr) {
       if (vld.check(cmpArr.length, Tags.notFound)) {
-         res.json(cmpArr);
+         res.json(cmpArr[0]);
       }
       req.cnn.release();
    });

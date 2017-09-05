@@ -73,7 +73,7 @@ router.get('/:id', function(req, res) {
               && prs.whenRegistered.getTime();
 
                 delete prs.password;
-             res.json(prsArr);
+             res.json(prsArr[0]);
          }
          req.cnn.release();
       });

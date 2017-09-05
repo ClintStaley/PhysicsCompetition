@@ -53,7 +53,7 @@ router.get('/:id', function (req, res) {
    req.cnn.query('select * from CompetitionType where id = ?', [req.params.id],
    function (err, ctpArr) {
       if (vld.check(ctpArr.length, Tags.notFound)) {
-         res.json(ctpArr);
+         res.json(ctpArr[0]);
       }
       req.cnn.release();
    });

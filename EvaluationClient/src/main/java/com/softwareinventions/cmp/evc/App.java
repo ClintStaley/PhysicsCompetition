@@ -6,7 +6,11 @@ import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.ClientRequest;
 import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.config.ClientConfig;
+import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.api.client.filter.ClientFilter;
+import com.sun.jersey.api.json.JSONConfiguration;
+
 
 public class App {
 	final static String url = "http://localhost:3000";
@@ -14,8 +18,10 @@ public class App {
 
 	public static void main(String[] args) {
 		try {
+			ClientConfig clientConfig = new DefaultClientConfig();
+			clientConfig.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE);
 			// creates a client
-			Client client = Client.create();
+			Client client = Client.create(clientConfig);
 
 			// Sets up filter so that cookies will be saved after running
 			client.addFilter(new ClientFilter() {
@@ -38,15 +44,16 @@ public class App {
 					return response;
 				}
 			});
+			//Ends the cookie handling 
 
 			// Log in to admin account
 			login(client);
 
 			// gets the CompetitionTypes from the server
-			String output = getAllSubmissions(client);
+			CompetitionType output = getAllSubmissions(client);
 
 			System.out.println("Output from Server .... \n");
-			System.out.println(output);
+			System.out.println(output.title);
 
 		} catch (Exception e) {
 
@@ -70,18 +77,25 @@ public class App {
 		}
 	}
 
-	public static String getAllSubmissions(Client client) {
+	public static CompetitionType getAllSubmissions(Client client) {
 		// does the actual get
-		ClientResponse response = client.resource(url +  "/Ctps").accept("application/json")
+		ClientResponse response = client.resource(url +  "/Ctps/1").accept("application/json")
 				.get(ClientResponse.class);
-
-		// returns error message if error
+		
 		if (response.getStatus() != 200) {
-			return "Failed : HTTP error code : " + response.getStatus();
+			throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
 		}
-
 		// returns the data from the response
-		return response.getEntity(String.class);
-
+		return checkAndRead(response,CompetitionType.class);
 	}
+	
+	 public static <T> T checkAndRead(ClientResponse response, Class<T> type) {
+	      T result = null;
+
+	      if (response.getStatus() == 200)
+	         result =  response.getEntity(type);
+	      response.close();
+
+	      return result;
+	   }
 }
