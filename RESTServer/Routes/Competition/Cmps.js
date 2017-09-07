@@ -10,12 +10,14 @@ router.get('/', function (req, res) {
    var email = req.query.email;
    var CtpId = req.query.CompetitionType;
    var cnn = req.cnn;
-   var query = 'select * from Competition';
+   var query = 'select Competition.id,ownerId,ctpId,title,prms,rules' +
+      ' from Competition';
    var fillers = [];
    
    if (email) {
-      query = 'select Competition.id,ownerId,ctpId,title,prms from Competition'
-         + ',Person where email = ? && Competition.ownerId = Person.id';
+      query = 'select Competition.id,ownerId,ctpId,title,prms,rules from ' +
+            'Competition,Person where email = ? && ' +
+            'Competition.ownerId = Person.id';
       fillers.push(email);
       if (CtpId) {
          query = query + ' && ctpId = ?';
@@ -98,7 +100,8 @@ router.post('/', function (req, res) {
 router.get('/:id', function (req, res) {
    var vld = req.validator;
    
-   req.cnn.query('select * from Competition where id = ?', [req.params.id],
+   req.cnn.query('select Competition.id,ownerId,ctpId,title,prms,rules from ' +
+      'Competition where id = ?', [req.params.id],
    function (err, cmpArr) {
       if (vld.check(cmpArr.length, Tags.notFound)) {
          res.json(cmpArr[0]);
@@ -168,8 +171,8 @@ router.get('/:id/WaitingSbms', function (req, res) {
    var num = req.query.num;
    
    if (vld.checkAdmin()) {
-      cnn.query('select * from Submits where cmpId = ? and response is null ' +
-         'order by subTime DESC',
+      cnn.query('select id,teamId,content,response,score,subTime from Submits' +
+         ' where cmpId = ? and response is null order by subTime DESC',
          [req.params.id],
       function (err, result) {
          if (vld.check(result.length, Tags.notFound)) {

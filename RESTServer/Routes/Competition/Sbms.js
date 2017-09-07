@@ -8,8 +8,9 @@ router.baseURL = '/Cmps/:cmpId/Teams/:teamId/Sbms';
 router.get('/', function (req, res) {
    var num = req.query.num;
    
-   req.cnn.chkQry('select * from Submits where cmpId = ? && teamId = ? ' +
-      'order by subTime DESC', [req.params.cmpId,req.params.teamId],
+   req.cnn.chkQry('select id,teamId,content,response,score,subTime from ' +
+      'Submits where cmpId = ? && teamId = ? order by subTime DESC',
+      [req.params.cmpId,req.params.teamId],
    //function that closes cnn
    function (err, result) {
       if (num || num == 0)
@@ -53,7 +54,8 @@ router.post('/', function (req, res) {
 router.get('/:id', function (req, res) {
    var vld = req.validator;
    
-   req.cnn.query('select * from Submits where id = ? && cmpId = ? && teamId = ?'
+   req.cnn.query('select id,teamId,content,response,score,subTime from ' +
+      'Submits where id = ? && cmpId = ? && teamId = ?'
         , [req.params.id,req.params.cmpId,req.params.teamId],
    function (err, teamArr) {
       if (vld.check(teamArr.length, Tags.notFound)) {

@@ -107,7 +107,8 @@ router.post('/', function (req, res) {
 router.get('/:id', function (req, res) {
    var vld = req.validator;
    
-   req.cnn.query('select * from Teams where id = ? && cmpId = ?',
+   req.cnn.query('select id,teamName,bestScore,lastSubmit,canSubmit from' +
+      ' Teams where id = ? && cmpId = ?',
     [req.params.id,req.params.cmpId],
    function (err, teamArr) {
       if (vld.check(teamArr.length, Tags.notFound)) {
