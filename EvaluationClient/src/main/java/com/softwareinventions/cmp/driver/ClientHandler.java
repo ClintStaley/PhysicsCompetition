@@ -23,6 +23,8 @@ public class ClientHandler {
 		ClientConfig clientConfig = new DefaultClientConfig();
 		clientConfig.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE);
 		// creates a client
+		// CAS FIX: Comment when it's not obvious what's going on to someone like
+		// you or me, but not otherwise.
 		client = Client.create(clientConfig);
 
 		// Sets up filter so that cookies will be saved after running

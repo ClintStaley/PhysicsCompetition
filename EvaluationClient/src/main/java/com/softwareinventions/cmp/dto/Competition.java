@@ -1,5 +1,6 @@
 package com.softwareinventions.cmp.dto;
 
+// CAS FIX: Pls remove tabs here and elsewhere.
 public class Competition {
 	private int id;
 	private int ownerId;

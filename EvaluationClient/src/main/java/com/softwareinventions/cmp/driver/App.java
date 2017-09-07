@@ -24,28 +24,32 @@ public class App {
 			System.out.println(output[0].getOwnerId());
 			//System.out.println(output[1].getTitle());
 
-
 		} catch (Exception e) {
-
 			System.out.println(e.getMessage());
 			e.printStackTrace();
-
 		}
 
 	}
 
 	public static Competition[] getAllCompetitionTypes(Client client) {
 		// does the actual get
+		// CAS FIX: Comments should be imperative tense, and be sentences:
+		//
+		// Perform the get operation.
+		//
+		// Or, below "Return response body, parsed as a Competition object"
 		ClientResponse response = client.resource(url +  "/Cmps/1").accept("application/json")
-				.get(ClientResponse.class);
+		      .get(ClientResponse.class);
 		
 		if (response.getStatus() != 200) {
 			throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
 		}
 		// returns the data from the response
+		// CAS FIX: Horizontal whitespace violation
 		return new Competition[]{checkAndRead(response,Competition.class)};
 	}
 	
+	// CAS FIX: comment would be useful here.  Imperative tense, full sentence
 	 public static <T> T checkAndRead(ClientResponse response, Class<T> type) {
 	      T result = null;
 
