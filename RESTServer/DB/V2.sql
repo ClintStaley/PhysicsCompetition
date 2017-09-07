@@ -1,6 +1,4 @@
 
-
-
 drop database if exists VCSdb;
 create database VCSdb;
 use VCSdb;
@@ -19,7 +17,7 @@ create table Person (
 
 create table CompetitionType (
    id int auto_increment primary key,
-   title varchar(80) not null,
+   title varchar(80) not null unique,
    description varchar(100) not null,
    prmSchema varchar(20000) not null
 );
@@ -98,6 +96,7 @@ select * from Teams;
 select * from Members;
 select * from Submits;
 
+select * from Submits where cmpId = 1 and response is null order by subTime DESC;
             
             
             
