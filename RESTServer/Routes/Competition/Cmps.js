@@ -175,11 +175,11 @@ router.get('/:id/WaitingSbms', function (req, res) {
          ' where cmpId = ? and response is null order by subTime DESC',
          [req.params.id],
       function (err, result) {
-         if (vld.check(result.length, Tags.notFound)) {
+         if (result.length) {
             if (num || num == 0)
                result = result.slice(0, num);
-            res.json(result);
          }
+         res.json(result);
          cnn.release();
       });
    }

@@ -14,11 +14,22 @@ public class App {
       try {
          ClientHandler handler = new ClientHandler(url);
 
-         Lgr.info("Hello");
          // gets the CompetitionTypes from the server
          Submissions[] output = handler.GetWaitingSubmissions(1);
 
-         System.out.println("Output from Server .... \n");
+         System.out.println("\n");
+         System.out.println(output[0].id);
+         System.out.println(output[0].content);
+         System.out.println(output[0].subTime);
+         System.out.println(output[0].teamId);
+         
+         handler.Response(1,output[0],"Responce Eclipse");
+         
+
+         
+         output = handler.GetWaitingSubmissions(1);
+
+         System.out.println("\n");
          System.out.println(output[0].id);
          System.out.println(output[0].content);
          System.out.println(output[0].subTime);
