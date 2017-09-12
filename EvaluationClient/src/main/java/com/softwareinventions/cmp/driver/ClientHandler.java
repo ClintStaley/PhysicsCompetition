@@ -108,4 +108,9 @@ public class ClientHandler {
       // CAS FIX: Horizontal whitespace violation
       return checkAndRead(response, Submissions[].class);
    }
+   
+   public void Response(Submissions ResId, String Response) {
+      ClientResponse response = client.resource(url + "/Cmps/" + "/Teams/" + "/Sbms").type("application/json")
+            .post(ClientResponse.class, Response);
+   }
 }
