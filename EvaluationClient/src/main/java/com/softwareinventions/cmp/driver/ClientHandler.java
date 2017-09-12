@@ -94,6 +94,10 @@ public class ClientHandler {
       return checkAndRead(response, CompetitionType[].class);
    }
 
+   public void checkAndClose(ClientResponse response) throws EVCException {
+      checkAndRead(response, null);
+   }
+   
    // CAS FIX: comment would be useful here. Imperative tense, full sentence
    // CAS FIX: Use this method whenever possible for the subtask of fetching
    // a response body of type |type| from |response|.  I've added a
@@ -105,7 +109,7 @@ public class ClientHandler {
 
       try {
          if (response.getStatus() == 200)
-            result = response.getEntity(type);
+            result = type == null ? null :response.getEntity(type);
          else
             throw new EVCException(String.format("Error code %d on resource %s",
              response.getStatus(), response.getLocation()));
