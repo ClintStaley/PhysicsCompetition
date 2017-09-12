@@ -16,8 +16,8 @@ router.get('/', function (req, res) {
    
    if (email) {
       query = 'select Competition.id,ownerId,ctpId,title,prms,rules from ' +
-            'Competition,Person where email = ? && ' +
-            'Competition.ownerId = Person.id';
+         'Competition,Person where email = ? && ' +
+         'Competition.ownerId = Person.id';
       fillers.push(email);
       if (CtpId) {
          query = query + ' && ctpId = ?';
@@ -31,13 +31,13 @@ router.get('/', function (req, res) {
    
    async.waterfall([
    function (cb) {
-      cnn.chkQry(query,fillers, cb);
+      cnn.chkQry(query, fillers, cb);
    },
    function (result, fields, cb) {
       res.json(result);
-   
+      
       res.status(200);
-   
+      
       cb();
    }
    ],
@@ -52,7 +52,7 @@ router.post('/', function (req, res) {
    var body = req.body;
    var cnn = req.cnn;
    
-   if ( vld.checkAdmin())
+   if (vld.checkAdmin())
       async.waterfall([
       function (cb) {
          //Get dupTitles if they exist
@@ -67,8 +67,8 @@ router.post('/', function (req, res) {
          //check dupTitle
          if (vld.check(!existingCmp.length, Tags.dupTitle, null, cb)) {
             // get the prmSchema from Ctp
-               cnn.chkQry('select * from CompetitionType where id = ?',
-                  body.ctpId, cb);
+            cnn.chkQry('select * from CompetitionType where id = ?',
+               body.ctpId, cb);
          }
       },
       function (Ctp, fields, cb) {
@@ -80,7 +80,7 @@ router.post('/', function (req, res) {
                if (vld.check(validation.valid, Tags.NoCompType, null, cb))
                   cnn.chkQry('insert into Competition set ?', body, cb);
             }
-            catch (exception){
+            catch (exception) {
                vld.check(false, "no JSON", null, cb);
             }
          }
@@ -102,12 +102,12 @@ router.get('/:id', function (req, res) {
    
    req.cnn.query('select Competition.id,ownerId,ctpId,title,prms,rules from ' +
       'Competition where id = ?', [req.params.id],
-   function (err, cmpArr) {
-      if (vld.check(cmpArr.length, Tags.notFound)) {
-         res.json(cmpArr[0]);
-      }
-      req.cnn.release();
-   });
+      function (err, cmpArr) {
+         if (vld.check(cmpArr.length, Tags.notFound)) {
+            res.json(cmpArr[0]);
+         }
+         req.cnn.release();
+      });
 });
 
 router.put('/:id', function (req, res) {
@@ -115,38 +115,61 @@ router.put('/:id', function (req, res) {
    var ssn = req.session;
    var body = req.body;
    var cnn = req.cnn;
-   if (vld.checkAdmin())
-      async.waterfall([
-      function (cb) {
-         if (vld.hasOnlyFields(body, ["title", "prms"]))
-            cnn.chkQry("select * from Competition where id = ?",
-               req.params.id, cb);
-      },
-      function (qRes, fields, cb) {
-         if (vld.check(qRes.length, Tags.notFound, null, cb)) {
-            if (body.title)
+   var cmpTp;
+   
+   async.waterfall([
+   function (cb) {
+      if (vld.hasOnlyFields(body, ["title", "prms"]))
+         cnn.query("select * from Competition where id = ?",
+            [req.params.id], cb);
+   },
+   function (qRes, fields, cb) {
+      if (vld.check(qRes && qRes.length, Tags.notFound, null, cb) &&
+         vld.checkPrsOK(qRes[0].ownerId, cb)) {
+         cmpTp = qRes[0].ctpId;
+         if (body.title)
+            cnn.chkQry(
+               "select * from Competition where title = ? and ownerId = ?",
+               [body.title, ssn.id], cb);
+         else
+            cb(null, null, cb);
+      }
+   },
+   function (titleRes, fields, cb) {
+      if (!body.title ||
+         vld.check(!titleRes.length, Tags.dupTitle, null, cb))
+         if (body.prms)
+            async.waterfall([
+            function (cb) {
                cnn.chkQry(
-                  "select * from Competition where title = ? and ownerId = ?",
-                        [body.title, ssn.id], cb);
-            else
-               cb(null, null, cb);
-         }
-      },
-      function (titleRes, fields, cb) {
-         if (!body.title ||
-            vld.check(!titleRes.length, Tags.dupTitle, null, cb))
+                  "select * from CompetitionType where id = ?",
+                  [cmpTp], cb);
+            }],
+            function (fields, Ctp) {
+               console.log(Ctp);
+               if (vld.check(true, Tags.notFound, null, cb))
+                  try {
+                     var validation = validate(JSON.parse(body.prms),
+                        JSON.parse(Ctp[0].prmSchema));
+                     if (vld.check(validation.valid, Tags.NoCompType, null, cb))
+                        cnn.chkQry("update Competition set ? where id = ?",
+                           [req.body, req.params.id], cb);
+                  }
+                  catch (exception) {
+                     vld.check(false, "no JSON", null, cb);
+                  }
+            });
+         else
             cnn.chkQry("update Competition set ? where id = ?",
-                  [req.body, req.params.id], cb);
-      },
-      function (updRes, fields, cb) {
-         res.status(200).end();
-         cb();
-      }],
-      function () {
-         cnn.release();
-      });
-   else
+               [req.body, req.params.id], cb);
+   },
+   function (updRes, fields, cb) {
+      res.status(200).end();
+      cb();
+   }],
+   function () {
       cnn.release();
+   });
 });
 
 router.delete('/:id', function (req, res) {

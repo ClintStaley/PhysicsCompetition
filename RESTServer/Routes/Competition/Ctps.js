@@ -59,9 +59,6 @@ router.get('/:id', function (req, res) {
    });
 });
 
-
-
-
 router.put('/:id', function (req, res) {
    var vld = req.validator;
    var body = req.body;
@@ -70,13 +67,13 @@ router.put('/:id', function (req, res) {
    async.waterfall([
    function (cb) {
       if (vld.hasOnlyFields(body, ["title", "description","prmSchema"]).checkAdmin())
-         cnn.chkQry("select * from CompetitionType where id = ? ",
+         cnn.chkQry('select * from CompetitionType where id = ?',
             req.params.id, cb);
    },
    function (qRes, fields, cb) {
       if (vld.check(qRes.length, Tags.notFound, null, cb)) {
          if (body.title)
-            cnn.chkQry("select * from CompetitionType where title = ? ",
+            cnn.chkQry('select * from CompetitionType where title = ?',
                body.title, cb);
          else
             cb(null,null,cb);
@@ -85,7 +82,7 @@ router.put('/:id', function (req, res) {
    function (titleRes, fields, cb) {
       if (!body.title ||
          vld.check(!titleRes.length, Tags.dupTitle, null, cb))
-         cnn.chkQry("update CompetitionType set ? where id = ?",
+         cnn.chkQry('update CompetitionType set ? where id = ?',
             [req.body, req.params.id], cb);
    },
    function (updRes, fields, cb) {
