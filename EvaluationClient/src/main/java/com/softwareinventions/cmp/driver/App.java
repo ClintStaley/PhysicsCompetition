@@ -6,7 +6,7 @@ import com.softwareinventions.cmp.dto.Submissions;
 
 public class App {
    final static String url = "http://localhost:3000";
-   String[] CompetitionTypes = { "Territory Grab", "Rocket Solem" };
+   String[] CompetitionTypes = { "Territory Grab", "Rocket Slalom" };
    static Logger Lgr = Logger.getLogger(App.class);
    
    
