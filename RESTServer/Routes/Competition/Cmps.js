@@ -127,7 +127,7 @@ router.put('/:id', function (req, res) {
             if (body.title)
                cnn.chkQry(
                   "select * from Competition where title = ? and ownerId = ?",
-                  [body.title, ssn.id], cb);
+                        [body.title, ssn.id], cb);
             else
                cb(null, null, cb);
          }
@@ -136,7 +136,7 @@ router.put('/:id', function (req, res) {
          if (!body.title ||
             vld.check(!titleRes.length, Tags.dupTitle, null, cb))
             cnn.chkQry("update Competition set ? where id = ?",
-               [req.body, req.params.id], cb);
+                  [req.body, req.params.id], cb);
       },
       function (updRes, fields, cb) {
          res.status(200).end();

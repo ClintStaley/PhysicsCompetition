@@ -25,9 +25,7 @@ public class ClientHandler {
       ClientConfig clientConfig = new DefaultClientConfig();
       clientConfig.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING,
             Boolean.TRUE);
-      // creates a client
-      // CAS FIX: Comment when it's not obvious what's going on to someone like
-      // you or me, but not otherwise.
+     
       client = Client.create(clientConfig);
 
       // Sets up filter so that cookies will be saved after running
@@ -58,7 +56,7 @@ public class ClientHandler {
    }
 
    private void loginAdmin() {
-      // login info
+      //Admin login info, Temp
       Person Prs = new Person();
       Prs.email = "adm@11.com";
       Prs.password = "password";
@@ -76,21 +74,11 @@ public class ClientHandler {
    }
 
    public CompetitionType[] getAllCompetitionTypes() throws EVCException {
-      // does the actual get
-      // CAS FIX: Comments should be imperative tense, and be sentences:
-      //
-      // Perform the get operation.
-      //
-      // Or, below "Return response body, parsed as a Competition object"
+      // Perform the get operation, and returns a ClientResponse object
       ClientResponse response = client.resource(url + "/Ctps")
             .accept("application/json").get(ClientResponse.class);
 
-      if (response.getStatus() != 200) {
-         throw new RuntimeException("Failed : HTTP error code : "
-               + response.getStatus());
-      }
       // returns the data from the response
-      // CAS FIX: Horizontal whitespace violation
       return checkAndRead(response, CompetitionType[].class);
    }
 
@@ -123,15 +111,27 @@ public class ClientHandler {
         .get(ClientResponse.class);
 
       if (response.getStatus() != 200) {
-         throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
+         throw new RuntimeException("Failed : HTTP error code : " + 
+               response.getStatus());
       }
       // returns the data from the response
       // CAS FIX: Horizontal whitespace violation
       return checkAndRead(response, Submissions[].class);
    }
    
-   public void Response(Submissions ResId, String Response) {
-      ClientResponse response = client.resource(url + "/Cmps/" + "/Teams/" + "/Sbms").type("application/json")
-            .post(ClientResponse.class, Response);
+   public void Response(int CmpId, Submissions submission, String res) {
+      Response tempSbm = new Response();
+      tempSbm.response = res;
+      
+      ClientResponse response = client.resource(url + "/Cmps/" + CmpId + "/Teams/" + submission.teamId + "/Sbms/" + submission.id)
+            .type("application/json").put(ClientResponse.class, tempSbm);
+      
+      if (response.getStatus() != 200) {
+         Lgr.info(response.getEntity(String.class));
+         throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
+         
+      }
+      response.close();
    }
+}
 }
