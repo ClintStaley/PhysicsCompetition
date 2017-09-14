@@ -22,7 +22,8 @@ Validator.Tags = {
    forbiddenField: "forbiddenField",// Field in body not allowed
    badBodyFormat: "badBodyFormat",   // Body didn't parse as JSON
    cantRemoveLeader: "CannotRemoveLeader",
-   NoCompType: "CompetitionTypeDoesNotExist"
+   NoCompType: "CompetitionTypeDoesNotExist",
+   InvalidPrms: "Invalid Parameters"
 };
 
 // Check |test|.  If false, add an error with tag and possibly empty array

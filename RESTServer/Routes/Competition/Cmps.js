@@ -146,12 +146,11 @@ router.put('/:id', function (req, res) {
                   [cmpTp], cb);
             }],
             function (fields, Ctp) {
-               console.log(Ctp);
-               if (vld.check(true, Tags.notFound, null, cb))
+               if (vld.check(Ctp && Ctp.length, Tags.notFound, null, cb))
                   try {
                      var validation = validate(JSON.parse(body.prms),
                         JSON.parse(Ctp[0].prmSchema));
-                     if (vld.check(validation.valid, Tags.NoCompType, null, cb))
+                     if (vld.check(validation.valid, Tags.InvalidPrms, null, cb))
                         cnn.chkQry("update Competition set ? where id = ?",
                            [req.body, req.params.id], cb);
                   }
