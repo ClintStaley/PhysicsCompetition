@@ -21,14 +21,23 @@ app.use(function (req, res, next) {
    next();
 });
 
+app.use(function(req, res, next) {
+   res.header("Access-Control-Allow-Origin", "*");
+   next();
+});
+
 // Attach cookies to req as req.cookies.<cookieName>
 app.use(cookieParser());
 
 // Find relevant Session if any, and attach as req.session
 app.use(Session.router);
 
-// Attach bugs object to req
-//app.use(function(req, res, next) {req.bugs = bugs; next();});
+//skip preflight
+app.options("/*", function(req, res, next){
+   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+   res.sendStatus(200);
+});
 
 // Check general login.  If OK, add Validator to |req| and continue processing,
 // otherwise respond immediately with 401 and noLogin error tag.
