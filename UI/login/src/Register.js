@@ -55,7 +55,7 @@ class Register extends Component {
                      type = "password"
                      hintText="Confirm your Password"
                      floatingLabelText="Confirm Password"
-                     onChange = {(event,newValue) => this.setState({password:newValue})}
+                     onChange = {(event,newValue) => this.setState({confirmPassword:newValue})}
                   />
                   <br/>
                   <RaisedButton label="Submit" primary={true} style={style} onClick={(event) => this.handleClick(event)}/>

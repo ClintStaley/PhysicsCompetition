@@ -4,6 +4,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import React from 'react';
 import axios from 'axios';
+import Uploadscreen from './UploadScreen';
 
 class Login extends React.Component {
    constructor(props){
@@ -54,8 +55,8 @@ class Login extends React.Component {
             if(response.status === 200){
                console.log("Login successful");
                var uploadScreen=[];
-               //uploadScreen.push(<UploadScreen appContext={self.props.appContext}/>);
-               self.props.appContext.setState({loginPage:[],uploadScreen:uploadScreen});
+               uploadScreen.push(<Uploadscreen appContext={self.props.appContext}/>);
+               self.props.appContext.setState({uploadScreen:uploadScreen, loginPage:[]});
             }
             else if(response.status === 204){
                console.log("Username password do not match");
