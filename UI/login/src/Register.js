@@ -13,7 +13,8 @@ class Register extends Component {
          first_name:'',
          last_name:'',
          email:'',
-         password:''
+         password:'',
+         confirmPassword:''
       }
    }
    render() {
@@ -50,6 +51,13 @@ class Register extends Component {
                      onChange = {(event,newValue) => this.setState({password:newValue})}
                   />
                   <br/>
+                  <TextField
+                     type = "password"
+                     hintText="Confirm your Password"
+                     floatingLabelText="Confirm Password"
+                     onChange = {(event,newValue) => this.setState({confirmPassword:newValue})}
+                  />
+                  <br/>
                   <RaisedButton label="Submit" primary={true} style={style} onClick={(event) => this.handleClick(event)}/>
                </div>
             </MuiThemeProvider>
@@ -58,34 +66,46 @@ class Register extends Component {
    }
    
    handleClick(event){
-      var apiBaseUrl = "http://localhost:3000/api/";
-      console.log("values",this.state.first_name,this.state.last_name,this.state.email,this.state.password);
+      var apiBaseUrl = "http://localhost:3000/";
+      console.log("values",this.state.first_name,this.state.last_name,this.state.email,this.state.password,this.state.confirmPassword);
       //To be done:check for empty values before hitting submit
       var self = this;
-      var payload={
-         "first_name": this.state.first_name,
-         "last_name":this.state.last_name,
-         "email":this.state.email,
-         "password":this.state.password
+      if (this.state.password !== this.state.confirmPassword) {
+         console.log("passwords do not match");
+         alert("passwords do not match");
       }
-      axios.post(apiBaseUrl+'/register', payload)
-         .then(function (response) {
-            console.log(response);
-            if(response.data.code == 200){
-               //  console.log("registration successfull");
-               var loginscreen=[];
-               loginscreen.push(<Login parentContext={this}/>);
-               var loginmessage = "Not Registered yet.Go to registration";
-               self.props.parentContext.setState({loginscreen:loginscreen,
-                  loginmessage:loginmessage,
-                  buttonLabel:"Register",
-                  isLogin:true
-               });
-            }
-         })
-         .catch(function (error) {
-            console.log(error);
-         });
+      else {
+         var payload = {
+            "firstName": this.state.first_name,
+            "lastName": this.state.last_name,
+            "email": this.state.email,
+            "password": this.state.password,
+            "termsAccepted": true,
+            "role": 0
+         };
+         axios.post(apiBaseUrl + 'Prss', payload)
+            .then(function (response) {
+               console.log(response);
+               if (response.status === 200) {
+                  //console.log("registration successfull");
+                  var loginscreen = [];
+                  loginscreen.push(<Login parentContext={this}/>);
+                  var loginmessage = "Not Registered yet.Go to registration";
+                  self.props.parentContext.setState({
+                     loginscreen: loginscreen,
+                     loginmessage: loginmessage,
+                     buttonLabel: "Register",
+                     isLogin: true
+                  });
+               }
+            })
+            .catch(function (error) {
+               console.log(error.message);
+               console.log(error.code); // Not always specified
+               console.log(error.config); // The config that was used to make the request
+               console.log(error.response); // Only available if response was received from the server
+            });
+      }
    }
 
 }
