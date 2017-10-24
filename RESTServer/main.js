@@ -9,6 +9,7 @@ var async = require('async');
 
 var app = express();
 
+
 // Static path to index.html and all clientside js
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -35,7 +36,8 @@ app.use(Session.router);
 //skip preflight
 app.options("/*", function(req, res, next){
    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+   res.header('Access-Control-Allow-Headers',
+      'Content-Type, Authorization, Content-Length, X-Requested-With');
    res.sendStatus(200);
 });
 

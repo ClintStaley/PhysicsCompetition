@@ -25,17 +25,24 @@ class Login extends React.Component {
                   <TextField
                      hintText="Enter your Username"
                      floatingLabelText="Username"
-                     onChange = {(event,newValue) => this.setState({username:newValue})}
+                     onChange = {(event,newValue) =>
+                        this.setState({username:newValue})}
                   />
                   <br/>
                   <TextField
                      type="password"
                      hintText="Enter your Password"
                      floatingLabelText="Password"
-                     onChange = {(event,newValue) => this.setState({password:newValue})}
+                     onChange = {(event,newValue) =>
+                        this.setState({password:newValue})}
                   />
                   <br/>
-                  <RaisedButton label="Submit" primary={true} style={style} onClick={(event) => this.handleClick(event)}/>
+                  <RaisedButton
+                     label="Submit"
+                     primary={true}
+                     style={style}
+                     onClick={(event) => this.handleClick(event)}
+                  />
                </div>
             </MuiThemeProvider>
          </div>
@@ -55,8 +62,10 @@ class Login extends React.Component {
             if(response.status === 200){
                console.log("Login successful");
                var uploadScreen=[];
-               uploadScreen.push(<Uploadscreen appContext={self.props.appContext}/>);
-               self.props.appContext.setState({uploadScreen:uploadScreen, loginPage:[]});
+               uploadScreen.push
+                  (<Uploadscreen appContext={self.props.appContext}/>);
+               self.props.appContext.setState
+                  ({uploadScreen:uploadScreen, loginPage:[]});
             }
             else if(response.status === 204){
                console.log("Username password do not match");

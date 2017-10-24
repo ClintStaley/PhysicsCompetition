@@ -28,37 +28,47 @@ class Register extends Component {
                   <TextField
                      hintText="Enter your First Name"
                      floatingLabelText="First Name"
-                     onChange = {(event,newValue) => this.setState({first_name:newValue})}
+                     onChange = {(event,newValue) =>
+                        this.setState({first_name:newValue})}
                   />
                   <br/>
                   <TextField
                      hintText="Enter your Last Name"
                      floatingLabelText="Last Name"
-                     onChange = {(event,newValue) => this.setState({last_name:newValue})}
+                     onChange = {(event,newValue) =>
+                        this.setState({last_name:newValue})}
                   />
                   <br/>
                   <TextField
                      hintText="Enter your Email"
                      type="email"
                      floatingLabelText="Email"
-                     onChange = {(event,newValue) => this.setState({email:newValue})}
+                     onChange = {(event,newValue) =>
+                        this.setState({email:newValue})}
                   />
                   <br/>
                   <TextField
                      type = "password"
                      hintText="Enter your Password"
                      floatingLabelText="Password"
-                     onChange = {(event,newValue) => this.setState({password:newValue})}
+                     onChange = {(event,newValue) =>
+                        this.setState({password:newValue})}
                   />
                   <br/>
                   <TextField
                      type = "password"
                      hintText="Confirm your Password"
                      floatingLabelText="Confirm Password"
-                     onChange = {(event,newValue) => this.setState({confirmPassword:newValue})}
+                     onChange = {(event,newValue) =>
+                        this.setState({confirmPassword:newValue})}
                   />
                   <br/>
-                  <RaisedButton label="Submit" primary={true} style={style} onClick={(event) => this.handleClick(event)}/>
+                  <RaisedButton
+                     label="Submit"
+                     primary={true}
+                     style={style}
+                     onClick={(event) => this.handleClick(event)}
+                  />
                </div>
             </MuiThemeProvider>
          </div>
@@ -67,7 +77,8 @@ class Register extends Component {
    
    handleClick(event){
       var apiBaseUrl = "http://localhost:3000/";
-      console.log("values",this.state.first_name,this.state.last_name,this.state.email,this.state.password,this.state.confirmPassword);
+      console.log("values",this.state.first_name,this.state.last_name,
+         this.state.email,this.state.password,this.state.confirmPassword);
       //To be done:check for empty values before hitting submit
       var self = this;
       if (this.state.password !== this.state.confirmPassword) {
