@@ -72,41 +72,41 @@ app.use('/Cmps/:cmpId/Teams/:teamId/Mmbs',
 app.delete('/DB', function (req, res) {
    var resetTables =
          ["Person","CompetitionType","Competition","Teams","Submits"];
-   
+
    if (!req.session.isAdmin()) {
       req.cnn.release();
       res.status(403).end();
       return;
    }
-   
+
    // Callbacks to clear tables
    var cbs = resetTables.map(function (tblName) {
       return function (cb) {
          req.cnn.query("delete from " + tblName, cb);
       };
    });
-   
+
    // Callbacks to reset increment bases
    cbs = cbs.concat(resetTables.map(function (tblName) {
       return function (cb) {
          req.cnn.query("alter table " + tblName + " auto_increment = 1", cb);
       };
    }));
-   
+
    // Callback to reinsert admin user
    cbs.push(function (cb) {
       req.cnn.query('INSERT INTO Person (firstName, lastName, email,' +
          ' password, whenRegistered, role) VALUES ' +
          '("Joe", "Admin", "adm@11.com","password", NOW(), 1);', cb);
    });
-   
+
    // Callback to clear sessions, release connection and return result
    cbs.push(function (callback) {
       for (var session in Session.sessions)
          delete Session.sessions[session];
       callback();
    });
-   
+
    async.series(cbs, function (err) {
       req.cnn.release();
       if (err)
@@ -132,11 +132,11 @@ app.use(function (err, req, res, next) {
 var port = (function () {
    var p = 3000;
    var idx = process.argv.indexOf('-p') + 1;
-   
+
    if (idx > 0 && idx < process.argv.length) {
       p = parseInt(process.argv[idx]) || p;
    }
-   
+
    return p;
 })();
 
