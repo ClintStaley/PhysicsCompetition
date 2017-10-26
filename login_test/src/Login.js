@@ -48,7 +48,7 @@ class Login extends React.Component {
          </div>
       );
    }
-   
+
    handleClick(event){
       var apiBaseUrl = "http://localhost:3000/";
       var self = this;
@@ -72,7 +72,7 @@ class Login extends React.Component {
                alert("username password do not match");
             }
             else{
-               console.log("Username does not exists");
+               console.log("Username does not exist");
                alert("Username does not exist");
             }
          })
