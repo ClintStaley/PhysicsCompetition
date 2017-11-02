@@ -1,6 +1,6 @@
 {
     "host": "localhost",
-    "user": "root",
-    "password": "test",
-    "database": "CHSdb"
+    "user": "Your username",
+    "password": "your password",
+    "database": "VCSdb"
 }
