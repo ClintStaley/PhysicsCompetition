@@ -1,8 +1,25 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import registerServiceWorker from './registerServiceWorker';
+import { Provider } from 'react-redux';
+// import react router
+import { BrowserRouter } from 'react-router-dom';
 
-ReactDOM.render(<App />, document.getElementById('root'));
-registerServiceWorker();
+// Our own components
+import { App } from './components/concentrator';
+
+// Import global styles accross entire application
+import 'bootstrap/dist/css/bootstrap.css'; // Bootstrap
+// import 'bootstrap/dist/css/bootstrap-theme.css';
+import './index.css'; // Our own main stylesheet
+
+import store from './store';
+
+const router = (
+  <Provider store={store}>
+    <BrowserRouter >
+      <App></App>
+    </BrowserRouter>
+  </Provider>
+)
+
+ReactDOM.render(router, document.getElementById('root'));
