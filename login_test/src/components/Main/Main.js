@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Register, SignIn, ConversationOverview } from '../concentrator'
+import { Register, SignIn, CompetitionPage } from '../concentrator'
 import { Route, Switch } from 'react-router-dom';
 import { Navbar, Nav, NavItem } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
@@ -29,7 +29,13 @@ class Main extends Component {
               <Nav>
                 {this.signedIn() ?
                   // User is signed in
-                    <h1>Home Page Goes Here</h1>
+                  [
+                    <LinkContainer key={0} to="/Competition">
+                      <NavItem>
+                        Competition
+                      </NavItem>
+                    </LinkContainer>
+                  ]
                   :
                   [
                     <LinkContainer key={0} to="/signin">
@@ -55,6 +61,7 @@ class Main extends Component {
         </div>
         <Switch>
           <Route exact path='/' children={Home} />
+          <Route path='/Competition' render={() => <CompetitionPage {...this.props} />} />
           <Route path='/signin' render={() => <SignIn {...this.props} />} />
           <Route path='/register' render={() => <Register {...this.props} />} />
         </Switch>

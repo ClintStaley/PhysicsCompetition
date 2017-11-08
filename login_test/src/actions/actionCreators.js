@@ -11,6 +11,15 @@ export function signIn(credidentials, cb) {
    }
 }
 
+export function updateCmps(id, cb) {
+   return (dispatch, prevState) => {
+      api.getCmps(id)
+         .then((cmps) => dispatch({ type: 'UPDATE_CMPS', cmps }))
+         .then(() => {if (cb) cb()})
+
+   }
+}
+
 export function signOut(cb) {
    return (dispatch, prevState) => {
       api.signOut()

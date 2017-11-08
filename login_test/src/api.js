@@ -76,7 +76,6 @@ export function signIn(cred) {
         .then((response) => response.json())
         .then((body) => get('Prss/' + body.prsId))
         .then((userResponse) => userResponse.json())
-        .then((user) => user[0])
 }
 
 /**
@@ -93,6 +92,25 @@ export function signOut() {
  */
 export function registerUser(user) {
     return post("Prss", user)
+}
+
+export function getCmps(prsId) {
+    return get("Prss/" + prsId + "/Teams")
+      .then((teamData) => {teamData.json()})
+      .then((response) => {
+        var promise = [];
+
+        for (var i = 0; i < response.length; i++)
+          promise.push(getOneCmps(response[i].cmpId));
+
+        return Promise.all(promise);
+      })
+      .then((response) => {response.json()})
+}
+
+export function getOneCmps(cmpId) {
+  return get("Cmps/" + cmpId)
+    .then((Competitions) => {Competitions.json()});
 }
 
 const errMap = {
