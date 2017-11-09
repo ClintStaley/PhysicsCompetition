@@ -5,7 +5,7 @@ import { Navbar, Nav, NavItem } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import './Main.css';
 
-const Home = (<h1>Home!</h1>); // TODO make real home component
+const Home = (<h1>Home!!!</h1>); // TODO make real home component
 
 class Main extends Component {
   signedIn() {
