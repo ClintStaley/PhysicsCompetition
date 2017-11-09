@@ -65,17 +65,16 @@ create table Submits (
    score int,
    subTime datetime,
    
-     constraint FKSubmits_cmpId foreign key (cmpId) references
+   constraint FKSubmits_cmpId foreign key (cmpId) references
     Competition(id) on delete cascade on update cascade,
     
-      constraint FKSubmits_teamId foreign key (teamId) references
+   constraint FKSubmits_teamId foreign key (teamId) references
     Teams(id) on delete cascade on update cascade
 );
 
 
 create table Members (
-
-	personId int not null,
+   personId int not null,
    teamId int not null,
    
    constraint FKTMembers_personId foreign key (personId) references
@@ -100,7 +99,7 @@ select * from Submits where cmpId = 1 and response is null order by subTime DESC
             
             
             
-		
+
             
             
  
