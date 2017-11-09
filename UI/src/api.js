@@ -96,25 +96,24 @@ export function registerUser(user) {
 
 export function getCmps(prsId) {
     return get("Prss/" + prsId + "/Teams")
-      .then((teamData) => {teamData.json()})
+      .then((teamData) => teamData.json())
       .then((response) => {
         var promise = [];
 
+        console.log(response);
         if (!response)
           return {};
-
 
         for (var i = 0; i < response.length; i++)
           promise.push(getOneCmps(response[i].cmpId));
 
         return Promise.all(promise);
       })
-      .then((response) => {response.json()})
 }
 
 export function getOneCmps(cmpId) {
   return get("Cmps/" + cmpId)
-    .then((Competitions) => {Competitions.json()});
+    .then((Competitions) => Competitions.json());
 }
 
 const errMap = {
