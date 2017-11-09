@@ -33,7 +33,7 @@ router.post('/', function(req, res) {
    var body = req.body;
    var admin = req.session && req.session.isAdmin();
    var cnn = req.cnn;
-   
+
    body.whenRegistered = new Date();
 
    async.waterfall([
@@ -140,8 +140,8 @@ router.delete('/:id', function(req, res) {
 router.get('/:id/Teams', function(req, res) {
    var vld = req.validator;
    var teams = [];
-   
-   if (vld.checkAdmin()) {
+
+   if (vld.checkPrsOK(req.params.id)) {
       async.waterfall([
       function (cb) { // get all teams
          req.cnn.chkQry('select cmpId,teamId from Teams,Members where ' +
@@ -152,6 +152,7 @@ router.get('/:id/Teams', function(req, res) {
             teams.push("Cmps/" + prop.cmpId + "/Teams/" + prop.teamId);
          });
          res.json(teams);
+         console.log(teams);
          cb();
       }],
       function () {

@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { ListGroup, ListGroupItem, Button, Glyphicon } from 'react-bootstrap';
-import { ConfDialog } from '../concentrator';
-import { putCnv, delCnv, postCnv } from '../../api';
+//import { ConfDialog } from '../concentrator';
+//import {  } from '../../api';
 //import './ConversationsOverview.css';
 
 export default class CompetitionPage extends Component {
   constructor(props) {
     super(props);
-    this.props.getCmps();
+    this.props.updateCmps(this.props.Prss.id);
     this.state = {
       showModal: false,
       showConfirmation: false,
@@ -36,7 +36,7 @@ export default class CompetitionPage extends Component {
       <section className="container">
         <h1>Competition Overview</h1>
         <ListGroup>
-          {this.props.Cnvs.map((cnv, i) => {
+          {this.props.Cmps.map((cnv, i) => {
             return <CompetitionItem
               key={i} {...cnv}
               showControlls={cnv.ownerId === this.props.Prss.id}

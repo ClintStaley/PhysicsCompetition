@@ -100,6 +100,10 @@ export function getCmps(prsId) {
       .then((response) => {
         var promise = [];
 
+        if (!response)
+          return {};
+
+
         for (var i = 0; i < response.length; i++)
           promise.push(getOneCmps(response[i].cmpId));
 
