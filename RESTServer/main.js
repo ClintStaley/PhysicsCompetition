@@ -49,6 +49,7 @@ app.use(function (req, res, next) {
       req.method === 'POST' && (req.path === '/Prss' || req.path === '/Ssns')) {
       req.validator = new Validator(req, res);
       next();
+      console.log(req.validator)
    } else
       res.status(401).end();
 });
