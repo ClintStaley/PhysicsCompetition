@@ -17,72 +17,72 @@ function FieldGroup({ id, label, help, ...props }) {
 }
 
 class Register extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      firstName: '',
-      lastName: '',
-      email: '',
-      password: '',
-      passwordTwo: '',
-      termsAccepted: false,
-      role: 0
-    }
+   constructor(props) {
+      super(props);
+      this.state = {
+         firstName: '',
+         lastName: '',
+         email: '',
+         password: '',
+         passwordTwo: '',
+         termsAccepted: false,
+         role: 0
+      }
 
-    this.handleChange = this.handleChange.bind(this);
-  }
+      this.handleChange = this.handleChange.bind(this);
+   }
 
-  submit() {
-    let { // Make a copy of the relevant values in current state
-      firstName,
-      lastName,
-      email,
-      password,
-      termsAccepted,
-      role
-    } = this.state;
-    const user = {
-      firstName,
-      lastName,
-      email,
-      password,
-      termsAccepted,
-      role
-    };
-    registerUser(user)
-      .then((res) => {
-        if (res.ok)
-          return // TODO show log in dialog
-        return res.json()
-      })
-      .then((err) => {
-        if (err) {
-          this.setState({ registerStatus: "error", err })
-        } else {
-          this.setState({ registerStatus: "success", err: undefined });
-        }
-      })
-  }
+   submit() {
+      let { // Make a copy of the relevant values in current state
+         firstName,
+         lastName,
+         email,
+         password,
+         termsAccepted,
+         role
+      } = this.state;
+      const user = {
+         firstName,
+         lastName,
+         email,
+         password,
+         termsAccepted,
+         role
+      };
+      registerUser(user)
+         .then((res) => {
+            if (res.ok)
+               return // TODO show log in dialog
+            return res.json()
+         })
+         .then((err) => {
+            if (err) {
+               this.setState({ registerStatus: "error", err })
+            } else {
+               this.setState({ registerStatus: "success", err: undefined });
+            }
+         })
+   }
 
-  handleChange(ev) {
-    let newState = {};
-    switch (ev.target.type) {
-      case 'checkbox':
-        newState[ev.target.id] = ev.target.checked;
-        break;
-      default:
-        newState[ev.target.id] = ev.target.value;
-    }
-    this.setState(newState);
-  }
+   handleChange(ev) {
+      let newState = {};
+      switch (ev.target.type) {
+         case 'checkbox':
+            newState[ev.target.id] = ev.target.checked;
+            break;
+         default:
+            newState[ev.target.id] = ev.target.value;
+      }
+      this.setState(newState);
+   }
 
-  formValid() {
-    let s = this.state;
-    return s.email && s.lastName && s.password && s.password === s.passwordTwo
-      && s.termsAccepted;
-  }
+   formValid() {
+      let s = this.state;
+      return s.email && s.lastName && s.password && s.password === s.passwordTwo &&
+         s.termsAccepted;
+   }
 
-  registerResult(status = "") {
+   registerResult(status = "") {
     if (status === "error")
       return (
         <Alert bsStyle="danger">

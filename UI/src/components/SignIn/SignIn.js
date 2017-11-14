@@ -3,37 +3,35 @@ import { Form, FormGroup, Col, FormControl, Button, ControlLabel } from 'react-b
 //import './SignIn.css';
 
 class SignIn extends Component {
-  constructor(props) {
-    super(props);
+   constructor(props) {
+      super(props);
 
-    this.state = {
-      email: 'EmailA@domainA',
-      password: 'PasswordA'
-    }
+      this.state = {
+         email: 'EmailA@domainA',
+         password: 'PasswordA'
+      }
 
-    // bind 'this' to the correct context
-    this.handleChange = this.handleChange.bind(this);
-    this.signIn = this.signIn.bind(this);
-  }
+      // bind 'this' to the correct context
+      this.handleChange = this.handleChange.bind(this);
+      this.signIn = this.signIn.bind(this);
+   }
 
-  signIn(event) {
-    console.log("Click");
-    console.log(this.state);
-    this.props.signIn(this.state, () => {
-      console.log("Callback");
-      this.props.history.push("/Competition")
-    });
+   signIn(event) {
+      console.log(this.state);
+      this.props.signIn(this.state, () => {
+         this.props.history.push("/Competition")
+      });
 
-    event.preventDefault()
-  }
+      event.preventDefault()
+   }
 
-  handleChange(event) {
-    const newState = {}
-    newState[event.target.name] = event.target.value;
-    this.setState(newState);
-  }
+   handleChange(event) {
+      const newState = {}
+      newState[event.target.name] = event.target.value;
+      this.setState(newState);
+   }
 
-  render() {
+   render() {
     return (
       <section className="container">
         <Col smOffset={2}>

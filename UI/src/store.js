@@ -6,8 +6,7 @@ import thunk from 'redux-thunk';
 
 import rootReducer from './reducers/index';
 
-const defaultState = {
-};
+const defaultState = {};
 
 const store = createStore(rootReducer, defaultState, applyMiddleware(thunk));
 
