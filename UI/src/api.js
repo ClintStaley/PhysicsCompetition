@@ -116,6 +116,18 @@ export function getOneCmps(cmpId) {
     .then((Competitions) => Competitions.json());
 }
 
+export function putCmp(id, body) {
+    return put(`Cmps/${id}`, body)
+}
+
+export function delCmp(id) {
+    return del(`Cmps/${id}`)
+}
+
+export function postCmp(body) {
+    return post('Cmps', body)
+}
+
 const errMap = {
     en: {
         missingField: 'Field missing from request: ',

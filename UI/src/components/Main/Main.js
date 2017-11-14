@@ -12,6 +12,11 @@ class Main extends Component {
     return Object.keys(this.props.Prss).length !== 0;
   }
 
+  signOut(event) {
+    console.log("Click");
+    console.log(this.state);
+    this.props.signOut(() => {this.props.history.push("/")});
+  }
 
   render() {
     return (
@@ -53,7 +58,7 @@ class Main extends Component {
               </Nav>
               {this.signedIn() ?
               <Nav pullRight>
-                <NavItem eventKey={1} onClick={() => this.props.signOut()}>Sign out</NavItem>
+                <NavItem eventKey={1} onClick = {this.signOut}>Sign out</NavItem>
               </Nav> : ''
               }
             </Navbar.Collapse>

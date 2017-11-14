@@ -21,7 +21,7 @@ class SignIn extends Component {
     console.log(this.state);
     this.props.signIn(this.state, () => {
       console.log("Callback");
-      this.props.history.push("/")
+      this.props.history.push("/Competition")
     });
 
     event.preventDefault()
