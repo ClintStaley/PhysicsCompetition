@@ -13,7 +13,7 @@ router.get('/', function (req, res) {
    var query = 'select Competition.id,ownerId,ctpId,title,prms,rules' +
       ' from Competition';
    var fillers = [];
-   
+
    if (email) {
       query = 'select Competition.id,ownerId,ctpId,title,prms,rules from ' +
          'Competition,Person where email = ? && ' +
@@ -28,16 +28,16 @@ router.get('/', function (req, res) {
       query = query + ' where ctpId = ?';
       fillers.push(CtpId);
    }
-   
+
    async.waterfall([
    function (cb) {
       cnn.chkQry(query, fillers, cb);
    },
    function (result, fields, cb) {
       res.json(result);
-      
+
       res.status(200);
-      
+
       cb();
    }
    ],
@@ -51,7 +51,7 @@ router.post('/', function (req, res) {
    var ssn = req.session;
    var body = req.body;
    var cnn = req.cnn;
-   
+
    if (vld.checkAdmin())
       async.waterfall([
       function (cb) {
@@ -99,7 +99,7 @@ router.post('/', function (req, res) {
 
 router.get('/:id', function (req, res) {
    var vld = req.validator;
-   
+
    req.cnn.query('select Competition.id,ownerId,ctpId,title,prms,rules from ' +
       'Competition where id = ?', [req.params.id],
       function (err, cmpArr) {
@@ -116,7 +116,7 @@ router.put('/:id', function (req, res) {
    var body = req.body;
    var cnn = req.cnn;
    var cmpTp;
-   
+
    async.waterfall([
    function (cb) {
       if (vld.hasOnlyFields(body, ["title", "prms"]))
@@ -173,7 +173,7 @@ router.put('/:id', function (req, res) {
 
 router.delete('/:id', function (req, res) {
    var vld = req.validator;
-   
+
    if (vld.checkAdmin()) {
       req.cnn.query('delete from Competition where id = ?', [req.params.id],
       function (err, result) {
@@ -191,9 +191,9 @@ router.get('/:id/WaitingSbms', function (req, res) {
    var vld = req.validator;
    var cnn = req.cnn;
    var num = req.query.num;
-   
+
    if (vld.checkAdmin()) {
-      cnn.query('select id,teamId,content,response,score,subTime from Submits' +
+      cnn.query('select id,teamId,content,response,score,subTime from Submit' +
          ' where cmpId = ? and response is null order by subTime DESC',
          [req.params.id],
       function (err, result) {

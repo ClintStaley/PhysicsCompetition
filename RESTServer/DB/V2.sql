@@ -30,15 +30,15 @@ create table Competition (
    prms varchar(20000) not null,
    rules int default 0,
    curTeam int,
-   
+
    constraint FKCompetition_ctpId foreign key (ctpId) references
     CompetitionType(id) on delete cascade on update cascade,
-    
+
    constraint FKCompetition_ownerId foreign key (ownerId) references
     Person(id) on delete cascade on update cascade
 );
 
-create table Teams (
+create table Team (
    id int auto_increment primary key,
    bestScore int not null default 0,
    teamName varchar(80) not null,
@@ -47,60 +47,67 @@ create table Teams (
    lastSubmit datetime default null,
    canSubmit boolean default true,
    nextTeam int,
-   
-   constraint FKTeams_cmpId foreign key (cmpId) references
+
+   constraint FKTeam_cmpId foreign key (cmpId) references
     Competition(id) on delete cascade on update cascade,
-   
-   constraint FKTeams_ownerId foreign key (ownerId) references
+
+   constraint FKTeam_ownerId foreign key (ownerId) references
     Person(id) on delete cascade on update cascade
 
 );
 
-create table Submits (
+create table Submit
+(
    id int auto_increment primary key,
    cmpId int not null,
    content varchar(2000) Not Null,
    response varchar(2000),
    teamId int not null,
+   PracticeRun boolean default false,
+
    score int,
    subTime datetime,
-   
-     constraint FKSubmits_cmpId foreign key (cmpId) references
+
+     constraint FKSubmit_cmpId foreign key (cmpId) references
     Competition(id) on delete cascade on update cascade,
-    
-      constraint FKSubmits_teamId foreign key (teamId) references
-    Teams(id) on delete cascade on update cascade
+
+      constraint FKSubmit_teamId foreign key (teamId) references
+    Team(id) on delete cascade on update cascade
 );
 
 
-create table Members (
-
-	personId int not null,
+create table Membership (
+   personId int not null,
    teamId int not null,
-   
-   constraint FKTMembers_personId foreign key (personId) references
+
+   constraint FKTMembership_personId foreign key (personId) references
     Person(id) on delete cascade on update cascade,
-   
-   constraint FKMembers_teamId foreign key (teamId) references
-    Teams(id) on delete cascade on update cascade
+
+   constraint FKMembership_teamId foreign key (teamId) references
+    Team(id) on delete cascade on update cascade
 
 );
 
 insert into Person (firstName, lastName, email,       password,   whenRegistered, role)
             VALUES ("Joe",     "Admin", "adm@11.com", "password", NOW(), 1);
-            
+
+
+insert into CompetitionType (title, description, prmSchema)
+            VALUES ("Bridge Builder", "Build Bridges", "{}");
+
+
+insert into Competition (ownerId, ctpId, title,prms)
+            VALUES (1,     1, "bridge building", "{}");
+
+insert into Team (teamName, cmpId, ownerId)
+            VALUES ("Team1", 1, 1);
+
+insert into Membership (personId, teamId)
+            VALUES (1,     1);
+
 select * from Person;
 select * from CompetitionType;
 select * from Competition;
-select * from Teams;
-select * from Members;
-select * from Submits;
-
-select * from Submits where cmpId = 1 and response is null order by subTime DESC;
-            
-            
-            
-		
-            
-            
- 
+select * from Team;
+select * from Membership;
+select * from Submit;

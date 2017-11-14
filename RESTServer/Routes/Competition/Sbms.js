@@ -7,19 +7,19 @@ router.baseURL = '/Cmps/:cmpId/Teams/:teamId/Sbms';
 
 router.get('/', function (req, res) {
    var num = req.query.num;
-   
+
    req.cnn.chkQry('select id,teamId,content,response,score,subTime from ' +
-      'Submits where cmpId = ? && teamId = ? order by subTime DESC',
+      'Submit where cmpId = ? && teamId = ? order by subTime DESC',
       [req.params.cmpId,req.params.teamId],
    //function that closes cnn
    function (err, result) {
       if (num || num == 0)
          result = result.slice(0,num);
-         
+
       res.json(result);
-      
+
       res.status(200);
-      
+
       req.cnn.release();
    });
 });
@@ -28,7 +28,7 @@ router.post('/', function (req, res) {
    var vld = req.validator;  // Shorthands
    var body = req.body;
    var cnn = req.cnn;
- 
+
    async.waterfall([
    function (cb) {
       if (vld.hasOnlyFields(body, ["content"], cb)) {
@@ -37,7 +37,7 @@ router.post('/', function (req, res) {
             body.cmpId = req.params.cmpId;
             body.teamId = req.params.teamId;
             body.subTime = new Date();
-            cnn.chkQry('insert into Submits set ?', body, cb);
+            cnn.chkQry('insert into Submit set ?', body, cb);
          }
       }
    },
@@ -53,9 +53,9 @@ router.post('/', function (req, res) {
 
 router.get('/:id', function (req, res) {
    var vld = req.validator;
-   
+
    req.cnn.query('select id,teamId,content,response,score,subTime from ' +
-      'Submits where id = ? && cmpId = ? && teamId = ?'
+      'Submit where id = ? && cmpId = ? && teamId = ?'
         , [req.params.id,req.params.cmpId,req.params.teamId],
    function (err, teamArr) {
       if (vld.check(teamArr.length, Tags.notFound)) {
@@ -69,7 +69,7 @@ router.put('/:id', function (req, res) {
    var vld = req.validator;  // Shorthands
    var body = req.body;
    var cnn = req.cnn;
-   
+
    async.waterfall([
    function (cb) {
       if (vld.hasOnlyFields(body, ["response"], cb)) {
@@ -77,7 +77,7 @@ router.put('/:id', function (req, res) {
             body.cmpId = req.params.cmpId;
             body.teamId = req.params.teamId;
             body.subTime = new Date();
-            cnn.chkQry('select * from Submits where id = ? && cmpId = ? &&' +
+            cnn.chkQry('select * from Submit where id = ? && cmpId = ? &&' +
                ' teamId = ?', [req.params.id,req.params.cmpId,req.params.teamId]
                , cb);
          }
@@ -85,7 +85,7 @@ router.put('/:id', function (req, res) {
    },
    function (result, err, cb) {
       if (vld.check(result && result.length , Tags.notFound, null, cb))
-         cnn.query("update Submits set ? where id = ?",[req.body, req.params.id]
+         cnn.query("update Submit set ? where id = ?",[req.body, req.params.id]
             ,cb);
    },
    function (result, fields, cb) {
