@@ -8,17 +8,17 @@ import './Main.css';
 const Home = (<h1>Home Page</h1>); // TODO make real home component
 
 class Main extends Component {
-  signedIn() {
-    return Object.keys(this.props.Prss).length !== 0;
-  }
+   signedIn() {
+      return Object.keys(this.props.Prss).length !== 0;
+   }
 
-  signOut(event) {
-    console.log("Click");
-    console.log(this.state);
-    this.props.signOut(() => {this.props.history.push("/")});
-  }
+   signOut(event) {
+      console.log("Click");
+      console.log(this.state);
+      this.props.signOut(() => { this.props.history.push("/") });
+   }
 
-  render() {
+   render() {
     return (
       <div>
         <div>
@@ -72,7 +72,7 @@ class Main extends Component {
         </Switch>
       </div>
     )
-  }
+   }
 
 }
 

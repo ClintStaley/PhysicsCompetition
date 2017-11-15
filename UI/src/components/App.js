@@ -5,19 +5,19 @@ import * as actionCreators from '../actions/actionCreators';
 import Main from './Main/Main';
 
 function mapStateToProps(state) {
-  return {
-    Prss: state.Prss,
-    Cmps: state.Cmps
-  }
+   return {
+      Prss: state.Prss,
+      Cmps: state.Cmps
+   }
 }
 
 function mapDispachToProps(dispatch) {
-  return bindActionCreators(actionCreators, dispatch);
+   return bindActionCreators(actionCreators, dispatch);
 }
 
 const App = withRouter(connect(
-    mapStateToProps,
-    mapDispachToProps,
-    )(Main));
+   mapStateToProps,
+   mapDispachToProps,
+)(Main));
 
 export default App;

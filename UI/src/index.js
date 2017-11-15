@@ -22,5 +22,4 @@ const router = (
     </BrowserRouter>
   </Provider>
 )
-
 ReactDOM.render(router, document.getElementById('root'));
