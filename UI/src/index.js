@@ -2,7 +2,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-// import react router
 import { BrowserRouter } from 'react-router-dom';
 
 // Our own components
