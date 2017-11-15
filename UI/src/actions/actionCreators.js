@@ -7,7 +7,6 @@ export function signIn(credidentials, cb) {
          .then((userInfo) => dispatch({ user: userInfo, type: "SIGN_IN" }))
          .then(() => {if (cb) cb()})
          .catch((error) => dispatch({ type: 'SIGN_IN_FAILED', error }))
-      // setTimeout(() => dispatch({user: credidentials, type: "SIGN_IN"}), 2000);
    }
 }
 

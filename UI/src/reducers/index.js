@@ -5,6 +5,6 @@ import { combineReducers } from 'redux';
 import Prss from './Prss';
 import Cmps from './Cmps';
 
-const rootReducer = combineReducers({Prss, Cmps});
+const rootReducer = combineReducers({ Prss, Cmps });
 
 export default rootReducer;
