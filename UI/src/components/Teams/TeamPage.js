@@ -2,28 +2,24 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { ListGroup, ListGroupItem, Button, Glyphicon } from 'react-bootstrap';
 import { ConfDialog } from '../concentrator';
-import { putCmp, delCmp, postCmp } from '../../api';
-import CmpModal from './CmpModal';
-//import './ConversationsOverview.css';
-export default class CompetitionPage extends Component {
+import { putTeam, delTeam, postTeam } from '../../api';
+
+export default class TeamPage extends Component {
    constructor(props) {
       super(props);
-      this.props.updateCmps(this.props.Prss.id);
-      this.state = {
-         showModal: false,
-         showConfirmation: false,
-      }
+      this.props.updateTeams(this.props.Prss.id);
    }
 
 
    render() {
       return (
       <section className="container">
-        <h1>Competition Overview</h1>
+        <h1>Team Overview</h1>
         <ListGroup>
-          {this.props.Cmps.map((cnv, i) => {
-            return <CompetitionItem
-              key={i} {...cnv}/>
+          {this.props.Teams.map((team, i) => {
+            return <TeamItem
+              key={i} {...team}
+              Leader = {team.ownerId === this.props.Prss.id}/>
           })
           }
         </ListGroup>
@@ -33,16 +29,29 @@ export default class CompetitionPage extends Component {
 }
 
 // A conversation list item
-const CompetitionItem = function (props) {
+const TeamItem = function (props) {
    return (
       <ListGroupItem className="clearfix">
-         <Link to="#">{props.title}</Link>
-         {props.showControlls ?
+      {console.log(props)}
+      {props.Leader ?
+         <Link to="#"><mark>{props.teamName}</mark></Link>
+         :
+         <Link to="#">{props.teamName}</Link>
+      }
+         {props.Leader ?
             <div className="pull-right">
                <Button bsSize="small" onClick={props.onDelete}><Glyphicon glyph="trash" /></Button>
                <Button bsSize="small" onClick={props.onEdit}><Glyphicon glyph="edit" /></Button>
             </div>
          : ''}
+         <ListGroup>
+           {props.Members.map((team, i) => {
+             return <TeamItem
+               key={i} {...team}
+               Leader = {team.ownerId === this.props.Prss.id}/>
+           })
+           }
+         </ListGroup>
       </ListGroupItem>
    )
 }

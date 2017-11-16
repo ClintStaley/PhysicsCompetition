@@ -19,6 +19,28 @@ export function updateCmps(id, cb) {
    }
 }
 
+export function updateTeams(id, cb) {
+   return (dispatch, prevState) => {
+      api.getTeams(id)
+         .then((Teams) => dispatch({ type: 'UPDATE_TEAM', Teams }))
+         .then(() => {if (cb) cb()})
+
+   }
+}
+
+export function updateMembers(CmpId, TeamId, cb) {
+   return (dispatch, prevState) => {
+      api.getMembers(CmpId, TeamId)
+         .then((Members) => {
+            var temp;
+            temp.Members = Members;
+            temp.TeamId = TeamId;
+         })
+         .then((MemberData) => dispatch({ type: 'POPULATE_TEAM', MemberData }))
+         .then(() => { if (cb) cb() })
+   }
+}
+
 export function signOut(cb) {
    return (dispatch, prevState) => {
       api.signOut()

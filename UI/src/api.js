@@ -95,7 +95,7 @@ export function registerUser(user) {
 }
 
 export function getCmps(prsId) {
-   return get("Prss/" + prsId + "/Teams")
+/*   return get("Prss/" + prsId + "/Teams")
       .then((teamData) => teamData.json())
       .then((response) => {
          var promise = [];
@@ -108,7 +108,9 @@ export function getCmps(prsId) {
             promise.push(getOneCmps(response[i].cmpId));
 
          return Promise.all(promise);
-      })
+      })*/
+      return get("Prss/" + prsId + "/Competition")
+         .then((teamData) => teamData.json())
 }
 
 export function getOneCmps(cmpId) {
@@ -126,6 +128,28 @@ export function delCmp(id) {
 
 export function postCmp(body) {
    return post('Cmps', body)
+}
+
+export function getTeams(prsId) {
+   return get("Prss/" + prsId + "/Teams")
+      .then((teamData) => TeamData = teamData.json())
+}
+
+export function putTeam(id, body) {
+   return put(`Teams/${id}`, body)
+}
+
+export function delTeam(id) {
+   return del(`Teams/${id}`)
+}
+
+export function postteam(body) {
+   return post('Teams', body)
+}
+
+export function getMembers(cmpId, TeamId) {
+   return get("Cmps/" + cmpId + "/Teams" + TeamId + "/mmbs")
+      .then((memberData) => memberData.json())
 }
 
 const errMap = {

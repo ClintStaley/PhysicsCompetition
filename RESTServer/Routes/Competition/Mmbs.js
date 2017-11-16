@@ -7,7 +7,7 @@ router.baseURL = '/Cmps/:cmpId/Teams/:teamId/Mmbs';
 
 router.get('/', function (req, res) {
 
-   req.cnn.chkQry('select firstName,lastName,email from Person,Membership' +
+   req.cnn.chkQry('select id,firstName,lastName,email from Person,Membership' +
          ' where personId = id && teamId = ?', [req.params.teamId],
    function (err, result) {
       res.json(result);

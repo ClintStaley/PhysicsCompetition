@@ -21,9 +21,9 @@ export default class CompetitionPage extends Component {
       <section className="container">
         <h1>Competition Overview</h1>
         <ListGroup>
-          {this.props.Cmps.map((cnv, i) => {
+          {this.props.Cmps.map((cmp, i) => {
             return <CompetitionItem
-              key={i} {...cnv}/>
+              key={i} {...cmp}/>
           })
           }
         </ListGroup>
