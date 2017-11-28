@@ -6,8 +6,8 @@ class SignIn extends Component {
       super(props);
 
       this.state = {
-         email: 'EmailA@domainA',
-         password: 'PasswordA'
+         email: 'adm@11.com',
+         password: 'password'
       }
 
       // bind event handlers to the correct context

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Register, SignIn, CompetitionPage } from '../concentrator'
+import { Register, SignIn, CompetitionPage, TeamPage } from '../concentrator'
 import { Route, Switch } from 'react-router-dom';
 import { Navbar, Nav, NavItem } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
@@ -13,8 +13,7 @@ class Main extends Component {
    }
 
    signOut(event) {
-      console.log("Click");
-      console.log(this.state);
+      console.log(this);
       this.props.signOut(() => { this.props.history.push("/") });
    }
 
@@ -39,7 +38,12 @@ class Main extends Component {
                       <NavItem>
                         Competition
                       </NavItem>
-                    </LinkContainer>
+                    </LinkContainer>,
+                    <LinkContainer key={1} to="/Teams">
+                      <NavItem>
+                       Teams
+                      </NavItem>
+                    </LinkContainer>,
                   ]
                   :
                   [
@@ -58,7 +62,7 @@ class Main extends Component {
               </Nav>
               {this.signedIn() ?
               <Nav pullRight>
-                <NavItem eventKey={1} onClick = {this.signOut}>Sign out</NavItem>
+                <NavItem eventKey={2} onClick = {() => this.signOut()}>Sign out</NavItem>
               </Nav> : ''
               }
             </Navbar.Collapse>
@@ -67,6 +71,7 @@ class Main extends Component {
         <Switch>
           <Route exact path='/' children={Home} />
           <Route path='/Competition' render={() => <CompetitionPage {...this.props} />} />
+          <Route path='/Teams' render={() => <TeamPage {...this.props} />} />
           <Route path='/signin' render={() => <SignIn {...this.props} />} />
           <Route path='/register' render={() => <Register {...this.props} />} />
         </Switch>

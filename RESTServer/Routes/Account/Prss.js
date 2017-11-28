@@ -156,5 +156,25 @@ router.get('/:id/Teams', function(req, res) {
 
 });
 
+router.get('/:id/Competition', function(req, res) {
+   var vld = req.validator;
+   var teams = [];
+
+   if (vld.checkPrsOK(req.params.id))
+         req.cnn.chkQry('select Competition.id, Competition.ownerId, ctpId, title, prms, ' +
+         'rules, curTeam from Competition,Team,Membership where ' +
+            'personId =  ? and teamId = Team.id and cmpId = Competition.id',
+             [req.params.id],
+      function (err, Cmps) {
+         res.json(Cmps);
+         res.status(200);
+         req.cnn.release();
+       });
+
+   else
+      req.cnn.release();
+
+});
+
 
 module.exports = router;
