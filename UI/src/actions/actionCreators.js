@@ -22,21 +22,36 @@ export function updateCmps(id, cb) {
 export function updateTeams(id, cb) {
    return (dispatch, prevState) => {
       api.getTeams(id)
+         .then((teams) => {
+            Object.keys(teams).map((teamNum, i) => {
+             teams[teamNum].members = {};
+             teams[teamNum].toggled = false;
+          });
+          return teams;
+         })
          .then((Teams) => dispatch({ type: 'UPDATE_TEAM', Teams }))
          .then(() => {if (cb) cb()})
 
    }
 }
 
-export function updateMembers(CmpId, TeamId, cb) {
+export function toggleTeam(teamId, cb) {
    return (dispatch, prevState) => {
-      api.getMembers(CmpId, TeamId)
-         .then((Members) => {
-            var temp;
-            temp.Members = Members;
-            temp.TeamId = TeamId;
+      dispatch({ type: 'TOGGLE_TEAM', teamId })
+      .then(() => {if (cb) cb()})
+   }
+}
+
+export function updateMembers(cmpId, teamId, cb) {
+   return (dispatch, prevState) => {
+      api.getMembers(cmpId, teamId)
+         .then((members) => {
+            var temp = {};
+            temp.members = members;
+            temp.teamId = teamId;
+            return temp;
          })
-         .then((MemberData) => dispatch({ type: 'POPULATE_TEAM', MemberData }))
+         .then((memberData) => dispatch({ type: 'POPULATE_TEAM', memberData }))
          .then(() => { if (cb) cb() })
    }
 }
