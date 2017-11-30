@@ -19,17 +19,19 @@ export function updateCmps(id, cb) {
    }
 }
 
+// Get team info, and augment each team description with empty members
+// and closed member-toggle.  Dispatch a team update with the augmented
+// team list.
 export function updateTeams(id, cb) {
    return (dispatch, prevState) => {
       api.getTeams(id)
          .then((teams) => {
-            Object.keys(teams).map((teamNum, i) => {
+            Object.keys(teams).map((teamNum) => {
              teams[teamNum].members = {};
              teams[teamNum].toggled = false;
           });
-          return teams;
+          dispatch({ type: 'UPDATE_TEAM', teams});
          })
-         .then((Teams) => dispatch({ type: 'UPDATE_TEAM', Teams }))
          .then(() => {if (cb) cb()})
 
    }
@@ -38,7 +40,7 @@ export function updateTeams(id, cb) {
 export function toggleTeam(teamId, cb) {
    return (dispatch, prevState) => {
       dispatch({ type: 'TOGGLE_TEAM', teamId })
-      .then(() => {if (cb) cb()})
+         .then(() => {if (cb) cb()})
    }
 }
 
