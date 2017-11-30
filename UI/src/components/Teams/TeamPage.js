@@ -18,7 +18,6 @@ export default class TeamPage extends Component {
    }
 
    toggleView = (teamId) => {
-      console.log("toggled");
       if (this.props.teams[teamId].members === {})
          this.props.updateMembers(this.props.teams[teamId].cmpId ,teamId);
 
@@ -28,7 +27,7 @@ export default class TeamPage extends Component {
    render() {
       return (
       <section className="container">
-      {console.log("Render")}
+      {console.log("Big Render")}
         <h1>Team Overview</h1>
         <ListGroup>
           {Object.keys(this.props.teams).map((teamNum, i) => {
@@ -36,8 +35,9 @@ export default class TeamPage extends Component {
 
             return <TeamItem
               key={i} {...team}
-              toggleTeam = {() => this.toggleView(team.teamId)}
-              leader = {team.ownerId === this.props.Prss.id}/>
+              toggleTeam = {() => this.toggleView(teamNum)}
+              leader = {team.ownerId === this.props.Prss.id}
+              prss = {this.props.Prss.id}/>
           })
           }
         </ListGroup>
@@ -51,13 +51,12 @@ const TeamItem = function (props) {
    return (
       <ListGroupItem className="clearfix">
       {props.leader ?
-         <Button onclick={props.toggleTeam}><mark>{props.teamName}</mark></Button>
+         <Button onClick={props.toggleTeam}><mark>{props.teamName}</mark></Button>
          :
-         <Button onclick={props.toggleTeam}>{props.teamName}</Button>
+         <Button onClick={props.toggleTeam}>{props.teamName}</Button>
       }
          {props.leader ?
             <div className="pull-right">
-               <Button bsSize="small" onClick={props.onDelete}><Glyphicon glyph="trash" /></Button>
                <Button bsSize="small" onClick={props.onEdit}><Glyphicon glyph="edit" /></Button>
             </div>
          : ''}
@@ -68,7 +67,7 @@ const TeamItem = function (props) {
 
              return <MemberItem
                key={i} {...member}
-               leader = {props.leader}/>
+               leader = {props.leader || member.id === props.prss}/>
           })
           }
          </ListGroup>
