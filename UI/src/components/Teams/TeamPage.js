@@ -11,7 +11,7 @@ export default class TeamPage extends Component {
       this.props.updateMembers(1,1);
    }
 
-   updateTeams = (id) => {
+   updateTeam = (id) => {
       if (this.props.Teams === undefined)
          this.props.updateTeams(this.props.Prss.id);
    }
@@ -23,7 +23,8 @@ export default class TeamPage extends Component {
    render() {
       return (
       <section className="container">
-      {this.updateTeams(this.props.Prss.id)}
+      {console.log("Render")}
+      {this.updateTeam(this.props.Prss.id)}
         <h1>Team Overview</h1>
         <ListGroup>
           {Object.keys(this.props.Teams).map((teamNum, i) => {

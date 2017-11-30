@@ -6,9 +6,6 @@ export default function Teams(state = [], action) {
          state[action.teamId].toggled = !state[action.teamId].toggled;
          return state;
       case 'POPULATE_TEAM':
-      console.log(state[action.memberData.teamId]);
-      console.log(action.memberData.teamId);
-      console.log(state);
          state[action.memberData.teamId].members = action.memberData.members;
          return state;
       default:
