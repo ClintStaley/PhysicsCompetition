@@ -8,7 +8,7 @@ function mapStateToProps(state) {
    return {
       Prss: state.Prss,
       Cmps: state.Cmps,
-      Teams: state.Teams
+      teams: state.teams
    }
 }
 

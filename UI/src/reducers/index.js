@@ -4,8 +4,8 @@ import { combineReducers } from 'redux';
 
 import Prss from './Prss';
 import Cmps from './Cmps';
-import Teams from './Teams';
+import teams from './teams';
 
-const rootReducer = combineReducers({ Prss, Cmps, Teams });
+const rootReducer = combineReducers({ Prss, Cmps, teams });
 
 export default rootReducer;

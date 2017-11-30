@@ -30,17 +30,16 @@ export function updateTeams(id, cb) {
              teams[teamNum].members = {};
              teams[teamNum].toggled = false;
           });
-          dispatch({ type: 'UPDATE_TEAM', teams});
+          return dispatch({ type: 'UPDATE_TEAM', teams});
          })
          .then(() => {if (cb) cb()})
 
    }
 }
 
-export function toggleTeam(teamId, cb) {
+export function toggleTeam(teamId) {
    return (dispatch, prevState) => {
       dispatch({ type: 'TOGGLE_TEAM', teamId })
-         .then(() => {if (cb) cb()})
    }
 }
 
@@ -48,12 +47,11 @@ export function updateMembers(cmpId, teamId, cb) {
    return (dispatch, prevState) => {
       api.getMembers(cmpId, teamId)
          .then((members) => {
-            var temp = {};
-            temp.members = members;
-            temp.teamId = teamId;
-            return temp;
+            var memberData = {};
+            memberData.members = members;
+            memberData.teamId = teamId;
+            return dispatch({ type: 'POPULATE_TEAM', memberData });
          })
-         .then((memberData) => dispatch({ type: 'POPULATE_TEAM', memberData }))
          .then(() => { if (cb) cb() })
    }
 }

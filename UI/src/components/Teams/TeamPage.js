@@ -9,14 +9,19 @@ export default class TeamPage extends Component {
       super(props);
       this.props.updateTeams(this.props.Prss.id);
       this.props.updateMembers(1,1);
+      console.log("Constructor");
    }
 
    updateTeam = (id) => {
-      if (this.props.Teams === undefined)
+      if (this.props.teams === undefined)
          this.props.updateTeams(this.props.Prss.id);
    }
 
    toggleView = (teamId) => {
+      console.log("toggled");
+      if (this.props.teams[teamId].members === {})
+         this.props.updateMembers(this.props.teams[teamId].cmpId ,teamId);
+
       this.props.toggleTeam(teamId);
    }
 
@@ -24,11 +29,10 @@ export default class TeamPage extends Component {
       return (
       <section className="container">
       {console.log("Render")}
-      {this.updateTeam(this.props.Prss.id)}
         <h1>Team Overview</h1>
         <ListGroup>
-          {Object.keys(this.props.Teams).map((teamNum, i) => {
-            var team = this.props.Teams[teamNum];
+          {Object.keys(this.props.teams).map((teamNum, i) => {
+            var team = this.props.teams[teamNum];
 
             return <TeamItem
               key={i} {...team}
