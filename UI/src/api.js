@@ -132,7 +132,15 @@ export function postCmp(body) {
 
 export function getTeams(prsId) {
    return get("Prss/" + prsId + "/Teams")
-      .then((teamData) => TeamData = teamData.json())
+      .then((teamData) => teamData.json())
+      .then((TeamData) => {
+         var Teams = {};
+         for (var i = 0;i < TeamData.length;i++){
+            Teams[TeamData[i].id] = TeamData[i];
+         }
+
+         return Teams;
+      })
 }
 
 export function putTeam(id, body) {
@@ -148,8 +156,15 @@ export function postteam(body) {
 }
 
 export function getMembers(cmpId, TeamId) {
-   return get("Cmps/" + cmpId + "/Teams" + TeamId + "/mmbs")
+   return get("Cmps/" + cmpId + "/Teams/" + TeamId + "/mmbs")
       .then((memberData) => memberData.json())
+      .then((memberData) => {
+         var members = {};
+         for (var i = 0;i < memberData.length;i++)
+            members[memberData[i].id] = memberData[i];
+
+         return members;
+      })
 }
 
 const errMap = {

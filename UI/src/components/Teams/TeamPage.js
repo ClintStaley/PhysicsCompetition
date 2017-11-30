@@ -8,18 +8,31 @@ export default class TeamPage extends Component {
    constructor(props) {
       super(props);
       this.props.updateTeams(this.props.Prss.id);
+      this.props.updateMembers(1,1);
    }
 
+   updateTeams = (id) => {
+      if (this.props.Teams === undefined)
+         this.props.updateTeams(this.props.Prss.id);
+   }
+
+   toggleView = (teamId) => {
+      this.props.toggleTeam(teamId);
+   }
 
    render() {
       return (
       <section className="container">
+      {this.updateTeams(this.props.Prss.id)}
         <h1>Team Overview</h1>
         <ListGroup>
-          {this.props.Teams.map((team, i) => {
+          {Object.keys(this.props.Teams).map((teamNum, i) => {
+            var team = this.props.Teams[teamNum];
+
             return <TeamItem
               key={i} {...team}
-              Leader = {team.ownerId === this.props.Prss.id}/>
+              toggleTeam = {() => this.toggleView(team.teamId)}
+              leader = {team.ownerId === this.props.Prss.id}/>
           })
           }
         </ListGroup>
@@ -32,26 +45,44 @@ export default class TeamPage extends Component {
 const TeamItem = function (props) {
    return (
       <ListGroupItem className="clearfix">
-      {console.log(props)}
-      {props.Leader ?
-         <Link to="#"><mark>{props.teamName}</mark></Link>
+      {props.leader ?
+         <Button onclick={props.toggleTeam}><mark>{props.teamName}</mark></Button>
          :
-         <Link to="#">{props.teamName}</Link>
+         <Button onclick={props.toggleTeam}>{props.teamName}</Button>
       }
-         {props.Leader ?
+         {props.leader ?
             <div className="pull-right">
                <Button bsSize="small" onClick={props.onDelete}><Glyphicon glyph="trash" /></Button>
                <Button bsSize="small" onClick={props.onEdit}><Glyphicon glyph="edit" /></Button>
             </div>
          : ''}
+         {props.toggled ?
          <ListGroup>
-           {props.Members.map((team, i) => {
-             return <TeamItem
-               key={i} {...team}
-               Leader = {team.ownerId === this.props.Prss.id}/>
-           })
-           }
+          {Object.keys(props.members).map((MemNum, i) => {
+             var member = props.members[MemNum];
+
+             return <MemberItem
+               key={i} {...member}
+               leader = {props.leader}/>
+          })
+          }
          </ListGroup>
+         : ''}
       </ListGroupItem>
+   )
+}
+
+//A member list item
+const MemberItem = function (props) {
+   return (
+   <ListGroupItem className="clearfix">
+   <Link to="#">{props.firstName}</Link>
+      {props.leader ?
+         <div className="pull-right">
+            <Button bsSize="small" onClick={props.onDelete}><Glyphicon glyph="trash" /></Button>
+            <Button bsSize="small" onClick={props.onEdit}><Glyphicon glyph="edit" /></Button>
+         </div>
+      : ''}
+   </ListGroupItem>
    )
 }
