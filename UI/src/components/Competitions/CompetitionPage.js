@@ -10,8 +10,8 @@ export default class CompetitionPage extends Component {
       super(props);
 
       //get all cmps from database
-      this.props.updateCmps(this.props.Prss.id);
-
+      //as of now will reget all cmps from database every tim epage is loaded
+      this.props.updateCmps(this.props.prss.id);
    }
 
 
@@ -19,8 +19,9 @@ export default class CompetitionPage extends Component {
       return (
       <section className="container">
         <h1>Competition Overview</h1>
+        {/*List all of the cmps by name for now*/}
         <ListGroup>
-          {this.props.Cmps.map((cmp, i) => {
+          {this.props.cmps.map((cmp, i) => {
             return <CompetitionItem
               key={i} {...cmp}/>
           })
@@ -36,6 +37,7 @@ const CompetitionItem = function (props) {
    return (
       <ListGroupItem className="clearfix">
          <Link to="#">{props.title}</Link>
+         {/*ShowControlls is not used now will be used later*/}
          {props.showControlls ?
             <div className="pull-right">
                <Button bsSize="small" onClick={props.onDelete}><Glyphicon glyph="trash" /></Button>

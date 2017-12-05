@@ -38,9 +38,16 @@ export function updateTeams(id, cb) {
    }
 }
 
-export function toggleTeam(teamId) {
+export function toggleTeam(cmpId, teamId, cb) {
    return (dispatch, prevState) => {
-      dispatch({ type: 'TOGGLE_TEAM', teamId })
+      api.getMembers(cmpId, teamId)
+         .then((members) => {
+            var memberData = {};
+            memberData.members = members;
+            memberData.teamId = teamId;
+            return dispatch({ type: 'TOGGLE_TEAM', memberData });
+         })
+         .then(() => { if (cb) cb() })
    }
 }
 

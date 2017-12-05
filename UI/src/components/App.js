@@ -6,8 +6,8 @@ import Main from './Main/Main';
 
 function mapStateToProps(state) {
    return {
-      Prss: state.Prss,
-      Cmps: state.Cmps,
+      prss: state.prss,
+      cmps: state.cmps,
       teams: state.teams
    }
 }
