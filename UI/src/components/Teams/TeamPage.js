@@ -7,32 +7,33 @@ import { putTeam, delTeam, postTeam } from '../../api';
 export default class TeamPage extends Component {
    constructor(props) {
       super(props);
+
+      //initilize teams, grab all teams for user
       this.props.updateTeams(this.props.Prss.id);
-      this.props.updateMembers(1,1);
-      console.log("Constructor");
    }
 
-   updateTeam = (id) => {
-      if (this.props.teams === undefined)
-         this.props.updateTeams(this.props.Prss.id);
-   }
 
    toggleView = (teamId) => {
-      if (this.props.teams[teamId].members === {})
+      //check for membership data, only update when no membership data is available
+      if (Object.keys(this.props.teams[teamId].members).length  === 0)
          this.props.updateMembers(this.props.teams[teamId].cmpId ,teamId);
 
+      //toggle team toggles the member list on the screen
       this.props.toggleTeam(teamId);
    }
 
    render() {
       return (
       <section className="container">
+      {/*shows when the entire page is rendered again*/}
+      {/*As of now the entire page rerenders when a team is togled, should change in future*/}
       {console.log("Big Render")}
         <h1>Team Overview</h1>
         <ListGroup>
           {Object.keys(this.props.teams).map((teamNum, i) => {
             var team = this.props.teams[teamNum];
 
+            {/*Creates a team item with all the required knowledge*/}
             return <TeamItem
               key={i} {...team}
               toggleTeam = {() => this.toggleView(teamNum)}
@@ -46,7 +47,7 @@ export default class TeamPage extends Component {
   }
 }
 
-// A conversation list item
+// A Team Item
 const TeamItem = function (props) {
    return (
       <ListGroupItem className="clearfix">
@@ -65,6 +66,7 @@ const TeamItem = function (props) {
           {Object.keys(props.members).map((MemNum, i) => {
              var member = props.members[MemNum];
 
+             {/*passes member data and privlige*/}
              return <MemberItem
                key={i} {...member}
                leader = {props.leader || member.id === props.prss}/>

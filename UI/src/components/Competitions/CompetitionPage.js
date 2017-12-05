@@ -4,7 +4,7 @@ import { ListGroup, ListGroupItem, Button, Glyphicon } from 'react-bootstrap';
 import { ConfDialog } from '../concentrator';
 import { putCmp, delCmp, postCmp } from '../../api';
 import CmpModal from './CmpModal';
-//import './ConversationsOverview.css';
+
 export default class CompetitionPage extends Component {
    constructor(props) {
       super(props);

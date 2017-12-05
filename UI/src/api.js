@@ -93,11 +93,6 @@ export function signOut() {
    return del("Ssns/" + cookie);
 }
 
-/**
-  Register a user
-  @param {Object} user
-  @returns {Promise}
-*/
 export function registerUser(user) {
    return post("Prss", user)
 }
