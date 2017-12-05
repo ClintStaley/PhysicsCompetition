@@ -3,16 +3,15 @@ import { Link } from 'react-router-dom';
 import { ListGroup, ListGroupItem, Button, Glyphicon } from 'react-bootstrap';
 import { ConfDialog } from '../concentrator';
 import { putCmp, delCmp, postCmp } from '../../api';
-import CmpModal from './CmpModal';
+
 
 export default class CompetitionPage extends Component {
    constructor(props) {
       super(props);
+
+      //get all cmps from database
       this.props.updateCmps(this.props.Prss.id);
-      this.state = {
-         showModal: false,
-         showConfirmation: false,
-      }
+
    }
 
 
