@@ -9,7 +9,7 @@ const Home = (<h1>Home Page</h1>); // TODO make real home component
 
 class Main extends Component {
    signedIn() {
-      return Object.keys(this.props.Prss).length !== 0;
+      return Object.keys(this.props.prss).length !== 0;
    }
 
    signOut(event) {
@@ -25,7 +25,7 @@ class Main extends Component {
             <Navbar.Toggle />
             {this.signedIn() ?
                 <Navbar.Text key={1}>
-                    {`Signed in as: ${this.props.Prss.firstName} ${this.props.Prss.lastName}`}
+                    {`Signed in as: ${this.props.prss.firstName} ${this.props.prss.lastName}`}
                 </Navbar.Text>
               : ''
               }
@@ -71,7 +71,7 @@ class Main extends Component {
         <Switch>
           <Route exact path='/' children={Home} />
           <Route path='/Competition' render={() => <CompetitionPage {...this.props} />} />
-          <Route path='/Teams' render={() => <TeamPage {...this.props} />} />
+          <Route path='/Teams' component= {TeamPage} />
           <Route path='/signin' render={() => <SignIn {...this.props} />} />
           <Route path='/register' render={() => <Register {...this.props} />} />
         </Switch>

@@ -6,6 +6,7 @@ import {
 import { registerUser, errorTranslate } from '../../api';
 //import './Register.css';
 
+//FieldGroup item, will hold a field to be entered
 function FieldGroup({ id, label, help, ...props }) {
   return (
     <FormGroup controlId={id}>
@@ -19,6 +20,8 @@ function FieldGroup({ id, label, help, ...props }) {
 class Register extends Component {
    constructor(props) {
       super(props);
+
+      //start with empty values
       this.state = {
          firstName: '',
          lastName: '',
@@ -41,6 +44,7 @@ class Register extends Component {
          termsAccepted,
          role
       } = this.state;
+
       const user = {
          firstName,
          lastName,
@@ -49,11 +53,13 @@ class Register extends Component {
          termsAccepted,
          role
       };
+
+      //send user data to action creator
       registerUser(user)
          .then((res) => {
             if (res.ok)
                return // TODO show log in dialog
-            return res.json()
+            return res.json() //error detected
          })
          .then((err) => {
             if (err) {
@@ -66,6 +72,7 @@ class Register extends Component {
 
    handleChange(ev) {
       let newState = {};
+      //if checkbok modify checked, else modify value
       switch (ev.target.type) {
          case 'checkbox':
             newState[ev.target.id] = ev.target.checked;
@@ -73,19 +80,23 @@ class Register extends Component {
          default:
             newState[ev.target.id] = ev.target.value;
       }
+
+      //update changes made
       this.setState(newState);
    }
 
+   //just checks that all the fields are filled, and passwords match
    formValid() {
       let s = this.state;
       return s.email && s.lastName && s.password && s.password === s.passwordTwo &&
          s.termsAccepted;
    }
 
+//will display a box for sucess or failure, otherwise does nothing
    registerResult(status = "") {
     if (status === "error")
       return (
-        <Alert bsStyle="danger">
+        <Alert bsStyle="danger">//red background
           <h2>Oh no!</h2>
           <strong>Registration had the following warnings:</strong>
           {this.state.err.map((err, i) => <p key={i}>{errorTranslate(err.tag)}</p>)}
@@ -93,7 +104,7 @@ class Register extends Component {
       )
     else if (status === "success")
       return (
-        <Alert bsStyle="success">
+        <Alert bsStyle="success">//green background
           <h2>Registration successfull!</h2>
           <p>Do you want to sign in straight away?</p>
           <Button onClick={() =>
@@ -106,6 +117,7 @@ class Register extends Component {
       )
   }
 
+  //renders all of the fields
   render() {
     return (
       <div className="container">

@@ -1,6 +1,7 @@
 import * as api from '../api';
 import { history } from '../store';
 
+
 export function signIn(credidentials, cb) {
    return (dispatch, prevState) => {
       api.signIn(credidentials)
@@ -19,24 +20,46 @@ export function updateCmps(id, cb) {
    }
 }
 
+// Get team info, and augment each team description with empty members
+// and closed member-toggle.  Dispatch a team update with the augmented
+// team list.
 export function updateTeams(id, cb) {
    return (dispatch, prevState) => {
       api.getTeams(id)
-         .then((Teams) => dispatch({ type: 'UPDATE_TEAM', Teams }))
+         .then((teams) => {
+            Object.keys(teams).map((teamNum) => {
+             teams[teamNum].members = {};
+             teams[teamNum].toggled = false;
+          });
+          return dispatch({ type: 'UPDATE_TEAM', teams});
+         })
          .then(() => {if (cb) cb()})
 
    }
 }
 
-export function updateMembers(CmpId, TeamId, cb) {
+export function toggleTeam(cmpId, teamId, cb) {
    return (dispatch, prevState) => {
-      api.getMembers(CmpId, TeamId)
-         .then((Members) => {
-            var temp;
-            temp.Members = Members;
-            temp.TeamId = TeamId;
+      api.getMembers(cmpId, teamId)
+         .then((members) => {
+            var memberData = {};
+            memberData.members = members;
+            memberData.teamId = teamId;
+            return dispatch({ type: 'TOGGLE_TEAM', memberData });
          })
-         .then((MemberData) => dispatch({ type: 'POPULATE_TEAM', MemberData }))
+         .then(() => { if (cb) cb() })
+   }
+}
+
+export function updateMembers(cmpId, teamId, cb) {
+   return (dispatch, prevState) => {
+      api.getMembers(cmpId, teamId)
+         .then((members) => {
+            var memberData = {};
+            memberData.members = members;
+            memberData.teamId = teamId;
+            return dispatch({ type: 'POPULATE_TEAM', memberData });
+         })
          .then(() => { if (cb) cb() })
    }
 }

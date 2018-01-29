@@ -2,10 +2,11 @@ import { combineReducers } from 'redux';
 // import { routerReducer } from 'react-router-redux';
 
 
-import Prss from './Prss';
-import Cmps from './Cmps';
-import Teams from './Teams';
+import prss from './prss';
+import cmps from './cmps';
+import teams from './teams';
 
-const rootReducer = combineReducers({ Prss, Cmps, Teams });
+//combines all reducers
+const rootReducer = combineReducers({ prss, cmps, teams });
 
 export default rootReducer;

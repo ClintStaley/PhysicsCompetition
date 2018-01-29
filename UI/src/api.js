@@ -5,8 +5,8 @@ let cookie;
 headers.set('Content-Type', 'application/json');
 
 const reqConf = {
-   headers: headers,
-   credentials: 'include',
+   headers: headers,        // Indicate JSON content type
+   credentials: 'include',  // Send cookies
 }
 
 // Heper functions for the comon request types
@@ -58,12 +58,20 @@ export function del(endpoint) {
    })
 }
 
-// Functions for performing the api requests
+/* Functions for performing API actions.  All share these principles:
+
+ 1. They perform REST interface actions, and simple reprocessing of
+ data to/from REST that would reasonably be considered part of the API
+ behavior rather than a Redux action.
+
+ 2. A good example of 1 is the conversion of all JSON string bodies to
+ JS objects before returning, which they all do.
 
 /**
- * Sign a user into the service, returns the user data
- * @param {{user: string, password: string}} cred
- */
+  Sign a user into the service. Return the user data.
+
+  @param {{user: string, password: string}} cred
+*/
 export function signIn(cred) {
    console.log(cred);
    return post("Ssns", cred)
@@ -79,38 +87,19 @@ export function signIn(cred) {
 }
 
 /**
- * @returns {Promise} result of the sign out request
- */
+  @returns {Promise} result of the sign out request
+*/
 export function signOut() {
    return del("Ssns/" + cookie);
 }
 
-/**
- * Register a user
- * @param {Object} user
- * @returns {Promise}
- */
 export function registerUser(user) {
    return post("Prss", user)
 }
 
 export function getCmps(prsId) {
-/*   return get("Prss/" + prsId + "/Teams")
+   return get("Prss/" + prsId + "/Competition")
       .then((teamData) => teamData.json())
-      .then((response) => {
-         var promise = [];
-
-         console.log(response);
-         if (!response)
-            return {};
-
-         for (var i = 0; i < response.length; i++)
-            promise.push(getOneCmps(response[i].cmpId));
-
-         return Promise.all(promise);
-      })*/
-      return get("Prss/" + prsId + "/Competition")
-         .then((teamData) => teamData.json())
 }
 
 export function getOneCmps(cmpId) {
@@ -132,7 +121,15 @@ export function postCmp(body) {
 
 export function getTeams(prsId) {
    return get("Prss/" + prsId + "/Teams")
-      .then((teamData) => TeamData = teamData.json())
+      .then((teamData) => teamData.json())
+      .then((TeamData) => {
+         var Teams = {};
+         for (var i = 0;i < TeamData.length;i++){
+            Teams[TeamData[i].id] = TeamData[i];
+         }
+
+         return Teams;
+      })
 }
 
 export function putTeam(id, body) {
@@ -147,9 +144,21 @@ export function postteam(body) {
    return post('Teams', body)
 }
 
+/**
+  Return id -> member map rather than simple array of members,
+  which the API outta do, really.
+*/
 export function getMembers(cmpId, TeamId) {
-   return get("Cmps/" + cmpId + "/Teams" + TeamId + "/mmbs")
+   return get("Cmps/" + cmpId + "/Teams/" + TeamId + "/mmbs")
       .then((memberData) => memberData.json())
+      .then((memberData) => {
+         var members = {};
+
+         for (var i = 0; i < memberData.length;i++)
+            members[memberData[i].id] = memberData[i];
+
+         return members;
+      })
 }
 
 const errMap = {
@@ -201,12 +210,10 @@ const errMap = {
 }
 
 /**
- * TODO perhaps should return a Promise to confirm with the
- * rest of the api functions
- *
- * @param {string} errTag
- * @param {string} lang
- */
+  Translate an API error tag into an English or other language sentence.
+  @param {string} errTag
+  @param {string} lang
+*/
 export function errorTranslate(errTag, lang = 'en') {
    return errMap[lang][errTag] || 'Unknown Error!';
 }

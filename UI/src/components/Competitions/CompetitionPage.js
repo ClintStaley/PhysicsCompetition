@@ -3,16 +3,15 @@ import { Link } from 'react-router-dom';
 import { ListGroup, ListGroupItem, Button, Glyphicon } from 'react-bootstrap';
 import { ConfDialog } from '../concentrator';
 import { putCmp, delCmp, postCmp } from '../../api';
-import CmpModal from './CmpModal';
-//import './ConversationsOverview.css';
+
+
 export default class CompetitionPage extends Component {
    constructor(props) {
       super(props);
-      this.props.updateCmps(this.props.Prss.id);
-      this.state = {
-         showModal: false,
-         showConfirmation: false,
-      }
+
+      //get all cmps from database
+      //as of now will reget all cmps from database every tim epage is loaded
+      this.props.updateCmps(this.props.prss.id);
    }
 
 
@@ -20,8 +19,9 @@ export default class CompetitionPage extends Component {
       return (
       <section className="container">
         <h1>Competition Overview</h1>
+        {/*List all of the cmps by name for now*/}
         <ListGroup>
-          {this.props.Cmps.map((cmp, i) => {
+          {this.props.cmps.map((cmp, i) => {
             return <CompetitionItem
               key={i} {...cmp}/>
           })
@@ -37,6 +37,7 @@ const CompetitionItem = function (props) {
    return (
       <ListGroupItem className="clearfix">
          <Link to="#">{props.title}</Link>
+         {/*ShowControlls is not used now will be used later*/}
          {props.showControlls ?
             <div className="pull-right">
                <Button bsSize="small" onClick={props.onDelete}><Glyphicon glyph="trash" /></Button>
