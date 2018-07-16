@@ -6,7 +6,7 @@ var async = require('async');
 
 router.baseURL = '/Cmps';
 
-router.get('/', function (req, res) {
+router.get('/', (req, res) => {
    var email = req.query.email;
    var CtpId = req.query.CompetitionType;
    var cnn = req.cnn;
@@ -30,10 +30,10 @@ router.get('/', function (req, res) {
    }
 
    async.waterfall([
-   function (cb) {
+   (cb) => {
       cnn.chkQry(query, fillers, cb);
    },
-   function (result, fields, cb) {
+   (result, fields, cb) => {
       res.json(result);
 
       res.status(200);
@@ -41,12 +41,12 @@ router.get('/', function (req, res) {
       cb();
    }
    ],
-   function () {
+   () => {
       cnn.release();
    });
 });
 
-router.post('/', function (req, res) {
+router.post('/', (req, res) => {
    var vld = req.validator;  // Shorthands
    var ssn = req.session;
    var body = req.body;
@@ -54,7 +54,7 @@ router.post('/', function (req, res) {
 
    if (vld.checkAdmin())
       async.waterfall([
-      function (cb) {
+      (cb) => {
          //Get dupTitles if they exist
          if (vld.hasOnlyFields(body, ["title", "ctpId", "prms", "rules"], cb)) {
             body.ownerId = ssn.id;
@@ -63,7 +63,7 @@ router.post('/', function (req, res) {
                [body.title, body.ownerId], cb);
          }
       },
-      function (existingCmp, fields, cb) {
+      (existingCmp, fields, cb) => {
          //check dupTitle
          if (vld.check(!existingCmp.length, Tags.dupTitle, null, cb)) {
             // get the prmSchema from Ctp
@@ -71,7 +71,7 @@ router.post('/', function (req, res) {
                body.ctpId, cb);
          }
       },
-      function (Ctp, fields, cb) {
+      (Ctp, fields, cb) => {
          // If no duplicates, insert new competition
          if (vld.check(Ctp && Ctp.length, Tags.NoCompType, null, cb)) {
             try {
@@ -85,24 +85,24 @@ router.post('/', function (req, res) {
             }
          }
       },
-      function (result, fields, cb) {
+      (result, fields, cb) => {
          // Return location of inserted competition
          res.location(router.baseURL + '/' + result.insertId).end();
          cb();
       }],
-      function () {
+      () => {
          cnn.release();
       });
    else
       cnn.release();
 });
 
-router.get('/:id', function (req, res) {
+router.get('/:id', (req, res) => {
    var vld = req.validator;
 
    req.cnn.query('select Competition.id,ownerId,ctpId,title,prms,rules from ' +
       'Competition where id = ?', [req.params.id],
-      function (err, cmpArr) {
+      (err, cmpArr) => {
          if (vld.check(cmpArr.length, Tags.notFound)) {
             res.json(cmpArr[0]);
          }
@@ -110,7 +110,7 @@ router.get('/:id', function (req, res) {
       });
 });
 
-router.put('/:id', function (req, res) {
+router.put('/:id', (req, res) => {
    var vld = req.validator;
    var ssn = req.session;
    var body = req.body;
@@ -118,12 +118,12 @@ router.put('/:id', function (req, res) {
    var cmpTp;
 
    async.waterfall([
-   function (cb) {
+   (cb) => {
       if (vld.hasOnlyFields(body, ["title", "prms"]))
          cnn.query("select * from Competition where id = ?",
             [req.params.id], cb);
    },
-   function (qRes, fields, cb) {
+   (qRes, fields, cb) => {
       if (vld.check(qRes && qRes.length, Tags.notFound, null, cb) &&
          vld.checkPrsOK(qRes[0].ownerId, cb)) {
          cmpTp = qRes[0].ctpId;
@@ -135,17 +135,17 @@ router.put('/:id', function (req, res) {
             cb(null, null, cb);
       }
    },
-   function (titleRes, fields, cb) {
+   (titleRes, fields, cb) => {
       if (!body.title ||
          vld.check(!titleRes.length, Tags.dupTitle, null, cb))
          if (body.prms)
             async.waterfall([
-            function (cb) {
+            (cb) => {
                cnn.chkQry(
                   "select * from CompetitionType where id = ?",
                   [cmpTp], cb);
             }],
-            function (fields, Ctp) {
+            (fields, Ctp) => {
                if (vld.check(Ctp && Ctp.length, Tags.notFound, null, cb))
                   try {
                      var validation = validate(JSON.parse(body.prms),
@@ -162,21 +162,21 @@ router.put('/:id', function (req, res) {
             cnn.chkQry("update Competition set ? where id = ?",
                [req.body, req.params.id], cb);
    },
-   function (updRes, fields, cb) {
+   (updRes, fields, cb) => {
       res.status(200).end();
       cb();
    }],
-   function () {
+   () => {
       cnn.release();
    });
 });
 
-router.delete('/:id', function (req, res) {
+router.delete('/:id', (req, res) => {
    var vld = req.validator;
 
    if (vld.checkAdmin()) {
       req.cnn.query('delete from Competition where id = ?', [req.params.id],
-      function (err, result) {
+      (err, result) => {
          if (!err && vld.check(result.affectedRows, Tags.notFound))
             res.status(200).end();
          req.cnn.release();
@@ -187,7 +187,7 @@ router.delete('/:id', function (req, res) {
    }
 });
 
-router.get('/:id/WaitingSbms', function (req, res) {
+router.get('/:id/WaitingSbms', (req, res) => {
    var vld = req.validator;
    var cnn = req.cnn;
    var num = req.query.num;
@@ -196,7 +196,7 @@ router.get('/:id/WaitingSbms', function (req, res) {
       cnn.query('select id,teamId,content,response,score,subTime from Submit' +
          ' where cmpId = ? and response is null order by subTime DESC',
          [req.params.id],
-      function (err, result) {
+      (err, result) => {
          if (result.length) {
             if (num || num == 0)
                result = result.slice(0, num);

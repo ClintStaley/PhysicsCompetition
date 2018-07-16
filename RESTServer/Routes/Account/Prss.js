@@ -7,7 +7,7 @@ router.baseURL = '/Prss';
 
 
 
-router.get('/', function(req, res) {
+router.get('/', (req, res) => {
    var ssn = req.session;
    var clause = '';
    var fillers = [];
@@ -22,13 +22,13 @@ router.get('/', function(req, res) {
       fillers.push(ssn.id);
    }
    req.cnn.chkQry('select id, email from Person' + clause, fillers,
-   function(err, prsArr) {
+   (err, prsArr) => {
       res.json(prsArr);
       req.cnn.release();
    });
 });
 
-router.post('/', function(req, res) {
+router.post('/', (req, res) => {
    var vld = req.validator;  // Shorthands
    var body = req.body;
    var admin = req.session && req.session.isAdmin();
@@ -37,7 +37,7 @@ router.post('/', function(req, res) {
    body.whenRegistered = new Date();
 
    async.waterfall([
-   function(cb) { // Check properties and search for Email duplicates
+   (cb) => { // Check properties and search for Email duplicates
       if (vld.hasFields(body, ["email","firstName", "lastName", "password", "role"], cb) &&
        vld.chain(body.role === 0 || admin, Tags.noPermission)
        .chain(body.termsAccepted || admin, Tags.noTerms)
@@ -45,29 +45,29 @@ router.post('/', function(req, res) {
          cnn.chkQry('select * from Person where email = ?', body.email, cb);
       }
    },
-   function(existingPrss, fields, cb) {  // If no duplicates, insert new Person
+   (existingPrss, fields, cb) => {  // If no duplicates, insert new Person
       if (vld.check(!existingPrss.length, Tags.dupEmail, null, cb)) {
          body.termsAccepted = body.termsAccepted ? new Date() : null;
          console.log("I am posting in Prss");
          cnn.chkQry('insert into Person set ?', body, cb);
       }
    },
-   function(result, fields, cb) { // Return location of inserted Person
+   (result, fields, cb) => { // Return location of inserted Person
       res.location(router.baseURL + '/' + result.insertId).end();
       cb();
    }],
-   function() {
+   () => {
       cnn.release();
    });
 });
 
-router.get('/:id', function(req, res) {
+router.get('/:id', (req, res) => {
    var vld = req.validator;
    var prs;
 
    if (vld.checkPrsOK(req.params.id)) {
       req.cnn.query('select * from Person where id = ?', [req.params.id],
-      function(err, prsArr) {
+      (err, prsArr) => {
          if (vld.check(prsArr.length, Tags.notFound)) {
              prs = prsArr[0];
              prs.termsAccepted = prs.termsAccepted
@@ -86,14 +86,14 @@ router.get('/:id', function(req, res) {
    }
 });
 
-router.put('/:id', function(req, res) {
+router.put('/:id', (req, res) => {
    var vld = req.validator;
    var body = req.body;
    var admin = req.session.isAdmin();
    var cnn = req.cnn;
 
    async.waterfall([
-   function(cb) {
+   (cb) => {
       if (
         (vld.checkPrsOK(req.params.id, cb)) &&
         vld.hasOnlyFields(body,
@@ -104,7 +104,7 @@ router.put('/:id', function(req, res) {
         null, cb))
          cnn.chkQry("select * from Person where id = ? ", req.params.id, cb);
    },
-   function(qRes, fields, cb) {
+   (qRes, fields, cb) => {
       if (vld.check(admin || !body.password ||
        qRes[0].password === body.oldPassword, Tags.oldPwdMismatch, null, cb)) {
          delete req.body.oldPassword;
@@ -112,22 +112,22 @@ router.put('/:id', function(req, res) {
           [req.body, req.params.id], cb);
       }
    },
-   function(updRes, fields, cb) {
+   (updRes, fields, cb) => {
       res.status(200).end();
       cb();
    }],
-   function() {
+   () => {
       cnn.release();
    });
 });
 
-router.delete('/:id', function(req, res) {
+router.delete('/:id', (req, res) => {
    var vld = req.validator;
 
    if (vld.checkAdmin())
       req.cnn.query('DELETE from Person where id = ?',
        [ req.params.id],
-      function (err, result) {
+       (err, result) => {
          if (!err && vld.check(result.affectedRows, Tags.notFound))
             res.status(200).end();
          req.cnn.release();
@@ -137,7 +137,7 @@ router.delete('/:id', function(req, res) {
    }
 });
 
-router.get('/:id/Teams', function(req, res) {
+router.get('/:id/Teams', (req, res) => {
    var vld = req.validator;
    var teams = [];
 
@@ -145,7 +145,7 @@ router.get('/:id/Teams', function(req, res) {
          req.cnn.chkQry('select id,bestScore,teamName,cmpId,ownerId,lastSubmit,'
             + 'canSubmit from Team,Membership where ' +
             'personId =  ? and teamId = Team.id', [req.params.id],
-      function (err, memberTeam) {
+         (err, memberTeam) => {
          res.json(memberTeam);
          res.status(200);
          req.cnn.release();
@@ -156,7 +156,7 @@ router.get('/:id/Teams', function(req, res) {
 
 });
 
-router.get('/:id/Competition', function(req, res) {
+router.get('/:id/Competition', (req, res) => {
    var vld = req.validator;
    var teams = [];
 
@@ -165,7 +165,7 @@ router.get('/:id/Competition', function(req, res) {
          'rules, curTeam from Competition,Team,Membership where ' +
             'personId =  ? and teamId = Team.id and cmpId = Competition.id',
              [req.params.id],
-      function (err, Cmps) {
+       (err, Cmps) => {
          res.json(Cmps);
          res.status(200);
          req.cnn.release();

@@ -5,14 +5,14 @@ var async = require('async');
 
 router.baseURL = '/Cmps/:cmpId/Teams/:teamId/Sbms';
 
-router.get('/', function (req, res) {
+router.get('/', (req, res) => {
    var num = req.query.num;
 
    req.cnn.chkQry('select id,teamId,content,response,score,subTime from ' +
       'Submit where cmpId = ? && teamId = ? order by subTime DESC',
       [req.params.cmpId,req.params.teamId],
    //function that closes cnn
-   function (err, result) {
+   (err, result) => {
       if (num || num == 0)
          result = result.slice(0,num);
 
@@ -24,13 +24,13 @@ router.get('/', function (req, res) {
    });
 });
 
-router.post('/', function (req, res) {
+router.post('/', (req, res) => {
    var vld = req.validator;  // Shorthands
    var body = req.body;
    var cnn = req.cnn;
 
    async.waterfall([
-   function (cb) {
+   (cb) => {
       if (vld.hasOnlyFields(body, ["content"], cb)) {
          if (vld.check(( !body.response || vld.checkAdmin()),
                Tags.forbiddenField,null,cb)) {
@@ -41,23 +41,23 @@ router.post('/', function (req, res) {
          }
       }
    },
-   function (result, fields, cb) {
+   (result, fields, cb) => {
       // Return location of inserted Submissions
       res.location(router.baseURL + '/' + result.insertId).end();
       cb();
    }],
-   function () {
+   () => {
       cnn.release();
    });
 });
 
-router.get('/:id', function (req, res) {
+router.get('/:id', (req, res) => {
    var vld = req.validator;
 
    req.cnn.query('select id,teamId,content,response,score,subTime from ' +
       'Submit where id = ? && cmpId = ? && teamId = ?'
         , [req.params.id,req.params.cmpId,req.params.teamId],
-   function (err, teamArr) {
+   (err, teamArr) => {
       if (vld.check(teamArr.length, Tags.notFound)) {
          res.json(teamArr[0]);
       }
@@ -65,13 +65,13 @@ router.get('/:id', function (req, res) {
    });
 });
 
-router.put('/:id', function (req, res) {
+router.put('/:id', (req, res) => {
    var vld = req.validator;  // Shorthands
    var body = req.body;
    var cnn = req.cnn;
 
    async.waterfall([
-   function (cb) {
+   (cb) => {
       if (vld.hasOnlyFields(body, ["response"], cb)) {
          if (vld.checkAdmin(cb)) {
             body.cmpId = req.params.cmpId;
@@ -83,17 +83,17 @@ router.put('/:id', function (req, res) {
          }
       }
    },
-   function (result, err, cb) {
+   (result, err, cb) => {
       if (vld.check(result && result.length , Tags.notFound, null, cb))
          cnn.query("update Submit set ? where id = ?",[req.body, req.params.id]
             ,cb);
    },
-   function (result, fields, cb) {
+   (result, fields, cb) => {
       // Return location of inserted Submissions
       res.location(router.baseURL + '/' + result.insertId).end();
       cb();
    }],
-   function () {
+   () => {
       res.status(200);
       cnn.release();
    });

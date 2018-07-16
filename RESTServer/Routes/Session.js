@@ -14,12 +14,12 @@ var Session = function Session(user) {
    this.id = user.id;
    this.email = user.email;
    this.role = user.role;
-   
+
    this.loginTime = new Date().getTime();
    this.lastUsed = new Date().getTime();
 };
 
-Session.prototype.isAdmin = function () {
+Session.prototype.isAdmin = () => {
    return this.role === 1;
 };
 
@@ -33,10 +33,10 @@ Session.prototype.isAdmin = function () {
 exports.makeSession = function makeSession(user, res) {
    var authToken = crypto.randomBytes(16).toString('hex');  // Create random auth token
    var session = new Session(user);
-   
+
    res.cookie(cookieName, authToken, {maxAge: duration, httpOnly: true}); // 1
    sessions[authToken] = session;
-   
+
    return authToken;
 };
 

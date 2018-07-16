@@ -5,11 +5,11 @@ var async = require('async');
 
 router.baseURL = '/Cmps/:cmpId/Teams/:teamId/Mmbs';
 
-router.get('/', function (req, res) {
+router.get('/', (req, res) => {
 
    req.cnn.chkQry('select id,firstName,lastName,email from Person,Membership' +
          ' where personId = id && teamId = ?', [req.params.teamId],
-   function (err, result) {
+   (err, result) => {
       res.json(result);
 
       res.status(200);
@@ -18,14 +18,14 @@ router.get('/', function (req, res) {
    });
 });
 
-router.post('/', function (req, res) {
+router.post('/', (req, res) => {
    var vld = req.validator;  // Shorthands
    var ssn = req.session;
    var body = req.body;
    var cnn = req.cnn;
 
    async.waterfall([
-   function (cb) {
+ (cb) => {
       //
       if (vld.hasFields(body, ["personId"], cb)) {
          body.teamId = req.params.teamId;
@@ -33,7 +33,7 @@ router.post('/', function (req, res) {
                body.teamId, cb);
       }
    },
-   function (result, fields, cb) {
+   (result, fields, cb) => {
       //check if post is from admin or team leader
       if (vld.check(ssn && (ssn.isAdmin() ||
             (result && result.length && ssn.id == result[0].ownerId)
@@ -41,33 +41,33 @@ router.post('/', function (req, res) {
          cnn.chkQry('select * from Membership where personId = ? && teamId = ?',
             [body.personId,body.teamId], cb);
    },
-   function (result, fields, cb) {
+   (result, fields, cb) => {
       if (vld.check(result && !result.length, Tags.dupEnrollment, null, cb)) {
          cnn.chkQry('insert into Membership set ?', body, cb);
 
       }
    },
-   function (result, fields, cb) {
+   (result, fields, cb) => {
       // Return location of inserted Member
       res.location(router.baseURL + '/' + result.insertId).end();
       cb();
    }],
-   function () {
+   () => {
       cnn.release();
    });
 });
 
-router.delete('/:id', function (req, res) {
+router.delete('/:id', (req, res) => {
    var vld = req.validator;
    var ssn = req.session;
    var cnn = req.cnn;
 
    async.waterfall([
-   function (cb) {
+   (cb) => {
       cnn.chkQry('select ownerId from Team where id = ?',
          [req.params.teamId], cb);
    },
-   function (result, fields, cb) {
+   (result, fields, cb) => {
       if (vld.check(result && result.length , Tags.notFound, null, cb))
          if (vld.chain(ssn && (ssn.isAdmin() ||
                ssn.id == result[0].ownerId || ssn.id == req.params.id),
@@ -77,7 +77,7 @@ router.delete('/:id', function (req, res) {
             req.cnn.query('delete from Membership where personId = ? && teamId = ?'
                 , [req.params.id, req.params.teamId], cb);
    }],
-   function (err, result) {
+   (err, result) => {
       if (!err && vld.check(result.affectedRows, Tags.notFound))
          res.status(200).end();
       cnn.release();
