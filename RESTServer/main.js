@@ -71,7 +71,7 @@ app.use('/Cmps/:cmpId/Teams/:teamId/Mmbs',
 // auto_increment keys to start at 1, and reinserts one admin user.
 app.delete('/DB', function (req, res) {
    var resetTables =
-         ["Person","CompetitionType","Competition","Teams","Submits"];
+         ["Person","CompetitionType","Competition","Team","Submit", "Membership"];
 
    if (!req.session.isAdmin()) {
       req.cnn.release();
