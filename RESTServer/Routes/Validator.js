@@ -41,7 +41,7 @@ Validator.Tags = {
 Validator.prototype.check = function (test, tag, params, cb) {
    if (!test)
       this.errors.push({tag: tag, params: params});
-   
+
    if (this.errors.length) {
       if (this.res) {
          if (this.errors[0].tag === Validator.Tags.noPermission)
@@ -78,24 +78,22 @@ Validator.prototype.checkPrsOK = function (prsId, cb) {
 };
 
 Validator.prototype.hasOnlyFields = function (obj, fieldList) {
-   var self = this;
-   
-   Object.keys(obj).forEach(function (prop) {
-      self.chain(fieldList.indexOf(prop) >= 0, Validator.Tags.forbiddenField, [prop]);
+
+   Object.keys(obj).forEach((prop) => {
+      this.chain(fieldList.indexOf(prop) >= 0, Validator.Tags.forbiddenField, [prop]);
    });
-   
+
    return this;
 };
 
 // Check presence of truthy property in |obj| for all fields in fieldList
 Validator.prototype.hasFields = function (obj, fieldList, cb) {
-   var self = this;
-   
-   fieldList.forEach(function (name) {
-      self.chain(obj.hasOwnProperty(name) && obj[name] !== "" && obj[name]
+
+   fieldList.forEach((name) => {
+      this.chain(obj.hasOwnProperty(name) && obj[name] !== "" && obj[name]
          !== null && obj[name] !== undefined, Validator.Tags.missingField, [name]);
    });
-   
+
    return this.check(true, null, null, cb);
 };
 
