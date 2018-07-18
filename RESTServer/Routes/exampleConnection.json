@@ -1,6 +1,6 @@
 {
     "host": "localhost",
-    "user": "Your username",
-    "password": "your password",
-    "database": "VCSdb"
+    "user": "Your mysql username",
+    "password": "your mysql password",
+    "database": "CmpDB"
 }
