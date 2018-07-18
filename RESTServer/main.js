@@ -9,6 +9,21 @@ var async = require('async');
 
 var app = express();
 
+// Manage CORS POS.
+app.use(function(req, res, next) {
+   console.log("Handling " + req.path + '/' + req.method);
+   res.header("Access-Control-Allow-Origin", "http://localhost:3001");
+   res.header("Access-Control-Allow-Credentials", true);
+   res.header("Access-Control-Allow-Headers", "Content-Type");
+   res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
+   res.header("Access-Control-Expose-Headers", "Content-Type, Location");
+  next();
+});
+
+// No further processing needed for options calls.
+app.options("/*", function(req, res) {
+   res.status(200).end();
+});
 
 // Static path to index.html and all clientside js
 app.use(express.static(path.join(__dirname, 'public')));
@@ -22,24 +37,11 @@ app.use(function (req, res, next) {
    next();
 });
 
-app.use(function(req, res, next) {
-   res.header("Access-Control-Allow-Origin", "*");
-   next();
-});
-
 // Attach cookies to req as req.cookies.<cookieName>
 app.use(cookieParser());
 
 // Find relevant Session if any, and attach as req.session
 app.use(Session.router);
-
-//skip preflight
-app.options("/*", function(req, res, next){
-   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-   res.header('Access-Control-Allow-Headers',
-      'Content-Type, Authorization, Content-Length, X-Requested-With');
-   res.sendStatus(200);
-});
 
 // Check general login.  If OK, add Validator to |req| and continue processing,
 // otherwise respond immediately with 401 and noLogin error tag.
