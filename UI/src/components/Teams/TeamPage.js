@@ -24,10 +24,13 @@ class TeamPage extends Component {
       //if (Object.keys(this.props.teams[teamId].members).length  === 0)
          //this.props.updateMembers(this.props.teams[teamId].cmpId ,teamId);
 
-      console.log(this.props.teams[teamId]);
-
       //toggle team toggles the member list on the screen
       this.props.toggleTeam(this.props.teams[teamId].cmpId ,teamId);
+   }
+
+   deleteTeam = (teamNum) => {
+
+      this.props.deleteTeam(this.props.teams[teamNum].cmpId, teamNum);
    }
 
    render() {
@@ -45,6 +48,7 @@ class TeamPage extends Component {
             return <TeamItem
               key={i} {...team}
               toggleTeam = {() => this.toggleView(teamNum)}
+              deleteTeam = {() => this.deleteTeam(teamNum)}
               leader = {team.ownerId === this.props.prss.id}
               prss = {this.props.prss.id}/>
           })
@@ -67,6 +71,7 @@ const TeamItem = function (props) {
          {props.leader ?
             <div className="pull-right">
                <Button bsSize="small" onClick={props.onEdit}><Glyphicon glyph="edit" /></Button>
+               <Button bsSize="small" onClick={props.deleteTeam}><Glyphicon glyph="trash" /></Button>
             </div>
          : ''}
          {props.toggled ?

@@ -38,6 +38,15 @@ export function updateTeams(id, cb) {
    }
 }
 
+export function deleteTeam(cmpId, teamId, cb) {
+   return (dispatch, prevState) => {
+      api.delTeam(cmpId , teamId).then(() =>
+          dispatch({ type: 'DELETE_TEAM', teamId})
+       ).then(() => {if (cb) cb()})
+   }
+}
+
+
 export function toggleTeam(cmpId, teamId, cb) {
    return (dispatch, prevState) => {
       api.getMembers(cmpId, teamId)
