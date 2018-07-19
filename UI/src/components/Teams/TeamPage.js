@@ -40,20 +40,20 @@ class TeamPage extends Component {
 
 
    openModal = (team) => {
-      const newState = { showModal: true };
-      if (team)
-         newState['editCnv'] = team;
-      this.setState(newState);
+//      const newState = { showModal: true };
+//      if (team)
+//         newState['editCnv'] = team;
+      this.setState({ showModal: true });
    }
 
    modalDismiss = (result) => {
       if (result.status === "OK") {
-         if (this.state.editCnv)
-            this.updateCnv(result);
-         else
-            this.newCnv(result);
+//         if (this.state.editCnv)
+   //         this.updateCnv(result);
+      //   else
+         //   this.newCnv(result);
       }
-      this.setState({ showModal: false, editCnv: null });
+      this.setState({ showModal: false });
    }
 
 
@@ -68,6 +68,11 @@ class TeamPage extends Component {
 
    deleteTeam = (teamNum) => {
       this.props.deleteTeam(this.props.teams[teamNum].cmpId, teamNum);
+   }
+
+   deleteMember = (memberId, teamId) => {
+      //add delete member
+      this.props.deleteTeam(this.props.teams[teamId].cmpId, teamId);
    }
 
    render() {
@@ -86,9 +91,14 @@ class TeamPage extends Component {
             return <TeamItem
               key={i} {...team}
               toggleTeam = {() => this.toggleView(teamNum)}
+
+              openModal = {() => this.openModal()}
+              showModal = {this.state.showModal}
+              closeModel = {(team) => this.modalDismiss(team)}
+
               openConfirmation = {() => this.openConfirmation()}
               showConfirmation = {this.state.showConfirmation}
-              deleteTeam = {() => this.deleteTeam(teamNum)}
+
               closeConfirmation = {(res) => this.closeConfirmation(res, teamNum)}
 
               leader = {team.ownerId === this.props.prss.id}
@@ -112,16 +122,15 @@ const TeamItem = function (props) {
       }
          {props.leader ?
             <div className="pull-right">
-               <Button bsSize="small" onClick={props.onEdit}><Glyphicon glyph="edit" /></Button>
+               <Button bsSize="small" onClick={props.openModal}><Glyphicon glyph="edit" /></Button>
                 <TeamModel
                    showModal={props.showModal}
-                   title={props.editCnv ? "Edit title" : "New Conversation"}
-                   cnv={props.editCnv}
-                   onDismiss={props.modalDismiss} />
+                   title={"Test Model"}
+                   onDismiss={props.closeModel} />
                <Button bsSize="small" onClick={props.openConfirmation}><Glyphicon glyph="trash" /></Button>
                 <ConfDialog
                   show={props.showConfirmation}
-                  title="Delete conversation"
+                  title="Delete Team"
                   body={`Are you sure you want to delete the Team '${props.teamName}'`}
                   buttons={['Yes', 'Abort']}
                   onClose={props.closeConfirmation} />
@@ -151,8 +160,8 @@ const MemberItem = function (props) {
    <Link to="#">{props.firstName}</Link>
       {props.privlige ?
          <div className="pull-right">
-            <Button bsSize="small" onClick={props.onDelete}><Glyphicon glyph="trash" /></Button>
-            <Button bsSize="small" onClick={props.onEdit}><Glyphicon glyph="edit" /></Button>
+            <Button bsSize="small" onClick={props.DeleteMember}><Glyphicon glyph="trash" /></Button>
+            <Button bsSize="small" onClick={props.EditMember}><Glyphicon glyph="edit" /></Button>
          </div>
       : ''}
    </ListGroupItem>

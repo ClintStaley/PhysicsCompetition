@@ -49,7 +49,7 @@ export default class TeamModel extends Component {
           controlId="formBasicText"
           validationState={this.getValidationState()}
         >
-          <ControlLabel>Conversation Title</ControlLabel>
+          <ControlLabel>Team Name</ControlLabel>
           <FormControl
             type="text"
             value={this.state.cnvTitle}
