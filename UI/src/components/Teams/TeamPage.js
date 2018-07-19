@@ -6,6 +6,7 @@ import { ListGroup, ListGroupItem, Button, Glyphicon } from 'react-bootstrap';
 import { ConfDialog } from '../concentrator';
 import * as actionCreators from '../../actions/actionCreators';
 import { putTeam, delTeam, postTeam } from '../../api';
+import TeamModel from './TeamModel'
 
 class TeamPage extends Component {
    constructor(props) {
@@ -93,8 +94,12 @@ const TeamItem = function (props) {
          {props.leader ?
             <div className="pull-right">
                <Button bsSize="small" onClick={props.onEdit}><Glyphicon glyph="edit" /></Button>
+                <TeamModel
+                   showModal={props.showModal}
+                   title={props.editCnv ? "Edit title" : "New Conversation"}
+                   cnv={props.editCnv}
+                   onDismiss={props.modalDismiss} />
                <Button bsSize="small" onClick={props.openConfirmation}><Glyphicon glyph="trash" /></Button>
-
                 <ConfDialog
                   show={props.showConfirmation}
                   title="Delete conversation"
