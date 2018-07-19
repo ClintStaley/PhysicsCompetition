@@ -77,10 +77,10 @@ create table Submit
 
 
 create table Membership (
-   personId int not null,
+   prsId int not null,
    teamId int not null,
 
-   constraint FKTMembership_personId foreign key (personId) references
+   constraint FKTMembership_personId foreign key (prsId) references
     Person(id) on delete cascade on update cascade,
 
    constraint FKMembership_teamId foreign key (teamId) references
@@ -102,7 +102,7 @@ insert into Competition (ownerId, ctpId, title,prms)
 insert into Team (teamName, cmpId, ownerId)
             VALUES ("Team1", 1, 1);
 
-insert into Membership (personId, teamId)
+insert into Membership (prsId, teamId)
             VALUES (1,     1);
 
 select * from Person;

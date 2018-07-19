@@ -144,7 +144,7 @@ router.get('/:id/Teams', (req, res) => {
    if (vld.checkPrsOK(req.params.id))
          req.cnn.chkQry('select id,bestScore,teamName,cmpId,ownerId,lastSubmit,'
             + 'canSubmit from Team,Membership where ' +
-            'personId =  ? and teamId = Team.id', [req.params.id],
+            'prsId =  ? and teamId = Team.id', [req.params.id],
          (err, memberTeam) => {
          res.json(memberTeam);
          res.status(200);
@@ -161,9 +161,9 @@ router.get('/:id/Competition', (req, res) => {
    var teams = [];
 
    if (vld.checkPrsOK(req.params.id))
-         req.cnn.chkQry('select Competition.id, Competition.ownerId, ctpId, title, prms, ' +
+         req.cnn.chkQry('select distinct Competition.id, Competition.ownerId, ctpId, title, prms, ' +
          'rules, curTeam from Competition,Team,Membership where ' +
-            'personId =  ? and teamId = Team.id and cmpId = Competition.id',
+            'prsId =  ? and teamId = Team.id and cmpId = Competition.id',
              [req.params.id],
        (err, Cmps) => {
          res.json(Cmps);

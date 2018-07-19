@@ -10,17 +10,20 @@ export default class CompetitionPage extends Component {
       super(props);
 
       //get all cmps from database
-      //as of now will reget all cmps from database every tim epage is loaded
+      //as of now will reget all cmps from database every time page is loaded
       this.props.updateCmps(this.props.prss.id);
+
    }
 
 
    render() {
       return (
       <section className="container">
-        <h1>Competition Overview</h1>
+        <h1>Current Competition Overview</h1>
         {/*List all of the cmps by name for now*/}
+        {/*only will show the cmps that person is a part of*/}
         <ListGroup>
+
           {this.props.cmps.map((cmp, i) => {
             return <CompetitionItem
               key={i} {...cmp}/>

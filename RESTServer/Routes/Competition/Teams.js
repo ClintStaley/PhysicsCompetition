@@ -57,7 +57,7 @@ router.post('/', (req, res) => {
       res.location(router.baseURL + '/' + result.teamId);
 
       //save team data to include team leader as a member in member table
-      MemberData.personId = body.ownerId;
+      MemberData.prsId = body.ownerId;
       MemberData.teamId = result.insertId;
 
       if (rules) {
@@ -95,8 +95,8 @@ router.post('/', (req, res) => {
    },
    (res, fields, cb) => {
       //put team leader into member
-   cnn.chkQry('insert into Membership set personId = ?, teamId = ?',
-      [MemberData.personId,MemberData.teamId], cb);
+   cnn.chkQry('insert into Membership set prsId = ?, teamId = ?',
+      [MemberData.prsId,MemberData.teamId], cb);
    }],
    () => {
       res.end();
