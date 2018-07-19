@@ -25,7 +25,7 @@ class TeamPage extends Component {
    }
 
    openConfirmation = (cnv) => {
-      this.setState({ delCnv: cnv, showConfirmation: true })
+      this.setState({showConfirmation: true })
    }
 
    closeConfirmation = (res,  teamNum) => {
@@ -37,6 +37,25 @@ class TeamPage extends Component {
    openConfirmation = (cnv) => {
       this.setState({ delCnv: cnv, showConfirmation: true })
    }
+
+
+   openModal = (team) => {
+      const newState = { showModal: true };
+      if (team)
+         newState['editCnv'] = team;
+      this.setState(newState);
+   }
+
+   modalDismiss = (result) => {
+      if (result.status === "OK") {
+         if (this.state.editCnv)
+            this.updateCnv(result);
+         else
+            this.newCnv(result);
+      }
+      this.setState({ showModal: false, editCnv: null });
+   }
+
 
    toggleView = (teamId) => {
       //check for membership data, only update when no membership data is available
