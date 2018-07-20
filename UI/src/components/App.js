@@ -12,13 +12,13 @@ function mapStateToProps(state) {
    }
 }
 
-function mapDispachToProps(dispatch) {
+function mapDispatchToProps(dispatch) {
    return bindActionCreators(actionCreators, dispatch);
 }
 
 const App = withRouter(connect(
    mapStateToProps,
-   mapDispachToProps,
+   mapDispatchToProps,
 )(Main));
 
 export default App;

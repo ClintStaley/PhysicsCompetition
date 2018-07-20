@@ -9,26 +9,31 @@ var Validator = function (req, res) {
 // List of errors, and their corresponding resource string tags
 Validator.Tags = {
    noPermission: "noPermission",    // Login lacks permission (engenders 403 code).
-   missingField: "missingField",    // Field missing from request. Params[0] is field name
-   badValue: "badValue",            // Field has bad value.  Params[0] gives field name
+   missingField: "missingField",    // Field named by params[0] is missing
+   badValue: "badValue",            // Field named by params[0] has bad value.
    notFound: "notFound",            // Entity not present in DB
    badLogin: "badLogin",            // Email/password combination invalid
    dupEmail: "dupEmail",            // Email duplicates an existing email
    noTerms: "noTerms",              // Acceptance of terms is required.
-   noOldPwd: "noOldPwd",            // Change of password requires an old password
+   noOldPwd: "noOldPwd",            // Password change requires old password
    oldPwdMismatch: "oldPwdMismatch",// Old password doesn't match
-   dupTitle: "dupTitle",            // Title duplicates an existing Conversation title
+   dupTitle: "dupTitle",            // Title duplicates an existing title
    dupEnrollment: "dupEnrollment",  // Duplicate enrollment
    forbiddenField: "forbiddenField",// Field in body not allowed
-   badBodyFormat: "badBodyFormat",   // Body didn't parse as JSON
-   cantRemoveLeader: "CannotRemoveLeader",
+   badBodyFormat: "badBodyFormat",  // Body didn't parse as JSON
+   cantRemoveLeader: "CannotRemoveLeader",    // Team leader is required
+
+   // CAS FIX: We need absolute naming consistency, including capitalization
+   // rules.  These should be lowercase.  And, notFound would probably cover
+   // the NoCompType anyway.
    NoCompType: "CompetitionTypeDoesNotExist",
    InvalidPrms: "Invalid Parameters"
 };
 
-// Check |test|.  If false, add an error with tag and possibly empty array
-// of qualifying parameters, e.g. name of missing field if tag is
-// Tags.missingField.
+// Check |test|.  If false, add an error with tag and possibly related
+// parameters, e.g. name of missing field if tag is Tags.missingField.
+// Parameter |err| is either a single error tag, or an array comprising
+// an error tag followed by parameters.
 //
 // Regardless, check if any errors have accumulated, and if so, close the
 // response with a 400 and a list of accumulated errors, and throw
@@ -38,9 +43,13 @@ Validator.Tags = {
 // and it may be relied upon to close a response with an appropriate error
 // list and call an error handler (e.g. a waterfall default function),
 // leaving the caller to cover the "good" case only.
-Validator.prototype.check = function (test, tag, params, cb) {
-   if (!test)
-      this.errors.push({tag: tag, params: params});
+Validator.prototype.check = function (test, err, cb) {
+   if (!test) {
+      if (Array.isArray(err))
+         this.errors.push({tag: err[0], params: err.slice(1)});
+      else
+         this.errors.push({tag: err, params: null});
+   }
 
    if (this.errors.length) {
       if (this.res) {
@@ -67,14 +76,14 @@ Validator.prototype.chain = function (test, tag, params) {
 
 Validator.prototype.checkAdmin = function (cb) {
    return this.check(this.session && this.session.isAdmin(),
-      Validator.Tags.noPermission, null, cb);
+      Validator.Tags.noPermission, cb);
 };
 
 // Validate that AU is the specified person or is an admin
 Validator.prototype.checkPrsOK = function (prsId, cb) {
    return this.check(this.session &&
       (this.session.isAdmin() || this.session.id == prsId),
-      Validator.Tags.noPermission, null, cb);
+      Validator.Tags.noPermission, cb);
 };
 
 Validator.prototype.hasOnlyFields = function (obj, fieldList) {
@@ -94,7 +103,7 @@ Validator.prototype.hasFields = function (obj, fieldList, cb) {
          !== null && obj[name] !== undefined, Validator.Tags.missingField, [name]);
    });
 
-   return this.check(true, null, null, cb);
+   return this.check(true, null, cb);
 };
 
 module.exports = Validator;

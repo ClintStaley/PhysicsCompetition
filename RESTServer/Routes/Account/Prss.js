@@ -5,8 +5,6 @@ var async = require('async');
 
 router.baseURL = '/Prss';
 
-
-
 router.get('/', (req, res) => {
    var ssn = req.session;
    var clause = '';
@@ -41,12 +39,12 @@ router.post('/', (req, res) => {
       if (vld.hasFields(body, ["email","firstName", "lastName", "password", "role"], cb) &&
        vld.chain(body.role === 0 || admin, Tags.noPermission)
        .chain(body.termsAccepted || admin, Tags.noTerms)
-       .check(body.role === 0 || body.role === 1, Tags.badValue, ["role"], cb)) {
+       .check(body.role === 0 || body.role === 1, [Tags.badValue, "role"], cb)) {
          cnn.chkQry('select * from Person where email = ?', body.email, cb);
       }
    },
    (existingPrss, fields, cb) => {  // If no duplicates, insert new Person
-      if (vld.check(!existingPrss.length, Tags.dupEmail, null, cb)) {
+      if (vld.check(!existingPrss.length, Tags.dupEmail, cb)) {
          body.termsAccepted = body.termsAccepted ? new Date() : null;
          console.log("I am posting in Prss");
          cnn.chkQry('insert into Person set ?', body, cb);
@@ -100,13 +98,12 @@ router.put('/:id', (req, res) => {
         ["firstName", "lastName", "password", "oldPassword", "role"])
        .chain(!("password" in body) || body.password, Tags.badValue, ["password"])
        .chain(!body.role || admin && body.role === 1, Tags.badValue, ["role"])
-       .check(!body.password || body.oldPassword || admin, Tags.noOldPwd,
-        null, cb))
+       .check(!body.password || body.oldPassword || admin, Tags.noOldPwd, cb))
          cnn.chkQry("select * from Person where id = ? ", req.params.id, cb);
    },
    (qRes, fields, cb) => {
       if (vld.check(admin || !body.password ||
-       qRes[0].password === body.oldPassword, Tags.oldPwdMismatch, null, cb)) {
+       qRes[0].password === body.oldPassword, Tags.oldPwdMismatch, cb)) {
          delete req.body.oldPassword;
          cnn.chkQry("update Person set ? where id = ?",
           [req.body, req.params.id], cb);

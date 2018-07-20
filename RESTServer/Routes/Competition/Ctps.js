@@ -31,7 +31,7 @@ router.post('/', (req, res) => {
       },
       (existingCtp, fields, cb) => {
          // If no duplicates, insert new competitionType
-         if (vld.check(!existingCtp.length, Tags.dupTitle, null, cb)) {
+         if (vld.check(!existingCtp.length, Tags.dupTitle, cb)) {
             cnn.chkQry('insert into CompetitionType set ?', body, cb);
          }
       },
@@ -71,7 +71,7 @@ router.put('/:id', (req, res) => {
             req.params.id, cb);
    },
    (qRes, fields, cb) => {
-      if (vld.check(qRes.length, Tags.notFound, null, cb)) {
+      if (vld.check(qRes.length, Tags.notFound, cb)) {
          if (body.title)
             cnn.chkQry('select * from CompetitionType where title = ?',
                body.title, cb);
@@ -81,7 +81,7 @@ router.put('/:id', (req, res) => {
    },
    (titleRes, fields, cb) => {
       if (!body.title ||
-         vld.check(!titleRes.length, Tags.dupTitle, null, cb))
+         vld.check(!titleRes.length, Tags.dupTitle, cb))
          cnn.chkQry('update CompetitionType set ? where id = ?',
             [req.body, req.params.id], cb);
    },

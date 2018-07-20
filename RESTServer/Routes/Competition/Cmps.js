@@ -65,7 +65,7 @@ router.post('/', (req, res) => {
       },
       (existingCmp, fields, cb) => {
          //check dupTitle
-         if (vld.check(!existingCmp.length, Tags.dupTitle, null, cb)) {
+         if (vld.check(!existingCmp.length, Tags.dupTitle, cb)) {
             // get the prmSchema from Ctp
             cnn.chkQry('select * from CompetitionType where id = ?',
                body.ctpId, cb);
@@ -73,15 +73,15 @@ router.post('/', (req, res) => {
       },
       (Ctp, fields, cb) => {
          // If no duplicates, insert new competition
-         if (vld.check(Ctp && Ctp.length, Tags.NoCompType, null, cb)) {
+         if (vld.check(Ctp && Ctp.length, Tags.NoCompType, cb)) {
             try {
                var validation = validate(JSON.parse(body.prms),
                   JSON.parse(Ctp[0].prmSchema));
-               if (vld.check(validation.valid, Tags.NoCompType, null, cb))
+               if (vld.check(validation.valid, Tags.NoCompType, cb))
                   cnn.chkQry('insert into Competition set ?', body, cb);
             }
             catch (exception) {
-               vld.check(false, "no JSON", null, cb);
+               vld.check(false, "no JSON", cb);
             }
          }
       },
@@ -124,7 +124,7 @@ router.put('/:id', (req, res) => {
             [req.params.id], cb);
    },
    (qRes, fields, cb) => {
-      if (vld.check(qRes && qRes.length, Tags.notFound, null, cb) &&
+      if (vld.check(qRes && qRes.length, Tags.notFound, cb) &&
          vld.checkPrsOK(qRes[0].ownerId, cb)) {
          cmpTp = qRes[0].ctpId;
          if (body.title)
@@ -137,7 +137,7 @@ router.put('/:id', (req, res) => {
    },
    (titleRes, fields, cb) => {
       if (!body.title ||
-         vld.check(!titleRes.length, Tags.dupTitle, null, cb))
+         vld.check(!titleRes.length, Tags.dupTitle, cb))
          if (body.prms)
             async.waterfall([
             (cb) => {
@@ -146,16 +146,16 @@ router.put('/:id', (req, res) => {
                   [cmpTp], cb);
             }],
             (fields, Ctp) => {
-               if (vld.check(Ctp && Ctp.length, Tags.notFound, null, cb))
+               if (vld.check(Ctp && Ctp.length, Tags.notFound, cb))
                   try {
                      var validation = validate(JSON.parse(body.prms),
                         JSON.parse(Ctp[0].prmSchema));
-                     if (vld.check(validation.valid, Tags.InvalidPrms, null, cb))
+                     if (vld.check(validation.valid, Tags.InvalidPrms, cb))
                         cnn.chkQry("update Competition set ? where id = ?",
                            [req.body, req.params.id], cb);
                   }
                   catch (exception) {
-                     vld.check(false, "no JSON", null, cb);
+                     vld.check(false, Tags.badBodyFormat, cb);
                   }
             });
          else

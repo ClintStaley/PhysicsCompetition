@@ -3,7 +3,7 @@ var Tags = require('../Validator.js').Tags;
 var router = Express.Router({caseSensitive: true ,mergeParams: true});
 var async = require('async');
 
-router.baseURL = '/Cmps/:cmpId/Team';
+router.baseURL = '/Cmps/:cmpId/Teams';
 
 router.get('/', (req, res) => {
 
@@ -39,14 +39,14 @@ router.post('/', (req, res) => {
    },
    (existingTm, fields, cb) => {
       // If no duplicates, check the cmp rules
-      if (vld.check(!existingTm.length, Tags.dupTitle, null, cb)) {
+      if (vld.check(!existingTm.length, Tags.dupTitle, cb)) {
          cnn.chkQry('select * from Competition where id = ?', body.cmpId, cb);
       }
    },
    (Cmp, fields, cb) => {
       // save rules and the current team for future use
       //create new team
-      if (vld.check(Cmp && Cmp.length, Tags.notFound, null, cb)) {
+      if (vld.check(Cmp && Cmp.length, Tags.notFound, cb)) {
          rules = Cmp[0].rules;
          curTeam = Cmp[0].curTeam;
          cnn.chkQry('insert into Team set ?', body, cb);
@@ -90,7 +90,7 @@ router.post('/', (req, res) => {
       }
       else{
          //if the cmp has standard rules
-         cb(null,null,cb);
+         cb(null, null, cb);
       }
    },
    (res, fields, cb) => {
@@ -130,7 +130,7 @@ router.put('/:id', (req, res) => {
             [req.params.id,req.params.cmpId], cb);
    },
    (qRes, fields, cb) => {
-      if (vld.check(qRes.length, Tags.notFound, null, cb)) {
+      if (vld.check(qRes.length, Tags.notFound, cb)) {
          if (body.teamName && vld.checkPrsOK(qRes[0].ownerId,cb))
             cnn.chkQry("select * from Team where teamName = ? && cmpId = ?",
                [body.teamName,req.params.cmpId], cb);
@@ -138,7 +138,7 @@ router.put('/:id', (req, res) => {
    },
    (nameRes, fields, cb) => {
       if (!body.teamName ||
-            vld.check(nameRes  && !nameRes.length, Tags.dupTitle, null, cb))
+            vld.check(nameRes  && !nameRes.length, Tags.dupTitle, cb))
          cnn.chkQry("update Team set ? where id = ?",
             [req.body, req.params.id], cb);
    },
@@ -165,7 +165,7 @@ router.delete('/:id', (req, res) => {
    },
    (result, fields, cb) => {
       //checks teh team exists
-      if (vld.check(result && result.length , Tags.notFound, null, cb))
+      if (vld.check(result && result.length , Tags.notFound, cb))
          if (vld.checkPrsOK(result[0].ownerId, cb)) {
             nextTeam = result[0].nextTeam;
             otherTeams = !(nextTeam == req.params.id);

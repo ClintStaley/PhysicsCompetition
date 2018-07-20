@@ -37,12 +37,12 @@ router.post('/', (req, res) => {
       //check if post is from admin or team leader
       if (vld.check(ssn && (ssn.isAdmin() ||
             (result && result.length && ssn.id == result[0].ownerId)
-            || ssn.id == body.prsId), Tags.noPermission, null, cb))
+            || ssn.id == body.prsId), Tags.noPermission, cb))
          cnn.chkQry('select * from Membership where prsId = ? && teamId = ?',
             [body.prsId,body.teamId], cb);
    },
    (result, fields, cb) => {
-      if (vld.check(result && !result.length, Tags.dupEnrollment, null, cb)) {
+      if (vld.check(result && !result.length, Tags.dupEnrollment, cb)) {
          cnn.chkQry('insert into Membership set ?', body, cb);
 
       }
@@ -68,12 +68,12 @@ router.delete('/:id', (req, res) => {
          [req.params.teamId], cb);
    },
    (result, fields, cb) => {
-      if (vld.check(result && result.length , Tags.notFound, null, cb))
+      if (vld.check(result && result.length , Tags.notFound, cb))
          if (vld.chain(ssn && (ssn.isAdmin() ||
                ssn.id == result[0].ownerId || ssn.id == req.params.id),
                Tags.noPermission,null).
                check(!(result[0].ownerId == req.params.id),
-               Tags.cantRemoveLeader,null, cb))
+               Tags.cantRemoveLeader, cb))
             req.cnn.query('delete from Membership where prsId = ? && teamId = ?'
                 , [req.params.id, req.params.teamId], cb);
    }],
