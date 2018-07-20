@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Register, SignIn, CompetitionPage, TeamPage } from '../concentrator'
+import { Register, SignIn, CompetitionPage, TeamPage } from '../concentrator';
 import { Route, Switch } from 'react-router-dom';
 import { Navbar, Nav, NavItem } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
@@ -28,7 +28,7 @@ class Main extends Component {
                     {`Signed in as: ${this.props.prss.firstName} ${this.props.prss.lastName}`}
                 </Navbar.Text>
               : ''
-              }
+            }
             <Navbar.Collapse>
               <Nav>
                 {this.signedIn() ?
@@ -78,7 +78,6 @@ class Main extends Component {
       </div>
     )
    }
-
 }
 
 export default Main

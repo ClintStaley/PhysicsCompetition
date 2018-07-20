@@ -9,7 +9,7 @@ function mapStateToProps(state) {
       prss: state.prss,
       cmps: state.cmps,
       teams: state.teams
-   }
+   };
 }
 
 function mapDispachToProps(dispatch) {
