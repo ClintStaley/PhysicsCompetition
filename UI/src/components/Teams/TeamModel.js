@@ -62,8 +62,7 @@ export default class TeamModel extends Component {
             this.close("OK") : this.close("Cancel")}>
         <FormGroup
           controlId="formBasicText"
-          validationState={this.getValidationState()}
-        >
+          validationState={this.getValidationState()}>
           <ControlLabel>Team Name</ControlLabel>
           <FormControl
             type="text"

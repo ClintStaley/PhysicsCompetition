@@ -44,9 +44,7 @@ export function getTeams(teamId, cb) {
        });
        return dispatch({ type: 'GET_TEAM', teams});
       })
-      .then(() => {if (cb) cb()})
-
-   }
+      .then(() => {if (cb) cb()})}
 }
 
 export function deleteTeam(cmpId, teamId, cb) {

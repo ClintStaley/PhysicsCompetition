@@ -33,7 +33,7 @@ router.post('/', (req, res) => {
    (cb) => {
       if (vld.hasOnlyFields(body, ["content"], cb)) {
          if (vld.check(( !body.response || vld.checkAdmin()),
-               Tags.forbiddenField,null,cb)) {
+               Tags.forbiddenField, cb)) {
             body.cmpId = req.params.cmpId;
             body.teamId = req.params.teamId;
             body.subTime = new Date();
@@ -84,7 +84,7 @@ router.put('/:id', (req, res) => {
       }
    },
    (result, err, cb) => {
-      if (vld.check(result && result.length , Tags.notFound, null, cb))
+      if (vld.check(result && result.length , Tags.notFound, cb))
          cnn.query("update Submit set ? where id = ?",[req.body, req.params.id]
             ,cb);
    },

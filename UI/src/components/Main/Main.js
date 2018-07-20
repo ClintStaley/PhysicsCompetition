@@ -71,14 +71,13 @@ class Main extends Component {
         <Switch>
           <Route exact path='/' children={Home} />
           <Route path='/Competition' render={() => <CompetitionPage {...this.props} />} />
-          <Route path='/Teams' render={() => <TeamPage {...this.props}/>}/>//component = {TeamPage} />
+          <Route path='/Teams' render={() => <TeamPage {...this.props}/>}/>
           <Route path='/signin' render={() => <SignIn {...this.props} />} />
           <Route path='/register' render={() => <Register {...this.props} />} />
         </Switch>
       </div>
     )
    }
-
 }
 
 export default Main

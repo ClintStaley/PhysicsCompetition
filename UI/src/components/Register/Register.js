@@ -92,11 +92,11 @@ class Register extends Component {
          s.termsAccepted;
    }
 
-//will display a box for sucess or failure, otherwise does nothing
+   // Display a box for sucess or failure, otherwise do nothing
    registerResult(status = "") {
     if (status === "error")
       return (
-        <Alert bsStyle="danger">//red background
+        <Alert bsStyle="danger">
           <h2>Oh no!</h2>
           <strong>Registration had the following warnings:</strong>
           {this.state.err.map((err, i) => <p key={i}>{errorTranslate(err.tag)}</p>)}
@@ -104,7 +104,7 @@ class Register extends Component {
       )
     else if (status === "success")
       return (
-        <Alert bsStyle="success">//green background
+        <Alert bsStyle="success">
           <h2>Registration successfull!</h2>
           <p>Do you want to sign in straight away?</p>
           <Button onClick={() =>

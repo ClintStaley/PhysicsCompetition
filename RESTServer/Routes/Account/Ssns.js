@@ -25,7 +25,7 @@ router.post('/', (req, res) => {
    cnn.chkQry('select * from Person where email = ?', [req.body.email],
       (err, result) => {
          if (req.validator.check(result.length && result[0].password ===
-               req.body.password, Tags.badLogin)) {
+          req.body.password, Tags.badLogin)) {
             cookie = ssnUtil.makeSession(result[0], res);
             console.log("Logging in " + req.body.email);
             res.location(router.baseURL + '/' + cookie).status(200).end();

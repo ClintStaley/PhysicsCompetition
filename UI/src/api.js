@@ -140,8 +140,8 @@ export function delTeam(cmpId, teamId) {
    return del(`Cmps/${cmpId}/Teams/${teamId}`)
 }
 
-export function postteam(cmpId, body) {
-   return post('Cmps/${cmpId}/Teams', body)
+export function postTeam(cmpId, body) {
+   return post(`Cmps/${cmpId}/Teams`, body)
 }
 
 /**
