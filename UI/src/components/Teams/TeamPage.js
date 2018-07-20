@@ -13,7 +13,8 @@ class TeamPage extends Component {
 
       //initilize teams, grab all teams for user
       this.state = {
-         showConfirmation: false
+         showConfirmation: false,
+         openModal: false
       }
       this.props.getTeams(this.props.prss.id);
       console.log("constructor");
@@ -98,7 +99,7 @@ class TeamPage extends Component {
               leader = {team.ownerId === this.props.prss.id}
               prss = {this.props.prss.id}/>
           })
-          }
+       }
         </ListGroup>
       </section>
       )
@@ -118,12 +119,14 @@ const TeamItem = function (props) {
          {props.leader ?
             <div className="pull-right">
                <Button bsSize="small" onClick={props.openModal}><Glyphicon glyph="edit" /></Button>
+               {props.showModal ?
                 <TeamModel
                    showModal={props.showModal}
                    title={"Edit Team"}
                    team = {props}
                    members = {props.members}
                    onDismiss={props.closeModel} />
+                : ''}
                <Button bsSize="small" onClick={props.openConfirmation}><Glyphicon glyph="trash" /></Button>
                 <ConfDialog
                   show={props.showConfirmation}
@@ -154,6 +157,7 @@ const TeamItem = function (props) {
 const MemberItem = function (props) {
    return (
    <ListGroupItem className="clearfix">
+         {console.log("Member Created")}
    <Link to="#">{props.firstName}</Link>
       {props.privlige ?
          <div className="pull-right">
@@ -164,6 +168,7 @@ const MemberItem = function (props) {
    </ListGroupItem>
    )
 }
+
 //makes teamPage a container componet, rather than a presentational componet
 function mapStateToProps(state) {
    return {

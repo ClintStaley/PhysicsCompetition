@@ -8,8 +8,10 @@ export default class TeamModel extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      TeamName: (this.props.team && this.props.team.teamName) || "",
+     TeamName: (this.props.team && this.props.team.teamName) || ""
     }
+
+    console.log("Model Created");
   }
 
   close = (result) => {
@@ -45,7 +47,8 @@ export default class TeamModel extends Component {
 
     for (var property in this.props.team.members) {
        if (this.props.team.members.hasOwnProperty(property)) {
-          MemberOptions.push(this.props.team.members[property].firstName);
+         MemberOptions.push({label: this.props.team.members[property].firstName
+          , value: this.props.team.members[property].firstName});
        }
     }
     console.log(this.props);
@@ -74,9 +77,7 @@ export default class TeamModel extends Component {
           <HelpBlock>There must be a team name.</HelpBlock>
 
           <div>
-          <Select
-            options={['hello','test']}
-            />
+            <Select options={MemberOptions}/>
           </div>
         </FormGroup>
         {/*Add dropdown for switching team leader */}
