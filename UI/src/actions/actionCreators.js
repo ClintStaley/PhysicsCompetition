@@ -30,7 +30,7 @@ export function updateTeams(id, cb) {
             Object.keys(teams).map((teamNum) => {
              teams[teamNum].members = {};
              teams[teamNum].toggled = false;
-          });
+            });
           return dispatch({ type: 'UPDATE_TEAM', teams});
          })
          .then(() => {if (cb) cb()})
