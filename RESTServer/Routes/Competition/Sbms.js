@@ -9,17 +9,14 @@ router.get('/', (req, res) => {
    var num = req.query.num;
 
    req.cnn.chkQry('select id,teamId,content,response,score,subTime from ' +
-      'Submit where cmpId = ? && teamId = ? order by subTime DESC',
-      [req.params.cmpId,req.params.teamId],
+    'Submit where cmpId = ? && teamId = ? order by subTime DESC',
+    [req.params.cmpId, req.params.teamId],
    //function that closes cnn
    (err, result) => {
       if (num || num == 0)
          result = result.slice(0,num);
-
       res.json(result);
-
       res.status(200);
-
       req.cnn.release();
    });
 });
@@ -33,7 +30,7 @@ router.post('/', (req, res) => {
    (cb) => {
       if (vld.hasOnlyFields(body, ["content"], cb)) {
          if (vld.check(( !body.response || vld.checkAdmin()),
-               Tags.forbiddenField, cb)) {
+          Tags.forbiddenField, cb)) {
             body.cmpId = req.params.cmpId;
             body.teamId = req.params.teamId;
             body.subTime = new Date();
@@ -54,9 +51,9 @@ router.post('/', (req, res) => {
 router.get('/:id', (req, res) => {
    var vld = req.validator;
 
-   req.cnn.query('select id,teamId,content,response,score,subTime from ' +
-      'Submit where id = ? && cmpId = ? && teamId = ?'
-        , [req.params.id,req.params.cmpId,req.params.teamId],
+   req.cnn.query('select id, teamId, content, response, score, subTime from ' +
+    'Submit where id = ? && cmpId = ? && teamId = ?',
+    [req.params.id,req.params.cmpId,req.params.teamId],
    (err, teamArr) => {
       if (vld.check(teamArr.length, Tags.notFound)) {
          res.json(teamArr[0]);
@@ -77,16 +74,16 @@ router.put('/:id', (req, res) => {
             body.cmpId = req.params.cmpId;
             body.teamId = req.params.teamId;
             body.subTime = new Date();
-            cnn.chkQry('select * from Submit where id = ? && cmpId = ? &&' +
-               ' teamId = ?', [req.params.id,req.params.cmpId,req.params.teamId]
-               , cb);
+            cnn.chkQry('select * from Submit where id = ? && cmpId = ? && ' +
+             'teamId = ?',
+             [req.params.id, req.params.cmpId, req.params.teamId], cb);
          }
       }
    },
    (result, err, cb) => {
-      if (vld.check(result && result.length , Tags.notFound, cb))
-         cnn.query("update Submit set ? where id = ?",[req.body, req.params.id]
-            ,cb);
+      if (vld.check(result && result.length, Tags.notFound, cb))
+         cnn.query("update Submit set ? where id = ?", 
+          [req.body, req.params.id], cb);
    },
    (result, fields, cb) => {
       // Return location of inserted Submissions

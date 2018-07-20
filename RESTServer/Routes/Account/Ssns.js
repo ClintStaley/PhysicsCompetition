@@ -38,7 +38,7 @@ router.delete('/:cookie', (req, res) => {
    var ssnExists;
 
    if (req.validator.check(req.params.cookie === req.cookies[ssnUtil.cookieName]
-         || req.session.isAdmin(), Tags.noPermission)) {
+    || req.session.isAdmin(), Tags.noPermission)) {
       ssnExists = ssnUtil.deleteSession(req.params.cookie);
       res.status(ssnExists ? 200 : 400).end();
    }

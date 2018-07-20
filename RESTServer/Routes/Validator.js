@@ -26,8 +26,8 @@ Validator.Tags = {
    // CAS FIX: We need absolute naming consistency, including capitalization
    // rules.  These should be lowercase.  And, notFound would probably cover
    // the NoCompType anyway.
-   NoCompType: "CompetitionTypeDoesNotExist",
-   InvalidPrms: "Invalid Parameters"
+   noCompType: "CompetitionTypeDoesNotExist",
+   invalidPrms: "Invalid Parameters"
 };
 
 // Check |test|.  If false, add an error with tag and possibly related
@@ -68,9 +68,8 @@ Validator.prototype.check = function (test, err, cb) {
 // Somewhat like |check|, but designed to allow several chained checks
 // in a row, finalized by a check call.
 Validator.prototype.chain = function (test, tag, params) {
-   if (!test) {
+   if (!test)
       this.errors.push({tag: tag, params: params});
-   }
    return this;
 };
 
@@ -82,16 +81,14 @@ Validator.prototype.checkAdmin = function (cb) {
 // Validate that AU is the specified person or is an admin
 Validator.prototype.checkPrsOK = function (prsId, cb) {
    return this.check(this.session &&
-      (this.session.isAdmin() || this.session.id == prsId),
-      Validator.Tags.noPermission, cb);
+    (this.session.isAdmin() || this.session.id == prsId),
+    Validator.Tags.noPermission, cb);
 };
 
 Validator.prototype.hasOnlyFields = function (obj, fieldList) {
-
    Object.keys(obj).forEach((prop) => {
       this.chain(fieldList.indexOf(prop) >= 0, Validator.Tags.forbiddenField, [prop]);
    });
-
    return this;
 };
 
@@ -100,7 +97,8 @@ Validator.prototype.hasFields = function (obj, fieldList, cb) {
 
    fieldList.forEach((name) => {
       this.chain(obj.hasOwnProperty(name) && obj[name] !== "" && obj[name]
-         !== null && obj[name] !== undefined, Validator.Tags.missingField, [name]);
+       !== null && obj[name] !== undefined, 
+       Validator.Tags.missingField, [name]);
    });
 
    return this.check(true, null, cb);

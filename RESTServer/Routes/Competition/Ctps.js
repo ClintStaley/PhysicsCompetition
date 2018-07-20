@@ -6,13 +6,10 @@ var async = require('async');
 router.baseURL = '/Ctps';
 
 router.get('/', (req, res) => {
-
    req.cnn.chkQry('select * from CompetitionType', null,
    (err, result) => {
       res.json(result);
-
       res.status(200);
-
       req.cnn.release();
    });
 });
@@ -26,13 +23,13 @@ router.post('/', (req, res) => {
       (cb) => {
          if (vld.hasFields(body, ["title", "description", "prmSchema"], cb)) {
             cnn.chkQry('select * from CompetitionType where title = ?',
-               body.title, cb);
+             body.title, cb);
          }
       },
       (existingCtp, fields, cb) => {
          // If no duplicates, insert new competitionType
          if (vld.check(!existingCtp.length, Tags.dupTitle, cb)) {
-            cnn.chkQry('insert into CompetitionType set ?', body, cb);
+          cnn.chkQry('insert into CompetitionType set ?', body, cb);
          }
       },
       (result, fields, cb) => {
@@ -66,15 +63,16 @@ router.put('/:id', (req, res) => {
 
    async.waterfall([
    (cb) => {
-      if (vld.hasOnlyFields(body, ["title", "description","prmSchema"]).checkAdmin())
+      if (vld.hasOnlyFields(body, ["title", "description","prmSchema"])
+       .checkAdmin())
          cnn.chkQry('select * from CompetitionType where id = ?',
-            req.params.id, cb);
+          req.params.id, cb);
    },
    (qRes, fields, cb) => {
       if (vld.check(qRes.length, Tags.notFound, cb)) {
          if (body.title)
             cnn.chkQry('select * from CompetitionType where title = ?',
-               body.title, cb);
+             body.title, cb);
          else
             cb(null,null,cb);
       }
@@ -83,7 +81,7 @@ router.put('/:id', (req, res) => {
       if (!body.title ||
          vld.check(!titleRes.length, Tags.dupTitle, cb))
          cnn.chkQry('update CompetitionType set ? where id = ?',
-            [req.body, req.params.id], cb);
+          [req.body, req.params.id], cb);
    },
    (updRes, fields, cb) => {
       res.status(200).end();
@@ -100,8 +98,8 @@ router.delete('/:id', (req, res) => {
    if (vld.checkAdmin()) {
       async.waterfall([
       (cb) => {
-         req.cnn.query(
-            'delete from CompetitionType where id = ?', [req.params.id], cb);
+         req.cnn.query('delete from CompetitionType where id = ?',
+          [req.params.id], cb);
       },
       (result, err, cb) => {
          if (vld.check(!err && result.affectedRows, Tags.notFound))
@@ -113,7 +111,6 @@ router.delete('/:id', (req, res) => {
       });
    }
    else {
-      console.log("Right Here?");
       req.cnn.release();
    }
 });

@@ -73,7 +73,7 @@ router.get('/:id', (req, res) => {
              prs.whenRegistered = prs.whenRegistered
               && prs.whenRegistered.getTime();
 
-                delete prs.password;
+             delete prs.password;
              res.json(prsArr[0]);
          }
          req.cnn.release();
@@ -93,9 +93,9 @@ router.put('/:id', (req, res) => {
    async.waterfall([
    (cb) => {
       if (
-        (vld.checkPrsOK(req.params.id, cb)) &&
-        vld.hasOnlyFields(body,
-        ["firstName", "lastName", "password", "oldPassword", "role"])
+       (vld.checkPrsOK(req.params.id, cb)) &&
+       vld.hasOnlyFields(body,
+       ["firstName", "lastName", "password", "oldPassword", "role"])
        .chain(!("password" in body) || body.password, Tags.badValue, ["password"])
        .chain(!body.role || admin && body.role === 1, Tags.badValue, ["role"])
        .check(!body.password || body.oldPassword || admin, Tags.noOldPwd, cb))
@@ -124,14 +124,13 @@ router.delete('/:id', (req, res) => {
    if (vld.checkAdmin())
       req.cnn.query('DELETE from Person where id = ?',
        [ req.params.id],
-       (err, result) => {
+      (err, result) => {
          if (!err && vld.check(result.affectedRows, Tags.notFound))
             res.status(200).end();
          req.cnn.release();
       });
-   else {
+   else 
       req.cnn.release();
-   }
 });
 
 router.get('/:id/Teams', (req, res) => {
@@ -139,18 +138,16 @@ router.get('/:id/Teams', (req, res) => {
    var teams = [];
 
    if (vld.checkPrsOK(req.params.id))
-         req.cnn.chkQry('select id,bestScore,teamName,cmpId,ownerId,lastSubmit,'
-            + 'canSubmit from Team,Membership where ' +
-            'prsId =  ? and teamId = Team.id', [req.params.id],
-         (err, memberTeam) => {
+      req.cnn.chkQry('select id,bestScore,teamName,cmpId,ownerId,lastSubmit,'
+       + 'canSubmit from Team,Membership where ' +
+       'prsId =  ? and teamId = Team.id', [req.params.id],
+      (err, memberTeam) => {
          res.json(memberTeam);
          res.status(200);
          req.cnn.release();
-       });
-
+      });
    else
       req.cnn.release();
-
 });
 
 router.get('/:id/Competition', (req, res) => {
@@ -158,19 +155,17 @@ router.get('/:id/Competition', (req, res) => {
    var teams = [];
 
    if (vld.checkPrsOK(req.params.id))
-         req.cnn.chkQry('select distinct Competition.id, Competition.ownerId, ctpId, title, prms, ' +
-         'rules, curTeam from Competition,Team,Membership where ' +
-            'prsId =  ? and teamId = Team.id and cmpId = Competition.id',
-             [req.params.id],
-       (err, Cmps) => {
+      req.cnn.chkQry('select distinct Competition.id, Competition.ownerId, ' +
+       'ctpId, title, prms, rules, curTeam from Competition, Team, Membership' +
+       ' where prsId =  ? and teamId = Team.id and cmpId = Competition.id',
+       [req.params.id],
+      (err, Cmps) => {
          res.json(Cmps);
          res.status(200);
          req.cnn.release();
-       });
-
+      });
    else
       req.cnn.release();
-
 });
 
 

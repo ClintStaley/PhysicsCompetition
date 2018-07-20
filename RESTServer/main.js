@@ -17,7 +17,7 @@ app.use(function(req, res, next) {
    res.header("Access-Control-Allow-Headers", "Content-Type");
    res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
    res.header("Access-Control-Expose-Headers", "Content-Type, Location");
-  next();
+   next();
 });
 
 // No further processing needed for options calls.
@@ -48,7 +48,7 @@ app.use(Session.router);
 app.use(function (req, res, next) {
    console.log("Checking login for " + req.path);
    if (req.session ||
-      req.method === 'POST' && (req.path === '/Prss' || req.path === '/Ssns')) {
+    req.method === 'POST' && (req.path === '/Prss' || req.path === '/Ssns')) {
       req.validator = new Validator(req, res);
       next();
    } else
@@ -66,14 +66,13 @@ app.use('/Cmps', require('./Routes/Competition/Cmps'));
 app.use('/Cmps/:cmpId/Teams', require('./Routes/Competition/Teams'));
 app.use('/Cmps/:cmpId/Teams/:teamId/Sbms', require('./Routes/Competition/Sbms'));
 app.use('/Cmps/:cmpId/Teams/:teamId/Mmbs',
- require('./Routes/Competition/Mmbs'));
+require('./Routes/Competition/Mmbs'));
 
 // Debugging tool. Clear all table contents, reset all auto_increment
 // keys to 1, and reinsert one admin user.
 app.delete('/DB', function (req, res) {
-   var resetTables =
-         ["Person","CompetitionType","Competition","Team","Submit", "Membership"];
-
+   var resetTables = ["Person", "CompetitionType", "Competition",
+    "Team", "Submit", "Membership"];
    if (!req.session.isAdmin()) {
       req.cnn.release();
       res.status(403).end();
@@ -120,7 +119,6 @@ app.delete('/DB', function (req, res) {
 // Handler of last resort.  Send a 404 response and release connection
 app.use(function (req, res) {
    res.status(404).end();
-
    req.cnn.release();
 });
 
