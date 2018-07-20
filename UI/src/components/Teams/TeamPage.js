@@ -5,7 +5,6 @@ import { bindActionCreators } from 'redux';
 import { ListGroup, ListGroupItem, Button, Glyphicon } from 'react-bootstrap';
 import { ConfDialog } from '../concentrator';
 import * as actionCreators from '../../actions/actionCreators';
-import { putTeam, delTeam, postTeam } from '../../api';
 import TeamModel from './TeamModel'
 
 class TeamPage extends Component {
@@ -16,15 +15,11 @@ class TeamPage extends Component {
       this.state = {
          showConfirmation: false
       }
-
-
-
-      this.props.updateTeams(this.props.prss.id);
-
+      this.props.getTeams(this.props.prss.id);
       console.log("constructor");
    }
 
-   openConfirmation = (cnv) => {
+   openConfirmation = () => {
       this.setState({showConfirmation: true })
    }
 
@@ -34,8 +29,8 @@ class TeamPage extends Component {
       }
       this.setState({ showConfirmation: false})
    }
-   openConfirmation = (cnv) => {
-      this.setState({ delCnv: cnv, showConfirmation: true })
+   openConfirmation = () => {
+      this.setState({showConfirmation: true })
    }
 
 
@@ -46,13 +41,13 @@ class TeamPage extends Component {
       this.setState({ showModal: true });
    }
 
-   modalDismiss = (result) => {
+   modalDismiss = (teamNum, result) => {
       if (result.status === "OK") {
-//         if (this.state.editCnv)
-   //         this.updateCnv(result);
-      //   else
-         //   this.newCnv(result);
+         var curTeam = this.props.teams[teamNum];
+         this.props.editTeam(teamNum, Object.assign({}, curTeam,result.UpdatedTeam));
       }
+      console.log(result);
+      console.log("close Model");
       this.setState({ showModal: false });
    }
 
@@ -81,7 +76,6 @@ class TeamPage extends Component {
       {/*shows when the entire page is rendered again*/}
       {/*As of now the entire page rerenders when a team is togled, should change in future*/}
       {console.log("Big Render")}
-      {console.log(this.props.teams)}
         <h1>Team Overview</h1>
         <ListGroup>
           {Object.keys(this.props.teams).map((teamNum, i) => {
@@ -94,7 +88,7 @@ class TeamPage extends Component {
 
               openModal = {() => this.openModal()}
               showModal = {this.state.showModal}
-              closeModel = {(team) => this.modalDismiss(team)}
+              closeModel = {(teamData) => this.modalDismiss(teamNum, teamData)}
 
               openConfirmation = {() => this.openConfirmation()}
               showConfirmation = {this.state.showConfirmation}
@@ -120,12 +114,15 @@ const TeamItem = function (props) {
          :
          <Button onClick={props.toggleTeam}>{props.teamName}</Button>
       }
+      {console.log(props)}
          {props.leader ?
             <div className="pull-right">
                <Button bsSize="small" onClick={props.openModal}><Glyphicon glyph="edit" /></Button>
                 <TeamModel
                    showModal={props.showModal}
-                   title={"Test Model"}
+                   title={"Edit Team"}
+                   team = {props}
+                   members = {props.members}
                    onDismiss={props.closeModel} />
                <Button bsSize="small" onClick={props.openConfirmation}><Glyphicon glyph="trash" /></Button>
                 <ConfDialog
