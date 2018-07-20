@@ -19,7 +19,7 @@ var Session = function Session(user) {
    this.lastUsed = new Date().getTime();
 };
 
-Session.prototype.isAdmin = () => {
+Session.prototype.isAdmin = function () {
    return this.role === 1;
 };
 
@@ -41,7 +41,7 @@ exports.makeSession = function makeSession(user, res) {
 };
 
 // Export a function to log out a user, given an authToken
-exports.deleteSession = function (authToken) {
+exports.deleteSession = (authToken) => {
    var rtn = authToken in sessions;
    console.log("Delete");
    delete sessions[authToken];

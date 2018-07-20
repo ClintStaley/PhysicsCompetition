@@ -132,16 +132,16 @@ export function getTeams(prsId) {
       })
 }
 
-export function putTeam(id, body) {
-   return put(`Teams/${id}`, body)
+export function putTeam(cmpId, teamId, body) {
+   return put(`Cmps/${cmpId}/Teams/${teamId}`, body)
 }
 
-export function delTeam(id) {
-   return del(`Teams/${id}`)
+export function delTeam(cmpId, teamId) {
+   return del(`Cmps/${cmpId}/Teams/${teamId}`)
 }
 
-export function postteam(body) {
-   return post('Teams', body)
+export function postTeam(cmpId, body) {
+   return post(`Cmps/${cmpId}/Teams`, body)
 }
 
 /**

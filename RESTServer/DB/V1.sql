@@ -1,6 +1,6 @@
-drop database if exists VCSdb;
-create database VCSdb;
-use VCSdb;
+drop database if exists CmpDB;
+create database CmpDB;
+use CmpDB;
 
 create table Person (
    id int auto_increment primary key,

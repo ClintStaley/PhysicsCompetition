@@ -9,6 +9,21 @@ var async = require('async');
 
 var app = express();
 
+// Manage CORS POS.
+app.use(function(req, res, next) {
+   console.log("Handling " + req.path + '/' + req.method);
+   res.header("Access-Control-Allow-Origin", "http://localhost:3001");
+   res.header("Access-Control-Allow-Credentials", true);
+   res.header("Access-Control-Allow-Headers", "Content-Type");
+   res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
+   res.header("Access-Control-Expose-Headers", "Content-Type, Location");
+   next();
+});
+
+// No further processing needed for options calls.
+app.options("/*", function(req, res) {
+   res.status(200).end();
+});
 
 // Static path to index.html and all clientside js
 app.use(express.static(path.join(__dirname, 'public')));
@@ -22,31 +37,18 @@ app.use(function (req, res, next) {
    next();
 });
 
-app.use(function(req, res, next) {
-   res.header("Access-Control-Allow-Origin", "*");
-   next();
-});
-
 // Attach cookies to req as req.cookies.<cookieName>
 app.use(cookieParser());
 
 // Find relevant Session if any, and attach as req.session
 app.use(Session.router);
 
-//skip preflight
-app.options("/*", function(req, res, next){
-   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-   res.header('Access-Control-Allow-Headers',
-      'Content-Type, Authorization, Content-Length, X-Requested-With');
-   res.sendStatus(200);
-});
-
 // Check general login.  If OK, add Validator to |req| and continue processing,
 // otherwise respond immediately with 401 and noLogin error tag.
 app.use(function (req, res, next) {
    console.log("Checking login for " + req.path);
    if (req.session ||
-      req.method === 'POST' && (req.path === '/Prss' || req.path === '/Ssns')) {
+    req.method === 'POST' && (req.path === '/Prss' || req.path === '/Ssns')) {
       req.validator = new Validator(req, res);
       next();
    } else
@@ -62,17 +64,15 @@ app.use('/Ssns', require('./Routes/Account/Ssns'));
 app.use('/Ctps', require('./Routes/Competition/Ctps'));
 app.use('/Cmps', require('./Routes/Competition/Cmps'));
 app.use('/Cmps/:cmpId/Teams', require('./Routes/Competition/Teams'));
-app.use('/Cmps/:cmpId/Teams/:teamId/Sbms',
-      require('./Routes/Competition/Sbms'));
+app.use('/Cmps/:cmpId/Teams/:teamId/Sbms', require('./Routes/Competition/Sbms'));
 app.use('/Cmps/:cmpId/Teams/:teamId/Mmbs',
-      require('./Routes/Competition/Mmbs'));
+require('./Routes/Competition/Mmbs'));
 
-// Special debugging route for /DB DELETE.  Clears all table contents, resets all
-// auto_increment keys to start at 1, and reinserts one admin user.
+// Debugging tool. Clear all table contents, reset all auto_increment
+// keys to 1, and reinsert one admin user.
 app.delete('/DB', function (req, res) {
-   var resetTables =
-         ["Person","CompetitionType","Competition","Team","Submit", "Membership"];
-
+   var resetTables = ["Person", "CompetitionType", "Competition",
+    "Team", "Submit", "Membership"];
    if (!req.session.isAdmin()) {
       req.cnn.release();
       res.status(403).end();
@@ -119,7 +119,6 @@ app.delete('/DB', function (req, res) {
 // Handler of last resort.  Send a 404 response and release connection
 app.use(function (req, res) {
    res.status(404).end();
-
    req.cnn.release();
 });
 
