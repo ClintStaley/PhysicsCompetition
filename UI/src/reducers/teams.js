@@ -13,12 +13,12 @@ export default function teams(state = {}, action) {
          // If newly selected team has no members, assign members to it
          if (Object.keys(state[teamId].members).length === 0) {
             return Object.assign({}, state, {
-               [teamId]: Object.assign({}, state[teamId], { toggled: !
-                     state[teamId].toggled }, { members: members }) })
+             [teamId]: Object.assign({}, state[teamId], { toggled: !
+             state[teamId].toggled }, { members: members }) })
          }
          return Object.assign({}, state, {
-            [teamId]: Object.assign({}, state[teamId], { toggled: !state[
-                  teamId].toggled }) });
+          [teamId]: Object.assign({}, state[teamId], { toggled: !state[
+          teamId].toggled }) });
       case 'POPULATE_TEAM':
          // Will add member data to the object
          return Object.assign({}, state, {members: action.memberdata.members});

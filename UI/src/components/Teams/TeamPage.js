@@ -5,13 +5,13 @@ import { bindActionCreators } from 'redux';
 import { ListGroup, ListGroupItem, Button, Glyphicon } from 'react-bootstrap';
 import { ConfDialog } from '../concentrator';
 import * as actionCreators from '../../actions/actionCreators';
-import TeamModel from './TeamModel'
+import TeamModal from './TeamModal'
 
 class TeamPage extends Component {
    constructor(props) {
       super(props);
 
-      //initilize teams, grab all teams for user
+      //initalize teams, grab all teams for user
       this.state = {
          showConfirmation: false,
          openModal: false
@@ -48,7 +48,7 @@ class TeamPage extends Component {
          this.props.editTeam(teamNum, Object.assign({}, curTeam,result.UpdatedTeam));
       }
       console.log(result);
-      console.log("close Model");
+      console.log("close Modal");
       this.setState({ showModal: false });
    }
 
@@ -89,7 +89,7 @@ class TeamPage extends Component {
 
               openModal = {() => this.openModal()}
               showModal = {this.state.showModal}
-              closeModel = {(teamData) => this.modalDismiss(teamNum, teamData)}
+              closeModal = {(teamData) => this.modalDismiss(teamNum, teamData)}
 
               openConfirmation = {() => this.openConfirmation()}
               showConfirmation = {this.state.showConfirmation}
@@ -120,12 +120,12 @@ const TeamItem = function (props) {
             <div className="pull-right">
                <Button bsSize="small" onClick={props.openModal}><Glyphicon glyph="edit" /></Button>
                {props.showModal ?
-                <TeamModel
+                <TeamModal
                    showModal={props.showModal}
                    title={"Edit Team"}
                    team = {props}
                    members = {props.members}
-                   onDismiss={props.closeModel} />
+                   onDismiss={props.closeModal} />
                 : ''}
                <Button bsSize="small" onClick={props.openConfirmation}><Glyphicon glyph="trash" /></Button>
                 <ConfDialog
