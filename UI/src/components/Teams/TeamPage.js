@@ -11,16 +11,13 @@ class TeamPage extends Component {
    constructor(props) {
       super(props);
 
-
-      //initalize teams, grab all teams for user
-
+      // Initialize teams; grab all teams for user
       this.state = {
          showConfirmation: false,
          showModal: false,
          modalNumber: null
       }
       this.props.getTeams(this.props.prss.id);
-      console.log("constructor");
    }
 
    openConfirmation = () => {
