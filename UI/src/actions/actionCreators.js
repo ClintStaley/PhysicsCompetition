@@ -20,9 +20,9 @@ export function updateCmps(id, cb) {
    }
 }
 
-export function editTeam(teamId, newTeamData, cb) {
+export function editTeam(cmpId, teamId, newTeamData, cb) {
    return (dispatch, prevState) => {
-      api.putCmp(teamId, newTeamData)
+      api.putTeam(cmpId, teamId, newTeamData)
       .then(() => {
           var teamData = {newTeamData : newTeamData, teamId: teamId};
           dispatch({ type: 'PUT_TEAM', teamData});

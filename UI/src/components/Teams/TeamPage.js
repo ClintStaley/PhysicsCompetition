@@ -10,7 +10,6 @@ import TeamModal from './TeamModal'
 class TeamPage extends Component {
    constructor(props) {
       super(props);
-
       //Initialize teams, grab all teams for user
       this.state = {
          showConfirmation: null,
@@ -38,17 +37,17 @@ class TeamPage extends Component {
    openModal = (teamId) => {
       if (this.props.teams[teamId].members ||
        this.props.teams[teamId].members.length  === 0){
-         this.props.updateMembers(this.props.teams[teamId].cmpId ,teamId);
-      }
-
-      this.setState({ modalNumber: teamId });
+         this.props.updateMembers(this.props.teams[teamId].cmpId ,teamId,
+          () => this.setState({ modalNumber: teamId }) );
+       }
    }
 
    modalDismiss = (teamNum, result) => {
+      console.log(result.UpdatedTeam );
       if (result.status === "OK") {
          var curTeam = this.props.teams[teamNum];
-         this.props.editTeam(teamNum,
-          Object.assign({}, curTeam,result.UpdatedTeam));
+         this.props.editTeam
+          ( this.props.teams[teamNum].cmpId ,teamNum, result.UpdatedTeam );
       }
       this.setState({ modalNumber: null });
    }
@@ -79,9 +78,10 @@ class TeamPage extends Component {
    render() {
       return (
       <section className="container">
+      {console.log("Team Rerender")}
       {this.state.modalNumber ?
       <TeamModal
-          showModal={this.state.modalNumber }
+          showModal={ this.state.modalNumber }
           title={"Edit Team"}
           team = {this.props.teams[this.state.modalNumber]}
           onDismiss={(teamData) => this.modalDismiss(this.state.modalNumber, teamData)} />
@@ -94,7 +94,6 @@ class TeamPage extends Component {
         onClose={(res) => this.closeConfirmation(res, this.state.showConfirmation)} />
       {/*shows when the entire page is rendered again*/}
       {/*As of now the entire page rerenders when a team is togled, should change in future*/}
-      {console.log("Team Rerender")}
         <h1>Team Overview</h1>
         <ListGroup>
           {Object.keys(this.props.teams).map((teamNum, i) => {
@@ -154,8 +153,8 @@ const MemberItem = function (props) {
      <Link to="#">{props.firstName}</Link>
      {props.privlige ?
      <div className="pull-right">
-       <Button bsSize="small" onClick={props.DeleteMember}><Glyphicon glyph="trash" /></Button>
        <Button bsSize="small" onClick={props.EditMember}><Glyphicon glyph="edit" /></Button>
+       <Button bsSize="small" onClick={props.DeleteMember}><Glyphicon glyph="trash" /></Button>
      </div>
       : ''}
    </ListGroupItem>

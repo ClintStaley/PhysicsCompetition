@@ -191,7 +191,7 @@ const errMap = {
       forbiddenRole: 'Role specified is not permitted.',
       noOldPwd: 'Change of password requires an old password',
       oldPwdMismatch: 'Old password that was provided is incorrect.',
-      dupTitle: 'Conversation title duplicates an existing one',
+      dupTitle: 'title duplicates an existing one',
       dupEnrollment: 'Duplicate enrollment',
       forbiddenField: 'Field in body not allowed.',
       queryFailed: 'Query failed (server problem).'
@@ -206,7 +206,7 @@ const errMap = {
       forbiddenRole: '[ES] Role specified is not permitted.',
       noOldPwd: '[ES] Change of password requires an old password',
       oldPwdMismatch: '[ES] Old password that was provided is incorrect.',
-      dupTitle: '[ES] Conversation title duplicates an existing one',
+      dupTitle: '[ES] title duplicates an existing one',
       dupEnrollment: '[ES] Duplicate enrollment',
       forbiddenField: '[ES] Field in body not allowed.',
       queryFailed: '[ES] Query failed (server problem).'

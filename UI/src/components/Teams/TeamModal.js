@@ -2,16 +2,38 @@ import React, { Component } from 'react';
 import {
   Modal, Button, FormControl, ControlLabel, FormGroup, HelpBlock
 } from 'react-bootstrap';
-import Select from 'react-select';
+import Select from 'react-virtualized-select';
+import 'react-select/dist/react-select.css';
 
 export default class TeamModal extends Component {
    constructor(props) {
       super(props);
+
+      var MemberOptions = [];
+
+      for (var property in this.props.team.members) {
+         if (this.props.team.members.hasOwnProperty(property)) {
+            MemberOptions.push({label: this.props.team.members[property]
+             .firstName, value: this.props.team.members[property].id});
+         }
+      }
+      var owner = {};
+      owner.value = this.props.team.ownerId;
+      owner.label = this.props.team.members[owner.value].firstName;
+
+      this.state = {
+       teamName: (this.props.team && this.props.team.teamName) || "",
+       members: MemberOptions,
+       owner: owner}
+
+       this.handleChangeSelect = this.handleChangeSelect.bind(this);
    }
 
    close = (result) => {
       this.props.onDismiss && this.props.onDismiss({ status: result,
        UpdatedTeam : {teamName: this.state.teamName}});
+   //   this.props.onDismiss && this.props.onDismiss({ status: result,
+   //    UpdatedTeam : {ownerId: , teamName: this.state.teamName}});
    }
 
    getValidationState = () => {
@@ -26,7 +48,7 @@ export default class TeamModal extends Component {
    }
 
    handleChangeSelect(event) {
-      this.setState({leader : event.target.value});
+      this.setState({owner : event});
    }
 
 //  componentWillReceiveProps = (nextProps) => {
@@ -36,19 +58,10 @@ export default class TeamModal extends Component {
 //  }
 
    render() {
-      this.state = {
-       teamName: (this.props.team && this.props.team.teamName) || ""}
 
-      var MemberOptions = [];
 
-      for (var property in this.props.team.members) {
-         if (this.props.team.members.hasOwnProperty(property)) {
-            MemberOptions.push({label: this.props.team.members[property]
-             .firstName, value: this.props.team.members[property].firstName});
-         }
-      }
       console.log(this.props);
-      console.log(MemberOptions);
+      console.log(this.state.MemberOptions);
       console.log(this.props.showModal);
       return (
        <Modal show={this.props.showModal != null} onHide={() => this.close("Cancel")}>
@@ -70,9 +83,14 @@ export default class TeamModal extends Component {
                onChange={this.handleChange}/>
                <FormControl.Feedback />
                <HelpBlock>There must be a team name.</HelpBlock>
-               <div>
-                 <Select options={MemberOptions}/>
-               </div>
+               <ControlLabel>Team Leader</ControlLabel>
+               {console.log(this.state.members)}
+               {console.log(this.props.team.ownerId)}
+               <Select
+               name="Leader"
+               options={this.state.members}
+               value={this.state.owner}
+               onChange={this.handleChangeSelect}/>
              </FormGroup>
            {/*Add dropdown for switching team leader */}
            </form>

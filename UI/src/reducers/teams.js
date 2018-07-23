@@ -21,7 +21,8 @@ export default function teams(state = {}, action) {
          var teamData = action.teamData.newTeamData;
          console.log(teamId);
          console.log(teamData);
-         return Object.assign({}, state, {[teamId]: teamData});
+         return Object.assign({}, state, {[teamId]:
+          Object.assign({}, state[teamId], teamData)});
       case 'DELETE_TEAM':
          return update(state, {$unset: [action.teamId]});
       case 'SIGN_OUT':
