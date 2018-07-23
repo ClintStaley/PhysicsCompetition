@@ -10,32 +10,30 @@ import TeamModal from './TeamModal'
 class TeamPage extends Component {
    constructor(props) {
       super(props);
-
-
-      //initalize teams, grab all teams for user
+      //Initialize teams, grab all teams for user
 
       this.state = {
-         showConfirmation: false,
-         showModal: false,
+         showConfirmation: null,
          modalNumber: null
       }
       this.props.getTeams(this.props.prss.id);
       console.log("constructor");
    }
 
-   openConfirmation = () => {
-      this.setState({showConfirmation: true })
+   openConfirmation = (teamId) => {
+      console.log(teamId);
+      this.setState({showConfirmation: teamId })
    }
 
    closeConfirmation = (res, teamNum) => {
       if (res === 'Yes') {
          this.deleteTeam(teamNum);
       }
-      this.setState({ showConfirmation: false})
+      this.setState({ showConfirmation: null})
    }
 
-   openConfirmation = () => {
-      this.setState({showConfirmation: true })
+   openConfirmation = (teamNum) => {
+      this.setState({showConfirmation: teamNum })
    }
 
    openModal = (teamId) => {
@@ -43,24 +41,17 @@ class TeamPage extends Component {
        this.props.teams[teamId].members.length  === 0){
          this.props.updateMembers(this.props.teams[teamId].cmpId ,teamId);
       }
-//      const newState = { showModal: true };
-//      if (team)
-//         newState['editCnv'] = team;
+
       this.setState({ modalNumber: teamId });
-      console.log(this.state.modalNumber === teamId);
-      console.log(teamId);
-      console.log(this.state.modalNumber);
-      this.setState({ showModal: true });
    }
 
    modalDismiss = (teamNum, result) => {
       if (result.status === "OK") {
          var curTeam = this.props.teams[teamNum];
-         this.props.editTeam(teamNum, Object.assign({}, curTeam,result.UpdatedTeam));
+         this.props.editTeam(teamNum,
+          Object.assign({}, curTeam,result.UpdatedTeam));
       }
-      console.log(result);
-      console.log("close Modal");
-      this.setState({ showModal: false });
+      this.setState({ modalNumber: null });
    }
 
 
@@ -75,6 +66,9 @@ class TeamPage extends Component {
    }
 
    deleteTeam = (teamNum) => {
+      console.log(teamNum);
+      console.log(this.state.showConfirmation);
+      console.log(this.props.teams[teamNum]);
       this.props.deleteTeam(this.props.teams[teamNum].cmpId, teamNum);
    }
 
@@ -86,6 +80,19 @@ class TeamPage extends Component {
    render() {
       return (
       <section className="container">
+      {this.state.modalNumber ?
+      <TeamModal
+          showModal={this.state.modalNumber }
+          title={"Edit Team"}
+          team = {this.props.teams[this.state.modalNumber]}
+          onDismiss={(teamData) => this.modalDismiss(this.state.modalNumber, teamData)} />
+      : ''}
+      <ConfDialog
+        show={this.state.showConfirmation  != null }
+        title="Delete Team"
+        body={`Are you sure you want to delete the Team '${this.state.showConfirmation}'`}
+        buttons={['Yes', 'Abort']}
+        onClose={(res) => this.closeConfirmation(res, this.state.showConfirmation)} />
       {/*shows when the entire page is rendered again*/}
       {/*As of now the entire page rerenders when a team is togled, should change in future*/}
       {console.log("Team Rerender")}
@@ -98,17 +105,8 @@ class TeamPage extends Component {
             return <TeamItem
               key={i} {...team}
               toggleTeam = {() => this.toggleView(teamNum)}
-
               openModal = {() => this.openModal(teamNum)}
-              showModal = {this.state.showModal}
-              modalNumber = {this.state.modalNumber}
-              closeModal = {(teamData) => this.modalDismiss(teamNum, teamData)}
-
-              openConfirmation = {() => this.openConfirmation()}
-              showConfirmation = {this.state.showConfirmation}
-
-              closeConfirmation = {(res) => this.closeConfirmation(res, teamNum)}
-
+              openConfirmation = {() => this.openConfirmation(teamNum)}
               leader = {team.ownerId === this.props.prss.id}
               prss = {this.props.prss.id}/>
           })
@@ -116,53 +114,36 @@ class TeamPage extends Component {
         </ListGroup>
       </section>
       )
-  }
+   }
 }
 
 // A Team Item
 const TeamItem = function (props) {
    return (
-      <ListGroupItem className="clearfix">
-      {props.leader ?
-         <Button onClick={props.toggleTeam}><mark>{props.teamName}</mark></Button>
-         :
-         <Button onClick={props.toggleTeam}>{props.teamName}</Button>
-      }
-      {console.log(props)}
-         {props.leader ?
-            <div className="pull-right">
-               <Button bsSize="small" onClick={props.openModal}><Glyphicon glyph="edit" /></Button>
-               {props.modalNumber === props.teamId ?
-                <TeamModal
-                   showModal={props.showModal }
-                   title={"Edit Team"}
-                   team = {props}
-                   members = {props.members}
-                   onDismiss={props.closeModal} />
-                : ''}
-               <Button bsSize="small" onClick={props.openConfirmation}><Glyphicon glyph="trash" /></Button>
-                <ConfDialog
-                  show={props.showConfirmation}
-                  title="Delete Team"
-                  body={`Are you sure you want to delete the Team '${props.teamName}'`}
-                  buttons={['Yes', 'Abort']}
-                  onClose={props.closeConfirmation} />
-            </div>
-         : ''}
-         {props.toggled ?
-         <ListGroup>
-          {Object.keys(props.members).map((MemNum, i) => {
-             var member = props.members[MemNum];
-
-             {/*passes member data and privlige*/}
-             return <MemberItem
-               key={i} {...member}
-               privlige = {props.leader || member.id === props.prss}/>
-          })
-          }
-         </ListGroup>
-         : ''}
-      </ListGroupItem>
+   <ListGroupItem className="clearfix">
+     {props.leader ?
+       <Button onClick={props.toggleTeam}><mark>{props.teamName}</mark></Button>
+       :
+       <Button onClick={props.toggleTeam}>{props.teamName}</Button>}
+     {props.leader ?
+       <div className="pull-right">
+         <Button bsSize="small" onClick={props.openModal}><Glyphicon glyph="edit" /></Button>
+         <Button bsSize="small" onClick={props.openConfirmation}><Glyphicon glyph="trash" /></Button>
+       </div>
+     : ''}
+     {props.toggled ?
+     <ListGroup>
+       {Object.keys(props.members).map((MemNum, i) => {
+         var member = props.members[MemNum];
+         {/*passes member data and privlige*/}
+         return <MemberItem
+           key={i} {...member}
+           privlige = {props.leader || member.id === props.prss}/>
+         })
+       }
+     </ListGroup>
+     : ''}
+   </ListGroupItem>
    )
 }
 
@@ -170,13 +151,13 @@ const TeamItem = function (props) {
 const MemberItem = function (props) {
    return (
    <ListGroupItem className="clearfix">
-         {console.log("Member Created")}
-   <Link to="#">{props.firstName}</Link>
-      {props.privlige ?
-         <div className="pull-right">
-            <Button bsSize="small" onClick={props.DeleteMember}><Glyphicon glyph="trash" /></Button>
-            <Button bsSize="small" onClick={props.EditMember}><Glyphicon glyph="edit" /></Button>
-         </div>
+     {console.log("Member Created")}
+     <Link to="#">{props.firstName}</Link>
+     {props.privlige ?
+     <div className="pull-right">
+       <Button bsSize="small" onClick={props.DeleteMember}><Glyphicon glyph="trash" /></Button>
+       <Button bsSize="small" onClick={props.EditMember}><Glyphicon glyph="edit" /></Button>
+     </div>
       : ''}
    </ListGroupItem>
    )
