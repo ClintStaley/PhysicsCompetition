@@ -11,7 +11,7 @@ class TeamPage extends Component {
    constructor(props) {
       super(props);
 
-      //initilize teams, grab all teams for user
+      // Initialize teams; grab all teams for user
       this.state = {
          showConfirmation: false,
          openModal: false
@@ -24,16 +24,16 @@ class TeamPage extends Component {
       this.setState({showConfirmation: true })
    }
 
-   closeConfirmation = (res,  teamNum) => {
+   closeConfirmation = (res, teamNum) => {
       if (res === 'Yes') {
          this.deleteTeam(teamNum);
       }
       this.setState({ showConfirmation: false})
    }
+
    openConfirmation = () => {
       this.setState({showConfirmation: true })
    }
-
 
    openModal = (team) => {
 //      const newState = { showModal: true };
