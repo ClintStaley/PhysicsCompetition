@@ -30,10 +30,16 @@ export default class TeamModal extends Component {
    }
 
    close = (result) => {
+      var updatedTeam = {}
+
+      if (this.state.teamName !== this.props.team.teamName)
+         updatedTeam.teamName = this.state.teamName;
+
+      if (this.state.owner.value !== this.props.team.ownerId)
+         updatedTeam.ownerId = this.state.owner.value;
+
       this.props.onDismiss && this.props.onDismiss({ status: result,
-       UpdatedTeam : {teamName: this.state.teamName}});
-   //   this.props.onDismiss && this.props.onDismiss({ status: result,
-   //    UpdatedTeam : {ownerId: , teamName: this.state.teamName}});
+       UpdatedTeam : updatedTeam});
    }
 
    getValidationState = () => {

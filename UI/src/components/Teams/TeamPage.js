@@ -43,7 +43,6 @@ class TeamPage extends Component {
    }
 
    modalDismiss = (teamNum, result) => {
-      console.log(result.UpdatedTeam );
       if (result.status === "OK") {
          var curTeam = this.props.teams[teamNum];
          this.props.editTeam
