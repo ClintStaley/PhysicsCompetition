@@ -10,14 +10,13 @@ import TeamModal from './TeamModal'
 class TeamPage extends Component {
    constructor(props) {
       super(props);
-      //Initialize teams, grab all teams for user
 
+      //Initialize teams, grab all teams for user
       this.state = {
          showConfirmation: null,
          modalNumber: null
       }
       this.props.getTeams(this.props.prss.id);
-      console.log("constructor");
    }
 
    openConfirmation = (teamId) => {
