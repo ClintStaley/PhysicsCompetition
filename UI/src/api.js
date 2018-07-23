@@ -16,6 +16,19 @@ function safeFetch(endpoint, body) {
    .then(rsp => rsp.ok ? rsp : createErrorPromise(rsp));
 }
 
+// Handle response with non-200 status by returning a Promise that rejects,
+// with reason: array of one or more error strings suitable for display.
+function createErrorPromise(response) {
+   if (response.status === 400)
+      return Promise.resolve(response)
+      .then(response => response.json())
+      .then(errorList => Promise.reject(errorList.map(
+         err => errorTranslate(err.tag))));
+   else
+      return Promise.reject([response.status === 401 ? "Not logged in"
+       : response.status === 403 ? "Not permitted" : "Unknown error"]);
+}
+
 // Helper functions for the comon request types
 /**
  * make a post request

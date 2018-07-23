@@ -5,26 +5,20 @@ export default function teams(state = {}, action) {
       case 'GET_TEAM': // Replace previous team
          return action.teams;
       case 'TOGGLE_TEAM':
-         var teamId = action.memberData.teamId;
-         var members = action.memberData.members;
          //update allows adding new data to the object while remaining immutable
          //will change the team.toggled state
-
-         // If newly selected team has no members, assign members to it
-         if (Object.keys(state[teamId].members).length === 0) {
-            return Object.assign({}, state, {
-             [teamId]: Object.assign({}, state[teamId], { toggled: !
-             state[teamId].toggled }, { members: members }) })
-         }
          return Object.assign({}, state, {
-          [teamId]: Object.assign({}, state[teamId], { toggled: !state[
-          teamId].toggled }) });
+          [action.teamId]: Object.assign({}, state[action.teamId],
+          { toggled: !state[action.teamId].toggled })
+         });
       case 'POPULATE_TEAM':
          // Will add member data to the object
-         return Object.assign({}, state, {members: action.memberdata.members});
+         return Object.assign({}, state,
+          {[action.teamData.teamId]: Object.assign({},
+          state[action.teamData.teamId] , {members: action.teamData.members})});
       case 'PUT_TEAM':
-         var teamId = action.newTeam.teamId;
-         var teamData = action.newTeam.newTeamData;
+         var teamId = action.teamData.teamId;
+         var teamData = action.teamData.newTeamData;
          console.log(teamId);
          console.log(teamData);
          return Object.assign({}, state, {[teamId]: teamData});

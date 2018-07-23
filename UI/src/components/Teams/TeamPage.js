@@ -11,10 +11,13 @@ class TeamPage extends Component {
    constructor(props) {
       super(props);
 
+
       //initalize teams, grab all teams for user
+
       this.state = {
          showConfirmation: false,
-         openModal: false
+         showModal: false,
+         modalNumber: null
       }
       this.props.getTeams(this.props.prss.id);
       console.log("constructor");
@@ -24,21 +27,29 @@ class TeamPage extends Component {
       this.setState({showConfirmation: true })
    }
 
-   closeConfirmation = (res,  teamNum) => {
+   closeConfirmation = (res, teamNum) => {
       if (res === 'Yes') {
          this.deleteTeam(teamNum);
       }
       this.setState({ showConfirmation: false})
    }
+
    openConfirmation = () => {
       this.setState({showConfirmation: true })
    }
 
-
-   openModal = (team) => {
+   openModal = (teamId) => {
+      if (this.props.teams[teamId].members ||
+       this.props.teams[teamId].members.length  === 0){
+         this.props.updateMembers(this.props.teams[teamId].cmpId ,teamId);
+      }
 //      const newState = { showModal: true };
 //      if (team)
 //         newState['editCnv'] = team;
+      this.setState({ modalNumber: teamId });
+      console.log(this.state.modalNumber === teamId);
+      console.log(teamId);
+      console.log(this.state.modalNumber);
       this.setState({ showModal: true });
    }
 
@@ -55,9 +66,10 @@ class TeamPage extends Component {
 
    toggleView = (teamId) => {
       //check for membership data, only update when no membership data is available
-      //if (Object.keys(this.props.teams[teamId].members).length  === 0)
-      //this.props.updateMembers(this.props.teams[teamId].cmpId ,teamId);
-
+      if (this.props.teams[teamId].members ||
+       this.props.teams[teamId].members.length  === 0){
+         this.props.updateMembers(this.props.teams[teamId].cmpId ,teamId);
+      }
       //toggle team toggles the member list on the screen
       this.props.toggleTeam(this.props.teams[teamId].cmpId, teamId);
    }
@@ -76,7 +88,7 @@ class TeamPage extends Component {
       <section className="container">
       {/*shows when the entire page is rendered again*/}
       {/*As of now the entire page rerenders when a team is togled, should change in future*/}
-      {console.log("Big Render")}
+      {console.log("Team Rerender")}
         <h1>Team Overview</h1>
         <ListGroup>
           {Object.keys(this.props.teams).map((teamNum, i) => {
@@ -87,8 +99,9 @@ class TeamPage extends Component {
               key={i} {...team}
               toggleTeam = {() => this.toggleView(teamNum)}
 
-              openModal = {() => this.openModal()}
+              openModal = {() => this.openModal(teamNum)}
               showModal = {this.state.showModal}
+              modalNumber = {this.state.modalNumber}
               closeModal = {(teamData) => this.modalDismiss(teamNum, teamData)}
 
               openConfirmation = {() => this.openConfirmation()}
@@ -119,9 +132,9 @@ const TeamItem = function (props) {
          {props.leader ?
             <div className="pull-right">
                <Button bsSize="small" onClick={props.openModal}><Glyphicon glyph="edit" /></Button>
-               {props.showModal ?
+               {props.modalNumber === props.teamId ?
                 <TeamModal
-                   showModal={props.showModal}
+                   showModal={props.showModal }
                    title={"Edit Team"}
                    team = {props}
                    members = {props.members}

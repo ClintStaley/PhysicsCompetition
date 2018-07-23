@@ -24,8 +24,8 @@ export function editTeam(teamId, newTeamData, cb) {
    return (dispatch, prevState) => {
       api.putCmp(teamId, newTeamData)
       .then(() => {
-          var newTeam = {newTeamData : newTeamData, teamId: teamId};
-          dispatch({ type: 'PUT_TEAM', newTeam});
+          var teamData = {newTeamData : newTeamData, teamId: teamId};
+          dispatch({ type: 'PUT_TEAM', teamData});
        })
       .then(() => {if (cb) cb()});
    }
@@ -39,10 +39,10 @@ export function getTeams(teamId, cb) {
       api.getTeams(teamId)
       .then((teams) => {
          Object.keys(teams).map((teamNum) => {
-          teams[teamNum].members = {};
-          teams[teamNum].toggled = false;
-       });
-       return dispatch({ type: 'GET_TEAM', teams});
+            teams[teamNum].members = {};
+            teams[teamNum].toggled = false;
+         });
+         return dispatch({ type: 'GET_TEAM', teams});
       })
       .then(() => {if (cb) cb()})}
 }
@@ -50,22 +50,16 @@ export function getTeams(teamId, cb) {
 export function deleteTeam(cmpId, teamId, cb) {
    return (dispatch, prevState) => {
       api.delTeam(cmpId , teamId).then(() =>
-          dispatch({ type: 'DELETE_TEAM', teamId}))
-       .then(() => {if (cb) cb()})
+       dispatch({ type: 'DELETE_TEAM', teamId}))
+      .then(() => {if (cb) cb()})
    }
 }
 
 
 export function toggleTeam(cmpId, teamId, cb) {
    return (dispatch, prevState) => {
-      api.getMembers(cmpId, teamId)
-      .then((members) => {
-         var memberData = {};
-         memberData.members = members;
-         memberData.teamId = teamId;
-         return dispatch({ type: 'TOGGLE_TEAM', memberData });
-      })
-      .then(() => { if (cb) cb() })
+      dispatch({ type: 'TOGGLE_TEAM', teamId })
+       //.then(() => {if (cb) cb()})
    }
 }
 
@@ -73,10 +67,10 @@ export function updateMembers(cmpId, teamId, cb) {
    return (dispatch, prevState) => {
       api.getMembers(cmpId, teamId)
       .then((members) => {
-         var memberData = {};
-         memberData.members = members;
-         memberData.teamId = teamId;
-         return dispatch({ type: 'POPULATE_TEAM', memberData });
+         var teamData = {};
+         teamData.members = members;
+         teamData.teamId = teamId;
+         return dispatch({ type: 'POPULATE_TEAM', teamData });
       })
       .then(() => { if (cb) cb() })
    }
