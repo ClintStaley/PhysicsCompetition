@@ -9,8 +9,14 @@ const reqConf = {
    credentials: 'include',  // Send cookies
 }
 
-// Heper functions for the comon request types
+// Fetch call that posts a server connect error on general fetch failure.
+function safeFetch(endpoint, body) {
+   return fetch(endpoint, body)
+   .catch(err => Promise.reject(["Server connect error"]))
+   .then(rsp => rsp.ok ? rsp : createErrorPromise(rsp));
+}
 
+// Helper functions for the comon request types
 /**
  * make a post request
  * @param {string} endpoint
@@ -18,11 +24,11 @@ const reqConf = {
  * @returns {Promise}
  */
 export function post(endpoint, body) {
-   return fetch(baseURL + endpoint, {
-      method: 'POST',
-      body: JSON.stringify(body),
-      ...reqConf
-   })
+    return safeFetch(baseURL + endpoint, {
+        method: 'POST',
+        body: JSON.stringify(body),
+        ...reqConf
+    });
 }
 
 /**
@@ -32,11 +38,11 @@ export function post(endpoint, body) {
  * @returns {Promise}
  */
 export function put(endpoint, body) {
-   return fetch(baseURL + endpoint, {
-      method: 'PUT',
-      body: JSON.stringify(body),
-      ...reqConf
-   })
+    return safeFetch(baseURL + endpoint, {
+        method: 'PUT',
+        body: JSON.stringify(body),
+        ...reqConf
+    })
 }
 
 /**
@@ -45,17 +51,17 @@ export function put(endpoint, body) {
  * @returns {Promise}
  */
 export function get(endpoint) {
-   return fetch(baseURL + endpoint, {
-      method: 'GET',
-      ...reqConf
-   })
+    return safeFetch(baseURL + endpoint, {
+        method: 'GET',
+        ...reqConf
+    })
 }
 
 export function del(endpoint) {
-   return fetch(baseURL + endpoint, {
-      method: 'DELETE',
-      ...reqConf
-   })
+    return safeFetch(baseURL + endpoint, {
+        method: 'DELETE',
+        ...reqConf
+    })
 }
 
 /* Functions for performing API actions.  All share these principles:
@@ -99,12 +105,12 @@ export function registerUser(user) {
 
 export function getCmps(prsId) {
    return get("Prss/" + prsId + "/Competition")
-      .then((teamData) => teamData.json())
+   .then((teamData) => teamData.json())
 }
 
 export function getOneCmps(cmpId) {
    return get("Cmps/" + cmpId)
-      .then((Competitions) => Competitions.json());
+   .then((Competitions) => Competitions.json());
 }
 
 export function putCmp(id, body) {
@@ -121,15 +127,15 @@ export function postCmp(body) {
 
 export function getTeams(prsId) {
    return get("Prss/" + prsId + "/Teams")
-      .then((teamData) => teamData.json())
-      .then((TeamData) => {
-         var Teams = {};
-         for (var i = 0;i < TeamData.length;i++){
-            Teams[TeamData[i].id] = TeamData[i];
-         }
+   .then((teamData) => teamData.json())
+   .then((TeamData) => {
+      var Teams = {};
+      for (var i = 0;i < TeamData.length;i++){
+         Teams[TeamData[i].id] = TeamData[i];
+      }
 
-         return Teams;
-      })
+      return Teams;
+   })
 }
 
 export function putTeam(cmpId, teamId, body) {
@@ -150,15 +156,15 @@ export function postTeam(cmpId, body) {
 */
 export function getMembers(cmpId, TeamId) {
    return get("Cmps/" + cmpId + "/Teams/" + TeamId + "/mmbs")
-      .then((memberData) => memberData.json())
-      .then((memberData) => {
-         var members = {};
+   .then((memberData) => memberData.json())
+   .then((memberData) => {
+      var members = {};
 
-         for (var i = 0; i < memberData.length;i++)
-            members[memberData[i].id] = memberData[i];
+      for (var i = 0; i < memberData.length;i++)
+         members[memberData[i].id] = memberData[i];
 
-         return members;
-      })
+      return members;
+   })
 }
 
 const errMap = {
