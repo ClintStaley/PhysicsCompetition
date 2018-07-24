@@ -69,6 +69,7 @@ class Main extends Component {
           </Navbar>
         </div>
         <Switch>
+        {console.log(this.props)}
           <Route exact path='/' children={Home} />
           <Route path='/Competition' render={() => <CompetitionPage {...this.props} />} />
           <Route path='/Teams' render={() => <TeamPage {...this.props}/>}/>
