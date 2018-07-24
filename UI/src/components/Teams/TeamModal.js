@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  Modal, Button, FormControl, ControlLabel, FormGroup, HelpBlock
+  Modal, Select, Button, FormControl, ControlLabel, FormGroup, HelpBlock
 } from 'react-bootstrap';
 import Select from 'react-virtualized-select';
 import 'react-select/dist/react-select.css';
@@ -13,11 +13,15 @@ export default class TeamModal extends Component {
       var leader;
       var team = this.props.team
 
-      for (var key in Object.keys(team.members)) {
-         members.push({label: team.members[key].firstName, value: key});
+      Object.keys(team.members).forEach((key) => {
+         members.push({
+          label: `${team.members[key].email} (${team.members[key].firstName})`,
+          value: key});
          if (team.leaderId === key)
-            leader = {value: key, label: team.members[key].firstName};
-      }
+            leader = {
+             label:`${team.members[key].email}(${team.members[key].firstName})`,
+             value: key};
+      });
 
       this.state = {
          teamName: team.teamName || "",
@@ -34,7 +38,7 @@ export default class TeamModal extends Component {
    }
 
    getValidationState = () => {
-      return this.state.teamName ? null : "warning";
+      return this.state.teamName ? null : "error";
    }
 
    // Only possible change is a new team name value
@@ -44,6 +48,7 @@ export default class TeamModal extends Component {
 
    // Only possible select is a new choice of first name for team lead
    handleChangeSelect(event) {
+      console.log("New leader " + JSON.stringify(event));
       this.setState({leader : event});
    }
 
