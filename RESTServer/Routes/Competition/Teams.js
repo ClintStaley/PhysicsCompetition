@@ -27,8 +27,7 @@ router.post('/', (req, res) => {
    async.waterfall([
    (cb) => {
       //check for required field teamName
-      if (vld.hasFields(body, ["teamName"], cb)) {
-         body.ownerId = ssn.id;
+      if (vld.hasFields(body, ["teamName", "leaderId"], cb)) {
          body.cmpId = req.params.cmpId;
          //Check teamName availability
          cnn.chkQry('select * from Team where teamName = ? and cmpId = ?',
@@ -55,7 +54,7 @@ router.post('/', (req, res) => {
       res.location(router.baseURL + '/' + result.teamId);
 
       //save team data to include team leader as a member in member table
-      memberData.prsId = body.ownerId;
+      memberData.prsId = body.leaderId;
       memberData.teamId = result.insertId;
 
       if (rules) {
@@ -105,7 +104,7 @@ router.post('/', (req, res) => {
 router.get('/:id', (req, res) => {
    var vld = req.validator;
 
-   req.cnn.query('select id,teamName,bestScore,lastSubmit,canSubmit from' +
+   req.cnn.query('select id, teamName, bestScore, lastSubmit, canSubmit from' +
     ' Team where id = ? && cmpId = ?',
     [req.params.id,req.params.cmpId],
    (err, teamArr) => {
@@ -123,25 +122,40 @@ router.put('/:id', (req, res) => {
 
    async.waterfall([
    (cb) => {
-      if (vld.hasOnlyFields(body, ["teamName", "ownerId"]))
+      if (vld.hasOnlyFields(body, ["teamName", "leaderId"]))
          cnn.chkQry("select * from Team where id = ? && cmpId = ?",
           [req.params.id, req.params.cmpId], cb);
    },
    (qRes, fields, cb) => {
       if (vld.check(qRes.length, Tags.notFound, cb)) {
-         if (body.teamName && vld.checkPrsOK(qRes[0].ownerId,cb))
-            cnn.chkQry("select * from Team where teamName = ? && cmpId = ?",
-             [body.teamName,req.params.cmpId], cb);
+         if (body.teamName && vld.checkPrsOK(qRes[0].leaderId,cb))
+            cnn.chkQry("select * from Team where" +
+             " teamName = ? && cmpId = ? && id != ?",
+             [body.teamName, req.params.cmpId, req.params.id], cb);
          else {
-            cb();
+            cb(null, null, cb);
          }
       }
    },
    (nameRes, fields, cb) => {
       if (!body.teamName ||
-       vld.check(nameRes  && !nameRes.length, Tags.dupTitle, cb))
-         cnn.chkQry("update Team set ? where id = ?",
-          [req.body, req.params.id], cb);
+       vld.check(nameRes  && !nameRes.length, Tags.dupTitle))
+         ;
+
+      if (body.leaderId)
+         cnn.chkQry("select * from Membership where prsId = ? && teamId = ?",
+          [body.leaderId, req.params.id], cb);
+      else {
+         cb(null, null, cb);
+      }
+   },
+   (leaderRes, fields, cb) => {
+      if (!body.leaderId ||
+       vld.check(leaderRes  && leaderRes.length, Tags.badTeamLead))
+         ;
+
+      cnn.chkQry("update Team set ? where id = ?",
+       [req.body, req.params.id], cb);
    },
    (updRes, fields, cb) => {
       res.status(200).end();
@@ -161,13 +175,12 @@ router.delete('/:id', (req, res) => {
    async.waterfall([
    (cb) => {
       //get data on the correct team
-      cnn.chkQry('select * from Team where id = ?',
-       [req.params.id], cb);
+      cnn.chkQry('select * from Team where id = ?', [req.params.id], cb);
    },
    (result, fields, cb) => {
       //checks teh team exists
       if (vld.check(result && result.length, Tags.notFound, cb))
-         if (vld.checkPrsOK(result[0].ownerId, cb)) {
+         if (vld.checkPrsOK(result[0].leaderId, cb)) {
             nextTeam = result[0].nextTeam;
             otherTeams = !(nextTeam == req.params.id);
             cnn.query('select * from Competition where id = ?',
@@ -192,7 +205,7 @@ router.delete('/:id', (req, res) => {
           [nextTeam, req.params.id], cb);
       }
       else
-         cb(null,null,cb);
+         cb(null, null, cb);
    },
    (updRes, fields, cb) => {
       //delete the team

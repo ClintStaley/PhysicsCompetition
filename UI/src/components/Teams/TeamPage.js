@@ -78,6 +78,7 @@ class TeamPage extends Component {
       return (
       <section className="container">
       {console.log("Team Rerender")}
+      {console.log(this.props.teams)}
       {this.state.modalNumber ?
       <TeamModal
           showModal={ this.state.modalNumber }

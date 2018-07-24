@@ -21,13 +21,13 @@ Validator.Tags = {
    dupEnrollment: "dupEnrollment",  // Duplicate enrollment
    forbiddenField: "forbiddenField",// Field in body not allowed
    badBodyFormat: "badBodyFormat",  // Body didn't parse as JSON
-   cantRemoveLeader: "CannotRemoveLeader",    // Team leader is required
+   cantRemoveLeader: "cantRemoveLeader",    // Team leader is required
 
    // CAS FIX: We need absolute naming consistency, including capitalization
    // rules.  These should be lowercase.  And, notFound would probably cover
    // the NoCompType anyway.
-   noCompType: "CompetitionTypeDoesNotExist",
-   invalidPrms: "Invalid Parameters",
+   noCompType: "noCompType",
+   invalidPrms: "invalidPrms",
    badTeamLead: "badTeamLead"
 };
 

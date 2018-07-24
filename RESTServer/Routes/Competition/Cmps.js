@@ -117,7 +117,7 @@ router.put('/:id', (req, res) => {
 
    async.waterfall([
    (cb) => {
-      if (vld.hasOnlyFields(body, ["title", "prms"]))
+      if (vld.hasOnlyFields(body, ["title", "ctpId", "prms", "rules"]))
          cnn.query("select * from Competition where id = ?",
           [req.params.id], cb);
    },
@@ -189,8 +189,8 @@ router.get('/:id/WaitingSbms', (req, res) => {
    var num = req.query.num;
 
    if (vld.checkAdmin()) {
-      cnn.query('select id,teamId,content,response,score,subTime from Submit' +
-       ' where cmpId = ? and response is null order by subTime DESC',
+      cnn.query('select id, teamId, content, response, score, subTime from' + 
+      ' Submit where cmpId = ? and response is null order by subTime DESC',
        [req.params.id],
       (err, result) => {
          if (result.length)

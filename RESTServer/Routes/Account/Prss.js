@@ -129,7 +129,7 @@ router.delete('/:id', (req, res) => {
             res.status(200).end();
          req.cnn.release();
       });
-   else 
+   else
       req.cnn.release();
 });
 
@@ -138,7 +138,7 @@ router.get('/:id/Teams', (req, res) => {
    var teams = [];
 
    if (vld.checkPrsOK(req.params.id))
-      req.cnn.chkQry('select id,bestScore,teamName,cmpId,ownerId,lastSubmit,'
+      req.cnn.chkQry('select id,bestScore,teamName,cmpId,leaderId,lastSubmit,'
        + 'canSubmit from Team,Membership where ' +
        'prsId =  ? and teamId = Team.id', [req.params.id],
       (err, memberTeam) => {
