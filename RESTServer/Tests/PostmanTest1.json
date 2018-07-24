@@ -3285,7 +3285,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"teamName\": \"Team A\"\n}"
+							"raw": "{\n  \"teamName\": \"Team A\",\n  \"leaderId\": \"1\"\n}"
 						},
 						"url": {
 							"raw": "{{url}}/Cmps/1/Teams",
@@ -3325,7 +3325,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"teamName\": \"Team B\"\n}"
+							"raw": "{\n  \"teamName\": \"Team B\",\n  \"leaderId\": \"1\"\n}"
 						},
 						"url": {
 							"raw": "{{url}}/Cmps/1/Teams",
@@ -3365,7 +3365,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"teamName\": \"Team B\"\n}"
+							"raw": "{\n  \"teamName\": \"Team B\",\n  \"leaderId\": \"1\"\n}"
 						},
 						"url": {
 							"raw": "{{url}}/Cmps/1/Teams",
@@ -3443,7 +3443,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"teamName\": \"Team C\"\n}"
+							"raw": "{\n  \"teamName\": \"Team C\",\n  \"leaderId\": \"1\"\n}"
 						},
 						"url": {
 							"raw": "{{url}}/Cmps/4/Teams",
@@ -3582,6 +3582,46 @@
 							"path": [
 								"Cmps",
 								"3",
+								"Teams",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit team B Leader Only",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 400\"] = responseCode.code === 400;"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"leaderId\": \"4\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/Cmps/1/Teams/2",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Cmps",
+								"1",
 								"Teams",
 								"2"
 							]
@@ -3816,7 +3856,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"teamName\": \"Team C\"\n}"
+							"raw": "{\n  \"teamName\": \"Team C\",\n  \"leaderId\": \"4\"\n}"
 						},
 						"url": {
 							"raw": "{{url}}/Cmps/1/Teams",
@@ -3905,7 +3945,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"teamName\": \"Team 3\"\n}"
+							"raw": "{\n  \"teamName\": \"Team 3\",\n  \"leaderId\": \"4\"\n}"
 						},
 						"url": {
 							"raw": "{{url}}/Cmps/1/Teams/4",
@@ -4062,7 +4102,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"teamName\": \"Team D\"\n}"
+							"raw": "{\n  \"teamName\": \"Team D\",\n  \"leaderId\": \"4\"\n}"
 						},
 						"url": {
 							"raw": "{{url}}/Cmps/1/Teams",
@@ -4748,6 +4788,46 @@
 							]
 						},
 						"description": "\n"
+					},
+					"response": []
+				},
+				{
+					"name": "Edit team D Leader",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"leaderId\": \"1\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/Cmps/1/Teams/5",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Cmps",
+								"1",
+								"Teams",
+								"5"
+							]
+						}
 					},
 					"response": []
 				},

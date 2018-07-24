@@ -9,66 +9,45 @@ export default class TeamModal extends Component {
    constructor(props) {
       super(props);
 
-      var MemberOptions = [];
+      var members = [];
+      var leader;
+      var team = this.props.team
 
-      for (var property in this.props.team.members) {
-         if (this.props.team.members.hasOwnProperty(property)) {
-            MemberOptions.push({label: this.props.team.members[property]
-             .firstName, value: this.props.team.members[property].id});
-         }
+      for (var key in Object.keys(team.members)) {
+         members.push({label: team.members[key].firstName, value: key});
+         if (team.leaderId === key)
+            leader = {value: key, label: team.members[key].firstName};
       }
-      var owner = {};
-      owner.value = this.props.team.ownerId;
-      owner.label = this.props.team.members[owner.value].firstName;
 
       this.state = {
-       teamName: (this.props.team && this.props.team.teamName) || "",
-       members: MemberOptions,
-       owner: owner}
+         teamName: team.teamName || "",
+         members: members,
+         leader: leader
+      };
 
-       this.handleChangeSelect = this.handleChangeSelect.bind(this);
+      this.handleChangeSelect = this.handleChangeSelect.bind(this);
    }
 
-   close = (result) => {
-      var updatedTeam = {}
-
-      if (this.state.teamName !== this.props.team.teamName)
-         updatedTeam.teamName = this.state.teamName;
-
-      if (this.state.owner.value !== this.props.team.ownerId)
-         updatedTeam.ownerId = this.state.owner.value;
-
-      this.props.onDismiss && this.props.onDismiss({ status: result,
-       UpdatedTeam : updatedTeam});
+   close = (result) => {this.props.onDismiss({
+      status: result,
+      updatedTeam : {teamName: this.state.teamName}});
    }
 
    getValidationState = () => {
-      if (this.state.teamName)
-         return null
-
-      return "warning";
+      return this.state.teamName ? null : "warning";
    }
 
+   // Only possible change is a new team name value
    handleChange = (e) => {
       this.setState({teamName: e.target.value});
    }
 
+   // Only possible select is a new choice of first name for team lead
    handleChangeSelect(event) {
-      this.setState({owner : event});
+      this.setState({leader : event});
    }
 
-//  componentWillReceiveProps = (nextProps) => {
-//    if (nextProps.showModal) {
-//      this.setState({teamName: (nextProps.cnv && nextProps.cnv.title) || ""})
-//    }
-//  }
-
    render() {
-
-
-      console.log(this.props);
-      console.log(this.state.MemberOptions);
-      console.log(this.props.showModal);
       return (
        <Modal show={this.props.showModal != null} onHide={() => this.close("Cancel")}>
          <Modal.Header closeButton>
@@ -79,26 +58,26 @@ export default class TeamModal extends Component {
            e.preventDefault() || this.state.teamName.length ?
            this.close("OK") : this.close("Cancel")}>
              <FormGroup
-               controlId="formBasicText"
-               validationState={this.getValidationState()}>
+             controlId="formBasicText"
+             validationState={this.getValidationState()}>
+
                <ControlLabel>Team Name</ControlLabel>
                <FormControl
                type="text"
                value={this.state.teamName}
                placeholder="Enter text"
                onChange={this.handleChange}/>
+
                <FormControl.Feedback />
                <HelpBlock>There must be a team name.</HelpBlock>
+
                <ControlLabel>Team Leader</ControlLabel>
-               {console.log(this.state.members)}
-               {console.log(this.props.team.ownerId)}
                <Select
                name="Leader"
                options={this.state.members}
-               value={this.state.owner}
+               value={this.state.leader}
                onChange={this.handleChangeSelect}/>
              </FormGroup>
-           {/*Add dropdown for switching team leader */}
            </form>
          </Modal.Body>
          <Modal.Footer>
