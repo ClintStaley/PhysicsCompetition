@@ -19,8 +19,8 @@ class TeamPage extends Component {
       // CAS FIX: This sort of thing doesn't go in the component constructor
       // Consider instead placing it in the render method of the relevant
       // Route tag.
-      if (!this.props.teams)
-         this.props.getTeams(this.props.prss.id);
+      console.log(JSON.stringify(this.props.teams));
+      this.props.getTeams(this.props.prss.id);
    }
 
    openConfirmation = (teamId) => {
