@@ -132,6 +132,9 @@ router.put('/:id', (req, res) => {
          if (body.teamName && vld.checkPrsOK(qRes[0].ownerId,cb))
             cnn.chkQry("select * from Team where teamName = ? && cmpId = ?",
              [body.teamName,req.params.cmpId], cb);
+         else {
+            cb();
+         }
       }
    },
    (nameRes, fields, cb) => {
