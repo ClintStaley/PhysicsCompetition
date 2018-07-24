@@ -22,13 +22,9 @@ Validator.Tags = {
    forbiddenField: "forbiddenField",// Field in body not allowed
    badBodyFormat: "badBodyFormat",  // Body didn't parse as JSON
    cantRemoveLeader: "cantRemoveLeader",    // Team leader is required
-
-   // CAS FIX: We need absolute naming consistency, including capitalization
-   // rules.  These should be lowercase.  And, notFound would probably cover
-   // the NoCompType anyway.
-   noCompType: "noCompType",
-   invalidPrms: "invalidPrms",
-   badTeamLead: "badTeamLead"
+   noCompType: "noCompType",        //cant fint competition type
+   invalidPrms: "invalidPrms",      //prms in competition doesn't pass prm schema
+   badTeamLead: "badTeamLead"       //user isnt in team
 };
 
 // Check |test|.  If false, add an error with tag and possibly related
