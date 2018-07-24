@@ -19,7 +19,8 @@ class TeamPage extends Component {
       // CAS FIX: This sort of thing doesn't go in the component constructor
       // Consider instead placing it in the render method of the relevant
       // Route tag.
-      this.props.getTeams(this.props.prss.id);
+      if (!this.props.teams)
+         this.props.getTeams(this.props.prss.id);
    }
 
    openConfirmation = (teamId) => {
@@ -46,13 +47,12 @@ class TeamPage extends Component {
        }
    }
 
-   dismissModal = (teamNum, result) => {
+   dismissModal = (teamId, result) => {
       if (result.status === "OK") {
-         var curTeam = this.props.teams[teamNum];
-         this.props.editTeam
-          ( this.props.teams[teamNum].cmpId, teamNum, result.updatedTeam );
+         this.props.editTeam(this.props.teams[teamId].cmpId, teamId,
+          result.updatedTeam);
       }
-      this.setState({ modalTeamId: null });
+      this.setState({modalTeamId: null});
    }
 
 
@@ -81,7 +81,6 @@ class TeamPage extends Component {
    render() {
       return (
       <section className="container">
-      {console.log("Team Rerender")}
       {this.state.modalTeamId ?
       <TeamModal
           showModal={ this.state.modalTeamId }
@@ -108,7 +107,7 @@ class TeamPage extends Component {
               toggleTeam = {() => this.toggleView(teamNum)}
               openModal = {() => this.openModal(teamNum)}
               openConfirmation = {() => this.openConfirmation(teamNum)}
-              leader = {team.ownerId === this.props.prss.id}
+              leader = {team.leaderId === this.props.prss.id}
               prss = {this.props.prss.id}/>
           })
        }
