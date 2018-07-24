@@ -27,7 +27,8 @@ Validator.Tags = {
    // rules.  These should be lowercase.  And, notFound would probably cover
    // the NoCompType anyway.
    noCompType: "CompetitionTypeDoesNotExist",
-   invalidPrms: "Invalid Parameters"
+   invalidPrms: "Invalid Parameters",
+   badTeamLead: "badTeamLead"
 };
 
 // Check |test|.  If false, add an error with tag and possibly related
@@ -97,7 +98,7 @@ Validator.prototype.hasFields = function (obj, fieldList, cb) {
 
    fieldList.forEach((name) => {
       this.chain(obj.hasOwnProperty(name) && obj[name] !== "" && obj[name]
-       !== null && obj[name] !== undefined, 
+       !== null && obj[name] !== undefined,
        Validator.Tags.missingField, [name]);
    });
 
