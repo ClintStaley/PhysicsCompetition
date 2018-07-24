@@ -16,7 +16,7 @@ export default class TeamModal extends Component {
       Object.keys(team.members).forEach((key) => {
          var option = {
           label: `${team.members[key].email} (${team.members[key].firstName})`,
-          value: key
+          value: team.members[key].id
          }
          members.push(option);
          if (team.leaderId === team.members[key].id) {
@@ -36,7 +36,7 @@ export default class TeamModal extends Component {
    close = (result) => {this.props.onDismiss({
       status: result,
       updatedTeam : {teamName: this.state.teamName,
-       leaderId: this.state.leader.id}});
+       leaderId: this.state.leader.value}});
    }
 
    getValidationState = () => {
