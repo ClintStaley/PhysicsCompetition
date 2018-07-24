@@ -28,3 +28,5 @@ export default class ConfDialog extends PureComponent {
     </Modal>)
   }
 }
+
+// CAS FIX: Just call  this.props.onClose directly from the render code?  
