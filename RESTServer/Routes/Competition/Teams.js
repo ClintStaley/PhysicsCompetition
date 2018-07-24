@@ -7,7 +7,7 @@ router.baseURL = '/Cmps/:cmpId/Teams';
 
 router.get('/', (req, res) => {
 
-   req.cnn.chkQry('select id,teamName,bestScore,lastSubmit,CanSubmit from Team where cmpId = ?', req.params.cmpId,
+   req.cnn.chkQry('select id, teamName, bestScore, lastSubmit, canSubmit from Team where cmpId = ?', req.params.cmpId,
    (err, result) => {
       res.json(result);
       res.status(200);
@@ -139,7 +139,7 @@ router.put('/:id', (req, res) => {
    },
    (nameRes, fields, cb) => {
       if (!body.teamName ||
-       vld.check(nameRes  && !nameRes.length, Tags.dupTitle, cb))
+       vld.check(nameRes && !nameRes.length, Tags.dupTitle, cb))
          cnn.chkQry("update Team set ? where id = ?",
           [req.body, req.params.id], cb);
    },

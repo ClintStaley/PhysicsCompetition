@@ -1,6 +1,4 @@
 import * as api from '../api';
-import { history } from '../store';
-
 
 export function signIn(credentials, cb) {
    return (dispatch, prevState) => {
@@ -31,18 +29,16 @@ export function editTeam(cmpId, teamId, newTeamData, cb) {
    }
 }
 
-// Get team info, and augment each team description with empty members
-// and closed member-toggle.  Dispatch a team update with the augmented
-// team list.
-export function getTeams(teamId, cb) {
+// Get basic team info for all teams of which the specified prsId is a member.
+// Leave members empty and toggled false.  (Later actions may populate members.)
+// Dispatch an update for the teams property of app state.
+export function getTeams(prsId, cb) {
    return (dispatch, prevState) => {
-      api.getTeams(teamId)
+      api.getTeams(prsId)
       .then((teams) => {
-         Object.keys(teams).map((teamNum) => {
-            teams[teamNum].members = {};
-            teams[teamNum].toggled = false;
-         });
-         return dispatch({ type: 'GET_TEAM', teams});
+         dispatch({type: 'GET_TEAMS', teams: teams.map(
+          teamInfo => Object.assign(teamInfo, {members : {}, toggled: false})
+         )});
       })
       .then(() => {if (cb) cb()})}
 }

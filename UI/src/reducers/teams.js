@@ -2,7 +2,7 @@ import update from 'immutability-helper';
 
 export default function teams(state = {}, action) {
    switch (action.type) {
-      case 'GET_TEAM': // Replace previous team
+      case 'GET_TEAMS': // Replace previous team
          return action.teams;
       case 'TOGGLE_TEAM':
          //update allows adding new data to the object while remaining immutable

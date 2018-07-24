@@ -10,24 +10,28 @@ import TeamModal from './TeamModal'
 class TeamPage extends Component {
    constructor(props) {
       super(props);
-      //Initialize teams, grab all teams for user
+
       this.state = {
          showConfirmation: null,
-         modalNumber: null
+         modalTeamId: null
       }
+
+      // CAS FIX: This sort of thing doesn't go in the component constructor
+      // Consider instead placing it in the render method of the relevant
+      // Route tag.
       this.props.getTeams(this.props.prss.id);
    }
 
    openConfirmation = (teamId) => {
-      console.log(teamId);
-      this.setState({showConfirmation: teamId })
+      this.setState({showConfirmation: teamId})
    }
 
-   closeConfirmation = (res, teamNum) => {
+   // Thus far the only confirmation is for a delete.
+   closeConfirmation = (res, teamId) => {
       if (res === 'Yes') {
-         this.deleteTeam(teamNum);
+         this.props.deleteTeam(this.props.teams[teamId].cmpId, teamId);
       }
-      this.setState({ showConfirmation: null})
+      this.setState({showConfirmation: null})
    }
 
    openConfirmation = (teamNum) => {
@@ -38,17 +42,17 @@ class TeamPage extends Component {
       if (this.props.teams[teamId].members ||
        this.props.teams[teamId].members.length  === 0){
          this.props.updateMembers(this.props.teams[teamId].cmpId ,teamId,
-          () => this.setState({ modalNumber: teamId }) );
+          () => this.setState({ modalTeamId: teamId }) );
        }
    }
 
-   modalDismiss = (teamNum, result) => {
+   dismissModal = (teamNum, result) => {
       if (result.status === "OK") {
          var curTeam = this.props.teams[teamNum];
          this.props.editTeam
-          ( this.props.teams[teamNum].cmpId ,teamNum, result.UpdatedTeam );
+          ( this.props.teams[teamNum].cmpId, teamNum, result.updatedTeam );
       }
-      this.setState({ modalNumber: null });
+      this.setState({ modalTeamId: null });
    }
 
 
@@ -78,12 +82,12 @@ class TeamPage extends Component {
       return (
       <section className="container">
       {console.log("Team Rerender")}
-      {this.state.modalNumber ?
+      {this.state.modalTeamId ?
       <TeamModal
-          showModal={ this.state.modalNumber }
+          showModal={ this.state.modalTeamId }
           title={"Edit Team"}
-          team = {this.props.teams[this.state.modalNumber]}
-          onDismiss={(teamData) => this.modalDismiss(this.state.modalNumber, teamData)} />
+          team = {this.props.teams[this.state.modalTeamId]}
+          onDismiss={(teamData) => this.dismissModal(this.state.modalTeamId, teamData)} />
       : ''}
       <ConfDialog
         show={this.state.showConfirmation  != null }

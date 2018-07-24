@@ -141,14 +141,14 @@ export function postCmp(body) {
 export function getTeams(prsId) {
    return get("Prss/" + prsId + "/Teams")
    .then((teamData) => teamData.json())
-   .then((TeamData) => {
-      var Teams = {};
-      for (var i = 0;i < TeamData.length;i++){
-         Teams[TeamData[i].id] = TeamData[i];
+   .then((teamData) => {
+      var teams = {};
+      for (var i = 0; i < teamData.length; i++){
+         teams[teamData[i].id] = teamData[i];
       }
 
-      return Teams;
-   })
+      return teams;
+   });
 }
 
 export function putTeam(cmpId, teamId, body) {
