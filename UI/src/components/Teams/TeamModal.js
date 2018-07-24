@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {
   Modal, Button, FormControl, ControlLabel, FormGroup, HelpBlock
 } from 'react-bootstrap';
-import Select from 'react-virtualized-select';
+import Select from 'react-select';
 import 'react-select/dist/react-select.css';
 
 export default class TeamModal extends Component {
@@ -14,13 +14,14 @@ export default class TeamModal extends Component {
       var team = this.props.team
 
       Object.keys(team.members).forEach((key) => {
-         members.push({
+         var option = {
           label: `${team.members[key].email} (${team.members[key].firstName})`,
-          value: key});
-         if (team.leaderId === key)
-            leader = {
-             label:`${team.members[key].email}(${team.members[key].firstName})`,
-             value: key};
+          value: team.members[key].id
+         }
+         members.push(option);
+         if (team.leaderId === team.members[key].id) {
+            leader = option;
+         }
       });
 
       this.state = {
@@ -34,7 +35,8 @@ export default class TeamModal extends Component {
 
    close = (result) => {this.props.onDismiss({
       status: result,
-      updatedTeam : {teamName: this.state.teamName}});
+      updatedTeam : {teamName: this.state.teamName,
+       leaderId: this.state.leader.value}});
    }
 
    getValidationState = () => {
@@ -53,6 +55,7 @@ export default class TeamModal extends Component {
    }
 
    render() {
+      console.log(JSON.stringify(this.state));
       return (
        <Modal show={this.props.showModal != null} onHide={() => this.close("Cancel")}>
          <Modal.Header closeButton>
@@ -77,6 +80,7 @@ export default class TeamModal extends Component {
                <HelpBlock>There must be a team name.</HelpBlock>
 
                <ControlLabel>Team Leader</ControlLabel>
+
                <Select
                name="Leader"
                options={this.state.members}
