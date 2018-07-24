@@ -81,6 +81,7 @@ class TeamPage extends Component {
    render() {
       return (
       <section className="container">
+      {console.log("Team Render")}
       {this.state.modalTeamId ?
       <TeamModal
           showModal={ this.state.modalTeamId }

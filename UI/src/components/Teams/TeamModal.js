@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  Modal, Select, Button, FormControl, ControlLabel, FormGroup, HelpBlock
+  Modal, Button, FormControl, ControlLabel, FormGroup, HelpBlock
 } from 'react-bootstrap';
 import Select from 'react-virtualized-select';
 import 'react-select/dist/react-select.css';
