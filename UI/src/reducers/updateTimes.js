@@ -1,6 +1,6 @@
 export default function cmps(state = {}, action) {
    switch (action.type) {
-      case 'GET_TEAMS':
+      case 'ADD_TEAMS':
          return Object.assign({}, state, { teams: new Date() });
       case 'SIGN_IN':
          return Object.assign({}, state, { prs: new Date() });
