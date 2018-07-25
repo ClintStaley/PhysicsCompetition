@@ -10,7 +10,7 @@ const Home = (<h1>Home Page</h1>); // TODO make real home component
 
 class Main extends Component {
    signedIn() {
-      return Object.keys(this.props.prss).length !== 0;
+      return Object.keys(this.props.prs).length !== 0;
    }
 
    signOut(event) {
@@ -26,7 +26,7 @@ class Main extends Component {
             <Navbar.Toggle />
             {this.signedIn() ?
                 <Navbar.Text key={1}>
-                    {`Signed in as: ${this.props.prss.firstName} ${this.props.prss.lastName}`}
+                    {`Signed in as: ${this.props.prs.firstName} ${this.props.prs.lastName}`}
                 </Navbar.Text>
               : ''
               }

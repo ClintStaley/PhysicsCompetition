@@ -16,7 +16,7 @@ class TeamsPage extends Component {
          modalTeamId: null
       }
 
-      this.props.getTeams(this.props.prss.id);
+      this.props.getTeams(this.props.prs.id);
       console.log(JSON.stringify(this.props.teams));
    }
 
@@ -104,8 +104,8 @@ class TeamsPage extends Component {
               toggleTeam = {() => this.toggleView(teamNum)}
               openModal = {() => this.openModal(teamNum)}
               openConfirmation = {() => this.openConfirmation(teamNum)}
-              leader = {team.leaderId === this.props.prss.id}
-              prss = {this.props.prss.id}/>
+              leader = {team.leaderId === this.props.prs.id}
+              prs = {this.props.prs.id}/>
           })
        }
         </ListGroup>
@@ -151,8 +151,8 @@ const TeamLine = function (props) {
            key={i} {...member}
            canDrop = {
              // Drop anyone but you if you're leader, otherwise only yourself
-             props.leader && member.id !== props.prss
-             || member.id === props.prss}
+             props.leader && member.id !== props.prs
+             || member.id === props.prs}
             />
          })
        }
@@ -189,7 +189,7 @@ const MemberItem = function (props) {
 //makes TeamsPage a container componet, rather than a presentational componet
 function mapStateToProps(state) {
    return {
-      prss: state.prss,
+      prs: state.prs,
       teams: state.teams
    }
 }

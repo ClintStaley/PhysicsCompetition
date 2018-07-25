@@ -1,4 +1,4 @@
-export default function prss(state = {}, action) {
+export default function prs(state = {}, action) {
    switch (action.type) {
       case 'SIGN_IN':
       console.log(state);
