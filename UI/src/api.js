@@ -167,7 +167,7 @@ export function postTeam(cmpId, body) {
   Return id -> member map rather than simple array of members,
   which the API outta do, really.
 */
-export function getMembers(cmpId, TeamId) {
+export function getMmbs(cmpId, TeamId) {
    return get("Cmps/" + cmpId + "/Teams/" + TeamId + "/mmbs")
    .then((memberData) => memberData.json())
    .then((memberData) => {

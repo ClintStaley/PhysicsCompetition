@@ -16,9 +16,6 @@ class TeamsPage extends Component {
          modalTeamId: null
       }
 
-      // CAS FIX: This sort of thing doesn't go in the component constructor
-      // Consider instead placing it in the render method of the relevant
-      // Route tag.
       this.props.getTeams(this.props.prss.id);
       console.log(JSON.stringify(this.props.teams));
    }
@@ -75,6 +72,10 @@ class TeamsPage extends Component {
    deleteMember = (memberId, teamId) => {
       //add delete member
       this.props.deleteTeam(this.props.teams[teamId].cmpId, teamId);
+   }
+
+   addMember = (mbrEmail, teamId) => {
+      this.props.
    }
 
    render() {
