@@ -16,10 +16,7 @@ class TeamsPage extends Component {
          modalTeamId: null
       }
 
-      // CAS FIX: This sort of thing doesn't go in the component constructor
-      // Consider instead placing it in the render method of the relevant
-      // Route tag.
-      this.props.getTeams(this.props.prss.id);
+      this.props.getTeams(this.props.prs.id);
       console.log(JSON.stringify(this.props.teams));
    }
 
@@ -42,7 +39,7 @@ class TeamsPage extends Component {
    openModal = (teamId) => {
       if (this.props.teams[teamId].members ||
        this.props.teams[teamId].members.length  === 0){
-         this.props.updateMembers(this.props.teams[teamId].cmpId ,teamId,
+         this.props.updateMmbs(this.props.teams[teamId].cmpId ,teamId,
           () => this.setState({ modalTeamId: teamId }) );
        }
    }
@@ -59,22 +56,23 @@ class TeamsPage extends Component {
       //check for membership data, only update when no membership data is available
       if (this.props.teams[teamId].members ||
        this.props.teams[teamId].members.length  === 0){
-         this.props.updateMembers(this.props.teams[teamId].cmpId ,teamId);
+         this.props.updateMmbs(this.props.teams[teamId].cmpId ,teamId);
       }
       //toggle team toggles the member list on the screen
       this.props.toggleTeam(this.props.teams[teamId].cmpId, teamId);
    }
 
    deleteTeam = (teamNum) => {
-      console.log(teamNum);
-      console.log(this.state.showConfirmation);
-      console.log(this.props.teams[teamNum]);
       this.props.deleteTeam(this.props.teams[teamNum].cmpId, teamNum);
    }
 
    deleteMember = (memberId, teamId) => {
       //add delete member
       this.props.deleteTeam(this.props.teams[teamId].cmpId, teamId);
+   }
+
+   addMember = (mbrEmail, teamId) => {
+      this.props.
    }
 
    render() {
@@ -106,8 +104,8 @@ class TeamsPage extends Component {
               toggleTeam = {() => this.toggleView(teamNum)}
               openModal = {() => this.openModal(teamNum)}
               openConfirmation = {() => this.openConfirmation(teamNum)}
-              leader = {team.leaderId === this.props.prss.id}
-              prss = {this.props.prss.id}/>
+              leader = {team.leaderId === this.props.prs.id}
+              prs = {this.props.prs.id}/>
           })
        }
         </ListGroup>
@@ -153,8 +151,8 @@ const TeamLine = function (props) {
            key={i} {...member}
            canDrop = {
              // Drop anyone but you if you're leader, otherwise only yourself
-             props.leader && member.id !== props.prss
-             || member.id === props.prss}
+             props.leader && member.id !== props.prs
+             || member.id === props.prs}
             />
          })
        }
@@ -178,7 +176,7 @@ const MemberItem = function (props) {
         <div className="pull-right">
           <OverlayTrigger trigger={["focus", "hover"]}
           placement="bottom" overlay={delTip}>
-            <Button bsSize="small" onClick={props.DeleteMember}>
+            <Button bsSize="small" onClick={props.deleteMember}>
               <Glyphicon glyph="trash" />
             </Button>
           </OverlayTrigger>
@@ -191,7 +189,7 @@ const MemberItem = function (props) {
 //makes TeamsPage a container componet, rather than a presentational componet
 function mapStateToProps(state) {
    return {
-      prss: state.prss,
+      prs: state.prs,
       teams: state.teams
    }
 }
