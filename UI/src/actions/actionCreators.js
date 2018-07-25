@@ -40,6 +40,8 @@ export function getTeams(prsId, cb) {
             teams[key] = Object.assign(teams[key],
              {members : {}, toggled: false});
          })
+         dispatch({type: 'GET_TEAMS', teams})
+
       })
       .then(() => {if (cb) cb()})}
 }
