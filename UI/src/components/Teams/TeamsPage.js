@@ -27,7 +27,7 @@ class TeamsPage extends Component {
    // Thus far the only confirmation is for a delete.
    closeConfirmation = (res, teamId) => {
       if (res === 'Yes') {
-         this.props.deleteTeam(this.props.teams[teamId].cmpId, teamId);
+         this.props.delTeam(this.props.teams[teamId].cmpId, teamId);
       }
       this.setState({showConfirmation: null})
    }
@@ -37,8 +37,8 @@ class TeamsPage extends Component {
    }
 
    openModal = (teamId) => {
-      if (this.props.teams[teamId].members ||
-       this.props.teams[teamId].members.length  === 0){
+      if (this.props.teams[teamId].mmbs ||
+       this.props.teams[teamId].mmbs.length  === 0){
          this.props.updateMmbs(this.props.teams[teamId].cmpId ,teamId,
           () => this.setState({ modalTeamId: teamId }) );
        }
@@ -54,25 +54,25 @@ class TeamsPage extends Component {
 
    toggleView = (teamId) => {
       //check for membership data, only update when no membership data is available
-      if (this.props.teams[teamId].members ||
-       this.props.teams[teamId].members.length  === 0){
+      if (this.props.teams[teamId].mmbs ||
+       this.props.teams[teamId].mmbs.length  === 0){
          this.props.updateMmbs(this.props.teams[teamId].cmpId ,teamId);
       }
       //toggle team toggles the member list on the screen
       this.props.toggleTeam(this.props.teams[teamId].cmpId, teamId);
    }
 
-   deleteTeam = (teamNum) => {
-      this.props.deleteTeam(this.props.teams[teamNum].cmpId, teamNum);
+   delTeam = (teamNum) => {
+      this.props.delTeam(this.props.teams[teamNum].cmpId, teamNum);
    }
 
-   deleteMember = (memberId, teamId) => {
-      //add delete member
-      this.props.deleteTeam(this.props.teams[teamId].cmpId, teamId);
+   delMmb = (mmbId, teamId) => {
+      //add del member
+      this.props.delTeam(this.props.teams[teamId].cmpId, teamId);
    }
 
-   addMember = (mbrEmail, teamId) => {
-      this.props.
+   addMmb = (mmbEmail, teamId) => {
+      this.props.addMmb(mmbEmail, this.props.teams[teamId].cmpId, teamId);
    }
 
    render() {
@@ -130,7 +130,7 @@ const TeamLine = function (props) {
        <Button onClick={props.toggleTeam}>{props.teamName}</Button>}
      {props.leader ?
        <div className="pull-right">
-         <Button bsSize="small" onClick={props.addMember}>
+         <Button bsSize="small" onClick={props.addMmb}>
            <Glyphicon glyph="plus" />
          </Button>
 
@@ -145,14 +145,14 @@ const TeamLine = function (props) {
      : ''}
      {props.toggled ?
      <ListGroup>
-       {Object.keys(props.members).map((memNum, i) => {
-         var member = props.members[memNum];
-         return <MemberItem
-           key={i} {...member}
+       {Object.keys(props.mmbs).map((memNum, i) => {
+         var mmb = props.mmbs[memNum];
+         return <MmbItem
+           key={i} {...mmb}
            canDrop = {
              // Drop anyone but you if you're leader, otherwise only yourself
-             props.leader && member.id !== props.prs
-             || member.id === props.prs}
+             props.leader && mmb.id !== props.prs
+             || mmb.id === props.prs}
             />
          })
        }
@@ -163,7 +163,7 @@ const TeamLine = function (props) {
 }
 
 //A member list item
-const MemberItem = function (props) {
+const MmbItem = function (props) {
    const delTip = (
       <Popover id="TeamsPage-delTip">Remove this member</Popover>
    )
@@ -176,7 +176,7 @@ const MemberItem = function (props) {
         <div className="pull-right">
           <OverlayTrigger trigger={["focus", "hover"]}
           placement="bottom" overlay={delTip}>
-            <Button bsSize="small" onClick={props.deleteMember}>
+            <Button bsSize="small" onClick={props.delMmb}>
               <Glyphicon glyph="trash" />
             </Button>
           </OverlayTrigger>

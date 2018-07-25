@@ -18,7 +18,7 @@ export function updateCmps(id, cb) {
    }
 }
 
-export function editTeam(cmpId, teamId, newTeamData, cb) {
+export function putTeam(cmpId, teamId, newTeamData, cb) {
    return (dispatch, prevState) => {
       api.putTeam(cmpId, teamId, newTeamData)
       .then(() => {
@@ -46,7 +46,7 @@ export function getTeams(prsId, cb) {
       .then(() => {if (cb) cb()})}
 }
 
-export function deleteTeam(cmpId, teamId, cb) {
+export function delTeam(cmpId, teamId, cb) {
    return (dispatch, prevState) => {
       api.delTeam(cmpId , teamId).then(() =>
        dispatch({ type: 'DELETE_TEAM', teamId}))
@@ -54,28 +54,24 @@ export function deleteTeam(cmpId, teamId, cb) {
    }
 }
 
-export function toggleTeam(cmpId, teamId, cb) {
+export function addMmb(mmbEmail, cmpId, teamId, cb) {
    return (dispatch, prevState) => {
-      dispatch({ type: 'TOGGLE_TEAM', teamId })
-       //.then(() => {if (cb) cb()})
+      api.getPrsByEmail(mmbEmail)
+      .then(prs => api.postMmb(prs.id, cmpId, teamId))
+      .then(dispatch({type: 'ADD_TEAM_MMB', prs, teamId}))
+      .catch(err => dispatch({type: 'TEAM_ERR', details: err}))
+      .then(() => {if (cb) cb()})
    }
 }
 
-export function addMmb(mmbEmail, teamId, cb) {
-   return (dispatch, prevState) => {
-      api.addMmb(mmbEmail, teamid)
-      .then()
-   }
-}
-
-export function updateMmbs(cmpId, teamId, cb) {
+export function getMmbs(cmpId, teamId, cb) {
    return (dispatch, prevState) => {
       api.getMmbs(cmpId, teamId)
       .then((members) => {
          var teamData = {};
          teamData.members = members;
          teamData.teamId = teamId;
-         return dispatch({ type: 'POPULATE_TEAM', teamData });
+         return dispatch({type: 'GET_MY_TEAMS', teamData});
       })
       .then(() => { if (cb) cb() })
    }
@@ -88,7 +84,15 @@ export function signOut(cb) {
       .then(() => {if (cb) cb()})
       .catch((err) => {
          console.log("Sign out error!");
-         dispatch({type: "ERROR", err});
+         dispatch({type: "ACCOUNT_ERR", err});
       })
    }
+}
+
+export function clearErrors(cb) {
+   return (dispatch, prevState) => {
+      dispatch({type: "CLEAR_ERRS"});
+      if (cb)
+         cb();
+   };
 }

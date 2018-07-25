@@ -64,17 +64,17 @@ export function put(endpoint, body) {
  * @returns {Promise}
  */
 export function get(endpoint) {
-    return safeFetch(baseURL + endpoint, {
-        method: 'GET',
-        ...reqConf
+   return safeFetch(baseURL + endpoint, {
+      method: 'GET',
+      ...reqConf
     })
 }
 
 export function del(endpoint) {
-    return safeFetch(baseURL + endpoint, {
-        method: 'DELETE',
-        ...reqConf
-    })
+   return safeFetch(baseURL + endpoint, {
+      method: 'DELETE',
+      ...reqConf
+   })
 }
 
 /* Functions for performing API actions.  All share these principles:
@@ -176,21 +176,21 @@ export function postTeam(cmpId, body) {
    return post(`Cmps/${cmpId}/Teams`, body)
 }
 
-export function addMmb(email, cmpId, teamId) {
+export function getPrsByEmail(email) {
    return get(`Prss?email={$email}`)
-   .then(prsMatch => prsMatch.json())
-   .then(prsMatch) {
-      if (prsMatch.length > 0)
-         return post(`Cmps/${cmpId}/Teams/${teamId}/Mmbs`, {
-            prsId: prsMatch[0].id
-         })
-   })
+   .then(rsp => rsp.json())
+   .then(prss => prss.length > 0 ? prss[0] : Promise.reject("Unknown Email"));
 }
-/**
-  Return id -> member map rather than simple array of members,
-  which the API oughta do, really.*/
+
+export function postMmb(prsId, cmpId, teamId) {
+   return post(`Cmps/${cmpId}/Teams/${teamId}/Mmbs`, {prsId});
+}
+
+/** Return id -> member map rather than simple array of members, which the
+API oughta do, really.*/
+
 export function getMmbs(cmpId, teamId) {
-   return get("Cmps/" + cmpId + "/Teams/" + teamId + "/mmbs")
+   return get(`Cmps${cmpId}/Teams/${teamId}/mmbs`)
    .then((memberData) => memberData.json())
    .then((memberData) => {
       var members = {};

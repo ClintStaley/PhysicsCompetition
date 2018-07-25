@@ -80,6 +80,21 @@ class Main extends Component {
              return <CmpPage cmpId = {props.match.params.cmpId}
               {...this.props} />}} />
         </Switch>
+
+        {/*Error popup dialog*/}
+        <ConfDialog
+           show={this.props.Errs.length > 0}
+           title="Error Notice"
+           body={<ListGroup>
+             {this.props.errs.map((err, i) =>
+               <ListGroupItem key={i} bsStyle="danger">
+                 {err}
+               </ListGroupItem>
+             )}
+           </ListGroup>}
+           buttons={['OK']}
+           onClose={() => {this.props.clearErrors()}}
+        />
       </div>
     )
    }
