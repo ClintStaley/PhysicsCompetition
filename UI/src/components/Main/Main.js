@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Register, SignIn, CmpsPage, TeamPage, CmpPage }
+import { Register, SignIn, CmpsPage, TeamsPage, CmpPage }
  from '../concentrator'
 import { Route, Switch } from 'react-router-dom';
 import { Navbar, Nav, NavItem } from 'react-bootstrap';
@@ -72,7 +72,7 @@ class Main extends Component {
         <Switch>
           <Route exact path='/' children={Home} />
           <Route path='/CmpsPage' render={() => <CmpsPage {...this.props} />} />
-          <Route path='/Teams' render={() => <TeamPage {...this.props}/>}/>
+          <Route path='/Teams' render={() => <TeamsPage {...this.props}/>}/>
           <Route path='/signin' render={() => <SignIn {...this.props} />} />
           <Route path='/register' render={() => <Register {...this.props} />} />
           <Route path='/CmpPage/:cmpId'
