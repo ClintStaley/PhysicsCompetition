@@ -18,16 +18,6 @@ export function updateCmps(id, cb) {
    }
 }
 
-
-export function getCmps(cb) {
-   return (dispatch, prevState) => {
-      api.getCmps()
-      .then((cmps) => dispatch({ type: 'GET_CMPS', cmps }))
-      .then(() => {if (cb) cb()})
-
-   }
-}
-
 export function editTeam(cmpId, teamId, newTeamData, cb) {
    return (dispatch, prevState) => {
       api.putTeam(cmpId, teamId, newTeamData)
@@ -64,7 +54,6 @@ export function deleteTeam(cmpId, teamId, cb) {
    }
 }
 
-
 export function toggleTeam(cmpId, teamId, cb) {
    return (dispatch, prevState) => {
       dispatch({ type: 'TOGGLE_TEAM', teamId })
@@ -72,9 +61,16 @@ export function toggleTeam(cmpId, teamId, cb) {
    }
 }
 
-export function updateMembers(cmpId, teamId, cb) {
+export function addMmb(mmbEmail, teamId, cb) {
    return (dispatch, prevState) => {
-      api.getMembers(cmpId, teamId)
+      api.addMmb(mmbEmail, teamid)
+      .then()
+   }
+}
+
+export function updateMmbs(cmpId, teamId, cb) {
+   return (dispatch, prevState) => {
+      api.getMmbs(cmpId, teamId)
       .then((members) => {
          var teamData = {};
          teamData.members = members;

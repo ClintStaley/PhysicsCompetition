@@ -152,7 +152,7 @@ export function postCmp(body) {
 }
 
 export function getTeams(prsId) {
-   return get("Prss/" + prsId + "/Teams")
+   return get(`Prss/${prsId}/Teams`)
    .then((teamData) => teamData.json())
    .then((teamData) => {
       var teams = {};
@@ -176,12 +176,21 @@ export function postTeam(cmpId, body) {
    return post(`Cmps/${cmpId}/Teams`, body)
 }
 
+export function addMmb(email, cmpId, teamId) {
+   return get(`Prss?email={$email}`)
+   .then(prsMatch => prsMatch.json())
+   .then(prsMatch) {
+      if (prsMatch.length > 0)
+         return post(`Cmps/${cmpId}/Teams/${teamId}/Mmbs`, {
+            prsId: prsMatch[0].id
+         })
+   })
+}
 /**
   Return id -> member map rather than simple array of members,
-  which the API outta do, really.
-*/
-export function getMmbs(cmpId, TeamId) {
-   return get("Cmps/" + cmpId + "/Teams/" + TeamId + "/mmbs")
+  which the API oughta do, really.*/
+export function getMmbs(cmpId, teamId) {
+   return get("Cmps/" + cmpId + "/Teams/" + teamId + "/mmbs")
    .then((memberData) => memberData.json())
    .then((memberData) => {
       var members = {};

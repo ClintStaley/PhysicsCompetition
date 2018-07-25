@@ -39,7 +39,7 @@ class TeamsPage extends Component {
    openModal = (teamId) => {
       if (this.props.teams[teamId].members ||
        this.props.teams[teamId].members.length  === 0){
-         this.props.updateMembers(this.props.teams[teamId].cmpId ,teamId,
+         this.props.updateMmbs(this.props.teams[teamId].cmpId ,teamId,
           () => this.setState({ modalTeamId: teamId }) );
        }
    }
@@ -56,16 +56,13 @@ class TeamsPage extends Component {
       //check for membership data, only update when no membership data is available
       if (this.props.teams[teamId].members ||
        this.props.teams[teamId].members.length  === 0){
-         this.props.updateMembers(this.props.teams[teamId].cmpId ,teamId);
+         this.props.updateMmbs(this.props.teams[teamId].cmpId ,teamId);
       }
       //toggle team toggles the member list on the screen
       this.props.toggleTeam(this.props.teams[teamId].cmpId, teamId);
    }
 
    deleteTeam = (teamNum) => {
-      console.log(teamNum);
-      console.log(this.state.showConfirmation);
-      console.log(this.props.teams[teamNum]);
       this.props.deleteTeam(this.props.teams[teamNum].cmpId, teamNum);
    }
 
@@ -179,7 +176,7 @@ const MemberItem = function (props) {
         <div className="pull-right">
           <OverlayTrigger trigger={["focus", "hover"]}
           placement="bottom" overlay={delTip}>
-            <Button bsSize="small" onClick={props.DeleteMember}>
+            <Button bsSize="small" onClick={props.deleteMember}>
               <Glyphicon glyph="trash" />
             </Button>
           </OverlayTrigger>
