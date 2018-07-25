@@ -9,12 +9,37 @@ export function signIn(credentials, cb) {
    }
 }
 
-export function updateCmps(id, cb) {
+export function getAllCmps(id, cb) {
    return (dispatch, prevState) => {
-      api.getCmps(id)
+      api.getCmps()
       .then((cmps) => dispatch({ type: 'GET_CMPS', cmps }))
       .then(() => {if (cb) cb()})
 
+   }
+}
+
+export function getMyCmps(id, cb) {
+   return (dispatch, prevState) => {
+      api.getCmpsByPerson(id)
+      .then((cmps) => {
+         Object.keys(cmps).forEach((key) => {
+            cmps[key] = Object.assign(cmps[key], {cmpTeams : []});
+         })
+         dispatch({ type: 'GET_MY_CMPS', cmps });
+      })
+      .then(() => {if (cb) cb()})
+
+   }
+}
+
+export function putCmp(cmpId, newCmpData, cb) {
+   return (dispatch, prevState) => {
+      api.putCmp(cmpId, newCmpData)
+      .then(() => {
+          var cmpData = {newCmpData : newCmpData, cmpId: cmpId};
+          dispatch({ type: 'PUT_CMP', cmpData});
+       })
+      .then(() => {if (cb) cb()});
    }
 }
 

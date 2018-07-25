@@ -29,7 +29,7 @@ create table Competition (
    title varchar(80) not null,
    prms varchar(20000) not null,
    rules int default 0,
-   curTeam int,
+   curTeamId int,
 
    constraint FKCompetition_ctpId foreign key (ctpId) references
     CompetitionType(id) on delete cascade on update cascade,

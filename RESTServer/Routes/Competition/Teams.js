@@ -75,7 +75,7 @@ router.post('/', (req, res) => {
                //makes the team just created the current team
                nextTeam = result.insertId;
                canSubmit = true;
-               cnn.chkQry('update Competition set curTeam = ? where id = ?',
+               cnn.chkQry('update Competition set curTeamId = ? where id = ?',
                 [result.insertId, body.cmpId], cb);
             }
          }],
@@ -192,10 +192,10 @@ router.delete('/:id', (req, res) => {
       if (!Cmp[0].rules || !(Cmp[0].curTeam == req.params.id))
          cb(null, null, cb);
       else if (!otherTeams) //checks if the curTeam needs to be null
-         cnn.chkQry('update Competition set curTeam = ? where id = ?',
+         cnn.chkQry('update Competition set curTeamId = ? where id = ?',
           [null, Cmp[0].id], cb);
       else
-         cnn.chkQry('update Competition set curTeam = ? where id = ?',
+         cnn.chkQry('update Competition set curTeamId = ? where id = ?',
           [nextTeam, Cmp[0].id], cb);
    },
    (updRes, fields, cb) => {

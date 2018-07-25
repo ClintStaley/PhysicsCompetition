@@ -17,42 +17,8 @@ export default class cmpPage extends Component {
       return (
       <section className="container">
         <h1>{this.props.cmps[cmpId].title}</h1>
-        <ListGroup>
-         {Object.keys(this.props.teams).map((teamId, i) => {
-           if (this.props.teams[teamId].cmpId !== cmpId)
-               return null;
-
-           var cmp = this.props.cmps[cmpId];
-
-           return <TeamLine
-             key={i} {...cmp}/>
-         })
-         }
-      </ListGroup>
       </section>
       )
    }
 
-   const TeamLine = function (props) {
-      return (
-      <ListGroupItem className="clearfix">
-        <ListGroup>
-          {Object.keys(props.members).map((memNum, i) => {
-            var member = props.members[memNum];
-            return <MemberItem
-              key={i} {...member}
-            })
-          }
-        </ListGroup>
-      </ListGroupItem>
-      )
-   }
-
-   const MemberItem = function (props) {
-      return (
-      <ListGroupItem className="clearfix">
-        <Link to="#">{props.firstName}</Link>
-      </ListGroupItem>
-      )
-   }
 }
