@@ -118,8 +118,8 @@ export function registerUser(user) {
 
 export function getCmps() {
    return get("Cmps")
-   .then((cmpData) => cmpData.json())
-   .then((cmpData) => {
+   .then((cmpsData) => cmpsData.json())
+   .then((cmpsData) => {
       var cmps = {};
       for (var i = 0; i < cmpData.length; i++){
          cmps[cmpData[i].id] = cmpData[i];
@@ -130,13 +130,21 @@ export function getCmps() {
 }
 
 export function getCmpsByPerson(prsId) {
-   return get("Prss/" + prsId + "/Competition")
-   .then((teamData) => teamData.json())
+   return get("Prss/" + prsId + "/Cmps")
+   .then((CmpData) => CmpData.json())
+   .then((cmpsData) => {
+      var cmps = {};
+      for (var i = 0; i < cmpData.length; i++){
+         cmps[cmpData[i].id] = cmpData[i];
+      }
+
+      return cmps;
+   });
 }
 
 export function getOneCmps(cmpId) {
    return get("Cmps/" + cmpId)
-   .then((Competitions) => Competitions.json());
+   .then((cmps) => cmps.json());
 }
 
 export function putCmp(id, body) {
@@ -153,6 +161,19 @@ export function postCmp(body) {
 
 export function getTeams(prsId) {
    return get(`Prss/${prsId}/Teams`)
+   .then((teamData) => teamData.json())
+   .then((teamData) => {
+      var teams = {};
+      for (var i = 0; i < teamData.length; i++){
+         teams[teamData[i].id] = teamData[i];
+      }
+
+      return teams;
+   });
+}
+
+export function getTeamsByCmp(cmpId) {
+   return get(`Cmps/${cmpId}/Teams`)
    .then((teamData) => teamData.json())
    .then((teamData) => {
       var teams = {};

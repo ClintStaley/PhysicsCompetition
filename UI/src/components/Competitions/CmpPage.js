@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { ListGroup, ListGroupItem, Button, Glyphicon } from 'react-bootstrap';
 
-export default class cmpPage extends Component {
+export default class CmpPage extends Component {
    constructor(props) {
       super(props);
 
