@@ -18,6 +18,16 @@ export function updateCmps(id, cb) {
    }
 }
 
+
+export function getCmps(cb) {
+   return (dispatch, prevState) => {
+      api.getCmps()
+      .then((cmps) => dispatch({ type: 'GET_CMPS', cmps }))
+      .then(() => {if (cb) cb()})
+
+   }
+}
+
 export function editTeam(cmpId, teamId, newTeamData, cb) {
    return (dispatch, prevState) => {
       api.putTeam(cmpId, teamId, newTeamData)

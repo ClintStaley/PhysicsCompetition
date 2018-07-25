@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Register, SignIn, CompetitionPage, TeamPage } from '../concentrator'
+import { Register, SignIn, CmpsPage, TeamPage, CmpPage }
+ from '../concentrator'
 import { Route, Switch } from 'react-router-dom';
 import { Navbar, Nav, NavItem } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
@@ -34,7 +35,7 @@ class Main extends Component {
                 {this.signedIn() ?
                   // User is signed in
                   [
-                    <LinkContainer key={0} to="/Competition">
+                    <LinkContainer key={0} to="/CmpsPage">
                       <NavItem>
                         Competition
                       </NavItem>
@@ -69,12 +70,15 @@ class Main extends Component {
           </Navbar>
         </div>
         <Switch>
-        {console.log(this.props)}
           <Route exact path='/' children={Home} />
-          <Route path='/Competition' render={() => <CompetitionPage {...this.props} />} />
+          <Route path='/CmpsPage' render={() => <CmpsPage {...this.props} />} />
           <Route path='/Teams' render={() => <TeamPage {...this.props}/>}/>
           <Route path='/signin' render={() => <SignIn {...this.props} />} />
           <Route path='/register' render={() => <Register {...this.props} />} />
+          <Route path='/CmpPage/:cmpId'
+           render={(props) => {
+             return <CmpPage cmpId = {props.match.params.cmpId}
+              {...this.props} />}} />
         </Switch>
       </div>
     )

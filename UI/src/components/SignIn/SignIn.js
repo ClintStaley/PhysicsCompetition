@@ -11,7 +11,7 @@ class SignIn extends Component {
          email: 'adm@11.com',
          password: 'password'
       }
-      
+
       // bind event handlers to the correct context
       this.handleChange = this.handleChange.bind(this);
       this.signIn = this.signIn.bind(this);
@@ -20,7 +20,7 @@ class SignIn extends Component {
    //calls signIn updates history
    signIn(event) {
       this.props.signIn(this.state, () => {
-         this.props.history.push("/Competition")
+         this.props.history.push("/")
       });
 
       event.preventDefault()//otherwise parent will respond
