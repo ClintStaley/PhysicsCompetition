@@ -7,7 +7,7 @@ import { ConfDialog } from '../concentrator';
 import * as actionCreators from '../../actions/actionCreators';
 import TeamModal from './TeamModal'
 
-class TeamPage extends Component {
+class TeamsPage extends Component {
    constructor(props) {
       super(props);
 
@@ -94,15 +94,14 @@ class TeamPage extends Component {
         body={`Are you sure you want to delete the Team '${this.state.showConfirmation}'`}
         buttons={['Yes', 'Abort']}
         onClose={(res) => this.closeConfirmation(res, this.state.showConfirmation)} />
-      {/*shows when the entire page is rendered again*/}
-      {/*As of now the entire page rerenders when a team is togled, should change in future*/}
+
         <h1>Team Overview</h1>
         <ListGroup>
           {Object.keys(this.props.teams).map((teamNum, i) => {
             var team = this.props.teams[teamNum];
 
             {/*Creates a team item with all the required knowledge*/}
-            return <TeamItem
+            return <TeamLine
               key={i} {...team}
               toggleTeam = {() => this.toggleView(teamNum)}
               openModal = {() => this.openModal(teamNum)}
@@ -117,10 +116,12 @@ class TeamPage extends Component {
    }
 }
 
-// A Team Item
-const TeamItem = function (props) {
+const TeamLine = function (props) {
    const addTip = (
-      <Popover id="TeamPage-addTip">Add a new team member</Popover>
+      <Popover id="TeamsPage-addTip">Add a new team member</Popover>
+   )
+   const delTip = (
+      <Popover id="TeamsPage-delTip">Remove this team</Popover>
    )
 
    return (
@@ -131,6 +132,10 @@ const TeamItem = function (props) {
        <Button onClick={props.toggleTeam}>{props.teamName}</Button>}
      {props.leader ?
        <div className="pull-right">
+         <Button bsSize="small" onClick={props.addMember}>
+           <Glyphicon glyph="plus" />
+         </Button>
+
          <Button bsSize="small" onClick={props.openModal}>
            <Glyphicon glyph="edit" />
          </Button>
@@ -142,12 +147,15 @@ const TeamItem = function (props) {
      : ''}
      {props.toggled ?
      <ListGroup>
-       {Object.keys(props.members).map((MemNum, i) => {
-         var member = props.members[MemNum];
-         {/*passes member data and canDrop*/}
+       {Object.keys(props.members).map((memNum, i) => {
+         var member = props.members[memNum];
          return <MemberItem
            key={i} {...member}
-           canDrop = {props.leader || member.id === props.prss}/>
+           canDrop = {
+             // Drop anyone but you if you're leader, otherwise only yourself
+             props.leader && member.id !== props.prss
+             || member.id === props.prss}
+            />
          })
        }
      </ListGroup>
@@ -159,7 +167,7 @@ const TeamItem = function (props) {
 //A member list item
 const MemberItem = function (props) {
    const delTip = (
-      <Popover id="TeamPage-delTip">Remove me from this team</Popover>
+      <Popover id="TeamsPage-delTip">Remove this member</Popover>
    )
 
    return (
@@ -180,7 +188,7 @@ const MemberItem = function (props) {
    )
 }
 
-//makes teamPage a container componet, rather than a presentational componet
+//makes TeamsPage a container componet, rather than a presentational componet
 function mapStateToProps(state) {
    return {
       prss: state.prss,
@@ -192,6 +200,6 @@ function mapDispachToProps(dispatch) {
    return bindActionCreators(actionCreators, dispatch);
 }
 
-//connects teamPage to the store
-TeamPage = connect(mapStateToProps, mapDispachToProps)(TeamPage)
-export default TeamPage
+//connects TeamsPage to the store
+TeamsPage = connect(mapStateToProps, mapDispachToProps)(TeamsPage)
+export default TeamsPage
