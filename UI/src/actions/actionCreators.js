@@ -12,7 +12,7 @@ export function signIn(credentials, cb) {
 export function updateCmps(id, cb) {
    return (dispatch, prevState) => {
       api.getCmps(id)
-      .then((cmps) => dispatch({ type: 'UPDATE_CMPS', cmps }))
+      .then((cmps) => dispatch({ type: 'GET_CMPS', cmps }))
       .then(() => {if (cb) cb()})
 
    }
