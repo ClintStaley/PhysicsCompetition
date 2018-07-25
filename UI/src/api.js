@@ -116,7 +116,20 @@ export function registerUser(user) {
    return post("Prss", user)
 }
 
-export function getCmps(prsId) {
+export function getCmps() {
+   return get("Cmps")
+   .then((cmpData) => cmpData.json())
+   .then((cmpData) => {
+      var cmps = {};
+      for (var i = 0; i < cmpData.length; i++){
+         cmps[cmpData[i].id] = cmpData[i];
+      }
+
+      return cmps;
+   });
+}
+
+export function getCmpsByPerson(prsId) {
    return get("Prss/" + prsId + "/Competition")
    .then((teamData) => teamData.json())
 }

@@ -5,7 +5,7 @@ export default function cmps(state = {}, action) {
       case 'SIGN_IN':
          return Object.assign({}, state, { prs: new Date() });
       case 'GET_CMPS':
-         return Object.assign({}, state, { myCmps: new Date() });
+         return Object.assign({}, state, { cmps: new Date() });
       case 'UPDATE_RESULTS':
          return Object.assign({}, state, { results: new Date() });
       default:

@@ -2,29 +2,51 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { ListGroup, ListGroupItem, Button, Glyphicon } from 'react-bootstrap';
 import { ConfDialog } from '../concentrator';
-import { putCmp, delCmp, postCmp } from '../../api';
 
 
-export default class CompetitionPage extends Component {
+export default class CmpsPage extends Component {
    constructor(props) {
       super(props);
 
       //get all cmps from database
       //as of now will reget all cmps from database every time page is loaded
-      this.props.updateCmps(this.props.prss.id);
+      if (!this.props.updateTimes.cmps)
+         this.props.getCmps();
 
+      this.state = {
+         showConfirmation: null
+      }
    }
 
+   // Thus far the only confirmation is for a delete.
+   closeConfirmation = (res, cmpId) => {
+      if (res === 'Yes') {
+         this.props.deleteCmp(this.props.cmps[cmpId].cmpId, cmpId);
+      }
+      this.setState({showConfirmation: null})
+   }
+
+   openConfirmation = (cmpId) => {
+      this.setState({showConfirmation: cmpId })
+   }
 
    render() {
       return (
       <section className="container">
+      {console.log(this.props)}
+      <ConfDialog
+        show={this.state.showConfirmation  != null }
+        title="Delete Competition"
+        body={`Are you sure you want to delete the Competition '${this.state.showConfirmation}'`}
+        buttons={['Yes', 'Abort']}
+        onClose={(res) => this.closeConfirmation(res, this.state.showConfirmation)} />
         <h1>Current Competition Overview</h1>
         {/*List all of the cmps by name for now*/}
         {/*only will show the cmps that person is a part of*/}
         <ListGroup>
+          {Object.keys(this.props.cmps).map((cmpId, i) => {
+            var cmp = this.props.cmps[cmpId];
 
-          {this.props.cmps.map((cmp, i) => {
             return <CompetitionItem
               key={i} {...cmp}/>
           })
@@ -39,7 +61,9 @@ export default class CompetitionPage extends Component {
 const CompetitionItem = function (props) {
    return (
       <ListGroupItem className="clearfix">
-         <Link to="#">{props.title}</Link>
+      {console.log(props)}
+         <Link to = {'/CmpPage/' + props.id} >{props.title}</Link>
+
          {/*ShowControlls is not used now will be used later*/}
          {props.showControlls ?
             <div className="pull-right">

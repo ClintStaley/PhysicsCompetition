@@ -188,7 +188,7 @@ router.delete('/:id', (req, res) => {
          }
    },
    (Cmp, fields, cb) => {
-      //checks teh competition rules, or if the cutTeam pointer needs to change
+      //checks the competition rules, or if the cutTeam pointer needs to change
       if (!Cmp[0].rules || !(Cmp[0].curTeam == req.params.id))
          cb(null, null, cb);
       else if (!otherTeams) //checks if the curTeam needs to be null
