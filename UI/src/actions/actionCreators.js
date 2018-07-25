@@ -36,9 +36,10 @@ export function getTeams(prsId, cb) {
    return (dispatch, prevState) => {
       api.getTeams(prsId)
       .then((teams) => {
-         dispatch({type: 'GET_TEAMS', teams: teams.map(
-          teamInfo => Object.assign(teamInfo, {members : {}, toggled: false})
-         )});
+         Object.keys(teams).forEach((key) => {
+            teams[key] = Object.assign(teams[key],
+             {members : {}, toggled: false});
+         })
       })
       .then(() => {if (cb) cb()})}
 }
