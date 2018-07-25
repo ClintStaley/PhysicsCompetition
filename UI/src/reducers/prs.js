@@ -5,6 +5,8 @@ export default function prs(state = {}, action) {
          return action.user
       case 'SIGN_OUT':
          return {} // Clear user state
+      case 'GET_MY_TEAMS':
+            return Object.assign({}, state, )
       default:
          return state
    }

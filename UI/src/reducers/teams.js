@@ -2,9 +2,9 @@ import update from 'immutability-helper';
 
 export default function teams(state = {}, action) {
    switch (action.type) {
-      case 'ADD_TEAMS': // Replace previous team
+      case 'GET_MY_TEAMS': // Replace previous team
          return Object.assign({}, state, action.teams);
-      case 'POPULATE_TEAM':
+      case 'GET_TEAM_MMBS':
          // Add membership data to a team
          return Object.assign({}, state,
           {[action.teamData.teamId]: Object.assign({},
@@ -16,7 +16,7 @@ export default function teams(state = {}, action) {
          // Overwrite only actually-changed elements in the team
          return Object.assign({}, state, {[teamId]:
           Object.assign({}, state[teamId], teamData)});
-      case 'DELETE_TEAM':
+      case 'DEL_TEAM':
          return update(state, {$unset: [action.teamId]});
       case 'SIGN_OUT':
          return {};

@@ -150,17 +150,17 @@ router.get('/:id/Teams', (req, res) => {
       req.cnn.release();
 });
 
-router.get('/:id/Competition', (req, res) => {
+router.get('/:id/Cmps', (req, res) => {
    var vld = req.validator;
    var teams = [];
 
    if (vld.checkPrsOK(req.params.id))
-      req.cnn.chkQry('select distinct Competition.id, Competition.ownerId, ' +
-       'ctpId, title, prms, rules, curTeam from Competition, Team, Membership' +
-       ' where prsId =  ? and teamId = Team.id and cmpId = Competition.id',
+      req.cnn.chkQry('select distinct Competition.id as id, ownerId, ctpId' +
+       ' title, prms, rules, curTeamId from Competition, Team, Membership' +
+       ' where prsId = ? and teamId = Team.id and cmpId = Competition.id',
        [req.params.id],
-      (err, Cmps) => {
-         res.json(Cmps);
+      (err, cmps) => {
+         res.json(cmps);
          res.status(200);
          req.cnn.release();
       });
