@@ -98,7 +98,6 @@ class TeamsPage extends Component {
           {Object.keys(this.props.teams).map((teamNum, i) => {
             var team = this.props.teams[teamNum];
 
-            {/*Creates a team item with all the required knowledge*/}
             return <TeamLine
               key={i} {...team}
               toggleTeam = {() => this.toggleView(teamNum)}
@@ -106,8 +105,7 @@ class TeamsPage extends Component {
               openConfirmation = {() => this.openConfirmation(teamNum)}
               leader = {team.leaderId === this.props.prs.id}
               prs = {this.props.prs.id}/>
-          })
-       }
+          })}
         </ListGroup>
       </section>
       )

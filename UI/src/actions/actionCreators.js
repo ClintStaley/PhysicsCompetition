@@ -82,8 +82,8 @@ export function delTeam(cmpId, teamId, cb) {
 export function addMmb(mmbEmail, cmpId, teamId, cb) {
    return (dispatch, prevState) => {
       api.getPrsByEmail(mmbEmail)
-      .then(prs => api.postMmb(prs.id, cmpId, teamId))
-      .then(dispatch({type: 'ADD_TEAM_MMB', prs, teamId}))
+      .then(prs => api.postMmb(prs.id, cmpId, teamId).then(() => prs))
+      .then((prs) => dispatch({type: 'ADD_TEAM_MMB', prs, teamId}))
       .catch(err => dispatch({type: 'TEAM_ERR', details: err}))
       .then(() => {if (cb) cb()})
    }
