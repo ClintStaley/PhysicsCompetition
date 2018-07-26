@@ -13,12 +13,12 @@ export default function cmps(state = [], action) {
 
          return Object.assign({}, state, {[cmpId]:
           Object.assign({}, state[cmpId], cmpData)});
-//      case 'GET_CMP_TEAMS'
-/*         var cmpId = action.cmpId;
-         var cmpArrId = ???   //need to flush out action creator design first
+      case 'GET_CMP_TEAMS':
+         var cmpId = action.cmpId;
+         var cmpArrId = Object.keys(action.teams);   //need to flush out action creator design first
 
          return Object.assign({}, state, {[cmpId]:
-          Object.assign({}, state[cmpId], {cmpTeams: cmpArrId})});*/
+          Object.assign({}, state[cmpId], {cmpTeams: cmpArrId})});
 
       default:
          return state;

@@ -12,9 +12,13 @@ export function signIn(credentials, cb) {
 export function getAllCmps( cb) {
    return (dispatch, prevState) => {
       api.getCmps()
-      .then((cmps) => dispatch({ type: 'GET_CMPS', cmps }))
+      .then((cmps) => {
+         Object.keys(cmps).forEach((key) => {
+            cmps[key] = Object.assign(cmps[key], {cmpTeams : []});
+         })
+         dispatch({ type: 'GET_CMPS', cmps });
+      })
       .then(() => {if (cb) cb()})
-
    }
 }
 
@@ -63,13 +67,28 @@ export function getTeams(prsId, cb) {
       .then((teams) => {
          Object.keys(teams).forEach((key) => {
             teams[key] = Object.assign(teams[key],
-             {members : {}, toggled: false});
+             {mmbs : {}, toggled: false});
          })
          dispatch({type: 'GET_TEAMS', teams})
 
       })
       .then(() => {if (cb) cb()})}
 }
+
+export function getTeamsByCmp(cmpId, cb) {
+   return (dispatch, prevState) => {
+      api.getTeamsByCmp(cmpId)
+      .then((teams) => {
+         Object.keys(teams).forEach((key) => {
+            teams[key] = Object.assign(teams[key],
+             {mmbs : {}, toggled: false});
+         })
+         dispatch({type: 'GET_CMP_TEAMS', teams, cmpId})
+
+      })
+      .then(() => {if (cb) cb()})}
+}
+
 
 export function delTeam(cmpId, teamId, cb) {
    return (dispatch, prevState) => {
@@ -92,11 +111,11 @@ export function addMmb(mmbEmail, cmpId, teamId, cb) {
 export function getMmbs(cmpId, teamId, cb) {
    return (dispatch, prevState) => {
       api.getMmbs(cmpId, teamId)
-      .then((members) => {
+      .then((mmbs) => {
          var teamData = {};
-         teamData.members = members;
+         teamData.mmbs = mmbs;
          teamData.teamId = teamId;
-         return dispatch({type: 'GET_MY_TEAMS', teamData});
+         return dispatch({type: 'GET_TEAM_MMBS', teamData});
       })
       .then(() => { if (cb) cb() })
    }

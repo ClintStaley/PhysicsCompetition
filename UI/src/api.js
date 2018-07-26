@@ -211,15 +211,15 @@ export function postMmb(prsId, cmpId, teamId) {
 API oughta do, really.*/
 
 export function getMmbs(cmpId, teamId) {
-   return get(`Cmps${cmpId}/Teams/${teamId}/mmbs`)
-   .then((memberData) => memberData.json())
-   .then((memberData) => {
-      var members = {};
+   return get(`Cmps/${cmpId}/Teams/${teamId}/mmbs`)
+   .then((mmbData) => mmbData.json())
+   .then((mmbData) => {
+      var mmbs = {};
 
-      for (var i = 0; i < memberData.length;i++)
-         members[memberData[i].id] = memberData[i];
+      for (var i = 0; i < mmbData.length;i++)
+         mmbs[mmbData[i].id] = mmbData[i];
 
-      return members;
+      return mmbs;
    })
 }
 

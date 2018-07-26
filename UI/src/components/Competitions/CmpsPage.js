@@ -11,7 +11,7 @@ export default class CmpsPage extends Component {
       //get all cmps from database
       //as of now will reget all cmps from database every time page is loaded
       if (!this.props.updateTimes.cmps)
-         this.props.getCmps();
+         this.props.getAllCmps();
       console.log("reconstruct cmppage");
       this.state = {
          showConfirmation: null
