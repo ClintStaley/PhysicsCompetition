@@ -9,7 +9,7 @@ export function signIn(credentials, cb) {
    }
 }
 
-export function getAllCmps(id, cb) {
+export function getAllCmps( cb) {
    return (dispatch, prevState) => {
       api.getCmps()
       .then((cmps) => dispatch({ type: 'GET_CMPS', cmps }))

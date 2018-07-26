@@ -82,8 +82,9 @@ class Main extends Component {
         </Switch>
 
         {/*Error popup dialog*/}
+        {this.props.errs ?
         <ConfDialog
-           show={this.props.Errs.length > 0}
+           show={this.props.errs.length > 0}
            title="Error Notice"
            body={<ListGroup>
              {this.props.errs.map((err, i) =>
@@ -95,6 +96,7 @@ class Main extends Component {
            buttons={['OK']}
            onClose={() => {this.props.clearErrors()}}
         />
+        : '' }
       </div>
     )
    }

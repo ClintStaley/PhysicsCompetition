@@ -8,7 +8,7 @@ export default class CmpPage extends Component {
 
       //attempt to remove a bug in
       if (!this.props.updateTimes.cmps)
-         this.props.getCmps();
+         this.props.getAllCmps();
    }
 
    render() {
@@ -18,13 +18,12 @@ export default class CmpPage extends Component {
       <section className="container">
         <h1>{this.props.cmps[cmpId].title}</h1>
         <ListGroup>
-          {Object.keys(this.props.teams).map((teamId, i) => {
-            if (this.props.teams[teamId].cmpId !== cmpId)
+          {this.props.cmps[cmpId].cmpTeams.map((teamId, i) => {
+            if (!this.props.teams[teamId])
               return null;
 
-            var cmp = this.props.cmps[cmpId];
-
-            return <TeamLine key={i} {...cmp}/>
+            var team = this.props.teams[teamId];
+            return <TeamLine key={i} {...team}/>
          })}
         </ListGroup>
       </section>
