@@ -1,8 +1,8 @@
 import * as api from '../api';
 
 function addErrAndCb(dsp, promise, cb) {
-   return promise.catch(errList => dsp({type: 'SHOW_ERR', details: errList}))
-   .then(() => {if (cb) cb()})
+   return promise.catch((errList) => dsp({type: 'SHOW_ERR', details: errList}))
+   .then((val) => {if (cb) cb(); return val;});
 }
 
 export function signIn(credentials, cb) {
@@ -51,6 +51,18 @@ export function putCmp(cmpId, newCmpData, cb) {
       .then(() => {if (cb) cb()});
    }
 }
+
+export function postTeam(cmpId, teamId, newTeamData, cb) {
+   return (dispatch, prevState) => {
+      api.postTeam(cmpId, teamId, newTeamData)
+      .then(() => {
+          var teamData = {newTeamData : newTeamData, teamId: teamId};
+          dispatch({ type: 'ADD_TEAM', teamData});
+       })
+      .then(() => {if (cb) cb()});
+   }
+}
+
 
 export function putTeam(cmpId, teamId, newTeamData, cb) {
    return (dispatch, prevState) => {

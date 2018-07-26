@@ -20,13 +20,13 @@ export default class CmpPage extends Component {
    }
 
    openCreateDialog = () => {
-       () => this.setState({ createDialog: true }) );
+      console.log("create dialog");
+      this.setState({ createDialog: true });
    }
 
    closeCreateDialog = (result) => {
       if (result.status === "OK") {
-         this.props.editTeam(this.props.teams[teamId].cmpId, teamId,
-          result.updatedTeam);
+         this.props.postTeam();
       }
       this.setState({createDialog: false});
    }
@@ -49,15 +49,14 @@ export default class CmpPage extends Component {
       if (!this.props.cmps[cmpId])
          return (<h1>Error loading Competition</h1>)
 
-      console.log(this.state.toggledTeams);
       return (
       <section className="container">
-      {this.state.CreateTeam ?
+      {this.state.createDialog ?
         <CreateTeamDialog
-          showModal={ this.state.modalTeamId }
-          title={"Edit Team"}
-          team = {this.props.teams[this.state.modalTeamId]}
-          onDismiss={(teamData) => this.dismissModal(this.state.modalTeamId, teamData)} />
+          showModal={ this.state.createDialog }
+          title={"Create Your Team"}
+          onDismiss={(teamData) =>
+           this.closeCreateDialog(teamData)} />
         : ''}
 
         <h1>{this.props.cmps[cmpId].title}</h1>
@@ -80,7 +79,7 @@ export default class CmpPage extends Component {
         : ''}
 
         <div className="pull-right">
-           <Button>Create Team</Button>
+           <Button onClick={this.openCreateDialog} >Create Team</Button>
         </div>
       </section>
       );
