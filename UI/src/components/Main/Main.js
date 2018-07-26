@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Register, SignIn, CmpsPage, TeamsPage, CmpPage }
+import { Register, SignIn, CmpsPage, TeamsPage, CmpPage, ConfDialog }
  from '../concentrator'
 import { Route, Switch } from 'react-router-dom';
 import { Navbar, Nav, NavItem } from 'react-bootstrap';
