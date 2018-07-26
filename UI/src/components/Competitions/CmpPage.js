@@ -26,7 +26,8 @@ export default class CmpPage extends Component {
 
    closeCreateDialog = (result) => {
       if (result.status === "OK") {
-         this.props.postTeam();
+         result.newTeam.leaderId = this.props.prs.id;
+         this.props.postTeam(this.props.cmpId, result.newTeam);
       }
       this.setState({createDialog: false});
    }
@@ -89,7 +90,6 @@ export default class CmpPage extends Component {
 const TeamLine = function (props) {
    return (
    <ListGroupItem className="clearfix">
-   {console.log(props)}
      <Button onClick={props.toggleTeam}>{props.teamName}</Button>
 
      {props.toggled ?
