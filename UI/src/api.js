@@ -157,6 +157,7 @@ export function delCmp(id) {
 
 export function postCmp(body) {
    return post('Cmps', body)
+   .then(rsp => rsp.headers["Location"])
 }
 
 export function getTeams(prsId) {
@@ -195,6 +196,7 @@ export function delTeam(cmpId, teamId) {
 
 export function postTeam(cmpId, body) {
    return post(`Cmps/${cmpId}/Teams`, body)
+   .then(rsp => rsp.headers["Location"])
 }
 
 export function getPrsByEmail(email) {
@@ -204,7 +206,8 @@ export function getPrsByEmail(email) {
 }
 
 export function postMmb(prsId, cmpId, teamId) {
-   return post(`Cmps/${cmpId}/Teams/${teamId}/Mmbs`, {prsId});
+   return post(`Cmps/${cmpId}/Teams/${teamId}/Mmbs`, {prsId})
+   .then(rsp => rsp.headers["Location"])
 }
 
 /** Return id -> member map rather than simple array of members, which the
