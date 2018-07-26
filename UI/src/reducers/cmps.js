@@ -7,19 +7,19 @@ export default function cmps(state = [], action) {
          return Object.assign({}, state, action.cmps);
       case 'ADD_CMPS': // add cmps to the master cmps object
          return Object.assign({}, state, action.cmps);
-      case 'PUT_CMP'
+      case 'PUT_CMP':
          var cmpId = action.cmpData.cmpId;
          var cmpData = action.cmpData.newCmpData;
 
          return Object.assign({}, state, {[cmpId]:
           Object.assign({}, state[cmpId], cmpData)});
-      case 'GET_CMP_TEAMS'
+//      case 'GET_CMP_TEAMS'
 /*         var cmpId = action.cmpId;
          var cmpArrId = ???   //need to flush out action creator design first
 
          return Object.assign({}, state, {[cmpId]:
           Object.assign({}, state[cmpId], {cmpTeams: cmpArrId})});*/
-          
+
       default:
          return state;
    }

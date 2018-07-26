@@ -121,8 +121,8 @@ export function getCmps() {
    .then((cmpsData) => cmpsData.json())
    .then((cmpsData) => {
       var cmps = {};
-      for (var i = 0; i < cmpData.length; i++){
-         cmps[cmpData[i].id] = cmpData[i];
+      for (var i = 0; i < cmpsData.length; i++){
+         cmps[cmpsData[i].id] = cmpsData[i];
       }
 
       return cmps;
@@ -134,8 +134,8 @@ export function getCmpsByPerson(prsId) {
    .then((CmpData) => CmpData.json())
    .then((cmpsData) => {
       var cmps = {};
-      for (var i = 0; i < cmpData.length; i++){
-         cmps[cmpData[i].id] = cmpData[i];
+      for (var i = 0; i < cmpsData.length; i++){
+         cmps[cmpsData[i].id] = cmpsData[i];
       }
 
       return cmps;
