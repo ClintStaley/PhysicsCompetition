@@ -138,13 +138,8 @@ router.get('/:id/Teams', (req, res) => {
    var teams = [];
 
    if (vld.checkPrsOK(req.params.id))
-<<<<<<< HEAD
-      req.cnn.chkQry('select id, bestScore, teamName, cmpId, leaderId, '
-      + 'lastSubmit, canSubmit from Team,Membership where ' +
-=======
       req.cnn.chkQry('select id, bestScore, teamName, cmpId, leaderId, ' +
        'lastSubmit, canSubmit from Team,Membership where ' +
->>>>>>> c475b3dfd20f8b94858cce5e7c78bf4b0d0f5e1a
        'prsId =  ? and teamId = Team.id', [req.params.id],
       (err, memberTeam) => {
          res.json(memberTeam);
