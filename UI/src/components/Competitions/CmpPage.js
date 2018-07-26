@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { ListGroup, ListGroupItem, Button, Glyphicon } from 'react-bootstrap';
+import CreateTeamDialog from './CreateTeamDialog'
 
 export default class CmpPage extends Component {
    constructor(props) {
@@ -14,8 +15,20 @@ export default class CmpPage extends Component {
 
       this.state = {
          toggledTeams: {},
-         modalTeamId: null
+         createDialog: null
       }
+   }
+
+   openCreateDialog = () => {
+       () => this.setState({ createDialog: true }) );
+   }
+
+   closeCreateDialog = (result) => {
+      if (result.status === "OK") {
+         this.props.editTeam(this.props.teams[teamId].cmpId, teamId,
+          result.updatedTeam);
+      }
+      this.setState({createDialog: false});
    }
 
    toggleView = (teamId) => {
@@ -39,10 +52,19 @@ export default class CmpPage extends Component {
       console.log(this.state.toggledTeams);
       return (
       <section className="container">
+      {this.state.CreateTeam ?
+        <CreateTeamDialog
+          showModal={ this.state.modalTeamId }
+          title={"Edit Team"}
+          team = {this.props.teams[this.state.modalTeamId]}
+          onDismiss={(teamData) => this.dismissModal(this.state.modalTeamId, teamData)} />
+        : ''}
+
         <h1>{this.props.cmps[cmpId].title}</h1>
 
         <h5>Competiton Teams</h5>
 
+        { this.props.cmps[cmpId].cmpTeams.length > 0 ?
         <ListGroup>
           {this.props.cmps[cmpId].cmpTeams.map((teamId, i) => {
             if (!this.props.teams[teamId])
@@ -55,6 +77,7 @@ export default class CmpPage extends Component {
             toggleTeam = {() => this.toggleView(teamId)}/>
          })}
         </ListGroup>
+        : ''}
 
         <div className="pull-right">
            <Button>Create Team</Button>

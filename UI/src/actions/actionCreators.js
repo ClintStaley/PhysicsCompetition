@@ -1,8 +1,8 @@
 import * as api from '../api';
 
 function addErrAndCb(dsp, promise, cb) {
-   return promise.catch((errList => dsp({type: 'SHOW_ERR', details: errList}))
-   .then(() => {if (cb) cb();}
+   return promise.catch(errList => dsp({type: 'SHOW_ERR', details: errList}))
+   .then(() => {if (cb) cb()})
 }
 
 export function signIn(credentials, cb) {
