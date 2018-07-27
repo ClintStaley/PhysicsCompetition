@@ -10,7 +10,7 @@ import TeamModal from './TeamModal'
 class TeamsPage extends Component {
    constructor(props) {
       super(props);
-
+console.log("teamPage rerender");
       this.state = {
          showConfirmation: null,
          modalTeamId: null

@@ -55,7 +55,6 @@ export function putCmp(cmpId, newCmpData, cb) {
 }
 
 export function postTeam(cmpId, newTeamData, cb) {
-   console.log(newTeamData);
    return (dispatch, prevState) => {
       api.postTeam(cmpId, newTeamData)
       .then((newTeamId) => {

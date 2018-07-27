@@ -230,6 +230,7 @@ export function getMmbs(cmpId, teamId) {
 
 const errMap = {
    en: {
+      noPermission: 'Login Lacks Permission: ', //403
       missingField: 'Field missing from request: ',
       badValue: 'Field has bad value: ',
       notFound: 'Entity not present in DB',
@@ -242,6 +243,12 @@ const errMap = {
       dupTitle: 'title duplicates an existing one',
       dupEnrollment: 'Duplicate enrollment',
       forbiddenField: 'Field in body not allowed.',
+
+      cantRemoveLeader: 'Team leader cannot quit team, either delete team or change team leader: ',
+      noCompType: 'Competition type does not exist: ',
+      invalidPrms: 'Parameters specified do not follow competition type rules: ',
+      badTeamLead: 'Team leader given is not on the team: ',
+
       queryFailed: 'Query failed (server problem).'
    },
    es: {

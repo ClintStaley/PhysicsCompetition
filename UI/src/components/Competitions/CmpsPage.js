@@ -12,11 +12,15 @@ export default class CmpsPage extends Component {
       //as of now will reget all cmps from database every time page is loaded
       if (!this.props.updateTimes.cmps)
          this.props.getAllCmps();
-      console.log("reconstruct cmppage");
+
+      console.log("reconstruct cmpsPage");
+
       this.state = {
          showConfirmation: null
       }
    }
+
+   componentWillUnmount
 
    // Thus far the only confirmation is for a delete.
    closeConfirmation = (res, cmpId) => {
@@ -33,7 +37,6 @@ export default class CmpsPage extends Component {
    render() {
       return (
       <section className="container">
-      {console.log(this.props)}
       <ConfDialog
         show={this.state.showConfirmation  != null }
         title="Delete Competition"

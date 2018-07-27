@@ -72,7 +72,7 @@ class Main extends Component {
         <Switch>
           <Route exact path='/' children={Home} />
           <Route path='/CmpsPage' render={() => <CmpsPage {...this.props} />} />
-          <Route path='/Teams' render={() => <TeamsPage {...this.props}/>}/>
+          <Route path='/Teams'  component= {TeamsPage} />
           <Route path='/signin' render={() => <SignIn {...this.props} />} />
           <Route path='/register' render={() => <Register {...this.props} />} />
           <Route path='/CmpPage/:cmpId'

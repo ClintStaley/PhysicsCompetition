@@ -13,6 +13,8 @@ export default class CmpPage extends Component {
       if (!this.props.updateTimes.cmps)
          this.props.getAllCmps();
 
+      console.log("reconstruct cmpPage");
+
       this.state = {
          toggledTeams: {},
          createDialog: null
