@@ -139,7 +139,7 @@ router.get('/:id/Teams', (req, res) => {
 
    if (vld.checkPrsOK(req.params.id))
       req.cnn.chkQry('select id, bestScore, teamName, cmpId, leaderId, ' +
-       'lastSubmit, canSubmit from Team,Membership where ' +
+       'lastSubmit, canSubmit from Team, Membership where ' +
        'prsId =  ? and teamId = Team.id', [req.params.id],
       (err, memberTeam) => {
          res.json(memberTeam);

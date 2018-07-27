@@ -13,7 +13,8 @@ class TeamsPage extends Component {
 console.log("teamPage rerender");
       this.state = {
          showConfirmation: null,
-         modalTeamId: null
+         modalTeamId: null,
+         expanded: {}
       }
 
       this.props.getTeamsByPrs(this.props.prs.id);
@@ -32,13 +33,13 @@ console.log("teamPage rerender");
       this.setState({showConfirmation: null})
    }
 
-   openConfirmation = (teamNum) => {
-      this.setState({showConfirmation: teamNum })
+   openConfirmation = (teamId) => {
+      this.setState({showConfirmation: teamId })
    }
 
    openModal = (teamId) => {
       if (this.props.teams[teamId].mmbs ||
-       this.props.teams[teamId].mmbs.length  === 0){
+       this.props.teams[teamId].mmbs.length){
          this.props.getMmbs(this.props.teams[teamId].cmpId, teamId,
           () => this.setState({ modalTeamId: teamId }) );
        }
@@ -54,16 +55,18 @@ console.log("teamPage rerender");
 
    toggleView = (teamId) => {
       //check for membership data, only update when no membership data is available
-      if (this.props.teams[teamId].mmbs ||
-       this.props.teams[teamId].mmbs.length  === 0){
-         this.props.getMmbs(this.props.teams[teamId].cmpId ,teamId);
+      console.log("Toggling " + JSON.stringify(this.props.teams[teamId]));
+      if (Object.keys(this.props.teams[teamId].mmbs).length === 0) {
+         this.props.getMmbs(this.props.teams[teamId].cmpId, teamId);
       }
-      //toggle team toggles the member list on the screen
-      this.props.toggleTeam(this.props.teams[teamId].cmpId, teamId);
+
+      var expanded = this.state.expanded;
+      expanded[teamId] = !expanded[teamId];
+      this.setState({expanded});
    }
 
-   delTeam = (teamNum) => {
-      this.props.delTeam(this.props.teams[teamNum].cmpId, teamNum);
+   delTeam = (teamId) => {
+      this.props.delTeam(this.props.teams[teamId].cmpId, teamId);
    }
 
    delMmb = (mmbId, teamId) => {
@@ -95,17 +98,19 @@ console.log("teamPage rerender");
 
         <h1>Team Overview</h1>
         <ListGroup>
-          {Object.keys(this.props.teams).map((teamNum, i) => {
-            var team = this.props.teams[teamNum];
+          {Object.keys(this.props.teams).map((teamId, i) => {
+            var team = this.props.teams[teamId];
 
             return <TeamLine
               key={i}
-              name={this.props.teams[teamNum].teamName}
-              toggleTeam = {() => this.toggleView(teamNum)}
-              openModal = {() => this.openModal(teamNum)}
-              openConfirmation = {() => this.openConfirmation(teamNum)}
-              leader = {team.leaderId === this.props.prs.id}
-              prs = {this.props.prs.id}/>
+              prs = {this.props.prs.id}
+              mmbs = {team.mmbs}
+              leaderId = {team.leaderId}
+              name = {team.teamName}
+              expanded = {this.state.expanded[teamId]}
+              toggle = {() => this.toggleView(teamId)}
+              edit = {() => this.openModal(teamId)}
+              del = {() => this.openConfirmation(teamId)}/>
           })}
         </ListGroup>
       </section>
@@ -120,34 +125,38 @@ const TeamLine = function (props) {
    const delTip = (
       <Popover id="TeamsPage-delTip">Remove this team</Popover>
    )
+   var isLeader = props.leaderId === props.prs.id;
 
    return (
    <ListGroupItem className="clearfix">
-     {props.leader ?
-       <Button onClick={props.toggleTeam}><mark>{props.name}</mark></Button>
+     {isLeader ?
+       <Button onClick={props.toggle}><mark>{props.name}</mark></Button>
        :
-       <Button onClick={props.toggleTeam}>{props.name}</Button>}
-     {props.leader ?
+       <Button onClick={props.toggle}>{props.name}</Button>
+     }
+     {isLeader ?
        <div className="pull-right">
          <Button bsSize="small" onClick={props.addMmb}>
            <Glyphicon glyph="plus" />
          </Button>
 
-         <Button bsSize="small" onClick={props.openModal}>
+         <Button bsSize="small" onClick={props.edit}>
            <Glyphicon glyph="edit" />
          </Button>
 
-         <Button bsSize="small" onClick={props.openConfirmation}>
+         <Button bsSize="small" onClick={props.del}>
            <Glyphicon glyph="trash" />
          </Button>
        </div>
-     : ''}
-     {props.toggled ?
-     <ListGroup>
-       {Object.keys(props.mmbs).map((memNum, i) => {
+       : ''
+    }
+    {props.expanded ?
+    <ListGroup>
+      {Object.keys(props.mmbs).map((memNum, i) => {
          var mmb = props.mmbs[memNum];
          return <MmbItem
            key={i} {...mmb}
+           isLeader = {mmb.id === props.leaderId}
            canDrop = {
              // Drop anyone but you if you're leader, otherwise only yourself
              props.leader && mmb.id !== props.prs
@@ -170,7 +179,7 @@ const MmbItem = function (props) {
    return (
    <ListGroupItem className="clearfix">
      <Link to="#">{props.firstName}</Link>
-
+     {props.isLeader ? ' (lead)' : ''}
      {props.canDrop ?
         <div className="pull-right">
           <OverlayTrigger trigger={["focus", "hover"]}
