@@ -9,26 +9,22 @@ export default class TeamModal extends Component {
    constructor(props) {
       super(props);
 
-      var members = [];
+      var mmbs = [];
       var leader;
       var team = this.props.team
 
-      Object.keys(team.members).forEach((key) => {
+      Object.keys(team.mmbs).forEach((key) => {
          var option = {
-          label: `${team.members[key].email} (${team.members[key].firstName})`,
-          value: team.members[key].id
+          label: `${team.mmbs[key].email} (${team.mmbs[key].firstName})`,
+          value: team.mmbs[key].id
          }
-         members.push(option);
-         if (team.leaderId === team.members[key].id) {
+         mmbs.push(option);
+         if (team.leaderId === team.mmbs[key].id) {
             leader = option;
          }
       });
 
-      this.state = {
-         teamName: team.teamName || "",
-         members: members,
-         leader: leader
-      };
+      this.state = {teamName: team.teamName || "", mmbs, leader};
 
       this.handleChangeSelect = this.handleChangeSelect.bind(this);
    }
@@ -83,7 +79,7 @@ export default class TeamModal extends Component {
 
                <Select
                name="Leader"
-               options={this.state.members}
+               options={this.state.mmbs}
                value={this.state.leader}
                onChange={this.handleChangeSelect}/>
              </FormGroup>

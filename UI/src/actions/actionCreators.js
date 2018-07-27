@@ -1,16 +1,18 @@
 import * as api from '../api';
 
-function addErrAndCb(dsp, promise, cb) {
+// Attach standard error handling dispatch "catch" to |promise| and also
+// add a standard "then" handler for |cb|, ultimately returning the final
+// value of the promise.
+function addStdHandlers(dsp, cb, promise) {
    return promise.catch((errList) => dsp({type: 'SHOW_ERR', details: errList}))
    .then((val) => {if (cb) cb(); return val;});
 }
 
 export function signIn(credentials, cb) {
    return (dispatch, prevState) => {
-      api.signIn(credentials)
-      .then((userInfo) => dispatch({ user: userInfo, type: "SIGN_IN" }))
-      .then(() => {if (cb) cb()})
-      .catch((error) => dispatch({ type: 'SIGN_IN_FAILED', error }))
+      addStdHandlers(dispatch, cb,
+       api.signIn(credentials)
+      .then((userInfo) => dispatch({ user: userInfo, type: "SIGN_IN" })));
    }
 }
 
@@ -73,7 +75,7 @@ export function putTeam(cmpId, teamId, newTeamData, cb) {
    return (dispatch, prevState) => {
       api.putTeam(cmpId, teamId, newTeamData)
       .then(() => {
-          var teamData = {newTeamData : newTeamData, teamId: teamId};
+          var teamData = {teamId: teamId, newTeamData : newTeamData,};
           dispatch({ type: 'PUT_TEAM', teamData});
        })
       .then(() => {if (cb) cb()});
@@ -83,15 +85,15 @@ export function putTeam(cmpId, teamId, newTeamData, cb) {
 // Get basic team info for all teams of which the specified prsId is a member.
 // Leave members empty and toggled false.  (Later actions may populate members.)
 // Dispatch an update for the teams property of app state.
-export function getTeams(prsId, cb) {
+export function getTeamsByPrs(prsId, cb) {
    return (dispatch, prevState) => {
-      api.getTeams(prsId)
+      api.getTeamsByPrs(prsId)
       .then((teams) => {
          Object.keys(teams).forEach((key) => {
             teams[key] = Object.assign(teams[key],
              {mmbs : {}, toggled: false});
          })
-         dispatch({type: 'GET_TEAMS', teams})
+         dispatch({type: 'GET_PRS_TEAMS', teams})
 
       })
       .then(() => {if (cb) cb()})}

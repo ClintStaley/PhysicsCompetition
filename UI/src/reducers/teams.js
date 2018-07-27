@@ -3,7 +3,7 @@ import update from 'immutability-helper';
 export default function teams(state = {}, action) {
    switch (action.type) {
       case 'GET_CMP_TEAMS':
-      case 'GET_MY_TEAMS': // Replace previous team
+      case 'GET_PRS_TEAMS': // Replace previous team
          return Object.assign({}, state, action.teams);
       case 'GET_TEAM_MMBS':
          // Add membership data to a team
@@ -18,8 +18,6 @@ export default function teams(state = {}, action) {
          return Object.assign({}, state, {[teamId]:
           Object.assign({}, state[teamId], teamData)});
       case 'ADD_TEAM':
-         
-
          return Object.assign({}, state, action.teamData);
       case 'DEL_TEAM':
          return update(state, {$unset: [action.teamId]});

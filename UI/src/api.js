@@ -160,7 +160,7 @@ export function postCmp(body) {
    .then(rsp => rsp.headers["Location"])
 }
 
-export function getTeams(prsId) {
+export function getTeamsByPrs(prsId) {
    return get(`Prss/${prsId}/Teams`)
    .then((teamData) => teamData.json())
    .then((teamData) => {
