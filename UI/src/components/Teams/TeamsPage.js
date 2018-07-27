@@ -78,20 +78,20 @@ class TeamsPage extends Component {
    render() {
       return (
       <section className="container">
-      {console.log("Team Render")}
-      {this.state.modalTeamId ?
-      <TeamModal
-          showModal={ this.state.modalTeamId }
-          title={"Edit Team"}
-          team = {this.props.teams[this.state.modalTeamId]}
-          onDismiss={(teamData) => this.dismissModal(this.state.modalTeamId, teamData)} />
-      : ''}
-      <ConfDialog
-        show={this.state.showConfirmation  != null }
-        title="Delete Team"
-        body={`Are you sure you want to delete the Team '${this.state.showConfirmation}'`}
-        buttons={['Yes', 'Abort']}
-        onClose={(res) => this.closeConfirmation(res, this.state.showConfirmation)} />
+        {console.log("Team Render")}
+        {this.state.modalTeamId ?
+        <TeamModal
+            showModal={ this.state.modalTeamId }
+            title={"Edit Team"}
+            team = {this.props.teams[this.state.modalTeamId]}
+            onDismiss={(teamData) => this.dismissModal(this.state.modalTeamId, teamData)} />
+        : ''}
+        <ConfDialog
+          show={this.state.showConfirmation  != null }
+          title="Delete Team"
+          body={`Are you sure you want to delete the Team '${this.state.showConfirmation}'`}
+          buttons={['Yes', 'Abort']}
+          onClose={(res) => this.closeConfirmation(res, this.state.showConfirmation)} />
 
         <h1>Team Overview</h1>
         <ListGroup>
@@ -99,7 +99,8 @@ class TeamsPage extends Component {
             var team = this.props.teams[teamNum];
 
             return <TeamLine
-              key={i} {...team}
+              key={i}
+              name={this.props.teams[teamNum].teamName}
               toggleTeam = {() => this.toggleView(teamNum)}
               openModal = {() => this.openModal(teamNum)}
               openConfirmation = {() => this.openConfirmation(teamNum)}
@@ -123,9 +124,9 @@ const TeamLine = function (props) {
    return (
    <ListGroupItem className="clearfix">
      {props.leader ?
-       <Button onClick={props.toggleTeam}><mark>{props.teamName}</mark></Button>
+       <Button onClick={props.toggleTeam}><mark>{props.name}</mark></Button>
        :
-       <Button onClick={props.toggleTeam}>{props.teamName}</Button>}
+       <Button onClick={props.toggleTeam}>{props.name}</Button>}
      {props.leader ?
        <div className="pull-right">
          <Button bsSize="small" onClick={props.addMmb}>

@@ -75,8 +75,8 @@ export function putTeam(cmpId, teamId, newTeamData, cb) {
    return (dispatch, prevState) => {
       api.putTeam(cmpId, teamId, newTeamData)
       .then(() => {
-          var teamData = {teamId: teamId, newTeamData : newTeamData,};
-          dispatch({ type: 'PUT_TEAM', teamData});
+          newTeamData.id = teamId;
+          dispatch({ type: 'PUT_TEAM', newTeamData});
        })
       .then(() => {if (cb) cb()});
    }
@@ -117,7 +117,7 @@ export function getTeamsByCmp(cmpId, cb) {
 export function delTeam(cmpId, teamId, cb) {
    return (dispatch, prevState) => {
       api.delTeam(cmpId , teamId).then(() =>
-       dispatch({ type: 'DELETE_TEAM', teamId}))
+       dispatch({ type: 'DEL_TEAM', teamId}))
       .then(() => {if (cb) cb()})
    }
 }

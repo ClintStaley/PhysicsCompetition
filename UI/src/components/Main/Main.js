@@ -82,7 +82,6 @@ class Main extends Component {
         </Switch>
 
         {/*Error popup dialog*/}
-        {this.props.errs ?
         <ConfDialog
            show={this.props.errs.length > 0}
            title="Error Notice"
@@ -96,7 +95,6 @@ class Main extends Component {
            buttons={['OK']}
            onClose={() => {this.props.clearErrors()}}
         />
-        : '' }
       </div>
     )
    }
