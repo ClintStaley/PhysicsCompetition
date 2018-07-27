@@ -27,7 +27,7 @@ export default class CmpPage extends Component {
    closeCreateDialog = (result) => {
       if (result.status === "OK") {
          result.newTeam.leaderId = this.props.prs.id;
-         this.props.postTeam(this.props.cmpId, result.newTeam);
+         this.props.postTeam(parseInt(this.props.cmpId), result.newTeam);
       }
       this.setState({createDialog: false});
    }

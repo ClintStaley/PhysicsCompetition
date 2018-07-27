@@ -58,10 +58,13 @@ export function postTeam(cmpId, newTeamData, cb) {
    console.log(newTeamData);
    return (dispatch, prevState) => {
       api.postTeam(cmpId, newTeamData)
-      .then((testValue) => {
-         console.log(testValue);
-          var teamData = {newTeamData : newTeamData};
-          dispatch({ type: 'ADD_TEAM', teamData});
+      .then((newTeamId) => {
+         var teamData = {[newTeamId] : newTeamData};
+         teamData[newTeamId].id = newTeamId;
+         teamData[newTeamId].mmbs = {};
+         teamData[newTeamId].cmpId = cmpId;
+
+         dispatch({ type: 'ADD_TEAM', teamData});
        })
       .then(() => {if (cb) cb()});
    }
