@@ -7,8 +7,7 @@ router.baseURL = '/Cmps/:cmpId/Teams';
 
 router.get('/', (req, res) => {
 
-   req.cnn.chkQry('select id, teamName, bestScore, lastSubmit, canSubmit,' +
-    ' leaderId from Team where cmpId = ?', req.params.cmpId,
+   req.cnn.chkQry('select * from Team where cmpId = ?', req.params.cmpId,
    (err, result) => {
       res.json(result);
       res.status(200);
@@ -106,8 +105,8 @@ router.post('/', (req, res) => {
 router.get('/:id', (req, res) => {
    var vld = req.validator;
 
-   req.cnn.query('select id, teamName, bestScore, lastSubmit, canSubmit from' +
-    ' Team where id = ? && cmpId = ?',
+   req.cnn.query('select id, teamName, leaderId, bestScore, lastSubmit,'
+    + ' canSubmit, cmpId, nextTeam from Team where id = ? && cmpId = ?',
     [req.params.id,req.params.cmpId],
    (err, teamArr) => {
       if (vld.check(teamArr.length, Tags.notFound)) {

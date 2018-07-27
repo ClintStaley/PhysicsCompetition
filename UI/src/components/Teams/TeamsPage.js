@@ -16,7 +16,7 @@ class TeamsPage extends Component {
          modalTeamId: null
       }
 
-      this.props.getTeams(this.props.prs.id);
+      this.props.getTeamsByPrs(this.props.prs.id);
       console.log(JSON.stringify(this.props.teams));
    }
 
@@ -39,14 +39,14 @@ class TeamsPage extends Component {
    openModal = (teamId) => {
       if (this.props.teams[teamId].mmbs ||
        this.props.teams[teamId].mmbs.length  === 0){
-         this.props.updateMmbs(this.props.teams[teamId].cmpId ,teamId,
+         this.props.getMmbs(this.props.teams[teamId].cmpId, teamId,
           () => this.setState({ modalTeamId: teamId }) );
        }
    }
 
    dismissModal = (teamId, result) => {
       if (result.status === "OK") {
-         this.props.editTeam(this.props.teams[teamId].cmpId, teamId,
+         this.props.putTeam(this.props.teams[teamId].cmpId, teamId,
           result.updatedTeam);
       }
       this.setState({modalTeamId: null});
@@ -56,7 +56,7 @@ class TeamsPage extends Component {
       //check for membership data, only update when no membership data is available
       if (this.props.teams[teamId].mmbs ||
        this.props.teams[teamId].mmbs.length  === 0){
-         this.props.updateMmbs(this.props.teams[teamId].cmpId ,teamId);
+         this.props.getMmbs(this.props.teams[teamId].cmpId ,teamId);
       }
       //toggle team toggles the member list on the screen
       this.props.toggleTeam(this.props.teams[teamId].cmpId, teamId);
