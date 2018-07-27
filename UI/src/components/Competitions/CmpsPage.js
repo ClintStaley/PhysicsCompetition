@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { ListGroup, ListGroupItem, Button, Glyphicon } from 'react-bootstrap';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import * as actionCreators from '../../actions/actionCreators';
+import { ListGroup, ListGroupItem, Button, Glyphicon, Tabs, Tab} from 'react-bootstrap';
 import { ConfDialog } from '../concentrator';
 
 
-export default class CmpsPage extends Component {
+class CmpsPage extends Component {
    constructor(props) {
       super(props);
 
@@ -13,7 +16,7 @@ export default class CmpsPage extends Component {
       if (!this.props.updateTimes.cmps)
          this.props.getAllCmps();
 
-      console.log("reconstruct cmpsPage");
+      this.props.getMyCmps(this.props.prs.id);
 
       this.state = {
          showConfirmation: null
@@ -37,24 +40,40 @@ export default class CmpsPage extends Component {
    render() {
       return (
       <section className="container">
+      {console.log(this.props)}
       <ConfDialog
         show={this.state.showConfirmation  != null }
         title="Delete Competition"
         body={`Are you sure you want to delete the Competition '${this.state.showConfirmation}'`}
         buttons={['Yes', 'Abort']}
         onClose={(res) => this.closeConfirmation(res, this.state.showConfirmation)} />
-        <h1>Current Competition Overview</h1>
+        <h1>Competition Overview</h1>
         {/*List all of the cmps by name for now*/}
-        {/*only will show the cmps that person is a part of*/}
-        <ListGroup>
-          {Object.keys(this.props.cmps).map((cmpId, i) => {
-            var cmp = this.props.cmps[cmpId];
+        {/*for now just spits out two lists with, clean up UI later*/}
 
-            return <CompetitionItem
-              key={i} {...cmp}/>
-          })
-          }
-        </ListGroup>
+        <Tabs>
+          <Tab eventKey={1} title="My Competitions">
+          <ListGroup>
+            {this.props.prs.myCmps && this.props.prs.myCmps.map((cmpId, i) => {
+             var cmp = this.props.cmps[cmpId];
+
+             return <CompetitionItem
+                key={i} {...cmp}/>
+            })}
+          </ListGroup>
+          </Tab>
+          <Tab eventKey={2} title="All Competitions">
+          <ListGroup>
+              {Object.keys(this.props.cmps).map((cmpId, i) => {
+                var cmp = this.props.cmps[cmpId];
+
+                return <CompetitionItem
+                  key={i} {...cmp}/>
+              })}
+
+          </ListGroup>
+          </Tab>
+        </Tabs>
       </section>
       )
   }
@@ -76,3 +95,21 @@ const CompetitionItem = function (props) {
       </ListGroupItem>
    )
 }
+
+//makes CmpsPage a container componet, rather than a presentational componet
+function mapStateToProps(state) {
+   return {
+      prs: state.prs,
+      teams: state.teams,
+      cmps: state.cmps,
+      updateTimes: state.updateTimes
+   }
+}
+
+function mapDispatchToProps(dispatch) {
+   return bindActionCreators(actionCreators, dispatch);
+}
+
+//connects CmpsPage to the store
+CmpsPage = connect(mapStateToProps, mapDispatchToProps)(CmpsPage)
+export default CmpsPage

@@ -137,7 +137,6 @@ export function getCmpsByPerson(prsId) {
       for (var i = 0; i < cmpsData.length; i++){
          cmps[cmpsData[i].id] = cmpsData[i];
       }
-
       return cmps;
    });
 }
@@ -197,7 +196,7 @@ export function delTeam(cmpId, teamId) {
 export function postTeam(cmpId, body) {
    return post(`Cmps/${cmpId}/Teams`, body)
    .then(rsp => {
-      return parseInt(rsp.headers.get("Location").split('/').splice(-1)[0]);
+      return parseInt(rsp.headers.get("Location").split('/').splice(-1)[0], 10);
    })
 }
 

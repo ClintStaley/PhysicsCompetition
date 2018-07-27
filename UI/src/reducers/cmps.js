@@ -1,9 +1,7 @@
-export default function cmps(state = [], action) {
+export default function cmps(state = {}, action) {
    switch (action.type) {
+      case 'GET_MY_CMPS':
       case 'GET_CMPS': // Replace previous cmps
-         return Object.assign({}, state, action.cmps);
-      case 'GET_MY_CMPS': // add cmps to the master cmps object
-         var newstate = Object.assign({}, state, action.cmps);
          return Object.assign({}, state, action.cmps);
       case 'ADD_CMPS': // add cmps to the master cmps object
          return Object.assign({}, state, action.cmps);

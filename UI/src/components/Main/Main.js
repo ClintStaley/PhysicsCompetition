@@ -37,7 +37,7 @@ class Main extends Component {
                   [
                     <LinkContainer key={0} to="/CmpsPage">
                       <NavItem>
-                        Competition
+                        Competitions
                       </NavItem>
                     </LinkContainer>,
                     <LinkContainer key={1} to="/TeamsPage">
@@ -61,7 +61,8 @@ class Main extends Component {
               </Nav>
               {this.signedIn() ?
               <Nav pullRight>
-                <NavItem eventKey={2} onClick = {() => this.signOut()}>Sign out</NavItem>
+                <NavItem eventKey={2}
+                 onClick = {() => this.signOut()}>Sign out</NavItem>
               </Nav> : ''
               }
             </Navbar.Collapse>
@@ -69,7 +70,7 @@ class Main extends Component {
         </div>
         <Switch>
           <Route exact path='/' children={Home} />
-          <Route path='/CmpsPage' render={() => <CmpsPage {...this.props} />} />
+          <Route path='/CmpsPage' component={CmpsPage} />} />
           <Route path='/TeamsPage' render={() => <TeamsPage {...this.props}/>}/>
           <Route path='/signin' render={() => <SignIn {...this.props} />} />
           <Route path='/register' render={() => <Register {...this.props} />} />

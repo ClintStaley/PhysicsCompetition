@@ -18,7 +18,8 @@ export default class TeamModal extends Component {
    }
 
    getValidationState = () => {
-      return this.state.teamName ? null : "error";
+      return this.state.teamName && this.state.teamName !== "" ?
+       "success" : "error";
    }
 
    // Only possible change is a new team name value
@@ -44,7 +45,7 @@ export default class TeamModal extends Component {
                <FormControl
                type="text"
                value={this.state.teamName}
-               placeholder="Enter text"
+               placeholder="Enter team name"
                onChange={this.handleChange}/>
 
                <FormControl.Feedback />
@@ -53,7 +54,8 @@ export default class TeamModal extends Component {
            </form>
          </Modal.Body>
          <Modal.Footer>
-           <Button onClick={() => this.close("OK")}>Ok</Button>
+           <Button disabled={this.getValidationState() !== "success"}
+            onClick={() => this.close("OK")}>Ok</Button>
            <Button onClick={() => this.close("Cancel")}>Cancel</Button>
          </Modal.Footer>
        </Modal>)
