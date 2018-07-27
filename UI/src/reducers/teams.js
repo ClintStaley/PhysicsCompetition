@@ -11,12 +11,10 @@ export default function teams(state = {}, action) {
           {[action.teamData.teamId]: Object.assign({},
           state[action.teamData.teamId] , {mmbs: action.teamData.mmbs})});
       case 'PUT_TEAM':
-         var teamId = action.teamData.teamId;
-         var teamData = action.teamData.newTeamData;
-
+         var data = action.newTeamData;
          // Overwrite only actually-changed elements in the team
-         return Object.assign({}, state, {[teamId]:
-          Object.assign({}, state[teamId], teamData)});
+         return Object.assign({}, state, {[data.id]:
+          Object.assign({}, state[data.id], data)});
       case 'ADD_TEAM':
          return Object.assign({}, state, action.teamData);
       case 'DEL_TEAM':

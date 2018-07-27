@@ -9,7 +9,8 @@ function mapStateToProps(state) {
       prs: state.prs,
       cmps: state.cmps,
       teams: state.teams,
-      updateTimes: state.updateTimes
+      updateTimes: state.updateTimes,
+      errs: state.errs
    }
 }
 
