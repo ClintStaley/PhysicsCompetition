@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { ListGroup, ListGroupItem, Button, Glyphicon } from 'react-bootstrap';
+import CreateTeamDialog from './CreateTeamDialog'
 
 export default class CmpPage extends Component {
    constructor(props) {
@@ -14,8 +15,21 @@ export default class CmpPage extends Component {
 
       this.state = {
          toggledTeams: {},
-         modalTeamId: null
+         createDialog: null
       }
+   }
+
+   openCreateDialog = () => {
+      console.log("create dialog");
+      this.setState({ createDialog: true });
+   }
+
+   closeCreateDialog = (result) => {
+      if (result.status === "OK") {
+         result.newTeam.leaderId = this.props.prs.id;
+         this.props.postTeam(this.props.cmpId, result.newTeam);
+      }
+      this.setState({createDialog: false});
    }
 
    toggleView = (teamId) => {
@@ -36,13 +50,21 @@ export default class CmpPage extends Component {
       if (!this.props.cmps[cmpId])
          return (<h1>Error loading Competition</h1>)
 
-      console.log(this.state.toggledTeams);
       return (
       <section className="container">
+      {this.state.createDialog ?
+        <CreateTeamDialog
+          showModal={ this.state.createDialog }
+          title={"Create Your Team"}
+          onDismiss={(teamData) =>
+           this.closeCreateDialog(teamData)} />
+        : ''}
+
         <h1>{this.props.cmps[cmpId].title}</h1>
 
         <h5>Competiton Teams</h5>
 
+        { this.props.cmps[cmpId].cmpTeams.length > 0 ?
         <ListGroup>
           {this.props.cmps[cmpId].cmpTeams.map((teamId, i) => {
             if (!this.props.teams[teamId])
@@ -55,9 +77,10 @@ export default class CmpPage extends Component {
             toggleTeam = {() => this.toggleView(teamId)}/>
          })}
         </ListGroup>
+        : ''}
 
         <div className="pull-right">
-           <Button>Create Team</Button>
+           <Button onClick={this.openCreateDialog} >Create Team</Button>
         </div>
       </section>
       );
@@ -67,7 +90,6 @@ export default class CmpPage extends Component {
 const TeamLine = function (props) {
    return (
    <ListGroupItem className="clearfix">
-   {console.log(props)}
      <Button onClick={props.toggleTeam}>{props.teamName}</Button>
 
      {props.toggled ?

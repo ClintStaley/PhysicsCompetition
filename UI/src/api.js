@@ -196,7 +196,12 @@ export function delTeam(cmpId, teamId) {
 
 export function postTeam(cmpId, body) {
    return post(`Cmps/${cmpId}/Teams`, body)
-   .then(rsp => rsp.headers["Location"])
+   .then(rsp => {
+      console.log(rsp);
+      console.log(rsp.headers["Location"]);
+      //rsp.headers is an empty JS object
+      return rsp.headers["Location"];
+   })
 }
 
 export function getPrsByEmail(email) {

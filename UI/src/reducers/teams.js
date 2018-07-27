@@ -17,6 +17,10 @@ export default function teams(state = {}, action) {
          // Overwrite only actually-changed elements in the team
          return Object.assign({}, state, {[teamId]:
           Object.assign({}, state[teamId], teamData)});
+      case 'ADD_TEAM':
+         
+
+         return Object.assign({}, state, action.teamData);
       case 'DEL_TEAM':
          return update(state, {$unset: [action.teamId]});
       case 'SIGN_OUT':

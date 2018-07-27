@@ -52,7 +52,8 @@ router.post('/', (req, res) => {
    },
    (result, fields, cb) => {
       // Return location of inserted Team
-      res.location(router.baseURL + '/' + result.teamId);
+      res.location(router.baseURL.replace(":cmpId", req.params.cmpId)
+       + '/' + result.insertId);
 
       //save team data to include team leader as a member in member table
       memberData.prsId = body.leaderId;

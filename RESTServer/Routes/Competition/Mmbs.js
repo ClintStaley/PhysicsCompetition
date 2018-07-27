@@ -45,7 +45,8 @@ router.post('/', (req, res) => {
    },
    (result, fields, cb) => {
       // Return location of inserted Member
-      res.location(router.baseURL + '/' + result.insertId).end();
+      res.location(router.baseURL.replace(":cmpId", req.params.cmpId)
+       .replace(":teamId", req.params.teamId) + '/' + result.insertId).end();
       cb();
    }],
    () => {

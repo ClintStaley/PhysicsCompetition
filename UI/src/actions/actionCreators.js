@@ -54,6 +54,20 @@ export function putCmp(cmpId, newCmpData, cb) {
    }
 }
 
+export function postTeam(cmpId, newTeamData, cb) {
+   console.log(newTeamData);
+   return (dispatch, prevState) => {
+      api.postTeam(cmpId, newTeamData)
+      .then((testValue) => {
+         console.log(testValue);
+          var teamData = {newTeamData : newTeamData};
+          dispatch({ type: 'ADD_TEAM', teamData});
+       })
+      .then(() => {if (cb) cb()});
+   }
+}
+
+
 export function putTeam(cmpId, teamId, newTeamData, cb) {
    return (dispatch, prevState) => {
       api.putTeam(cmpId, teamId, newTeamData)
