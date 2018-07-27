@@ -1,16 +1,18 @@
 import * as api from '../api';
 
-function addErrAndCb(dsp, promise, cb) {
+// Attach standard error handling dispatch "catch" to |promise| and also
+// add a standard "then" handler for |cb|, ultimately returning the final
+// value of the promise.
+function addStdHandlers(dsp, cb, promise) {
    return promise.catch((errList) => dsp({type: 'SHOW_ERR', details: errList}))
    .then((val) => {if (cb) cb(); return val;});
 }
 
 export function signIn(credentials, cb) {
    return (dispatch, prevState) => {
-      api.signIn(credentials)
-      .then((userInfo) => dispatch({ user: userInfo, type: "SIGN_IN" }))
-      .then(() => {if (cb) cb()})
-      .catch((error) => dispatch({ type: 'SIGN_IN_FAILED', error }))
+      addStdHandlers(dispatch, cb,
+       api.signIn(credentials)
+      .then((userInfo) => dispatch({ user: userInfo, type: "SIGN_IN" })));
    }
 }
 
