@@ -30,17 +30,15 @@ export function getAllCmps( cb) {
 }
 
 export function getMyCmps(id, cb) {
-   return (dispatch, prevState) => {
+   return ((dispatch, prevState) => {
       api.getCmpsByPerson(id)
       .then((cmps) => {
          Object.keys(cmps).forEach((key) => {
-            cmps[key] = Object.assign(cmps[key], {cmpTeams : []});
-         })
+            cmps[key].cmpTeams = []});
          dispatch({ type: 'GET_MY_CMPS', cmps });
       })
-      .then(() => {if (cb) cb()})
-
-   }
+      .then(() => {if (cb) cb()});
+   })
 }
 
 export function putCmp(cmpId, newCmpData, cb) {
@@ -55,9 +53,9 @@ export function putCmp(cmpId, newCmpData, cb) {
 }
 
 export function postTeam(cmpId, newTeamData, cb) {
-   console.log(newTeamData);
    return (dispatch, prevState) => {
-      api.postTeam(cmpId, newTeamData)
+      addStdHandlers(dispatch, cb,
+       api.postTeam(cmpId, newTeamData)
       .then((newTeamId) => {
          var teamData = {[newTeamId] : newTeamData};
          teamData[newTeamId].id = newTeamId;
@@ -65,8 +63,8 @@ export function postTeam(cmpId, newTeamData, cb) {
          teamData[newTeamId].cmpId = cmpId;
 
          dispatch({ type: 'ADD_TEAM', teamData});
-       })
-      .then(() => {if (cb) cb()});
+      })
+      .then(() => {if (cb) cb()}));
    }
 }
 
@@ -93,7 +91,7 @@ export function getTeamsByPrs(prsId, cb) {
             teams[key] = Object.assign(teams[key],
              {mmbs : {}, toggled: false});
          })
-         dispatch({type: 'GET_PRS_TEAMS', teams})
+         dispatch({type: 'GET_PMY_TEAMS', teams})
 
       })
       .then(() => {if (cb) cb()})}

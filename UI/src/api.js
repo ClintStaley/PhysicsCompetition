@@ -137,7 +137,6 @@ export function getCmpsByPerson(prsId) {
       for (var i = 0; i < cmpsData.length; i++){
          cmps[cmpsData[i].id] = cmpsData[i];
       }
-
       return cmps;
    });
 }
@@ -197,7 +196,7 @@ export function delTeam(cmpId, teamId) {
 export function postTeam(cmpId, body) {
    return post(`Cmps/${cmpId}/Teams`, body)
    .then(rsp => {
-      return parseInt(rsp.headers.get("Location").split('/').splice(-1)[0]);
+      return parseInt(rsp.headers.get("Location").split('/').splice(-1)[0], 10);
    })
 }
 
@@ -234,6 +233,7 @@ export function delMmb(cmpId, teamId, prsId) {
 
 const errMap = {
    en: {
+      noPermission: 'Login Lacks Permission: ', //403
       missingField: 'Field missing from request: ',
       badValue: 'Field has bad value: ',
       notFound: 'Entity not present in DB',
@@ -246,6 +246,12 @@ const errMap = {
       dupTitle: 'title duplicates an existing one',
       dupEnrollment: 'Duplicate enrollment',
       forbiddenField: 'Field in body not allowed.',
+
+      cantRemoveLeader: 'Team leader cannot quit team, either delete team or change team leader: ',
+      noCompType: 'Competition type does not exist: ',
+      invalidPrms: 'Parameters specified do not follow competition type rules: ',
+      badTeamLead: 'Team leader given is not on the team: ',
+
       queryFailed: 'Query failed (server problem).'
    },
    es: {

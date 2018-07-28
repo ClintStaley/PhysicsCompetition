@@ -10,7 +10,7 @@ import TeamModal from './TeamModal'
 class TeamsPage extends Component {
    constructor(props) {
       super(props);
-
+      
       this.state = {
          delConfirmTeamId: null,   // ID of team to confirm for deletion
          editTeamId: null,         // ID of team to edit

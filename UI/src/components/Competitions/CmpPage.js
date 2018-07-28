@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { ListGroup, ListGroupItem, Button, Glyphicon } from 'react-bootstrap';
+import { ListGroup, ListGroupItem, Button } from 'react-bootstrap';
 import CreateTeamDialog from './CreateTeamDialog'
 
 export default class CmpPage extends Component {
@@ -9,10 +9,6 @@ export default class CmpPage extends Component {
 
       this.props.getTeamsByCmp(this.props.cmpId);
 
-      //attempt to remove a bug in
-      if (!this.props.updateTimes.cmps)
-         this.props.getAllCmps();
-
       this.state = {
          toggledTeams: {},
          createDialog: null
@@ -20,14 +16,13 @@ export default class CmpPage extends Component {
    }
 
    openCreateDialog = () => {
-      console.log("create dialog");
       this.setState({ createDialog: true });
    }
 
    closeCreateDialog = (result) => {
       if (result.status === "OK") {
          result.newTeam.leaderId = this.props.prs.id;
-         this.props.postTeam(parseInt(this.props.cmpId), result.newTeam);
+         this.props.postTeam(parseInt(this.props.cmpId, 10), result.newTeam);
       }
       this.setState({createDialog: false});
    }
@@ -45,7 +40,6 @@ export default class CmpPage extends Component {
 
    render() {
       var cmpId = this.props.cmpId;
-      var toggled = {};
 
       if (!this.props.cmps[cmpId])
          return (<h1>Error loading Competition</h1>)
