@@ -24,7 +24,7 @@ export default class TeamModal extends Component {
          }
       });
 
-      this.state = {teamName: team.teamName || "", mmbs, leader};
+      this.state = {teamName: team && team.teamName || "", mmbs, leader};
 
       this.handleChangeSelect = this.handleChangeSelect.bind(this);
    }
@@ -51,7 +51,7 @@ export default class TeamModal extends Component {
    }
 
    render() {
-      console.log(JSON.stringify(this.state));
+
       return (
        <Modal show={this.props.showModal != null} onHide={() => this.close("Cancel")}>
          <Modal.Header closeButton>

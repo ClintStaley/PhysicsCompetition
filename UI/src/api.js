@@ -228,6 +228,10 @@ export function getMmbs(cmpId, teamId) {
    })
 }
 
+export function delMmb(cmpId, teamId, prsId) {
+   return del(`Cmps/${cmpId}/Teams/${teamId}/Mmbs/${prsId}`);
+}
+
 const errMap = {
    en: {
       missingField: 'Field missing from request: ',
