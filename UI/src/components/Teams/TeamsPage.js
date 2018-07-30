@@ -139,7 +139,6 @@ class TeamsPage extends Component {
             label="New member's Email:"
             body={this.state.delMmbFunc ?
              `Delete ${this.state.delMmbName}?` : ''}
-            buttons={['Add', 'Cancel']}
             onClose={(res) => this.closeAddMmb(res)} />
 
         <h1>Team Overview</h1>

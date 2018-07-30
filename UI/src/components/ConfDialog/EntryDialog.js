@@ -19,8 +19,8 @@ export default class EntryDialog extends PureComponent {
       };
    }
 
-   close = (result) => {
-      this.props.onClose({result, entry: this.state.value});
+   close = (status) => {
+      this.props.onClose({status, entry: this.state.value});
    }
 
    getValidationState = () => {

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { ListGroup, ListGroupItem, Button } from 'react-bootstrap';
-import CreateTeamDialog from './CreateTeamDialog'
+import { EntryDialog } from '../concentrator';
 
 export default class CmpPage extends Component {
    constructor(props) {
@@ -22,8 +22,11 @@ export default class CmpPage extends Component {
    closeCreateDialog = (result) => {
       console.log(result);
       if (result.status === "OK") {
-         result.newTeam.leaderId = this.props.prs.id;
-         this.props.postTeam(parseInt(this.props.cmpId, 10), result.newTeam);
+         var newTeam = {};
+         newTeam.leaderId = this.props.prs.id;
+         newTeam.teamName = result.entry
+
+         this.props.postTeam(parseInt(this.props.cmpId, 10), newTeam);
       }
       this.setState({createDialog: false});
    }
@@ -47,13 +50,12 @@ export default class CmpPage extends Component {
 
       return (
       <section className="container">
-      {this.state.createDialog ?
-        <CreateTeamDialog
-          showModal={ this.state.createDialog }
-          title={"Create Your Team"}
-          onDismiss={(teamData) =>
-           this.closeCreateDialog(teamData)} />
-        : ''}
+        <EntryDialog
+        show={ this.state.createDialog }
+        title={"Create Your Team"}
+        label="Team name"
+        onClose={(teamData) =>
+        this.closeCreateDialog(teamData)} />
 
         <h1>{this.props.cmps[cmpId].title}</h1>
 
