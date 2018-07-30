@@ -51,7 +51,6 @@ export default class TeamModal extends Component {
    }
 
    render() {
-
       return (
        <Modal show={this.props.showModal != null} onHide={() => this.close("Cancel")}>
          <Modal.Header closeButton>
