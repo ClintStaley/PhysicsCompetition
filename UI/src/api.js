@@ -200,10 +200,14 @@ export function postTeam(cmpId, body) {
    })
 }
 
-export function getPrsByEmail(email) {
+export function getPrs(prsId) {
+   return get(`Prss/${prsId}`).then(res => res.json());
+}
+
+export function getPrssByEmail(email) {
    return get(`Prss?email=${email}`)
    .then(rsp => rsp.json())
-   .then(prss => prss.length > 0 ? prss[0] : Promise.reject("Unknown Email"));
+   .then(prss => prss.length > 0 ? prss : Promise.reject("Unknown Email"));
 }
 
 export function postMmb(prsId, cmpId, teamId) {
