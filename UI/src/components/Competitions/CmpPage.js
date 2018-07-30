@@ -7,6 +7,7 @@ export default class CmpPage extends Component {
    constructor(props) {
       super(props);
 
+      this.props.getCtp(this.props.cmps[this.props.cmpId].ctpId);
       this.props.getTeamsByCmp(this.props.cmpId);
       this.props.getTeamsByPrs(this.props.prs.id);
 
@@ -44,7 +45,9 @@ export default class CmpPage extends Component {
    }
 
    render() {
-      var cmpId = this.props.cmpId;
+      var props = this.props;
+      var cmpId = props.cmpId;
+      var ctpId = props.cmps[cmpId].ctpId;
 
       if (!this.props.cmps[cmpId])
          return (<h1>Error loading Competition</h1>)
@@ -58,27 +61,27 @@ export default class CmpPage extends Component {
         onClose={(teamData) =>
         this.closeCreateDialog(teamData)} />
 
-        <h1>{this.props.cmps[cmpId].title}</h1>
+        <h1>{props.cmps[cmpId].title}</h1>
 
         <h4>Competition Description</h4>
 
-        <div></div>
+        <div>{props.ctps[ctpId] && props.ctps[ctpId].description}</div>
 
         <h4>Competiton Tutorial</h4>
 
-        <div></div>
+        <div>{props.ctps[ctpId] && props.ctps[ctpId].tutorial}</div>
 
         <h4>Competiton Teams</h4>
 
-        { this.props.cmps[cmpId].cmpTeams.length > 0 ?
+        { props.cmps[cmpId].cmpTeams.length > 0 ?
         <ListGroup>
-          {this.props.cmps[cmpId].cmpTeams.map((teamId, i) => {
+          {props.cmps[cmpId].cmpTeams.map((teamId, i) => {
             if (!this.props.teams[teamId])
               return null;
 
-            var team = this.props.teams[teamId];
+            var team = props.teams[teamId];
             team.toggled = this.state.toggledTeams[teamId];
-            team.isMember = this.props.prs.myTeams.includes(teamId);
+            team.isMember = props.prs.myTeams.includes(teamId);
 
             return <TeamLine key={i} {...team}
             toggleTeam = {() => this.toggleView(teamId)}/>

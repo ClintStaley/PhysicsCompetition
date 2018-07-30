@@ -117,7 +117,7 @@ export function registerUser(user) {
 }
 
 export function getCtpById(ctpId){
-   return get(`/Ctps/${ctpId}`)
+   return get(`Ctps/${ctpId}`)
    .then((ctpData) => ctpData.json())
 }
 

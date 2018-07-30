@@ -18,12 +18,13 @@ export function signIn(credentials, cb) {
 
 export function getCtp(ctpId, cb){
    return ((dispatch, prevState) => {
+      addStdHandlers(dispatch, cb,
       api.getCtpById(ctpId)
       .then((ctp) => {
          dispatch({ type: 'GET_CTP', ctp });
       })
-      .then(() => {if (cb) cb()});
-   })
+      .then(() => {if (cb) cb()})
+   )})
 }
 
 export function getAllCmps( cb) {
