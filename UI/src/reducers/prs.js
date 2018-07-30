@@ -11,9 +11,10 @@ export default function prs(state = {}, action) {
       case 'GET_PRS_CMPS':
          return Object.assign({}, state, {myCmps: Object.keys(action.cmps)});
       case 'ADD_TEAM':
-         var teamId = Object.keys(action.teamData)[0];
+         var teamId = action.newTeamData.id;;
          var myTeams = state.myTeams;
-         myTeams.push(teamId); // CAS FIX: No!  Must use concat.
+
+         myTeams.concat([teamId]);
 
          return Object.assign({}, state, {myTeams});
       case 'DEL_MMB':

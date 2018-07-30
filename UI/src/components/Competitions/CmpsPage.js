@@ -51,7 +51,7 @@ class CmpsPage extends Component {
         {/*List all of the cmps by name for now*/}
         {/*for now just spits out two lists with, clean up UI later*/}
 
-        <Tabs>
+        <Tabs id="cmpsTabs">
           <Tab eventKey={1} title="My Competitions">
           <ListGroup>
             {this.props.prs.myCmps && this.props.prs.myCmps.map((cmpId, i) => {

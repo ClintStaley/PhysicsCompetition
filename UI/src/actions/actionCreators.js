@@ -57,14 +57,11 @@ export function postTeam(cmpId, newTeamData, cb) {
       addStdHandlers(dispatch, cb,
        api.postTeam(cmpId, newTeamData)
       .then((newTeamId) => {
-         var teamData = {[newTeamId] : newTeamData};
-         teamData[newTeamId].id = newTeamId;
-         teamData[newTeamId].mmbs = {};
-         teamData[newTeamId].cmpId = cmpId;
-
-         // CAS FIX: Why is this being output as a one-member map instead
-         // of just the original teamData with id and cmpId added???
-         dispatch({ type: 'ADD_TEAM', teamData});
+         newTeamData.id = newTeamId;
+         newTeamData.mmbs = {};
+         newTeamData.cmpId = cmpId;
+         
+         dispatch({ type: 'ADD_TEAM', newTeamData});
       })
       .then(() => {if (cb) cb()}));
    }

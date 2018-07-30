@@ -1602,7 +1602,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"Bridge Builder\",\n    \"description\": \"Building Bridges\",\n    \"prmSchema\": \"{   \\\"title\\\": \\\"Route Strategy\\\",   \\\"description\\\": \\\"A solar car route strategy\\\",   \\\"type\\\": \\\"object\\\",   \\\"properties\\\": {     \\\"Altitude Profiles\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"array\\\",         \\\"items\\\": {           \\\"type\\\": \\\"number\\\"         },         \\\"maxItems\\\": 2,         \\\"minItems\\\": 2       },       \\\"minItems\\\": 2     },     \\\"Cell Output profile\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"array\\\",         \\\"items\\\": {           \\\"type\\\": \\\"number\\\"         },         \\\"maxItems\\\": 2,         \\\"minItems\\\": 2       },       \\\"minItems\\\": 2     },     \\\"Friction\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"number\\\",         \\\"minimum\\\": 0,         \\\"exclusiveMinimum\\\": true       },       \\\"maxItems\\\": 2,       \\\"minItems\\\": 1     },     \\\"Energy /m alt\\\": {       \\\"type\\\": \\\"number\\\",       \\\"minimum\\\": 0,       \\\"exclusiveMinimum\\\": true     },     \\\"Battery I/o\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"array\\\",         \\\"items\\\": {           \\\"type\\\": \\\"number\\\",           \\\"default\\\": 1000         },         \\\"maxItems\\\": 2,         \\\"minItems\\\": 2       },       \\\"minItems\\\": 2     },     \\\"Regen Efficiency\\\": {       \\\"type\\\": \\\"number\\\",       \\\"minimum\\\": 0,       \\\"default\\\": 100,       \\\"exclusiveMinimum\\\": true     },     \\\"Initial Battery\\\": {       \\\"type\\\": \\\"number\\\",       \\\"minimum\\\": 0,       \\\"default\\\": 10,       \\\"exclusiveMinimum\\\": true     }   },   \\\"required\\\": [     \\\"Altitude Profiles\\\",     \\\"Cell Output profile\\\",     \\\"Friction\\\",     \\\"Energy /m alt\\\",     \\\"Battery I/o\\\",     \\\"Regen Efficiency\\\",     \\\"Initial Battery\\\"   ] }\"\n}"
+							"raw": "{\n    \"title\": \"Land Grab\",\n    \"description\": \"Claim territory by placing circles in a field of obstacles\",\n    \"tutorial\": \"Claim territory by placing circles in a field of obstacles...\",\n    \"prmSchema\": \"{\\\"$schema\\\": \\\"http://json-schema.org/draft-07/schema#\\\",      \\\"title\\\": \\\"Land Grab\\\",   \\\"type\\\": \\\"object\\\",    \\\"properties\\\": {      \\\"numCircles\\\": {    \\\"title\\\": \\\"Number of circles allowed per team\\\",    \\\"type\\\": \\\"integer\\\",    \\\"minimum\\\": 1      },    \\\"obstacles\\\": {    \\\"title\\\": \\\"Blocked areas in 100x100 square\\\",    \\\"type\\\": \\\"array\\\",    \\\"items\\\": {       \\\"title\\\": \\\"Blocked rectangle\\\",       \\\"type\\\": \\\"object\\\",       \\\"properties\\\": {     \\\"loX\\\": {   \\\"title\\\": \\\"Left edge\\\",   \\\"type\\\": \\\"number\\\",   \\\"minimum\\\": 0.0,   \\\"maximum\\\": 100.0     },     \\\"hiX\\\": {   \\\"title\\\": \\\"Right edge\\\",   \\\"type\\\": \\\"number\\\",   \\\"minimum\\\": 0.0,   \\\"maximum\\\": 100.0     },     \\\"loY\\\": {   \\\"title\\\": \\\"Bottom edge\\\",   \\\"type\\\": \\\"number\\\",   \\\"minimum\\\": 0.0,   \\\"maximum\\\": 100.0     },      \\\"hiY\\\": {   \\\"title\\\": \\\"Top edge\\\",   \\\"type\\\": \\\"number\\\",   \\\"minimum\\\": 0.0,   \\\"maximum\\\": 100.0     }       }    }      }}}\"\n}"
 						},
 						"url": {
 							"raw": "{{url}}/Ctps",
@@ -1640,7 +1640,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"Jet ski\",\n    \"description\": \"Cutting Corrners\",\n    \"prmSchema\": \"{   \\\"title\\\": \\\"Route Strategy\\\",   \\\"description\\\": \\\"A solar car route strategy\\\",   \\\"type\\\": \\\"object\\\",   \\\"properties\\\": {     \\\"Altitude Profiles\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"array\\\",         \\\"items\\\": {           \\\"type\\\": \\\"number\\\"         },         \\\"maxItems\\\": 2,         \\\"minItems\\\": 2       },       \\\"minItems\\\": 2     },     \\\"Cell Output profile\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"array\\\",         \\\"items\\\": {           \\\"type\\\": \\\"number\\\"         },         \\\"maxItems\\\": 2,         \\\"minItems\\\": 2       },       \\\"minItems\\\": 2     },     \\\"Friction\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"number\\\",         \\\"minimum\\\": 0,         \\\"exclusiveMinimum\\\": true       },       \\\"maxItems\\\": 2,       \\\"minItems\\\": 1     },     \\\"Energy /m alt\\\": {       \\\"type\\\": \\\"number\\\",       \\\"minimum\\\": 0,       \\\"exclusiveMinimum\\\": true     },     \\\"Battery I/o\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"array\\\",         \\\"items\\\": {           \\\"type\\\": \\\"number\\\",           \\\"default\\\": 1000         },         \\\"maxItems\\\": 2,         \\\"minItems\\\": 2       },       \\\"minItems\\\": 2     },     \\\"Regen Efficiency\\\": {       \\\"type\\\": \\\"number\\\",       \\\"minimum\\\": 0,       \\\"default\\\": 100,       \\\"exclusiveMinimum\\\": true     },     \\\"Initial Battery\\\": {       \\\"type\\\": \\\"number\\\",       \\\"minimum\\\": 0,       \\\"default\\\": 10,       \\\"exclusiveMinimum\\\": true     }   },   \\\"required\\\": [     \\\"Altitude Profiles\\\",     \\\"Cell Output profile\\\",     \\\"Friction\\\",     \\\"Energy /m alt\\\",     \\\"Battery I/o\\\",     \\\"Regen Efficiency\\\",     \\\"Initial Battery\\\"   ] }\"\n}"
+							"raw": "{\n    \"title\": \"Jet ski\",\n    \"description\": \"Cutting Corrners\",\n    \"tutorial\": \"cut corners\",\n    \"prmSchema\": \"{   \\\"title\\\": \\\"Route Strategy\\\",   \\\"description\\\": \\\"A solar car route strategy\\\",   \\\"type\\\": \\\"object\\\",   \\\"properties\\\": {     \\\"Altitude Profiles\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"array\\\",         \\\"items\\\": {           \\\"type\\\": \\\"number\\\"         },         \\\"maxItems\\\": 2,         \\\"minItems\\\": 2       },       \\\"minItems\\\": 2     },     \\\"Cell Output profile\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"array\\\",         \\\"items\\\": {           \\\"type\\\": \\\"number\\\"         },         \\\"maxItems\\\": 2,         \\\"minItems\\\": 2       },       \\\"minItems\\\": 2     },     \\\"Friction\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"number\\\",         \\\"minimum\\\": 0,         \\\"exclusiveMinimum\\\": true       },       \\\"maxItems\\\": 2,       \\\"minItems\\\": 1     },     \\\"Energy /m alt\\\": {       \\\"type\\\": \\\"number\\\",       \\\"minimum\\\": 0,       \\\"exclusiveMinimum\\\": true     },     \\\"Battery I/o\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"array\\\",         \\\"items\\\": {           \\\"type\\\": \\\"number\\\",           \\\"default\\\": 1000         },         \\\"maxItems\\\": 2,         \\\"minItems\\\": 2       },       \\\"minItems\\\": 2     },     \\\"Regen Efficiency\\\": {       \\\"type\\\": \\\"number\\\",       \\\"minimum\\\": 0,       \\\"default\\\": 100,       \\\"exclusiveMinimum\\\": true     },     \\\"Initial Battery\\\": {       \\\"type\\\": \\\"number\\\",       \\\"minimum\\\": 0,       \\\"default\\\": 10,       \\\"exclusiveMinimum\\\": true     }   },   \\\"required\\\": [     \\\"Altitude Profiles\\\",     \\\"Cell Output profile\\\",     \\\"Friction\\\",     \\\"Energy /m alt\\\",     \\\"Battery I/o\\\",     \\\"Regen Efficiency\\\",     \\\"Initial Battery\\\"   ] }\"\n}"
 						},
 						"url": {
 							"raw": "{{url}}/Ctps",
@@ -1716,7 +1716,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"Bridge Builder\",\n    \"description\": \"Building Bridges\",\n    \"prmSchema\": \"{   \\\"title\\\": \\\"Route Strategy\\\",   \\\"description\\\": \\\"A solar car route strategy\\\",   \\\"type\\\": \\\"object\\\",   \\\"properties\\\": {     \\\"Altitude Profiles\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"array\\\",         \\\"items\\\": {           \\\"type\\\": \\\"number\\\"         },         \\\"maxItems\\\": 2,         \\\"minItems\\\": 2       },       \\\"minItems\\\": 2     },     \\\"Cell Output profile\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"array\\\",         \\\"items\\\": {           \\\"type\\\": \\\"number\\\"         },         \\\"maxItems\\\": 2,         \\\"minItems\\\": 2       },       \\\"minItems\\\": 2     },     \\\"Friction\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"number\\\",         \\\"minimum\\\": 0,         \\\"exclusiveMinimum\\\": true       },       \\\"maxItems\\\": 2,       \\\"minItems\\\": 1     },     \\\"Energy /m alt\\\": {       \\\"type\\\": \\\"number\\\",       \\\"minimum\\\": 0,       \\\"exclusiveMinimum\\\": true     },     \\\"Battery I/o\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"array\\\",         \\\"items\\\": {           \\\"type\\\": \\\"number\\\",           \\\"default\\\": 1000         },         \\\"maxItems\\\": 2,         \\\"minItems\\\": 2       },       \\\"minItems\\\": 2     },     \\\"Regen Efficiency\\\": {       \\\"type\\\": \\\"number\\\",       \\\"minimum\\\": 0,       \\\"default\\\": 100,       \\\"exclusiveMinimum\\\": true     },     \\\"Initial Battery\\\": {       \\\"type\\\": \\\"number\\\",       \\\"minimum\\\": 0,       \\\"default\\\": 10,       \\\"exclusiveMinimum\\\": true     }   },   \\\"required\\\": [     \\\"Altitude Profiles\\\",     \\\"Cell Output profile\\\",     \\\"Friction\\\",     \\\"Energy /m alt\\\",     \\\"Battery I/o\\\",     \\\"Regen Efficiency\\\",     \\\"Initial Battery\\\"   ] }\"\n}"
+							"raw": "{\n    \"title\": \"Land Grab\",\n    \"description\": \"Building Bridges\",\n    \"tutorial\": \"Bridge Maker instructions...\",\n    \"prmSchema\": \"{   \\\"title\\\": \\\"Route Strategy\\\",   \\\"description\\\": \\\"A solar car route strategy\\\",   \\\"type\\\": \\\"object\\\",   \\\"properties\\\": {     \\\"Altitude Profiles\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"array\\\",         \\\"items\\\": {           \\\"type\\\": \\\"number\\\"         },         \\\"maxItems\\\": 2,         \\\"minItems\\\": 2       },       \\\"minItems\\\": 2     },     \\\"Cell Output profile\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"array\\\",         \\\"items\\\": {           \\\"type\\\": \\\"number\\\"         },         \\\"maxItems\\\": 2,         \\\"minItems\\\": 2       },       \\\"minItems\\\": 2     },     \\\"Friction\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"number\\\",         \\\"minimum\\\": 0,         \\\"exclusiveMinimum\\\": true       },       \\\"maxItems\\\": 2,       \\\"minItems\\\": 1     },     \\\"Energy /m alt\\\": {       \\\"type\\\": \\\"number\\\",       \\\"minimum\\\": 0,       \\\"exclusiveMinimum\\\": true     },     \\\"Battery I/o\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"array\\\",         \\\"items\\\": {           \\\"type\\\": \\\"number\\\",           \\\"default\\\": 1000         },         \\\"maxItems\\\": 2,         \\\"minItems\\\": 2       },       \\\"minItems\\\": 2     },     \\\"Regen Efficiency\\\": {       \\\"type\\\": \\\"number\\\",       \\\"minimum\\\": 0,       \\\"default\\\": 100,       \\\"exclusiveMinimum\\\": true     },     \\\"Initial Battery\\\": {       \\\"type\\\": \\\"number\\\",       \\\"minimum\\\": 0,       \\\"default\\\": 10,       \\\"exclusiveMinimum\\\": true     }   },   \\\"required\\\": [     \\\"Altitude Profiles\\\",     \\\"Cell Output profile\\\",     \\\"Friction\\\",     \\\"Energy /m alt\\\",     \\\"Battery I/o\\\",     \\\"Regen Efficiency\\\",     \\\"Initial Battery\\\"   ] }\"\n}"
 						},
 						"url": {
 							"raw": "{{url}}/Ctps",
@@ -1747,7 +1747,7 @@
 									"if (jsonBody.length) {",
 									"   var cpt = jsonBody[0];",
 									"   ",
-									"   tests[\"Expected Content\"] = cpt.title === \"Bridge Builder\";",
+									"   tests[\"Expected Content\"] = cpt.title === \"Land Grab\";",
 									"}"
 								]
 							}
@@ -1790,7 +1790,7 @@
 									" var cpt = jsonBody;",
 									"",
 									"tests[\"Status code is 200\"] = responseCode.code === 200;",
-									"tests[\"Expected Content\"] = cpt.title === \"Bridge Builder\";",
+									"tests[\"Expected Content\"] = cpt.title === \"Land Grab\";",
 									""
 								]
 							}
@@ -2112,7 +2112,7 @@
 									"if (jsonBody.length) {",
 									"   var cpt = jsonBody[0];",
 									"   ",
-									"   tests[\"Expected Content\"] = cpt.title === \"Bridge Builder\";",
+									"   tests[\"Expected Content\"] = cpt.title === \"Land Grab\";",
 									"}"
 								]
 							}
@@ -2318,7 +2318,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"ctpId\": 1,\n  \"title\": \"Competition A\",\n  \"prms\": \"{   \\\"Altitude Profiles\\\": [[2,2],[2,2],[2,2]],   \\\"Cell Output profile\\\": [[2,2],[2,2]],   \\\"Friction\\\": [2],   \\\"Energy /m alt\\\": 1,   \\\"Battery I/o\\\": [[5,4],[5,4]],   \\\"Regen Efficiency\\\": 9,   \\\"Initial Battery\\\": 8 }\",\n  \"rules\": 1\n}"
+							"raw": "{\n    \"ctpId\": 1,\n  \"title\": \"Land Grab A\",\n  \"prms\": \"{      \\\"numCircles\\\": 3,      \\\"obstacles\\\": [        {          \\\"loX\\\": 0,          \\\"hiX\\\": 40.2,          \\\"loY\\\": 0,          \\\"hiY\\\": 28.7        },        {          \\\"loX\\\": 0,          \\\"hiX\\\": 50,          \\\"loY\\\": 85,          \\\"hiY\\\": 100        },         {          \\\"loX\\\": 80,          \\\"hiX\\\": 100,          \\\"loY\\\": 0,          \\\"hiY\\\": 12        }      ]    }\",\n  \"rules\": 1\n}"
 						},
 						"url": {
 							"raw": "{{url}}/Cmps",
@@ -2356,7 +2356,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"ctpId\": 1,\n  \"title\": \"Competition B\",\n  \"prms\": \"{   \\\"Altitude Profiles\\\": [[2,2],[2,2],[2,2]],   \\\"Cell Output profile\\\": [[2,2],[2,2]],   \\\"Friction\\\": [2],   \\\"Energy /m alt\\\": 1,   \\\"Battery I/o\\\": [[5,4],[5,4]],   \\\"Regen Efficiency\\\": 9,   \\\"Initial Battery\\\": 9 }\"\n}"
+							"raw": "{\n    \"ctpId\": 1,\n  \"title\": \"Land Grab B\",\n  \"prms\": \"{      \\\"numCircles\\\": 3,      \\\"obstacles\\\": [        {          \\\"loX\\\": 0,          \\\"hiX\\\": 40.2,          \\\"loY\\\": 0,          \\\"hiY\\\": 28.7        },        {          \\\"loX\\\": 0,          \\\"hiX\\\": 50,          \\\"loY\\\": 85,          \\\"hiY\\\": 100        },         {          \\\"loX\\\": 80,          \\\"hiX\\\": 100,          \\\"loY\\\": 0,          \\\"hiY\\\": 12        }      ]    }\"\n}"
 						},
 						"url": {
 							"raw": "{{url}}/Cmps",
@@ -2387,7 +2387,7 @@
 									"if (jsonBody.length) {",
 									"   var cpt = jsonBody[0];",
 									"   ",
-									"   tests[\"Expected Content\"] = cpt.title === \"Competition A\";",
+									"   tests[\"Expected Content\"] = cpt.title === \"Land Grab A\";",
 									"}"
 								]
 							}
@@ -2429,7 +2429,7 @@
 									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
 									"",
 									"tests[\"Status code is 200\"] = responseCode.code === 200;",
-									"tests[\"Expected Content\"] = jsonBody.title === \"Competition A\";",
+									"tests[\"Expected Content\"] = jsonBody.title === \"Land Grab A\";",
 									""
 								]
 							}
@@ -2477,7 +2477,7 @@
 									"if (jsonBody.length) {",
 									"   var cpt = jsonBody[0];",
 									"   ",
-									"   tests[\"Expected Content\"] = cpt.title === \"Competition A\";",
+									"   tests[\"Expected Content\"] = cpt.title === \"Land Grab A\";",
 									"}"
 								]
 							}
@@ -2531,7 +2531,7 @@
 									"if (jsonBody.length) {",
 									"   var cpt = jsonBody[0];",
 									"   ",
-									"   tests[\"Expected Content\"] = cpt.title === \"Competition A\";",
+									"   tests[\"Expected Content\"] = cpt.title === \"Land Grab A\";",
 									"}"
 								]
 							}
@@ -2592,7 +2592,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"title\": \"Competition C\",\n  \"prms\": \"{   \\\"Altitude Profiles\\\": [[2,2],[2,2],[2,2]],   \\\"Cell Output profile\\\": [[2,2],[2,2]],   \\\"Friction\\\": [2],   \\\"Energy /m alt\\\": 1,   \\\"Battery I/o\\\": [[5,4],[5,4]],   \\\"Regen Efficiency\\\": 9,   \\\"Initial Battery\\\": 1 }\"\n}"
+							"raw": "{\n  \"title\": \"Land Grab C\",\n  \"prms\": \"{      \\\"numCircles\\\": 3,      \\\"obstacles\\\": [        {          \\\"loX\\\": 0,          \\\"hiX\\\": 40.2,          \\\"loY\\\": 0,          \\\"hiY\\\": 28.7        },        {          \\\"loX\\\": 0,          \\\"hiX\\\": 50,          \\\"loY\\\": 85,          \\\"hiY\\\": 100        },         {          \\\"loX\\\": 80,          \\\"hiX\\\": 100,          \\\"loY\\\": 0,          \\\"hiY\\\": 12        }      ]    }\"\n}"
 						},
 						"url": {
 							"raw": "{{url}}/Cmps/2",
@@ -2630,7 +2630,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"prms\": \"{   \\\"Altitude Profiles\\\": [[2,2],[2,2],[2,2]],   \\\"Cell Output profile\\\": [[2,2],[2,2]],   \\\"Friction\\\": [2],   \\\"Energy /m alt\\\": 1,   \\\"Battery I/o\\\": [[5,4],[5,4]],   \\\"Regen Efficiency\\\": 9,   \\\"Initial Battery\\\": 1 }\"\n}"
+							"raw": "{\n  \"prms\": \"{      \\\"numCircles\\\": 3,      \\\"obstacles\\\": [        {          \\\"loX\\\": 0,          \\\"hiX\\\": 40.2,          \\\"loY\\\": 0,          \\\"hiY\\\": 28.7        },        {          \\\"loX\\\": 0,          \\\"hiX\\\": 50,          \\\"loY\\\": 80,          \\\"hiY\\\": 100        },         {          \\\"loX\\\": 80,          \\\"hiX\\\": 100,          \\\"loY\\\": 0,          \\\"hiY\\\": 12        }      ]    }\"\n}"
 						},
 						"url": {
 							"raw": "{{url}}/Cmps/1",
@@ -2736,7 +2736,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"title\": \"CompetitionType C\",\n  \"description\": \"description\",\n  \"prmSchema\": \"{   \\\"title\\\": \\\"Route Strategy\\\",   \\\"description\\\": \\\"A solar car route strategy\\\",   \\\"type\\\": \\\"object\\\",   \\\"properties\\\": {     \\\"Altitude Profiles\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"array\\\",         \\\"items\\\": {           \\\"type\\\": \\\"number\\\"         },         \\\"maxItems\\\": 2,         \\\"minItems\\\": 2       },       \\\"minItems\\\": 2     },     \\\"Cell Output profile\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"array\\\",         \\\"items\\\": {           \\\"type\\\": \\\"number\\\"         },         \\\"maxItems\\\": 2,         \\\"minItems\\\": 2       },       \\\"minItems\\\": 2     },     \\\"Friction\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"number\\\",         \\\"minimum\\\": 0,         \\\"exclusiveMinimum\\\": true       },       \\\"maxItems\\\": 2,       \\\"minItems\\\": 1     },     \\\"Energy /m alt\\\": {       \\\"type\\\": \\\"number\\\",       \\\"minimum\\\": 0,       \\\"exclusiveMinimum\\\": true     },     \\\"Battery I/o\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"array\\\",         \\\"items\\\": {           \\\"type\\\": \\\"number\\\",           \\\"default\\\": 1000         },         \\\"maxItems\\\": 2,         \\\"minItems\\\": 2       },       \\\"minItems\\\": 2     },     \\\"Regen Efficiency\\\": {       \\\"type\\\": \\\"number\\\",       \\\"minimum\\\": 0,       \\\"default\\\": 100,       \\\"exclusiveMinimum\\\": true     },     \\\"Initial Battery\\\": {       \\\"type\\\": \\\"number\\\",       \\\"minimum\\\": 0,       \\\"default\\\": 10,       \\\"exclusiveMinimum\\\": true     }   },   \\\"required\\\": [     \\\"Altitude Profiles\\\",     \\\"Cell Output profile\\\",     \\\"Friction\\\",     \\\"Energy /m alt\\\",     \\\"Battery I/o\\\",     \\\"Regen Efficiency\\\",     \\\"Initial Battery\\\"   ] }\"\n}"
+							"raw": "{\n  \"title\": \"CompetitionType C\",\n  \"description\": \"description\",\n  \"tutorial\": \"tutorial\",\n  \"prmSchema\": \"{   \\\"title\\\": \\\"Route Strategy\\\",   \\\"description\\\": \\\"A solar car route strategy\\\",   \\\"type\\\": \\\"object\\\",   \\\"properties\\\": {     \\\"Altitude Profiles\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"array\\\",         \\\"items\\\": {           \\\"type\\\": \\\"number\\\"         },         \\\"maxItems\\\": 2,         \\\"minItems\\\": 2       },       \\\"minItems\\\": 2     },     \\\"Cell Output profile\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"array\\\",         \\\"items\\\": {           \\\"type\\\": \\\"number\\\"         },         \\\"maxItems\\\": 2,         \\\"minItems\\\": 2       },       \\\"minItems\\\": 2     },     \\\"Friction\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"number\\\",         \\\"minimum\\\": 0,         \\\"exclusiveMinimum\\\": true       },       \\\"maxItems\\\": 2,       \\\"minItems\\\": 1     },     \\\"Energy /m alt\\\": {       \\\"type\\\": \\\"number\\\",       \\\"minimum\\\": 0,       \\\"exclusiveMinimum\\\": true     },     \\\"Battery I/o\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"array\\\",         \\\"items\\\": {           \\\"type\\\": \\\"number\\\",           \\\"default\\\": 1000         },         \\\"maxItems\\\": 2,         \\\"minItems\\\": 2       },       \\\"minItems\\\": 2     },     \\\"Regen Efficiency\\\": {       \\\"type\\\": \\\"number\\\",       \\\"minimum\\\": 0,       \\\"default\\\": 100,       \\\"exclusiveMinimum\\\": true     },     \\\"Initial Battery\\\": {       \\\"type\\\": \\\"number\\\",       \\\"minimum\\\": 0,       \\\"default\\\": 10,       \\\"exclusiveMinimum\\\": true     }   },   \\\"required\\\": [     \\\"Altitude Profiles\\\",     \\\"Cell Output profile\\\",     \\\"Friction\\\",     \\\"Energy /m alt\\\",     \\\"Battery I/o\\\",     \\\"Regen Efficiency\\\",     \\\"Initial Battery\\\"   ] }\"\n}"
 						},
 						"url": {
 							"raw": "{{url}}/Ctps",
@@ -2774,7 +2774,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"Territory Grab\",\n    \"description\": \"Cutting Corrners\",\n    \"prmSchema\": \"{   \\\"title\\\": \\\"Route Strategy\\\",   \\\"description\\\": \\\"A solar car route strategy\\\",   \\\"type\\\": \\\"object\\\",   \\\"properties\\\": {     \\\"Altitude Profiles\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"array\\\",         \\\"items\\\": {           \\\"type\\\": \\\"number\\\"         },         \\\"maxItems\\\": 2,         \\\"minItems\\\": 2       },       \\\"minItems\\\": 2     },     \\\"Cell Output profile\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"array\\\",         \\\"items\\\": {           \\\"type\\\": \\\"number\\\"         },         \\\"maxItems\\\": 2,         \\\"minItems\\\": 2       },       \\\"minItems\\\": 2     },     \\\"Friction\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"number\\\",         \\\"minimum\\\": 0,         \\\"exclusiveMinimum\\\": true       },       \\\"maxItems\\\": 2,       \\\"minItems\\\": 1     },     \\\"Energy /m alt\\\": {       \\\"type\\\": \\\"number\\\",       \\\"minimum\\\": 0,       \\\"exclusiveMinimum\\\": true     },     \\\"Battery I/o\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"array\\\",         \\\"items\\\": {           \\\"type\\\": \\\"number\\\",           \\\"default\\\": 1000         },         \\\"maxItems\\\": 2,         \\\"minItems\\\": 2       },       \\\"minItems\\\": 2     },     \\\"Regen Efficiency\\\": {       \\\"type\\\": \\\"number\\\",       \\\"minimum\\\": 0,       \\\"default\\\": 100,       \\\"exclusiveMinimum\\\": true     },     \\\"Initial Battery\\\": {       \\\"type\\\": \\\"number\\\",       \\\"minimum\\\": 0,       \\\"default\\\": 10,       \\\"exclusiveMinimum\\\": true     }   },   \\\"required\\\": [     \\\"Altitude Profiles\\\",     \\\"Cell Output profile\\\",     \\\"Friction\\\",     \\\"Energy /m alt\\\",     \\\"Battery I/o\\\",     \\\"Regen Efficiency\\\",     \\\"Initial Battery\\\"   ] }\"\n}"
+							"raw": "{\n    \"title\": \"Territory Grab\",\n    \"description\": \"Cutting Corrners\",\n   \"tutorial\": \"tutorial\",\n    \"prmSchema\": \"{   \\\"title\\\": \\\"Route Strategy\\\",   \\\"description\\\": \\\"A solar car route strategy\\\",   \\\"type\\\": \\\"object\\\",   \\\"properties\\\": {     \\\"Altitude Profiles\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"array\\\",         \\\"items\\\": {           \\\"type\\\": \\\"number\\\"         },         \\\"maxItems\\\": 2,         \\\"minItems\\\": 2       },       \\\"minItems\\\": 2     },     \\\"Cell Output profile\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"array\\\",         \\\"items\\\": {           \\\"type\\\": \\\"number\\\"         },         \\\"maxItems\\\": 2,         \\\"minItems\\\": 2       },       \\\"minItems\\\": 2     },     \\\"Friction\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"number\\\",         \\\"minimum\\\": 0,         \\\"exclusiveMinimum\\\": true       },       \\\"maxItems\\\": 2,       \\\"minItems\\\": 1     },     \\\"Energy /m alt\\\": {       \\\"type\\\": \\\"number\\\",       \\\"minimum\\\": 0,       \\\"exclusiveMinimum\\\": true     },     \\\"Battery I/o\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"array\\\",         \\\"items\\\": {           \\\"type\\\": \\\"number\\\",           \\\"default\\\": 1000         },         \\\"maxItems\\\": 2,         \\\"minItems\\\": 2       },       \\\"minItems\\\": 2     },     \\\"Regen Efficiency\\\": {       \\\"type\\\": \\\"number\\\",       \\\"minimum\\\": 0,       \\\"default\\\": 100,       \\\"exclusiveMinimum\\\": true     },     \\\"Initial Battery\\\": {       \\\"type\\\": \\\"number\\\",       \\\"minimum\\\": 0,       \\\"default\\\": 10,       \\\"exclusiveMinimum\\\": true     }   },   \\\"required\\\": [     \\\"Altitude Profiles\\\",     \\\"Cell Output profile\\\",     \\\"Friction\\\",     \\\"Energy /m alt\\\",     \\\"Battery I/o\\\",     \\\"Regen Efficiency\\\",     \\\"Initial Battery\\\"   ] }\"\n}"
 						},
 						"url": {
 							"raw": "{{url}}/Ctps",
@@ -3041,7 +3041,7 @@
 									"if (jsonBody.length) {",
 									"   var cpt = jsonBody[0];",
 									"   ",
-									"   tests[\"Expected Content\"] = cpt.title === \"Competition A\";",
+									"   tests[\"Expected Content\"] = cpt.title === \"Land Grab A\";",
 									"}"
 								]
 							}
@@ -3405,7 +3405,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"ctpId\": 1,\n  \"title\": \"Competition D\",\n  \"prms\": \"{   \\\"Altitude Profiles\\\": [[2,2],[2,2],[2,2]],   \\\"Cell Output profile\\\": [[2,2],[2,2]],   \\\"Friction\\\": [2],   \\\"Energy /m alt\\\": 1,   \\\"Battery I/o\\\": [[5,4],[5,4]],   \\\"Regen Efficiency\\\": 9,   \\\"Initial Battery\\\": 9 }\"\n}"
+							"raw": "{\n    \"ctpId\": 1,\n  \"title\": \"Competition D\",\n  \"prms\": \"{      \\\"numCircles\\\": 3,      \\\"obstacles\\\": [        {          \\\"loX\\\": 0,          \\\"hiX\\\": 40.2,          \\\"loY\\\": 0,          \\\"hiY\\\": 28.7        },        {          \\\"loX\\\": 0,          \\\"hiX\\\": 50,          \\\"loY\\\": 85,          \\\"hiY\\\": 100        },         {          \\\"loX\\\": 80,          \\\"hiX\\\": 100,          \\\"loY\\\": 0,          \\\"hiY\\\": 12        }      ]    }\"\n}"
 						},
 						"url": {
 							"raw": "{{url}}/Cmps",
@@ -3676,7 +3676,7 @@
 									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
 									"",
 									"tests[\"Status code is 200\"] = responseCode.code === 200;",
-									"tests[\"Expected Content\"] = jsonBody.title === \"Competition A\";",
+									"tests[\"Expected Content\"] = jsonBody.title === \"Land Grab A\";",
 									""
 								]
 							}

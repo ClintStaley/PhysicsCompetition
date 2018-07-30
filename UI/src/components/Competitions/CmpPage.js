@@ -20,6 +20,7 @@ export default class CmpPage extends Component {
    }
 
    closeCreateDialog = (result) => {
+      console.log(result);
       if (result.status === "OK") {
          result.newTeam.leaderId = this.props.prs.id;
          this.props.postTeam(parseInt(this.props.cmpId, 10), result.newTeam);
@@ -56,7 +57,15 @@ export default class CmpPage extends Component {
 
         <h1>{this.props.cmps[cmpId].title}</h1>
 
-        <h5>Competiton Teams</h5>
+        <h4>Competition Description</h4>
+
+        <div></div>
+
+        <h4>Competiton Tutorial</h4>
+
+        <div></div>
+
+        <h4>Competiton Teams</h4>
 
         { this.props.cmps[cmpId].cmpTeams.length > 0 ?
         <ListGroup>
@@ -91,7 +100,7 @@ const TeamLine = function (props) {
        {Object.keys(props.mmbs).map((memNum, i) => {
          var mmb = props.mmbs[memNum];
 
-         mmb.leader = props.leaderId === mmb.id;
+         mmb.isLeader = props.leaderId === mmb.id;
 
          return <MemberItem key={i} {...mmb}/>
        })}
@@ -104,10 +113,8 @@ const TeamLine = function (props) {
 const MemberItem = function (props) {
    return (
    <ListGroupItem className="clearfix">
-     {props.leader ?
-     <Link to="#"><mark>{props.firstName}</mark></Link>
-     :
-     <Link to="#">{props.firstName}</Link>}
+     <Link to="#">{props.firstName}</Link>
+      {props.isLeader ? ` -- lead (${props.email})` : ''}
    </ListGroupItem>
    );
 }

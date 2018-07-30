@@ -16,7 +16,8 @@ export default function teams(state = {}, action) {
          return Object.assign({}, state, {[data.id]:
           Object.assign({}, state[data.id], data)});
       case 'ADD_TEAM':
-         return Object.assign({}, state, action.teamData);
+         var teamId = action.newTeamData.id;
+         return Object.assign({}, state, {[teamId]: action.newTeamData});
       case 'DEL_TEAM':
          return update(state, {$unset: [action.teamId]});
       case 'DEL_MMB':

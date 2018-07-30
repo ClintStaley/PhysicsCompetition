@@ -19,6 +19,7 @@ create table CompetitionType (
    id int auto_increment primary key,
    title varchar(80) not null unique,
    description varchar(100) not null,
+   tutorial varchar(1000) not null,
    prmSchema varchar(20000) not null
 );
 
@@ -92,8 +93,8 @@ insert into Person (firstName, lastName, email,       password,   whenRegistered
             VALUES ("Joe",     "Admin", "adm@11.com", "password", NOW(), 1);
 
 
-insert into CompetitionType (title, description, prmSchema)
-            VALUES ("Bridge Builder", "Build Bridges", "{}");
+insert into CompetitionType (title, description, tutorial, prmSchema)
+            VALUES ("Bridge Builder", "What yo do: Build Bridges", "How to build Bridges: Build Bridges", "{}");
 
 
 insert into Competition (ownerId, ctpId, title,prms)

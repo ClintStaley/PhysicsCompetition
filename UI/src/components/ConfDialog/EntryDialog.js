@@ -11,8 +11,26 @@ import {
  * buttons: Array<string>
  */
 export default class EntryDialog extends PureComponent {
-   close = (status) => {
-      this.props.onClose({status, entry: this.ref.value});
+   constructor(props) {
+      super(props);
+
+      this.state = {
+         value: ""
+      };
+   }
+
+   close = (result) => {
+      this.props.onClose({result, entry: this.state.value});
+   }
+
+   getValidationState = () => {
+      return this.state.value && this.state.value !== "" ?
+       "success" : "error";
+   }
+
+   // Only possible change is a new team name value
+   handleChange = (e) => {
+      this.setState({value: e.target.value});
    }
 
   render() {
@@ -24,16 +42,19 @@ export default class EntryDialog extends PureComponent {
          <Modal.Title>{props.title}</Modal.Title>
        </Modal.Header>
        <Modal.Body>
-         <FormGroup controlId={"val"}>
+         <FormGroup controlId={"val"}
+         validationState={this.getValidationState()}>
            <ControlLabel>{props.label}</ControlLabel>
            <FormControl type="text" placeholder={`Enter ${props.label}`}
-            value = {props.initValue} required={true}
-            inputRef={ref => this.ref = ref}/>
+            value = {this.state.value} onChange={this.handleChange}/>
+
+           <FormControl.Feedback />
            {props.help && <HelpBlock>{props.help}</HelpBlock>}
          </FormGroup>
        </Modal.Body>
        <Modal.Footer>
-         <Button key={0} onClick={() => this.close('OK')}>OK</Button>
+         <Button key={0}  disabled={this.getValidationState() !== "success"}
+          onClick={() => this.close('OK')}>OK</Button>
          <Button key={1} onClick={() => this.close('Cancel')}>Cancel</Button>
        </Modal.Footer>
      </Modal>)
