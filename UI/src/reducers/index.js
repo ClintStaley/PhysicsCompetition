@@ -9,6 +9,6 @@ import errs from './errs';
 import updateTimes from './updateTimes';
 
 //combines all reducers
-const rootReducer = combineReducers({ prs, cmps, teams , updateTimes, errs});
+const rootReducer = combineReducers({ prs, cmps, teams, updateTimes, errs});
 
 export default rootReducer;

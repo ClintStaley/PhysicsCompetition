@@ -35,7 +35,7 @@ export function getMyCmps(id, cb) {
       .then((cmps) => {
          Object.keys(cmps).forEach((key) => {
             cmps[key].cmpTeams = []});
-         dispatch({ type: 'GET_MY_CMPS', cmps });
+         dispatch({ type: 'GET_PRS_CMPS', cmps });
       })
       .then(() => {if (cb) cb()});
    })
@@ -62,6 +62,8 @@ export function postTeam(cmpId, newTeamData, cb) {
          teamData[newTeamId].mmbs = {};
          teamData[newTeamId].cmpId = cmpId;
 
+         // CAS FIX: Why is this being output as a one-member map instead
+         // of just the original teamData with id and cmpId added???
          dispatch({ type: 'ADD_TEAM', teamData});
       })
       .then(() => {if (cb) cb()}));
@@ -91,7 +93,7 @@ export function getTeamsByPrs(prsId, cb) {
             teams[key] = Object.assign(teams[key],
              {mmbs : {}, toggled: false});
          })
-         dispatch({type: 'GET_PMY_TEAMS', teams})
+         dispatch({type: 'GET_PRS_TEAMS', teams})
 
       })
       .then(() => {if (cb) cb()})}
@@ -125,12 +127,15 @@ export function addMmb(mmbEmail, cmpId, teamId, cb) {
       api.getPrsByEmail(mmbEmail)
       .then(prs => api.postMmb(prs.id, cmpId, teamId).then(() => prs))
       .then((prs) => dispatch({type: 'ADD_TEAM_MMB', prs, teamId}))
-      .catch(err => dispatch({type: 'TEAM_ERR', details: err}))
+      .catch(err => dispatch({type: 'SHOW_ERR',
+        details: `Can't add member: ${err}`}))
       .then(() => {if (cb) cb()})
    }
 }
 
 export function delMmb(cmpId, teamId, prsId, cb) {
+   console.log(`Deleting ${cmpId}/${teamId}/${prsId}`);
+
    return (dispatch, prevState) => {
       addStdHandlers(dispatch, cb, api.delMmb(cmpId, teamId, prsId)
       .then(()=>dispatch({type: 'DEL_MMB', teamId, prsId})));

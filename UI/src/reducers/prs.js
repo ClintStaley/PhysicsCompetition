@@ -1,7 +1,7 @@
 export default function prs(state = {}, action) {
    switch (action.type) {
       case 'SIGN_IN':
-         return action.user
+         return Object.assign(action.user, {myTeams: [], myCmps: []});
       case 'SIGN_OUT':
          return {} // Clear user state
       case 'GET_PRS_TEAMS':
@@ -13,11 +13,11 @@ export default function prs(state = {}, action) {
       case 'ADD_TEAM':
          var teamId = Object.keys(action.teamData)[0];
          var myTeams = state.myTeams;
-         if (!myTeams)
-            myTeams = [];
-         myTeams.push(teamId);
+         myTeams.push(teamId); // CAS FIX: No!  Must use concat.
 
-         return Object.assign({}, state, {myTeams: myTeams});
+         return Object.assign({}, state, {myTeams});
+      case 'DEL_MMB':
+         return Number(action.prsId) !== state.id ? state : Object.assign({}, state, {myTeams: state.myTeams.filter(teamId => teamId !== action.teamId)});
       default:
          return state
    }

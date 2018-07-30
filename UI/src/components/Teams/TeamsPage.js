@@ -3,24 +3,29 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ListGroup, ListGroupItem, Button, Glyphicon, Popover, OverlayTrigger } from 'react-bootstrap';
-import { ConfDialog } from '../concentrator';
+import { ConfDialog, EntryDialog } from '../concentrator';
 import * as actionCreators from '../../actions/actionCreators';
 import TeamModal from './TeamModal'
 
 class TeamsPage extends Component {
    constructor(props) {
       super(props);
-      
+
       this.state = {
          delConfirmTeamId: null,   // ID of team to confirm for deletion
          editTeamId: null,         // ID of team to edit
-         addMmbTeamId: null,       // ID of team to add member to
+         addMmbFunc: null,         // Function to add member to team
          delMmbFunc: null,         // Function to do deletion of member
          expanded: {}              // expanded state, per teamId
       }
 
+      // CAS FIX: This, and the similar call in CmpsPage, are misplaced in that
+      // they will not complete prior to render.  They need to be in a
+      // prerender action of some sort.
+      //
+      // Also, better design would remove from props all data but prs.id,
+      // teams, and prs.myTeams.
       this.props.getTeamsByPrs(this.props.prs.id);
-      console.log(JSON.stringify(this.props.teams));
    }
 
    openDelConfirm = (teamId) => {
@@ -69,26 +74,29 @@ class TeamsPage extends Component {
    }
 
    openAddMmb = (teamId) => {
-      this.setState({addMmbTeamId: teamId});
+      var props = this.props;
+
+      this.setState({addMmbFunc: (mmbEmail) => props.addMmb(mmbEmail,
+       props.teams[teamId].cmpId, teamId)});
    }
 
-   closeAddMmb = (teamId, mmbEmail, result) => {
+   closeAddMmb = (result) => {
       if (result.status === "OK")
-         this.props.addMmb(mmbEmail, this.props.teams[teamId].cmpId, teamId);
-      this.setState({addMmbTeamId: null});
+         this.state.addMmbFunc(result.entry)
+      this.setState({addMmbFunc: null});
    }
 
    openDelMmbConfirm = (teamId, prsId) => {
       var team = this.props.teams[teamId];
 
       this.setState({
-         delMmbName: team.mmbs[prsId],
+         delMmbName: team.mmbs[prsId].firstName,
          delMmbFunc: () => this.props.delMmb(team.cmpId, teamId, prsId)
       });
    }
 
    closeDelMmbConfirm = (res) => {
-      if (res.status === "OK")
+      if (res === 'Yes')
          this.state.delMmbFunc();
       this.setState({delMmbFunc: null});
    }
@@ -111,23 +119,32 @@ class TeamsPage extends Component {
         <ConfDialog
           show={this.state.delConfirmTeamId !== null }
           title="Delete Team"
-          body={this.state.delConfirmTeamId ? `Delete ${props.teams[this.state.delConfirmTeamId].name}`
-           : ''}
-          buttons={['Yes', 'Abort']}
+          body={this.state.delConfirmTeamId ?
+           `Delete ${props.teams[this.state.delConfirmTeamId].teamName}` : ''}
+          buttons={['Yes', 'No']}
           onClose={(res) => this.closeDelConfirm(res,
            this.state.delConfirmTeamId)} />
 
-         <ConfDialog
-           show={this.state.delMmbFunc !== null }
-            title="Delete Member"
+        <ConfDialog
+          show={this.state.delMmbFunc !== null }
+          title="Delete Member"
+          body={this.state.delMmbFunc ?
+           `Delete ${this.state.delMmbName}?` : ''}
+          buttons={['Yes', 'No']}
+          onClose={(res) => this.closeDelMmbConfirm(res)} />
+
+         <EntryDialog
+            show={this.state.addMmbFunc !== null }
+            title="Add Team Member"
+            label="New member's Email:"
             body={this.state.delMmbFunc ?
-              `Delete ${this.state.delMmbName}?` : ''}
-            buttons={['Yes', 'Abort']}
-            onClose={(res) => this.closeDelMmbConfirm(res)} />
+             `Delete ${this.state.delMmbName}?` : ''}
+            buttons={['Add', 'Cancel']}
+            onClose={(res) => this.closeAddMmb(res)} />
 
         <h1>Team Overview</h1>
         <ListGroup>
-          {Object.keys(props.teams).map((teamId, i) => {
+          {props.prs.myTeams && props.prs.myTeams.map((teamId, i) => {
             var team = props.teams[teamId];
 
             return <TeamLine
@@ -136,7 +153,7 @@ class TeamsPage extends Component {
               mmbs = {team.mmbs}
               teamId = {team.id}
               leaderId = {team.leaderId}
-              name = {team.teamName}
+              teamName = {team.teamName}
               expanded = {this.state.expanded[teamId]}
               toggle = {() => this.toggleView(teamId)}
               addMmb = {() => this.openAddMmb(teamId)}
@@ -158,14 +175,13 @@ const TeamLine = function(props) {
       <Popover id="TeamsPage-delTip">Remove this team</Popover>
    )
    var isLeader = props.leaderId === props.prsId;
-   console.log(JSON.stringify(props));
    return (
 
    <ListGroupItem className="clearfix">
      {isLeader ?
-       <Button onClick={props.toggle}><mark>{props.name}</mark></Button>
+       <Button onClick={props.toggle}><mark>{props.teamName}</mark></Button>
        :
-       <Button onClick={props.toggle}>{props.name}</Button>
+       <Button onClick={props.toggle}>{props.teamName}</Button>
      }
      {isLeader ?
        <div className="pull-right">
@@ -193,17 +209,16 @@ const TeamLine = function(props) {
     <ListGroup>
       {Object.keys(props.mmbs).map((mmbId, i) => {
          var mmb = props.mmbs[mmbId];
+         var weAreLeader = props.prsId === props.leaderId;
 
          return <MmbItem
            key={i}
            name={mmb.firstName}
            contact={mmb.email}
            isLeader = {mmb.id === props.leaderId}
-           Stopped here.  Figure out why drop-member permission is messing up.
            del = {
-             // Drop anyone but you if you're leader, otherwise only yourself
-             isLeader && mmbId !== props.prsId || mmbId === props.prsId ?
-              () => props.delMmb(mmbId) : null
+             // If it's us, or we are leader, and if we're not dropping leader..
+             (weAreLeader || mmb.id === props.prsId) && mmb.id !== props.leaderId ? () => props.delMmb(mmbId) : null
            }
          />
        })}

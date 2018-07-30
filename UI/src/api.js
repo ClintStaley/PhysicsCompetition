@@ -201,7 +201,7 @@ export function postTeam(cmpId, body) {
 }
 
 export function getPrsByEmail(email) {
-   return get(`Prss?email={$email}`)
+   return get(`Prss?email=${email}`)
    .then(rsp => rsp.json())
    .then(prss => prss.length > 0 ? prss[0] : Promise.reject("Unknown Email"));
 }

@@ -13,6 +13,7 @@ router.get('/', (req, res) => {
 
    if (email) {
       clause = " where email like ?";
+      console.log(clause, email);
       fillers.push(email + ('%'));
    }
    if (!ssn.isAdmin()) {
