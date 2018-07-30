@@ -16,6 +16,16 @@ export function signIn(credentials, cb) {
    }
 }
 
+export function getCtp(ctpId, cb){
+   return ((dispatch, prevState) => {
+      api.getCtpById(ctpId)
+      .then((ctp) => {
+         dispatch({ type: 'GET_CTP', ctp });
+      })
+      .then(() => {if (cb) cb()});
+   })
+}
+
 export function getAllCmps( cb) {
    return (dispatch, prevState) => {
       api.getCmps()
@@ -60,7 +70,7 @@ export function postTeam(cmpId, newTeamData, cb) {
          newTeamData.id = newTeamId;
          newTeamData.mmbs = {};
          newTeamData.cmpId = cmpId;
-         
+
          dispatch({ type: 'ADD_TEAM', newTeamData});
       })
       .then(() => {if (cb) cb()}));

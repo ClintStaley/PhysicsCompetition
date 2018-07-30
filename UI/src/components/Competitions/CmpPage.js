@@ -8,6 +8,7 @@ export default class CmpPage extends Component {
       super(props);
 
       this.props.getTeamsByCmp(this.props.cmpId);
+      this.props.getTeamsByPrs(this.props.prs.id);
 
       this.state = {
          toggledTeams: {},
@@ -77,6 +78,7 @@ export default class CmpPage extends Component {
 
             var team = this.props.teams[teamId];
             team.toggled = this.state.toggledTeams[teamId];
+            team.isMember = this.props.prs.myTeams.includes(teamId);
 
             return <TeamLine key={i} {...team}
             toggleTeam = {() => this.toggleView(teamId)}/>
@@ -96,6 +98,15 @@ const TeamLine = function (props) {
    return (
    <ListGroupItem className="clearfix">
      <Button onClick={props.toggleTeam}>{props.teamName}</Button>
+
+     <div className="pull-right">
+       <label>Last Score: {props.lastSubmit ? props.lastSubmit : "N/A"}</label>
+
+       {props.isMember ?
+       <Button disabled = {!props.canSubmit}> Submit </Button>
+       : '' }
+     </div>
+
 
      {props.toggled ?
      <ListGroup>

@@ -1,4 +1,4 @@
-export default function cmps(state = {}, action) {
+export default function updateTimes(state = {}, action) {
    switch (action.type) {
       case 'ADD_TEAMS':
          return Object.assign({}, state, { teams: new Date() });

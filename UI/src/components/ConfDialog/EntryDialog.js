@@ -53,7 +53,7 @@ export default class EntryDialog extends PureComponent {
          </FormGroup>
        </Modal.Body>
        <Modal.Footer>
-         <Button key={0}  disabled={this.getValidationState() !== "success"}
+         <Button key={0}  disabled = {this.getValidationState() !== "success"}
           onClick={() => this.close('OK')}>OK</Button>
          <Button key={1} onClick={() => this.close('Cancel')}>Cancel</Button>
        </Modal.Footer>

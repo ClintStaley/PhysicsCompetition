@@ -116,6 +116,11 @@ export function registerUser(user) {
    return post("Prss", user)
 }
 
+export function getCtpById(ctpId){
+   return get(`/Ctps/${ctpId}`)
+   .then((ctpData) => ctpData.json())
+}
+
 export function getCmps() {
    return get("Cmps")
    .then((cmpsData) => cmpsData.json())
@@ -130,7 +135,7 @@ export function getCmps() {
 }
 
 export function getCmpsByPerson(prsId) {
-   return get("Prss/" + prsId + "/Cmps")
+   return get(`Prss/${prsId}/Cmps`)
    .then((CmpData) => CmpData.json())
    .then((cmpsData) => {
       var cmps = {};
@@ -141,8 +146,8 @@ export function getCmpsByPerson(prsId) {
    });
 }
 
-export function getOneCmps(cmpId) {
-   return get("Cmps/" + cmpId)
+export function getCmpsById(cmpId) {
+   return get(`Cmps/${cmpId}`)
    .then((cmps) => cmps.json());
 }
 
