@@ -25,6 +25,8 @@ export default function cmps(state = {}, action) {
 
          return Object.assign({}, state, {[cmpId]:
           Object.assign({}, state[cmpId], {cmpTeams: newTeamArr})});
+       case 'SIGN_OUT':
+          return {} // Clear user state
       default:
          return state;
    }

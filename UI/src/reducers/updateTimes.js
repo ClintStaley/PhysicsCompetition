@@ -10,6 +10,8 @@ export default function updateTimes(state = {}, action) {
          return Object.assign({}, state, { myCmps: new Date() });
       case 'UPDATE_RESULTS':
          return Object.assign({}, state, { results: new Date() });
+      case 'SIGN_OUT':
+         return {} // Clear user state
       default:
          return state;
    }

@@ -13,7 +13,8 @@ export default class CmpPage extends Component {
 
       this.state = {
          toggledTeams: {},
-         createDialog: null
+         createDialog: null,
+         myCmpLink: this.props.myCmpLink
       }
    }
 
@@ -48,6 +49,7 @@ export default class CmpPage extends Component {
       var props = this.props;
       var cmpId = props.cmpId;
       var ctpId = props.cmps[cmpId].ctpId;
+      var myCmpLink = this.state.myCmpLink;
 
       if (!this.props.cmps[cmpId])
          return (<h1>Error loading Competition</h1>)
@@ -63,9 +65,20 @@ export default class CmpPage extends Component {
 
         <h1>{props.cmps[cmpId].title}</h1>
 
-        <h4>Competiton Instructions (Make this a link to a separate page)</h4>
+        {myCmpLink ?
+        <h4> <Link to="#">Competiton Instructions </Link></h4>
+        :
+        <div>
+          <h4>Want to Join?</h4>
+
+          <h5>To join one of the existing teams, contact the team lead who can
+           add you via their Teams tab. Or, you may start a new team with
+           yourself as leader.</h5>
+         </div>
+         }
 
         <h4>Competiton Teams</h4>
+
 
         { props.cmps[cmpId].cmpTeams.length > 0 ?
         <ListGroup>
@@ -76,16 +89,21 @@ export default class CmpPage extends Component {
             var team = props.teams[teamId];
             team.toggled = this.state.toggledTeams[teamId];
             team.isMember = props.prs.myTeams.includes(teamId);
+            team.myTeamLink = myCmpLink;
 
             return <TeamLine key={i} {...team}
             toggleTeam = {() => this.toggleView(teamId)}/>
          })}
         </ListGroup>
-        : ''}
+        :
+        <h4>This Competition has no Teams</h4>
+         }
 
+         {!myCmpLink ?
         <div className="pull-right">
            <Button onClick={this.openCreateDialog} >Create Team</Button>
         </div>
+        : ''}
       </section>
       );
    }
@@ -94,14 +112,21 @@ export default class CmpPage extends Component {
 const TeamLine = function (props) {
    return (
    <ListGroupItem className="clearfix">
-     <Button onClick={props.toggleTeam}>{props.teamName}</Button>
+     <Button onClick = {props.toggleTeam}>{props.teamName}</Button>
 
+
+     { props.myTeamLink ?
      <div className="pull-right">
+       <label>Last Score:{props.lastSubmit ? props.lastSubmit : "N/A"}</label>
        {props.isMember ?
        <Button disabled = {!props.canSubmit}> Submit </Button>
-         : '' }
-       <label>Last Score: {props.lastSubmit ? props.lastSubmit : "N/A"}</label>
+         : ''}
      </div>
+     :
+      (props.isMember ?
+       ' (Already part of this team) '
+       : '')
+   }
 
      {props.toggled ?
      <ListGroup>

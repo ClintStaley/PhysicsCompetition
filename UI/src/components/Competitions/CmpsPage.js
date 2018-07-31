@@ -21,11 +21,12 @@ class CmpsPage extends Component {
 
       //cannot only load one based on teh page, because component did mount
       // will only run once, because they are the same component
-      console.log(props.showAll);
       if (!props.updateTimes.cmps)
          this.props.getAllCmps();
+
       if (!props.updateTimes.myCmps)
-          this.props.getMyCmps(this.props.prs.id);
+         this.props.getMyCmps(this.props.prs.id);
+
    }
 
    // Thus far the only confirmation is for a delete.
@@ -53,29 +54,30 @@ class CmpsPage extends Component {
         body={`Are you sure you want to delete the Competition '${this.state.showConfirmation}'`}
         buttons={['Yes', 'Abort']}
         onClose={(res) => this.closeConfirmation(res, this.state.showConfirmation)} />
-        <h1>Competition Overview</h1>
-
+        <h1>{props.showAll ? 'My Competitions' : 'Join Competition'}</h1>
 
         {props.showAll ?
-          <div>
-           <h4>Description</h4>
-
-           <div></div>
-
            <ListGroup>
               {cmps.map((cmpId, i) => {
                 var cmp = props.cmps[cmpId];
+
+                cmp.link = '/CmpPage2/' + cmp.id;
+                cmp.joiningCmp = props.showAll;
+                cmp.joined = props.prs.myCmps.includes(cmpId);
 
                 return <CompetitionItem
                   key={i} {...cmp}/>
               })}
            </ListGroup>
-          </div>
           :
-          (cmps.length ?
+          cmps.length ?
           <ListGroup>
            {cmps.map((cmpId, i) => {
              var cmp = props.cmps[cmpId];
+
+             cmp.link = '/CmpPage1/' + cmp.id;
+             cmp.joiningCmp = props.showAll;
+             cmp.joined = false;
 
              return <CompetitionItem
                key={i} {...cmp}/>
@@ -83,7 +85,7 @@ class CmpsPage extends Component {
            </ListGroup>
            :
            <h4>You are not in any competitions</h4>
-        )
+
        }
       </section>
       )
@@ -93,14 +95,15 @@ class CmpsPage extends Component {
 const CompetitionItem = function (props) {
    return (
       <ListGroupItem className="clearfix">
-         <Link to = {'/CmpPage/' + props.id} >{props.title}</Link>
+         <Link to = {props.link} >{props.title}</Link>
+          {props.joined ? '(already joined)' : ''}
 
-         {/*ShowControlls is not used now will be used later*/}
-         {props.showControlls ?
-            <div className="pull-right">
-               <Button bsSize="small" onClick={props.onDelete}><Glyphicon glyph="trash" /></Button>
-               <Button bsSize="small" onClick={props.onEdit}><Glyphicon glyph="edit" /></Button>
-            </div>
+          {props.joiningCmp ?
+          <div>
+           <h5>Competition Description</h5>
+
+           <div>{props.description}</div>
+         </div>
          : ''}
       </ListGroupItem>
    )
