@@ -11,11 +11,8 @@ class CmpsPage extends Component {
    constructor(props) {
       super(props);
 
+console.log(props.showAll);
       // Ensure needed cmps are in the props.
-      if (props.showAll && !this.props.updateTimes.cmps)
-         this.props.getAllCmps();
-      else
-          this.props.getMyCmps(this.props.prs.id);
 
       this.state = {
          showConfirmation: null
@@ -37,11 +34,21 @@ class CmpsPage extends Component {
    }
 
    render() {
-      var cmps = props.allCmps ? this.props.cmps : this.props.prs.myCmps;
+      var props = this.props;
+      var cmps = props.allCmps ? Object.keys(props.cmps) : props.prs.myCmps;
+
+      if (props.showAll){
+         if (!props.updateTimes.cmps)
+            this.props.getAllCmps();
+      }
+      else
+         if (!props.updateTimes.myCmps)
+             this.props.getMyCmps(this.props.prs.id);
+
 
       return (
       <section className="container">
-      {console.log(this.props)}
+      {console.log(props)}
       <ConfDialog
         show={this.state.showConfirmation  != null }
         title="Delete Competition"
@@ -52,29 +59,29 @@ class CmpsPage extends Component {
         {/*List all of the cmps by name for now*/}
         {/*for now just spits out two lists with, clean up UI later*/}
 
-        <Tabs id="cmpsTabs">
-          <Tab eventKey={1} title="My Competitions">
+        {props.showAll ?
           <ListGroup>
-            {this.props.prs.myCmps && this.props.prs.myCmps.map((cmpId, i) => {
-             var cmp = this.props.cmps[cmpId];
-
-             return <CompetitionItem
-                key={i} {...cmp}/>
-            })}
-          </ListGroup>
-          </Tab>
-          <Tab eventKey={2} title="All Competitions">
-          <ListGroup>
-              {Object.keys(this.props.cmps).map((cmpId, i) => {
-                var cmp = this.props.cmps[cmpId];
+              {cmps.map((cmpId, i) => {
+                var cmp = props.cmps[cmpId];
 
                 return <CompetitionItem
                   key={i} {...cmp}/>
               })}
-
           </ListGroup>
-          </Tab>
-        </Tabs>
+          :
+          (cmps ?
+          <ListGroup>
+           {cmps.map((cmpId, i) => {
+             var cmp = props.cmps[cmpId];
+
+             return <CompetitionItem
+               key={i} {...cmp}/>
+           })}
+           </ListGroup>
+           :
+           <h4>You are not in any competitions</h4>
+        )
+       }
       </section>
       )
   }

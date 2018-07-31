@@ -35,12 +35,17 @@ class Main extends Component {
                 {this.signedIn() ?
                   // User is signed in
                   [
-                    <LinkContainer key={0} to="/CmpsPage">
+                    <LinkContainer key={0} to="/MyCmpsPage">
                       <NavItem>
-                        Competitions
+                        My Competitions
                       </NavItem>
                     </LinkContainer>,
-                    <LinkContainer key={1} to="/TeamsPage">
+                    <LinkContainer key={1} to="/AllCmpsPage">
+                      <NavItem>
+                        Join Competitions
+                      </NavItem>
+                    </LinkContainer>,
+                    <LinkContainer key={2} to="/TeamsPage">
                       <NavItem>Teams</NavItem>
                     </LinkContainer>,
                   ]
@@ -70,11 +75,13 @@ class Main extends Component {
         </div>
         <Switch>
           <Route exact path='/' children={Home} />
-          <Route path='/MyCmpsPage' component={CmpsPage} />} />
-          <Route path='/AllCmpsPage' component={CmpsPage} />} />
-          <Route path='/TeamsPage' component={TeamsPage}/>
-          <Route path='/signin' render={() => <SignIn {...this.props} />} />
-          <Route path='/register' render={() => <Register {...this.props} />} />
+          <Route path='/MyCmpsPage'
+           render={() => <CmpsPage {...this.props} showAll = {false}/>} />} />
+           <Route path='/AllCmpsPage'
+           render={() => <CmpsPage {...this.props} showAll = {true}/>} />} />
+          <Route path='/TeamsPage' component = {TeamsPage}/>
+          <Route path='/signin' render = {() => <SignIn {...this.props} />} />
+          <Route path='/register' render = {() => <Register {...this.props} />} />
           <Route path='/CmpPage/:cmpId'
            render={(props) => {
              return <CmpPage cmpId = {props.match.params.cmpId}
