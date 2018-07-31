@@ -8,9 +8,9 @@ router.baseURL = '/Cmps/:cmpId/Teams/:teamId/Sbms';
 router.get('/', (req, res) => {
    var num = req.query.num;
 
-   req.cnn.chkQry('select id, teamId, content, response, score, subTime, ' +
+   req.cnn.chkQry('select id, teamId, content, response, score, sbmTime, ' +
     'practiceRun from Submit where cmpId = ? && teamId = ?' +
-    ' order by subTime DESC',
+    ' order by sbmTime DESC',
     [req.params.cmpId, req.params.teamId],
    //function that closes cnn
    (err, result) => {
@@ -34,7 +34,7 @@ router.post('/', (req, res) => {
           Tags.forbiddenField, cb)) {
             body.cmpId = req.params.cmpId;
             body.teamId = req.params.teamId;
-            body.subTime = new Date();
+            body.sbmTime = new Date();
             cnn.chkQry('insert into Submit set ?', body, cb);
          }
       }
@@ -53,7 +53,7 @@ router.post('/', (req, res) => {
 router.get('/:id', (req, res) => {
    var vld = req.validator;
 
-   req.cnn.query('select id, teamId, content, response, score, subTime ,' +
+   req.cnn.query('select id, teamId, content, response, score, sbmTime ,' +
     'practiceRun  from Submit where id = ? && cmpId = ? && teamId = ?',
     [req.params.id,req.params.cmpId,req.params.teamId],
    (submission, submissionGet) => {
@@ -75,7 +75,7 @@ router.put('/:id', (req, res) => {
          if (vld.checkAdmin(cb)) {
             body.cmpId = req.params.cmpId;
             body.teamId = req.params.teamId;
-            body.subTime = new Date();
+            body.sbmTime = new Date();
             cnn.chkQry('select * from Submit where id = ? && cmpId = ? && ' +
              'teamId = ?',
              [req.params.id, req.params.cmpId, req.params.teamId], cb);

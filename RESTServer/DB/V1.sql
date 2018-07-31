@@ -18,8 +18,8 @@ create table Person (
 create table CompetitionType (
    id int auto_increment primary key,
    title varchar(80) not null unique,
-   description varchar(100) not null,
-   tutorial varchar(1000) not null,
+   description varchar(500) not null,
+   tutorial varchar(10000) not null,
    prmSchema varchar(20000) not null
 );
 
@@ -29,6 +29,7 @@ create table Competition (
    ctpId int not null,
    title varchar(80) not null,
    prms varchar(20000) not null,
+   description varchar(500) not null,
    rules int default 0,
    curTeamId int,
 
@@ -67,7 +68,7 @@ create table Submit
    practiceRun boolean default false,
 
    score int,
-   subTime datetime,
+   sbmTime datetime,
 
      constraint FKSubmit_cmpId foreign key (cmpId) references
     Competition(id) on delete cascade on update cascade,
@@ -97,8 +98,8 @@ insert into CompetitionType (title, description, tutorial, prmSchema)
             VALUES ("Bridge Builder", "What yo do: Build Bridges", "How to build Bridges: Build Bridges", "{}");
 
 
-insert into Competition (ownerId, ctpId, title,prms)
-            VALUES (1,     1, "bridge building", "{}");
+insert into Competition (ownerId, ctpId, title, prms, description)
+            VALUES (1,     1, "bridge building", "{}", "description goes here");
 
 insert into Team (teamName, cmpId, leaderId)
             VALUES ("Team1", 1, 1);

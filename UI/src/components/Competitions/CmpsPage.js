@@ -16,7 +16,17 @@ class CmpsPage extends Component {
       }
    }
 
-   componentWillUnmount
+   componentDidMount() {
+      var props = this.props;
+
+      //cannot only load one based on teh page, because component did mount
+      // will only run once, because they are the same component
+      console.log(props.showAll);
+      if (!props.updateTimes.cmps)
+         this.props.getAllCmps();
+      if (!props.updateTimes.myCmps)
+          this.props.getMyCmps(this.props.prs.id);
+   }
 
    // Thus far the only confirmation is for a delete.
    closeConfirmation = (res, cmpId) => {
@@ -34,16 +44,6 @@ class CmpsPage extends Component {
       var props = this.props;
       var cmps = props.showAll ? Object.keys(props.cmps) : props.prs.myCmps;
 
-      console.log(props.showAll);
-      if (props.showAll){
-         if (!props.updateTimes.cmps)
-            this.props.getAllCmps();
-      }
-      else
-         if (!props.updateTimes.myCmps)
-             this.props.getMyCmps(this.props.prs.id);
-
-
       return (
       <section className="container">
       {console.log(props)}
@@ -54,18 +54,23 @@ class CmpsPage extends Component {
         buttons={['Yes', 'Abort']}
         onClose={(res) => this.closeConfirmation(res, this.state.showConfirmation)} />
         <h1>Competition Overview</h1>
-        {/*List all of the cmps by name for now*/}
-        {/*for now just spits out two lists with, clean up UI later*/}
+
 
         {props.showAll ?
-          <ListGroup>
+          <div>
+           <h4>Description</h4>
+
+           <div></div>
+
+           <ListGroup>
               {cmps.map((cmpId, i) => {
                 var cmp = props.cmps[cmpId];
 
                 return <CompetitionItem
                   key={i} {...cmp}/>
               })}
-          </ListGroup>
+           </ListGroup>
+          </div>
           :
           (cmps.length ?
           <ListGroup>
@@ -85,7 +90,6 @@ class CmpsPage extends Component {
   }
 }
 
-// A conversation list item
 const CompetitionItem = function (props) {
    return (
       <ListGroupItem className="clearfix">

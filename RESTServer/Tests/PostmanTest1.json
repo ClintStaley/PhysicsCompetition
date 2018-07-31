@@ -2318,7 +2318,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"ctpId\": 1,\n  \"title\": \"Land Grab A\",\n  \"prms\": \"{      \\\"numCircles\\\": 3,      \\\"obstacles\\\": [        {          \\\"loX\\\": 0,          \\\"hiX\\\": 40.2,          \\\"loY\\\": 0,          \\\"hiY\\\": 28.7        },        {          \\\"loX\\\": 0,          \\\"hiX\\\": 50,          \\\"loY\\\": 85,          \\\"hiY\\\": 100        },         {          \\\"loX\\\": 80,          \\\"hiX\\\": 100,          \\\"loY\\\": 0,          \\\"hiY\\\": 12        }      ]    }\",\n  \"rules\": 1\n}"
+							"raw": "{\n    \"ctpId\": 1,\n  \"title\": \"Land Grab A\",\n  \"prms\": \"{      \\\"numCircles\\\": 3,      \\\"obstacles\\\": [        {          \\\"loX\\\": 0,          \\\"hiX\\\": 40.2,          \\\"loY\\\": 0,          \\\"hiY\\\": 28.7        },        {          \\\"loX\\\": 0,          \\\"hiX\\\": 50,          \\\"loY\\\": 85,          \\\"hiY\\\": 100        },         {          \\\"loX\\\": 80,          \\\"hiX\\\": 100,          \\\"loY\\\": 0,          \\\"hiY\\\": 12        }      ]    }\",\n  \"rules\": 1,\n  \"description\": \"description of Land Grab .....\"\n}"
 						},
 						"url": {
 							"raw": "{{url}}/Cmps",
@@ -2356,7 +2356,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"ctpId\": 1,\n  \"title\": \"Land Grab B\",\n  \"prms\": \"{      \\\"numCircles\\\": 3,      \\\"obstacles\\\": [        {          \\\"loX\\\": 0,          \\\"hiX\\\": 40.2,          \\\"loY\\\": 0,          \\\"hiY\\\": 28.7        },        {          \\\"loX\\\": 0,          \\\"hiX\\\": 50,          \\\"loY\\\": 85,          \\\"hiY\\\": 100        },         {          \\\"loX\\\": 80,          \\\"hiX\\\": 100,          \\\"loY\\\": 0,          \\\"hiY\\\": 12        }      ]    }\"\n}"
+							"raw": "{\n    \"ctpId\": 1,\n  \"title\": \"Land Grab B\",\n  \"prms\": \"{      \\\"numCircles\\\": 3,      \\\"obstacles\\\": [        {          \\\"loX\\\": 0,          \\\"hiX\\\": 40.2,          \\\"loY\\\": 0,          \\\"hiY\\\": 28.7        },        {          \\\"loX\\\": 0,          \\\"hiX\\\": 50,          \\\"loY\\\": 85,          \\\"hiY\\\": 100        },         {          \\\"loX\\\": 80,          \\\"hiX\\\": 100,          \\\"loY\\\": 0,          \\\"hiY\\\": 12        }      ]    }\",\n  \"description\": \"description of Land Grab .....\"\n}"
 						},
 						"url": {
 							"raw": "{{url}}/Cmps",
@@ -2812,7 +2812,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"ctpId\": 3,\n  \"title\": \"Competition C\",\n  \"prms\": \"{   \\\"Altitude Profiles\\\": [[2,2],[2,2],[2,2]],   \\\"Cell Output profile\\\": [[2,2],[2,2]],   \\\"Friction\\\": [2],   \\\"Energy /m alt\\\": 1,   \\\"Battery I/o\\\": [[5,4],[5,4]],   \\\"Regen Efficiency\\\": 9,   \\\"Initial Battery\\\": 9 }\"\n}"
+							"raw": "{\n    \"ctpId\": 3,\n  \"title\": \"Competition C\",\n  \"prms\": \"{   \\\"Altitude Profiles\\\": [[2,2],[2,2],[2,2]],   \\\"Cell Output profile\\\": [[2,2],[2,2]],   \\\"Friction\\\": [2],   \\\"Energy /m alt\\\": 1,   \\\"Battery I/o\\\": [[5,4],[5,4]],   \\\"Regen Efficiency\\\": 9,   \\\"Initial Battery\\\": 9 }\",\n  \"description\": \"description of Land Grab .....\"\n}"
 						},
 						"url": {
 							"raw": "{{url}}/Cmps",
@@ -3405,7 +3405,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"ctpId\": 1,\n  \"title\": \"Competition D\",\n  \"prms\": \"{      \\\"numCircles\\\": 3,      \\\"obstacles\\\": [        {          \\\"loX\\\": 0,          \\\"hiX\\\": 40.2,          \\\"loY\\\": 0,          \\\"hiY\\\": 28.7        },        {          \\\"loX\\\": 0,          \\\"hiX\\\": 50,          \\\"loY\\\": 85,          \\\"hiY\\\": 100        },         {          \\\"loX\\\": 80,          \\\"hiX\\\": 100,          \\\"loY\\\": 0,          \\\"hiY\\\": 12        }      ]    }\"\n}"
+							"raw": "{\n    \"ctpId\": 1,\n  \"title\": \"Competition D\",\n  \"prms\": \"{      \\\"numCircles\\\": 3,      \\\"obstacles\\\": [        {          \\\"loX\\\": 0,          \\\"hiX\\\": 40.2,          \\\"loY\\\": 0,          \\\"hiY\\\": 28.7        },        {          \\\"loX\\\": 0,          \\\"hiX\\\": 50,          \\\"loY\\\": 85,          \\\"hiY\\\": 100        },         {          \\\"loX\\\": 80,          \\\"hiX\\\": 100,          \\\"loY\\\": 0,          \\\"hiY\\\": 12        }      ]    }\",\n  \"description\": \"description of Land Grab .....\"\n}"
 						},
 						"url": {
 							"raw": "{{url}}/Cmps",
