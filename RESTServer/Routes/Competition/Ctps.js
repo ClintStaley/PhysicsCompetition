@@ -7,8 +7,8 @@ router.baseURL = '/Ctps';
 
 router.get('/', (req, res) => {
    req.cnn.chkQry('select * from CompetitionType', null,
-   (err, result) => {
-      res.json(result);
+   (err, ctp) => {
+      res.json(ctp);
       res.status(200);
       req.cnn.release();
    });
@@ -49,9 +49,9 @@ router.get('/:id', (req, res) => {
    var vld = req.validator;
 
    req.cnn.query('select * from CompetitionType where id = ?', [req.params.id],
-   (err, ctpArr) => {
-      if (vld.check(ctpArr.length, Tags.notFound)) {
-         res.json(ctpArr[0]);
+   (err, ctps) => {
+      if (vld.check(ctps.length, Tags.notFound)) {
+         res.json(ctps[0]);
       }
       req.cnn.release();
    });
@@ -69,8 +69,8 @@ router.put('/:id', (req, res) => {
          cnn.chkQry('select * from CompetitionType where id = ?',
           req.params.id, cb);
    },
-   (qRes, fields, cb) => {
-      if (vld.check(qRes.length, Tags.notFound, cb)) {
+   (ctp, fields, cb) => {
+      if (vld.check(ctp.length, Tags.notFound, cb)) {
          if (body.title)
             cnn.chkQry('select * from CompetitionType where title = ?',
              body.title, cb);
@@ -78,13 +78,13 @@ router.put('/:id', (req, res) => {
             cb(null, null, cb);
       }
    },
-   (titleRes, fields, cb) => {
+   (ctp, fields, cb) => {
       if (!body.title ||
-         vld.check(!titleRes.length, Tags.dupTitle, cb))
+         vld.check(!ctp.length, Tags.dupTitle, cb))
          cnn.chkQry('update CompetitionType set ? where id = ?',
           [req.body, req.params.id], cb);
    },
-   (updRes, fields, cb) => {
+   (result, fields, cb) => {
       res.status(200).end();
       cb();
    }],

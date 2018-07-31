@@ -56,9 +56,9 @@ router.get('/:id', (req, res) => {
    req.cnn.query('select id, teamId, content, response, score, subTime ,' +
     'practiceRun  from Submit where id = ? && cmpId = ? && teamId = ?',
     [req.params.id,req.params.cmpId,req.params.teamId],
-   (err, teamArr) => {
-      if (vld.check(teamArr.length, Tags.notFound)) {
-         res.json(teamArr[0]);
+   (submission, submissionGet) => {
+      if (vld.check(submissionGet.length, Tags.notFound)) {
+         res.json(submissionGet[0]);
       }
       req.cnn.release();
    });
@@ -82,8 +82,8 @@ router.put('/:id', (req, res) => {
          }
       }
    },
-   (result, err, cb) => {
-      if (vld.check(result && result.length, Tags.notFound, cb))
+   (submission, err, cb) => {
+      if (vld.check(submission && submission.length, Tags.notFound, cb))
          cnn.query("update Submit set ? where id = ?",
           [req.body, req.params.id], cb);
    },

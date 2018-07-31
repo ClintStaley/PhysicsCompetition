@@ -21,8 +21,8 @@ router.get('/', (req, res) => {
       fillers.push(ssn.id);
    }
    req.cnn.chkQry('select id, email from Person' + clause, fillers,
-   (err, prsArr) => {
-      res.json(prsArr);
+   (err, result) => {
+      res.json(result);
       req.cnn.release();
    });
 });
@@ -44,10 +44,9 @@ router.post('/', (req, res) => {
          cnn.chkQry('select * from Person where email = ?', body.email, cb);
       }
    },
-   (existingPrss, fields, cb) => {  // If no duplicates, insert new Person
-      if (vld.check(!existingPrss.length, Tags.dupEmail, cb)) {
+   (prs, fields, cb) => {  // If no duplicates, insert new Person
+      if (vld.check(!prs.length, Tags.dupEmail, cb)) {
          body.termsAccepted = body.termsAccepted ? new Date() : null;
-         console.log("I am posting in Prss");
          cnn.chkQry('insert into Person set ?', body, cb);
       }
    },
@@ -62,20 +61,19 @@ router.post('/', (req, res) => {
 
 router.get('/:id', (req, res) => {
    var vld = req.validator;
-   var prs;
 
    if (vld.checkPrsOK(req.params.id)) {
       req.cnn.query('select * from Person where id = ?', [req.params.id],
       (err, prsArr) => {
          if (vld.check(prsArr.length, Tags.notFound)) {
-             prs = prsArr[0];
+             var prs = prsArr[0];
              prs.termsAccepted = prs.termsAccepted
               && prs.termsAccepted.getTime();
              prs.whenRegistered = prs.whenRegistered
               && prs.whenRegistered.getTime();
 
              delete prs.password;
-             res.json(prsArr[0]);
+             res.json(prs);
          }
          req.cnn.release();
       });
@@ -102,15 +100,15 @@ router.put('/:id', (req, res) => {
        .check(!body.password || body.oldPassword || admin, Tags.noOldPwd, cb))
          cnn.chkQry("select * from Person where id = ? ", req.params.id, cb);
    },
-   (qRes, fields, cb) => {
+   (prs, fields, cb) => {
       if (vld.check(admin || !body.password ||
-       qRes[0].password === body.oldPassword, Tags.oldPwdMismatch, cb)) {
+       prs[0].password === body.oldPassword, Tags.oldPwdMismatch, cb)) {
          delete req.body.oldPassword;
          cnn.chkQry("update Person set ? where id = ?",
           [req.body, req.params.id], cb);
       }
    },
-   (updRes, fields, cb) => {
+   (result, fields, cb) => {
       res.status(200).end();
       cb();
    }],
@@ -142,8 +140,8 @@ router.get('/:id/Teams', (req, res) => {
       req.cnn.chkQry('select id, bestScore, teamName, cmpId, leaderId, ' +
        'lastSubmit, canSubmit from Team, Membership where ' +
        'prsId =  ? and teamId = Team.id', [req.params.id],
-      (err, memberTeam) => {
-         res.json(memberTeam);
+      (err, teams) => {
+         res.json(teams);
          res.status(200);
          req.cnn.release();
       });
