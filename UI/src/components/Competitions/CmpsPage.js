@@ -11,12 +11,11 @@ class CmpsPage extends Component {
    constructor(props) {
       super(props);
 
-      //get all cmps from database
-      //as of now will reget all cmps from database every time page is loaded
-      if (!this.props.updateTimes.cmps)
+      // Ensure needed cmps are in the props.
+      if (props.showAll && !this.props.updateTimes.cmps)
          this.props.getAllCmps();
-
-      this.props.getMyCmps(this.props.prs.id);
+      else
+          this.props.getMyCmps(this.props.prs.id);
 
       this.state = {
          showConfirmation: null
@@ -38,6 +37,8 @@ class CmpsPage extends Component {
    }
 
    render() {
+      var cmps = props.allCmps ? this.props.cmps : this.props.prs.myCmps;
+
       return (
       <section className="container">
       {console.log(this.props)}
