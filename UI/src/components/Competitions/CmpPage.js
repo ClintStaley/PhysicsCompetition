@@ -63,13 +63,7 @@ export default class CmpPage extends Component {
 
         <h1>{props.cmps[cmpId].title}</h1>
 
-        <h4>Competition Description</h4>
-
-        <div>{props.ctps[ctpId] && props.ctps[ctpId].description}</div>
-
-        <h4>Competiton Tutorial</h4>
-
-        <div>{props.ctps[ctpId] && props.ctps[ctpId].tutorial}</div>
+        <h4>Competiton Instructions (Make this a link to a separate page)</h4>
 
         <h4>Competiton Teams</h4>
 
@@ -103,13 +97,11 @@ const TeamLine = function (props) {
      <Button onClick={props.toggleTeam}>{props.teamName}</Button>
 
      <div className="pull-right">
-       <label>Last Score: {props.lastSubmit ? props.lastSubmit : "N/A"}</label>
-
        {props.isMember ?
        <Button disabled = {!props.canSubmit}> Submit </Button>
-       : '' }
+         : '' }
+       <label>Last Score: {props.lastSubmit ? props.lastSubmit : "N/A"}</label>
      </div>
-
 
      {props.toggled ?
      <ListGroup>
