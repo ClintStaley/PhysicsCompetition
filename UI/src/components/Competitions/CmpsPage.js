@@ -11,9 +11,6 @@ class CmpsPage extends Component {
    constructor(props) {
       super(props);
 
-console.log(props.showAll);
-      // Ensure needed cmps are in the props.
-
       this.state = {
          showConfirmation: null
       }
@@ -35,8 +32,9 @@ console.log(props.showAll);
 
    render() {
       var props = this.props;
-      var cmps = props.allCmps ? Object.keys(props.cmps) : props.prs.myCmps;
+      var cmps = props.showAll ? Object.keys(props.cmps) : props.prs.myCmps;
 
+      console.log(props.showAll);
       if (props.showAll){
          if (!props.updateTimes.cmps)
             this.props.getAllCmps();
@@ -69,7 +67,7 @@ console.log(props.showAll);
               })}
           </ListGroup>
           :
-          (cmps ?
+          (cmps.length ?
           <ListGroup>
            {cmps.map((cmpId, i) => {
              var cmp = props.cmps[cmpId];
