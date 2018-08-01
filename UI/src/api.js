@@ -240,6 +240,11 @@ export function delMmb(cmpId, teamId, prsId) {
    return del(`Cmps/${cmpId}/Teams/${teamId}/Mmbs/${prsId}`);
 }
 
+export function getSbms(cmpId, teamId, numSbms) {
+   return get(`Cmps/${cmpId}/Teams/${teamId}/Sbms?num=${numSbms}`)
+   .then(rsp => rsp.json());
+}
+
 const errMap = {
    en: {
       noPermission: 'Login Lacks Permission: ', //403
