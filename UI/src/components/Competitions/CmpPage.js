@@ -7,14 +7,20 @@ export default class CmpPage extends Component {
    constructor(props) {
       super(props);
 
+      // CAS FIX: Move to componentDidMount
       this.props.getCtp(this.props.cmps[this.props.cmpId].ctpId);
       this.props.getTeamsByCmp(this.props.cmpId);
       this.props.getTeamsByPrs(this.props.prs.id);
 
       this.state = {
          toggledTeams: {},
+<<<<<<< HEAD
          createTeamFunc: null,
          myCmpLink: this.props.myCmpLink
+=======
+         createDialog: null,
+         myCmpLink: this.props.myCmpLink // CAS FIX you're not supposed to do this (assign props into state).  Why not just use this.props.myCmpLink?
+>>>>>>> 3c2340cfef564b4f9d5f01ba5dc36720101ce756
       }
    }
 
@@ -104,7 +110,7 @@ export default class CmpPage extends Component {
         <h4>This Competition has no Teams</h4>
          }
 
-         {!myCmpLink ?
+        {!myCmpLink ?
         <div className="pull-right">
            <Button onClick={this.openCreateDialog} >Create Team</Button>
         </div>
@@ -131,7 +137,7 @@ const TeamLine = function (props) {
       (props.isMember ?
        ' (Already part of this team) '
        : '')
-   }
+     }
 
      {props.toggled ?
      <ListGroup>
