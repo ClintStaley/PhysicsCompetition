@@ -19,8 +19,6 @@ class CmpsPage extends Component {
    componentDidMount() {
       var props = this.props;
 
-      //cannot only load one based on teh page, because component did mount
-      // will only run once, because they are the same component
       if (!props.updateTimes.cmps)
          this.props.getAllCmps();
 
@@ -75,12 +73,12 @@ class CmpsPage extends Component {
            {cmps.map((cmpId, i) => {
              var cmp = props.cmps[cmpId];
 
+             // CAS FIX: Names, names.... CmpPage1??
              cmp.link = '/CmpPage1/' + cmp.id;
              cmp.joiningCmp = props.showAll;
              cmp.joined = false;
 
-             return <CompetitionItem
-               key={i} {...cmp}/>
+             return <CompetitionItem key={i} {...cmp}/>
            })}
            </ListGroup>
            :
@@ -110,6 +108,11 @@ const CompetitionItem = function (props) {
 }
 
 //makes CmpsPage a container componet, rather than a presentational componet
+// CAS FIX: I am impressed at your effort to reduce what we might call
+// "props footprint", but let's take it to the full level.  For instance,
+// do changes to teams or ctps necessitate a rerender of this componeent?
+// And, do changes to all updateTimes require it, or just updateTimes.cmps
+// and updateTimes.mycmps?
 function mapStateToProps(state) {
    return {
       prs: state.prs,
