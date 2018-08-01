@@ -68,6 +68,7 @@ export function postTeam(cmpId, newTeamData, cb) {
       addStdHandlers(dispatch, cb,
        api.postTeam(cmpId, newTeamData)
       .then((newTeamId) => {
+         console.log(prevState());
          newTeamData.id = newTeamId;
          newTeamData.mmbs = {};
          newTeamData.cmpId = cmpId;

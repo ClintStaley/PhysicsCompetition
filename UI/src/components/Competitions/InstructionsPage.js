@@ -14,7 +14,9 @@ export default class CmpPage extends Component {
 
       return (
         <div>
-          <h1>{props.cmps[cmpId].title}</h1>
+          <h1>{props.cmps[cmpId].title} Instructions</h1>
+
+          <div></div>
         </div>
 
 

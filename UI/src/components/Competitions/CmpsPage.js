@@ -49,7 +49,7 @@ class CmpsPage extends Component {
       <section className="container">
       {console.log(props)}
       <ConfDialog
-        show={this.state.showConfirmation  != null }
+        show={this.state.showConfirmation  != null }bit
         title="Delete Competition"
         body={`Are you sure you want to delete the Competition '${this.state.showConfirmation}'`}
         buttons={['Yes', 'Abort']}

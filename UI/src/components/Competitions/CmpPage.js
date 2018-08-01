@@ -13,25 +13,25 @@ export default class CmpPage extends Component {
 
       this.state = {
          toggledTeams: {},
-         createDialog: null,
+         createTeamFunc: null,
          myCmpLink: this.props.myCmpLink
       }
    }
 
    openCreateDialog = () => {
-      this.setState({ createDialog: true });
+      console.log('open create');
+      this.setState({ createTeamFunc: (newTeamName) => {
+         this.props.postTeam(parseInt(this.props.cmpId, 10),
+         { leaderId : this.props.prs.id, teamName: newTeamName});
+      }});
+      console.log(this.state.createTeamFunc);
    }
 
    closeCreateDialog = (result) => {
-      console.log(result);
       if (result.status === "OK") {
-         var newTeam = {};
-         newTeam.leaderId = this.props.prs.id;
-         newTeam.teamName = result.entry
-
-         this.props.postTeam(parseInt(this.props.cmpId, 10), newTeam);
+         this.state.createTeamFunc(result.entry);
       }
-      this.setState({createDialog: false});
+      this.setState({createTeamFunc: null});
    }
 
    toggleView = (teamId) => {
@@ -57,13 +57,18 @@ export default class CmpPage extends Component {
       return (
       <section className="container">
         <EntryDialog
-        show={ this.state.createDialog }
+        show={ this.state.createTeamFunc !== null }
         title={"Create Your Team"}
         label="Team name"
         onClose={(teamData) =>
         this.closeCreateDialog(teamData)} />
 
         <h1>{props.cmps[cmpId].title}</h1>
+
+
+       <h4> Competition Description </h4>
+
+       <div>props.cmps[cmpId].description</div>
 
         {myCmpLink ?
         <h4> <Link to="#">Competiton Instructions </Link></h4>

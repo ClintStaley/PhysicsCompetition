@@ -82,16 +82,21 @@ class Main extends Component {
           <Route path='/TeamsPage' component = {TeamsPage}/>
           <Route path='/signin' render = {() => <SignIn {...this.props} />} />
           <Route path='/register' render = {() => <Register {...this.props} />} />
+
           <Route path='/CmpPage1/:cmpId/'
-           render={(props) => {
-             return <CmpPage cmpId = {props.match.params.cmpId}
-              myCmpLink = {true}
-              {...this.props} />}} />
-           <Route path='/CmpPage2/:cmpId/'
-            render={(props) => {
-              return <CmpPage cmpId = {props.match.params.cmpId}
-               myCmpLink = {false}
-               {...this.props} />}} />
+          render={(props) => {
+          return <CmpPage cmpId = {props.match.params.cmpId}
+          myCmpLink = {true}
+          {...this.props} />}} />
+
+          <Route path='/CmpPage2/:cmpId/'
+          render={(props) => {
+          return <CmpPage cmpId = {props.match.params.cmpId}
+          myCmpLink = {false}
+          {...this.props} />}} />
+
+          <Route path='/Instructions/:cmpId' render = {(props) =>
+             <Register cmpId = {props.match.params.cmpId} {...this.props} />} />
         </Switch>
 
         {/*Error popup dialog*/}
