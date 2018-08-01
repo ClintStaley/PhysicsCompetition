@@ -12,7 +12,7 @@ class CmpsPage extends Component {
       super(props);
 
       this.state = {
-         showConfirmation: null
+         showDeleteConfirmation: null
       }
    }
 
@@ -32,11 +32,11 @@ class CmpsPage extends Component {
       if (res === 'Yes') {
          this.props.deleteCmp(this.props.cmps[cmpId].cmpId, cmpId);
       }
-      this.setState({showConfirmation: null})
+      this.setState({showDeleteConfirmation: null})
    }
 
    openConfirmation = (cmpId) => {
-      this.setState({showConfirmation: cmpId })
+      this.setState({showDeleteConfirmation: cmpId })
    }
 
    render() {
@@ -47,11 +47,12 @@ class CmpsPage extends Component {
       <section className="container">
       {console.log(props)}
       <ConfDialog
-        show={this.state.showConfirmation  != null }bit
+        show={this.state.showDeleteConfirmation  != null }bit
         title="Delete Competition"
-        body={`Are you sure you want to delete the Competition '${this.state.showConfirmation}'`}
+        body={`Are you sure you want to delete the Competition
+         '${this.state.showDeleteConfirmation}'`}
         buttons={['Yes', 'Abort']}
-        onClose={(res) => this.closeConfirmation(res, this.state.showConfirmation)} />
+        onClose={(res) => this.closeConfirmation(res, this.state.showDeleteConfirmation)} />
         <h1>{props.showAll ? 'My Competitions' : 'Join Competition'}</h1>
 
         {props.showAll ?

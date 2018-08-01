@@ -14,13 +14,8 @@ export default class CmpPage extends Component {
 
       this.state = {
          toggledTeams: {},
-<<<<<<< HEAD
          createTeamFunc: null,
-         myCmpLink: this.props.myCmpLink
-=======
-         createDialog: null,
          myCmpLink: this.props.myCmpLink // CAS FIX you're not supposed to do this (assign props into state).  Why not just use this.props.myCmpLink?
->>>>>>> 3c2340cfef564b4f9d5f01ba5dc36720101ce756
       }
    }
 
@@ -74,7 +69,7 @@ export default class CmpPage extends Component {
 
        <h4> Competition Description </h4>
 
-       <div>props.cmps[cmpId].description</div>
+       <div>{props.cmps[cmpId].description}</div>
 
         {myCmpLink ?
         <h4> <Link to="#">Competiton Instructions </Link></h4>
