@@ -7,25 +7,40 @@ export default class CmpPage extends Component {
    constructor(props) {
       super(props);
 
-      // CAS FIX: Move to componentDidMount
-      this.props.getCtp(this.props.cmps[this.props.cmpId].ctpId);
-      this.props.getTeamsByCmp(this.props.cmpId);
-      this.props.getTeamsByPrs(this.props.prs.id);
 
       this.state = {
          toggledTeams: {},
-         createTeamFunc: null,
-         myCmpLink: this.props.myCmpLink // CAS FIX you're not supposed to do this (assign props into state).  Why not just use this.props.myCmpLink?
+         createTeamFunc: null
       }
    }
 
+   componentDidMount = () => {
+      this.props.getCtp(this.props.cmps[this.props.cmpId].ctpId);
+      this.props.getTeamsByPrs(this.props.prs.id);
+
+      //get all mmbs if linked to join cmps, so that i can display the team
+      //leader and email
+      if (this.props.myCmpLink)
+         this.props.getTeamsByCmp(this.props.cmpId);
+      else
+         this.props.getTeamsByCmp(this.props.cmpId, this.getAllTeamMmbs);
+   }
+
+   getAllTeamMmbs = () => {
+      var props = this.props;
+
+      props.cmps[props.cmpId].cmpTeams.map((teamId, i) => {
+         if (this.props.teams[teamId] && this.props.teams[teamId].mmbs &&
+          Object.keys(this.props.teams[teamId].mmbs).length  === 0)
+            props.getMmbs(props.cmpId ,teamId);
+      })
+   }
+
    openCreateDialog = () => {
-      console.log('open create');
       this.setState({ createTeamFunc: (newTeamName) => {
          this.props.postTeam(parseInt(this.props.cmpId, 10),
          { leaderId : this.props.prs.id, teamName: newTeamName});
       }});
-      console.log(this.state.createTeamFunc);
    }
 
    closeCreateDialog = (result) => {
@@ -46,11 +61,23 @@ export default class CmpPage extends Component {
        {[teamId]: !this.state.toggledTeams[teamId]})});
    }
 
+   orderTeamsByScore = (teams) => {
+      //expect an array of team Ids
+      var orderedTeams = [];
+      return teams.sort(this.compareTeamsByScore);
+   }
+
+   compareTeamsByScore = (team1, team2) => {
+      var teams = this.props.teams;
+      
+      return teams[team2].bestScore - teams[team1].bestScore;
+   }
+
    render() {
       var props = this.props;
       var cmpId = props.cmpId;
       var ctpId = props.cmps[cmpId].ctpId;
-      var myCmpLink = this.state.myCmpLink;
+      var myCmpLink = this.props.myCmpLink;
 
       if (!this.props.cmps[cmpId])
          return (<h1>Error loading Competition</h1>)
@@ -66,13 +93,14 @@ export default class CmpPage extends Component {
 
         <h1>{props.cmps[cmpId].title}</h1>
 
+        <h4> Competition Description </h4>
 
-       <h4> Competition Description </h4>
-
-       <div>{props.cmps[cmpId].description}</div>
+        <div>{props.cmps[cmpId].description}</div>
 
         {myCmpLink ?
-        <h4> <Link to="#">Competiton Instructions </Link></h4>
+        <h4> <Link to = {'/Instructions/' + cmpId}>
+          Competiton Instructions
+        </Link></h4>
         :
         <div>
           <h4>Want to Join?</h4>
@@ -88,7 +116,7 @@ export default class CmpPage extends Component {
 
         { props.cmps[cmpId].cmpTeams.length > 0 ?
         <ListGroup>
-          {props.cmps[cmpId].cmpTeams.map((teamId, i) => {
+          {this.orderTeamsByScore(props.cmps[cmpId].cmpTeams).map((teamId, i) => {
             if (!this.props.teams[teamId])
               return null;
 
@@ -120,19 +148,29 @@ const TeamLine = function (props) {
    <ListGroupItem className="clearfix">
      <Button onClick = {props.toggleTeam}>{props.teamName}</Button>
 
+     {props.isMember ?
+      ' (Member of this team) '
+      : ''}
 
-     { props.myTeamLink ?
      <div className="pull-right">
-       <label>Last Score:{props.lastSubmit ? props.lastSubmit : "N/A"}</label>
+     { props.myTeamLink ?
+        <div>
+       <label>
+         Last Score:{props.bestScore !== -1 ? props.bestScore : "N/A"}
+       </label>
        {props.isMember ?
        <Button disabled = {!props.canSubmit}> Submit </Button>
-         : ''}
-     </div>
+        : ''}
+       </div>
+
+
      :
-      (props.isMember ?
-       ' (Already part of this team) '
-       : '')
+      (props.mmbs && Object.keys(props.mmbs).length  ?
+       `TeamLeader: ${props.mmbs[props.leaderId].firstName}
+       (${props.mmbs[props.leaderId].email})`
+       : 'hello')
      }
+     </div>
 
      {props.toggled ?
      <ListGroup>

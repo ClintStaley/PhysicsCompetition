@@ -16,14 +16,28 @@ class CmpsPage extends Component {
       }
    }
 
-   componentDidMount() {
+   componentDidMount = () => {
       var props = this.props;
 
-      if (!props.updateTimes.cmps)
-         this.props.getAllCmps();
+      if (props.showAll) {
+         if (!props.updateTimes.cmps)
+            this.props.getAllCmps();
+      }
+      else
+         if (!props.updateTimes.myCmps)
+            this.props.getMyCmps(this.props.prs.id);
+   }
 
-      if (!props.updateTimes.myCmps)
-         this.props.getMyCmps(this.props.prs.id);
+   componentDidUpdate = () => {
+      var props = this.props;
+
+      if (props.showAll) {
+         if (!props.updateTimes.cmps)
+            this.props.getAllCmps();
+      }
+      else
+         if (!props.updateTimes.myCmps)
+            this.props.getMyCmps(this.props.prs.id);
 
    }
 
@@ -52,15 +66,16 @@ class CmpsPage extends Component {
         body={`Are you sure you want to delete the Competition
          '${this.state.showDeleteConfirmation}'`}
         buttons={['Yes', 'Abort']}
-        onClose={(res) => this.closeConfirmation(res, this.state.showDeleteConfirmation)} />
-        <h1>{props.showAll ? 'My Competitions' : 'Join Competition'}</h1>
+        onClose={(res) =>
+        this.closeConfirmation(res, this.state.showDeleteConfirmation)} />
+        <h1>{props.showAll ? 'Join Competition' :  'My Competitions' }</h1>
 
         {props.showAll ?
            <ListGroup>
               {cmps.map((cmpId, i) => {
                 var cmp = props.cmps[cmpId];
 
-                cmp.link = '/CmpPage2/' + cmp.id;
+                cmp.link = '/JoinCmpPage/' + cmp.id;
                 cmp.joiningCmp = props.showAll;
                 cmp.joined = props.prs.myCmps.includes(cmpId);
 
@@ -74,8 +89,7 @@ class CmpsPage extends Component {
            {cmps.map((cmpId, i) => {
              var cmp = props.cmps[cmpId];
 
-             // CAS FIX: Names, names.... CmpPage1??
-             cmp.link = '/CmpPage1/' + cmp.id;
+             cmp.link = '/MyCmpPage/' + cmp.id;
              cmp.joiningCmp = props.showAll;
              cmp.joined = false;
 
@@ -98,9 +112,13 @@ const CompetitionItem = function (props) {
           {props.joined ? '(already joined)' : ''}
 
           {props.joiningCmp ?
-          <div>
-           <h5>Competition Description</h5>
+          <div className="pull-right">
+            <Link to = {props.link} >See Teams</Link>
+          </div>
+          : ''}
 
+          {props.joiningCmp ?
+          <div>
            <div>{props.description}</div>
          </div>
          : ''}
@@ -117,10 +135,8 @@ const CompetitionItem = function (props) {
 function mapStateToProps(state) {
    return {
       prs: state.prs,
-      teams: state.teams,
       cmps: state.cmps,
-      updateTimes: state.updateTimes,
-      ctps: state.ctps
+      updateTimes: state.updateTimes
    }
 }
 
