@@ -3,7 +3,7 @@ package com.softwareinventions.cmp.driver;
 import com.softwareinventions.cmp.dto.CompetitionType;
 import com.softwareinventions.cmp.dto.Person;
 import com.softwareinventions.cmp.dto.Response;
-import com.softwareinventions.cmp.dto.Submissions;
+import com.softwareinventions.cmp.dto.Submit;
 import com.softwareinventions.cmp.util.EVCException;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientHandlerException;
@@ -60,13 +60,13 @@ public class ClientHandler {
 
    private void loginAdmin() {
       // Admin login info, Temp
-      Person Prs = new Person();
-      Prs.email = "adm@11.com";
-      Prs.password = "password";
+      Person prs = new Person();
+      prs.email = "adm@11.com";
+      prs.password = "password";
 
-      Lgr.info("Logging in " + Prs.email);
+      Lgr.info("Logging in " + prs.email);
       ClientResponse response = client.resource(url + "/Ssns")
-            .type("application/json").post(ClientResponse.class, Prs);
+            .type("application/json").post(ClientResponse.class, prs);
 
       // will throw exception if login failed
       if (response.getStatus() != 200) {
@@ -113,9 +113,9 @@ public class ClientHandler {
       return result;
    }
 
-   public Submissions[] GetWaitingSubmissions(int CmpId) throws EVCException {
+   public Submit[] GetWaitingSubmissions(int cmpId) throws EVCException {
       ClientResponse response = client
-            .resource(url + "/Cmps/" + CmpId + "/WaitingSbms")
+            .resource(url + "/Cmps/" + cmpId + "/WaitingSbms")
             .accept("application/json").get(ClientResponse.class);
 
       if (response.getStatus() != 200) {
@@ -123,17 +123,17 @@ public class ClientHandler {
                "Failed : HTTP error code : " + response.getStatus());
       }
       // returns the data from the response
-      return checkAndRead(response, Submissions[].class);
+      return checkAndRead(response, Submit[].class);
    }
 
-   public void Response(int CmpId, Submissions submission, String res)
+   public void Response(int cmpId, Submit submission, String res)
          throws EVCException {
 
       Response tempRes = new Response();
       tempRes.response = res;
 
       ClientResponse response = client
-            .resource(String.format("%s/Cmps/%d/Teams/%d/Sbms/%d", url, CmpId,
+            .resource(String.format("%s/Cmps/%d/Teams/%d/Sbms/%d", url, cmpId,
                   submission.teamId, submission.id))
             .type("application/json").put(ClientResponse.class, tempRes);
 

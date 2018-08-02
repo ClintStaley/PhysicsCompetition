@@ -6,5 +6,7 @@ public class Competition {
    public int ctpId;
    public String title;
    public String prms;
+   public String description;
    public int rules;
+   public int curTeamId;
 }

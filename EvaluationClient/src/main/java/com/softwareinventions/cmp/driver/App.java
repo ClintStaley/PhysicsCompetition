@@ -2,7 +2,7 @@ package com.softwareinventions.cmp.driver;
 
 import org.apache.log4j.Logger;
 
-import com.softwareinventions.cmp.dto.Submissions;
+import com.softwareinventions.cmp.dto.Submit;
 
 public class App {
    final static String url = "http://localhost:3000";
@@ -15,7 +15,7 @@ public class App {
          ClientHandler handler = new ClientHandler(url);
 
          // gets the CompetitionTypes from the server
-         Submissions[] output = handler.GetWaitingSubmissions(1);
+         Submit[] output = handler.GetWaitingSubmissions(1);
 
          System.out.println("\n");
          System.out.println(output[0].id);
