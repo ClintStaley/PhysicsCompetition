@@ -9,5 +9,6 @@ public class Submit {
    public String response;
    public int teamId;
    public int score;
-   public Date subTime;
+   public Date sbmTime;
+   public boolean practiceRun;
 }

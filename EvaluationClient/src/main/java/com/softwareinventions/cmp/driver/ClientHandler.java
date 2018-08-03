@@ -3,6 +3,7 @@ package com.softwareinventions.cmp.driver;
 import com.softwareinventions.cmp.dto.CompetitionType;
 import com.softwareinventions.cmp.dto.Person;
 import com.softwareinventions.cmp.dto.Response;
+import com.softwareinventions.cmp.dto.ResponseWrapper;
 import com.softwareinventions.cmp.dto.Submit;
 import com.softwareinventions.cmp.util.EVCException;
 import com.sun.jersey.api.client.Client;
@@ -113,7 +114,7 @@ public class ClientHandler {
       return result;
    }
 
-   public Submit[] GetWaitingSubmissions(int cmpId) throws EVCException {
+   public Submit[] getWaitingSubmissions(int cmpId) throws EVCException {
       ClientResponse response = client
             .resource(url + "/Cmps/" + cmpId + "/WaitingSbms")
             .accept("application/json").get(ClientResponse.class);
@@ -126,15 +127,14 @@ public class ClientHandler {
       return checkAndRead(response, Submit[].class);
    }
 
-   public void Response(int cmpId, Submit submission, String res)
+   public void response(ResponseWrapper res)
          throws EVCException {
 
-      Response tempRes = new Response();
-      tempRes.response = res;
-
+      Response tempRes = res.eval;
+      
       ClientResponse response = client
-            .resource(String.format("%s/Cmps/%d/Teams/%d/Sbms/%d", url, cmpId,
-                  submission.teamId, submission.id))
+            .resource(String.format("%s/Cmps/%d/Teams/%d/Sbms/%d", url, res.cmpId,
+                  res.teamId, res.sbmId))
             .type("application/json").put(ClientResponse.class, tempRes);
 
       checkAndClose(response);

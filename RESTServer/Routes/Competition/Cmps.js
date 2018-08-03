@@ -191,8 +191,8 @@ router.get('/:id/WaitingSbms', (req, res) => {
    var num = req.query.num;
 
    if (vld.checkAdmin()) {
-      cnn.query('select id, teamId, content, response, score, sbmTime from' +
-      ' Submit where cmpId = ? and response is null order by sbmTime DESC',
+      cnn.query('select * from Submit where cmpId = ? and response is null' +
+       ' order by sbmTime DESC',
        [req.params.id],
       (err, result) => {
          if (result.length)
