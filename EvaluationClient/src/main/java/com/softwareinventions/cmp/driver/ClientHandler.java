@@ -1,6 +1,7 @@
 package com.softwareinventions.cmp.driver;
 
 import com.softwareinventions.cmp.dto.CompetitionType;
+import com.softwareinventions.cmp.dto.Competition;
 import com.softwareinventions.cmp.dto.Person;
 import com.softwareinventions.cmp.dto.Response;
 import com.softwareinventions.cmp.dto.ResponseWrapper;
@@ -138,5 +139,18 @@ public class ClientHandler {
             .type("application/json").put(ClientResponse.class, tempRes);
 
       checkAndClose(response);
+   }
+   
+   public Competition[] getCmps() throws EVCException{
+	   ClientResponse response = client
+	            .resource(url + "/Cmps/")
+	            .accept("application/json").get(ClientResponse.class);
+
+	      if (response.getStatus() != 200) {
+	         throw new RuntimeException(
+	               "Failed : HTTP error code : " + response.getStatus());
+	      }
+	      // returns the data from the response
+	      return checkAndRead(response, Competition[].class);
    }
 }

@@ -2,8 +2,7 @@ package com.softwareinventions.cmp.driver;
 
 import org.apache.log4j.Logger;
 
-import com.softwareinventions.cmp.dto.Submit;
-import com.softwareinventions.cmp.dto.Response;
+import com.softwareinventions.cmp.dto.Competition;
 import com.softwareinventions.cmp.dto.ResponseWrapper;
 import com.softwareinventions.cmp.evaluator.LandGrabEvaluator;
 
@@ -15,10 +14,17 @@ public class App {
    
    public static void main(String[] args) {
       try {
-    	 LandGrabEvaluator LandGrabEval = new LandGrabEvaluator();
+    	 
          ClientHandler handler = new ClientHandler(url);
          ResponseWrapper[] evaluations;
-
+         
+         Competition[] cmps = handler.getCmps();
+         
+         for (int i = 0; i < cmps.length; i++)
+        	 System.out.println(cmps[i].title);
+         
+         LandGrabEvaluator LandGrabEval = new LandGrabEvaluator(cmps[0].prms);
+         
          // gets the CompetitionTypes from the server
          evaluations = LandGrabEval.evaluateSubmissions(handler.getWaitingSubmissions(1));
 
