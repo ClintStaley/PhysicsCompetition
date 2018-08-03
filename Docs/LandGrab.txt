@@ -1,0 +1,167 @@
+Specifics for LandGrab Competition:
+
+Parameter Schema
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    
+    "title": "Land Grab",
+    "type": "object", 
+      
+    "properties": {
+       "numCircles": {
+          "title": "Number of circles allowed per team",
+          "type": "integer",
+          "minValue": 1
+       },
+       "goalArea": {
+          "title": "Area of coverage that gets 100%",
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 10000.0
+       }
+       "obstacles": {
+          "title": "Blocked areas in 100x100 square",
+          "type": "array",
+          "items": {
+             "title": "Blocked rectangle",
+             "type": "object",
+             "properties": {
+                "loX": {
+                   "title": "Left edge",
+                   "type": "number",
+                   "minimum": 0.0,
+                   "maximum": 100.0
+                },
+                "hiX": {
+                   "title": "Right edge",
+                   "type": "number",
+                   "minimum": 0.0,
+                   "maximum": 100.0
+                },
+                "loY": {
+                   "title": "Bottom edge",
+                   "type": "number",
+                   "minimum": 0.0,
+                   "maximum": 100.0
+                }, 
+                "hiY": {
+                   "title": "Top edge",
+                   "type": "number",
+                   "minimum": 0.0,
+                   "maximum": 100.0
+                }
+             }     
+          }
+       }
+}
+
+
+Example Parameter
+{
+   numCircles: 3,
+   obstacles: [
+     {
+       loX: 0,
+       hiX: 40.2,
+       loY: 0,
+       hiY: 28.7
+     },
+     {
+       loX: 0,
+       hiX: 50,
+       loY: 85,
+       hiY: 100
+     },
+      {
+       loX: 80,
+       hiX: 100,
+       loY: 0,
+       hiY: 12
+     }
+   ] 
+}
+
+Submission Schema:
+
+
+{
+   "$schema": "http://json-schema.org/draft-07/schema#",
+    
+   "title": "Land Grab Submit",
+   "type": "array",
+   "items": {
+      "title": "Placed Circle",
+      "type": "object",
+      "properties": {
+         "centerX": {
+            "title": "Center X",
+            "type": "number",
+            "minimum": 0.0,
+            "maximum": 100.0
+         },
+         "centerY": {
+            "title": "Center Y",
+            "type": "number",
+            "minimum": 0.0,
+            "maximum": 100.0
+         },
+         "radius": {
+            "title": "Radius",
+            "type": "number",
+            "minimum": 0.0,
+            "maximum": 50.0
+         }
+      }
+   }
+}
+
+Example Submission
+
+[
+  {
+    centerX: 50.0,
+    centerY: 45.2,
+    radius: 15.9
+  },
+  {
+    centerX: 10.3,
+    centerY: 42.0,
+    radius: 11
+  },
+  {
+    centerX: 23,
+    centerY: 89,
+    radius: 40
+  }
+]
+
+Response schema
+
+{
+   "$schema": "http://json-schema.org/draft-07/schema#",
+    
+   "title": "Land Grab Response",
+   "type": "object",
+   "properties": {
+      "circleStatus" : {
+         "title": "Circle Status",
+         "type": "array",
+         "items": {
+           "title": "Circle state",
+           "type": "boolean"
+         }
+      },
+      "areaCovered": {
+         "title": "Area covered by valid circles",
+         "type": "number"
+      }
+   }
+}
+
+Example Response:
+
+{
+   circleStatus: [true, false, true],
+   areaCovered: 4200.2
+}
+
