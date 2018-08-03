@@ -8,8 +8,7 @@ router.baseURL = '/Cmps/:cmpId/Teams/:teamId/Sbms';
 router.get('/', (req, res) => {
    var num = req.query.num;
 
-   req.cnn.chkQry('select id, teamId, content, response, score, sbmTime, ' +
-    'practiceRun from Submit where cmpId = ? && teamId = ?' +
+   req.cnn.chkQry('select * from Submit where cmpId = ? && teamId = ?' +
     ' order by sbmTime DESC',
     [req.params.cmpId, req.params.teamId],
    //function that closes cnn

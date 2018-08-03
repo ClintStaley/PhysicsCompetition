@@ -14,9 +14,9 @@ export default function prs(state = {}, action) {
          var teamId = action.newTeamData.id;;
          var myTeams = state.myTeams;
 
-         var myNewTeams = myTeams.concat([teamId]);
+         var myNewTeams = myTeams.concat([teamId.toString()]);
 
-         return Object.assign({}, state, {myNewTeams});
+         return Object.assign({}, state, {myTeams: myNewTeams});
       case 'GET_TEAM_MMBS':
          if (Object.keys(action.teamData.mmbs).includes(state.id.toString()))
             return Object.assign({}, state, {myTeams:

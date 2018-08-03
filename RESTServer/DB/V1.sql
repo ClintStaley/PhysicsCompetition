@@ -42,7 +42,7 @@ create table Competition (
 
 create table Team (
    id int auto_increment primary key,
-   bestScore int not null default 0,
+   bestScore int not null default -1,
    teamName varchar(80) not null,
    cmpId int not null,
    leaderId int not null,

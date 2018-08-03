@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Register, SignIn, CmpsPage, TeamsPage, CmpPage, ConfDialog }
- from '../concentrator'
+import { Register, SignIn, CmpsPage, TeamsPage, CmpPage, ConfDialog,
+   InstructionsPage } from '../concentrator'
 import { Route, Switch } from 'react-router-dom';
 import { Navbar, Nav, NavItem, ListGroup, ListGroupItem } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
@@ -14,8 +14,8 @@ class Main extends Component {
    }
 
    signOut(event) {
-      console.log(this);
-      this.props.signOut(() => { this.props.history.push("/") });
+      this.props.history.push("/");
+      this.props.signOut();
    }
 
    render() {
@@ -83,20 +83,21 @@ class Main extends Component {
           <Route path='/signin' render = {() => <SignIn {...this.props} />} />
           <Route path='/register' render = {() => <Register {...this.props} />} />
 
-          <Route path='/CmpPage1/:cmpId/'
+          <Route path='/MyCmpPage/:cmpId/'
           render={(props) => {
           return <CmpPage cmpId = {props.match.params.cmpId}
           myCmpLink = {true}
           {...this.props} />}} />
 
-          <Route path='/CmpPage2/:cmpId/'
+          <Route path='/JoinCmpPage/:cmpId/'
           render={(props) => {
           return <CmpPage cmpId = {props.match.params.cmpId}
           myCmpLink = {false}
-          {...this.props} />}} />
+          {...this.props} />}}/>
 
           <Route path='/Instructions/:cmpId' render = {(props) =>
-             <Register cmpId = {props.match.params.cmpId} {...this.props} />} />
+             <InstructionsPage cmpId = {props.match.params.cmpId}
+              {...this.props} />} />
         </Switch>
 
         {/*Error popup dialog*/}

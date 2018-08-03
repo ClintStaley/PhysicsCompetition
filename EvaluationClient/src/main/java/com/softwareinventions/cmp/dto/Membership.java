@@ -1,6 +1,6 @@
 package com.softwareinventions.cmp.dto;
 
-public class Members {
+public class Membership {
    public int personId;
    public int teamId;
 }
