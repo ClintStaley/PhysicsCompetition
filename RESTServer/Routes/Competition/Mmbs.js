@@ -27,13 +27,13 @@ router.post('/', (req, res) => {
       //
       if (vld.hasFields(body, ["prsId"], cb)) {
          body.teamId = req.params.teamId;
-         cnn.chkQry('select ownerId from Team where id = ?', body.teamId, cb);
+         cnn.chkQry('select leaderId from Team where id = ?', body.teamId, cb);
       }
    },
    (result, fields, cb) => {
       //check if post is from admin or team leader
       if (vld.check(ssn && (ssn.isAdmin() ||
-       (result && result.length && ssn.id == result[0].ownerId)
+       (result && result.length && ssn.id == result[0].leaderId)
        || ssn.id == body.prsId), Tags.noPermission, cb))
          cnn.chkQry('select * from Membership where prsId = ? && teamId = ?',
           [body.prsId,body.teamId], cb);
@@ -45,7 +45,8 @@ router.post('/', (req, res) => {
    },
    (result, fields, cb) => {
       // Return location of inserted Member
-      res.location(router.baseURL + '/' + result.insertId).end();
+      res.location(router.baseURL.replace(":cmpId", req.params.cmpId)
+       .replace(":teamId", req.params.teamId) + '/' + result.insertId).end();
       cb();
    }],
    () => {
@@ -60,15 +61,15 @@ router.delete('/:id', (req, res) => {
 
    async.waterfall([
    (cb) => {
-      cnn.chkQry('select ownerId from Team where id = ?',
+      cnn.chkQry('select leaderId from Team where id = ?',
        [req.params.teamId], cb);
    },
    (result, fields, cb) => {
       if (vld.check(result && result.length , Tags.notFound, cb))
          if (vld.chain(ssn && (ssn.isAdmin() ||
-          ssn.id == result[0].ownerId || ssn.id == req.params.id),
+          ssn.id == result[0].leaderId || ssn.id == req.params.id),
           Tags.noPermission,null).
-          check(!(result[0].ownerId == req.params.id),
+          check(!(result[0].leaderId == req.params.id),
           Tags.cantRemoveLeader, cb))
             req.cnn.query('delete from Membership where prsId = ? && teamId = ?'
              , [req.params.id, req.params.teamId], cb);

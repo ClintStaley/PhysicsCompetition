@@ -8,8 +8,9 @@ router.baseURL = '/Cmps/:cmpId/Teams/:teamId/Sbms';
 router.get('/', (req, res) => {
    var num = req.query.num;
 
-   req.cnn.chkQry('select id,teamId,content,response,score,subTime from ' +
-    'Submit where cmpId = ? && teamId = ? order by subTime DESC',
+   req.cnn.chkQry('select id, teamId, content, response, score, subTime, ' +
+    'practiceRun from Submit where cmpId = ? && teamId = ?' +
+    ' order by subTime DESC',
     [req.params.cmpId, req.params.teamId],
    //function that closes cnn
    (err, result) => {
@@ -40,7 +41,8 @@ router.post('/', (req, res) => {
    },
    (result, fields, cb) => {
       // Return location of inserted Submissions
-      res.location(router.baseURL + '/' + result.insertId).end();
+      res.location(router.baseURL.replace(":cmpId", req.params.cmpId)
+      .replace(":teamId", req.params.teamId) + '/' + result.insertId).end();
       cb();
    }],
    () => {
@@ -51,8 +53,8 @@ router.post('/', (req, res) => {
 router.get('/:id', (req, res) => {
    var vld = req.validator;
 
-   req.cnn.query('select id, teamId, content, response, score, subTime from ' +
-    'Submit where id = ? && cmpId = ? && teamId = ?',
+   req.cnn.query('select id, teamId, content, response, score, subTime ,' +
+    'practiceRun  from Submit where id = ? && cmpId = ? && teamId = ?',
     [req.params.id,req.params.cmpId,req.params.teamId],
    (err, teamArr) => {
       if (vld.check(teamArr.length, Tags.notFound)) {
@@ -82,7 +84,7 @@ router.put('/:id', (req, res) => {
    },
    (result, err, cb) => {
       if (vld.check(result && result.length, Tags.notFound, cb))
-         cnn.query("update Submit set ? where id = ?", 
+         cnn.query("update Submit set ? where id = ?",
           [req.body, req.params.id], cb);
    },
    (result, fields, cb) => {

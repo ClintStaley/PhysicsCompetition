@@ -1,82 +1,143 @@
 import * as api from '../api';
-import { history } from '../store';
 
+// Attach standard error handling dispatch "catch" to |promise| and also
+// add a standard "then" handler for |cb|, ultimately returning the final
+// value of the promise.
+function addStdHandlers(dsp, cb, promise) {
+   return promise.catch((errList) => dsp({type: 'SHOW_ERR', details: errList}))
+   .then((val) => {if (cb) cb(); return val;});
+}
 
 export function signIn(credentials, cb) {
    return (dispatch, prevState) => {
-      api.signIn(credentials)
-      .then((userInfo) => dispatch({ user: userInfo, type: "SIGN_IN" }))
-      .then(() => {if (cb) cb()})
-      .catch((error) => dispatch({ type: 'SIGN_IN_FAILED', error }))
+      addStdHandlers(dispatch, cb,
+       api.signIn(credentials)
+      .then((userInfo) => dispatch({ user: userInfo, type: "SIGN_IN" })));
    }
 }
 
-export function updateCmps(id, cb) {
+export function getAllCmps( cb) {
    return (dispatch, prevState) => {
-      api.getCmps(id)
-      .then((cmps) => dispatch({ type: 'UPDATE_CMPS', cmps }))
+      api.getCmps()
+      .then((cmps) => {
+         Object.keys(cmps).forEach((key) => {
+            cmps[key] = Object.assign(cmps[key], {cmpTeams : []});
+         })
+         dispatch({ type: 'GET_CMPS', cmps });
+      })
       .then(() => {if (cb) cb()})
-
    }
 }
 
-export function editTeam(teamId, newTeamData, cb) {
+export function getMyCmps(id, cb) {
+   return ((dispatch, prevState) => {
+      api.getCmpsByPerson(id)
+      .then((cmps) => {
+         Object.keys(cmps).forEach((key) => {
+            cmps[key].cmpTeams = []});
+         dispatch({ type: 'GET_MY_CMPS', cmps });
+      })
+      .then(() => {if (cb) cb()});
+   })
+}
+
+export function putCmp(cmpId, newCmpData, cb) {
    return (dispatch, prevState) => {
-      api.putCmp(teamId, newTeamData)
+      api.putCmp(cmpId, newCmpData)
       .then(() => {
-          var newTeam = {newTeamData : newTeamData, teamId: teamId};
-          dispatch({ type: 'PUT_TEAM', newTeam});
+          var cmpData = {newCmpData : newCmpData, cmpId: cmpId};
+          dispatch({ type: 'PUT_CMP', cmpData});
        })
       .then(() => {if (cb) cb()});
    }
 }
 
-// Get team info, and augment each team description with empty members
-// and closed member-toggle.  Dispatch a team update with the augmented
-// team list.
-export function getTeams(teamId, cb) {
+export function postTeam(cmpId, newTeamData, cb) {
    return (dispatch, prevState) => {
-      api.getTeams(teamId)
+      addStdHandlers(dispatch, cb,
+       api.postTeam(cmpId, newTeamData)
+      .then((newTeamId) => {
+         var teamData = {[newTeamId] : newTeamData};
+         teamData[newTeamId].id = newTeamId;
+         teamData[newTeamId].mmbs = {};
+         teamData[newTeamId].cmpId = cmpId;
+
+         dispatch({ type: 'ADD_TEAM', teamData});
+      })
+      .then(() => {if (cb) cb()}));
+   }
+}
+
+
+export function putTeam(cmpId, teamId, newTeamData, cb) {
+   return (dispatch, prevState) => {
+      api.putTeam(cmpId, teamId, newTeamData)
+      .then(() => {
+          newTeamData.id = teamId;
+          dispatch({ type: 'PUT_TEAM', newTeamData});
+       })
+      .then(() => {if (cb) cb()});
+   }
+}
+
+// Get basic team info for all teams of which the specified prsId is a member.
+// Leave members empty and toggled false.  (Later actions may populate members.)
+// Dispatch an update for the teams property of app state.
+export function getTeamsByPrs(prsId, cb) {
+   return (dispatch, prevState) => {
+      api.getTeamsByPrs(prsId)
       .then((teams) => {
-         Object.keys(teams).map((teamNum) => {
-          teams[teamNum].members = {};
-          teams[teamNum].toggled = false;
-       });
-       return dispatch({ type: 'GET_TEAM', teams});
+         Object.keys(teams).forEach((key) => {
+            teams[key] = Object.assign(teams[key],
+             {mmbs : {}, toggled: false});
+         })
+         dispatch({type: 'GET_PMY_TEAMS', teams})
+
       })
       .then(() => {if (cb) cb()})}
 }
 
-export function deleteTeam(cmpId, teamId, cb) {
+export function getTeamsByCmp(cmpId, cb) {
+   return (dispatch, prevState) => {
+      api.getTeamsByCmp(cmpId)
+      .then((teams) => {
+         Object.keys(teams).forEach((key) => {
+            teams[key] = Object.assign(teams[key],
+             {mmbs : {}, toggled: false});
+         })
+         dispatch({type: 'GET_CMP_TEAMS', teams, cmpId})
+
+      })
+      .then(() => {if (cb) cb()})}
+}
+
+
+export function delTeam(cmpId, teamId, cb) {
    return (dispatch, prevState) => {
       api.delTeam(cmpId , teamId).then(() =>
-          dispatch({ type: 'DELETE_TEAM', teamId}))
-       .then(() => {if (cb) cb()})
+       dispatch({ type: 'DEL_TEAM', teamId}))
+      .then(() => {if (cb) cb()})
    }
 }
 
-
-export function toggleTeam(cmpId, teamId, cb) {
+export function addMmb(mmbEmail, cmpId, teamId, cb) {
    return (dispatch, prevState) => {
-      api.getMembers(cmpId, teamId)
-      .then((members) => {
-         var memberData = {};
-         memberData.members = members;
-         memberData.teamId = teamId;
-         return dispatch({ type: 'TOGGLE_TEAM', memberData });
-      })
-      .then(() => { if (cb) cb() })
+      api.getPrsByEmail(mmbEmail)
+      .then(prs => api.postMmb(prs.id, cmpId, teamId).then(() => prs))
+      .then((prs) => dispatch({type: 'ADD_TEAM_MMB', prs, teamId}))
+      .catch(err => dispatch({type: 'TEAM_ERR', details: err}))
+      .then(() => {if (cb) cb()})
    }
 }
 
-export function updateMembers(cmpId, teamId, cb) {
+export function getMmbs(cmpId, teamId, cb) {
    return (dispatch, prevState) => {
-      api.getMembers(cmpId, teamId)
-      .then((members) => {
-         var memberData = {};
-         memberData.members = members;
-         memberData.teamId = teamId;
-         return dispatch({ type: 'POPULATE_TEAM', memberData });
+      api.getMmbs(cmpId, teamId)
+      .then((mmbs) => {
+         var teamData = {};
+         teamData.mmbs = mmbs;
+         teamData.teamId = teamId;
+         return dispatch({type: 'GET_TEAM_MMBS', teamData});
       })
       .then(() => { if (cb) cb() })
    }
@@ -89,7 +150,15 @@ export function signOut(cb) {
       .then(() => {if (cb) cb()})
       .catch((err) => {
          console.log("Sign out error!");
-         dispatch({type: "ERROR", err});
+         dispatch({type: "ACCOUNT_ERR", err});
       })
    }
+}
+
+export function clearErrors(cb) {
+   return (dispatch, prevState) => {
+      dispatch({type: "CLEAR_ERRS"});
+      if (cb)
+         cb();
+   };
 }

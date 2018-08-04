@@ -74,7 +74,7 @@ router.put('/:id', (req, res) => {
             cnn.chkQry('select * from CompetitionType where title = ?',
              body.title, cb);
          else
-            cb(null,null,cb);
+            cb(null, null, cb);
       }
    },
    (titleRes, fields, cb) => {

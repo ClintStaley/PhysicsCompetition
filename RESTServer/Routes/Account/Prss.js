@@ -129,7 +129,7 @@ router.delete('/:id', (req, res) => {
             res.status(200).end();
          req.cnn.release();
       });
-   else 
+   else
       req.cnn.release();
 });
 
@@ -138,8 +138,8 @@ router.get('/:id/Teams', (req, res) => {
    var teams = [];
 
    if (vld.checkPrsOK(req.params.id))
-      req.cnn.chkQry('select id,bestScore,teamName,cmpId,ownerId,lastSubmit,'
-       + 'canSubmit from Team,Membership where ' +
+      req.cnn.chkQry('select id, bestScore, teamName, cmpId, leaderId, ' +
+       'lastSubmit, canSubmit from Team, Membership where ' +
        'prsId =  ? and teamId = Team.id', [req.params.id],
       (err, memberTeam) => {
          res.json(memberTeam);
@@ -150,17 +150,17 @@ router.get('/:id/Teams', (req, res) => {
       req.cnn.release();
 });
 
-router.get('/:id/Competition', (req, res) => {
+router.get('/:id/Cmps', (req, res) => {
    var vld = req.validator;
    var teams = [];
 
    if (vld.checkPrsOK(req.params.id))
-      req.cnn.chkQry('select distinct Competition.id, Competition.ownerId, ' +
-       'ctpId, title, prms, rules, curTeam from Competition, Team, Membership' +
-       ' where prsId =  ? and teamId = Team.id and cmpId = Competition.id',
+      req.cnn.chkQry('select distinct Competition.id as id, ownerId, ctpId,' +
+       ' title, prms, rules, curTeamId from Competition, Team, Membership' +
+       ' where prsId = ? and teamId = Team.id and cmpId = Competition.id',
        [req.params.id],
-      (err, Cmps) => {
-         res.json(Cmps);
+      (err, cmps) => {
+         res.json(cmps);
          res.status(200);
          req.cnn.release();
       });

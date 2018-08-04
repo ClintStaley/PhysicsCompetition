@@ -9,8 +9,27 @@ const reqConf = {
    credentials: 'include',  // Send cookies
 }
 
-// Heper functions for the comon request types
+// Fetch call that posts a server connect error on general fetch failure.
+function safeFetch(endpoint, body) {
+   return fetch(endpoint, body)
+   .catch(err => Promise.reject(["Server connect error"]))
+   .then(rsp => rsp.ok ? rsp : createErrorPromise(rsp));
+}
 
+// Handle response with non-200 status by returning a Promise that rejects,
+// with reason: array of one or more error strings suitable for display.
+function createErrorPromise(response) {
+   if (response.status === 400)
+      return Promise.resolve(response)
+      .then(response => response.json())
+      .then(errorList => Promise.reject(errorList.map(
+         err => errorTranslate(err.tag))));
+   else
+      return Promise.reject([response.status === 401 ? "Not logged in"
+       : response.status === 403 ? "Not permitted" : "Unknown error"]);
+}
+
+// Helper functions for the comon request types
 /**
  * make a post request
  * @param {string} endpoint
@@ -18,11 +37,11 @@ const reqConf = {
  * @returns {Promise}
  */
 export function post(endpoint, body) {
-   return fetch(baseURL + endpoint, {
-      method: 'POST',
-      body: JSON.stringify(body),
-      ...reqConf
-   })
+    return safeFetch(baseURL + endpoint, {
+        method: 'POST',
+        body: JSON.stringify(body),
+        ...reqConf
+    });
 }
 
 /**
@@ -32,11 +51,11 @@ export function post(endpoint, body) {
  * @returns {Promise}
  */
 export function put(endpoint, body) {
-   return fetch(baseURL + endpoint, {
-      method: 'PUT',
-      body: JSON.stringify(body),
-      ...reqConf
-   })
+    return safeFetch(baseURL + endpoint, {
+        method: 'PUT',
+        body: JSON.stringify(body),
+        ...reqConf
+    })
 }
 
 /**
@@ -45,14 +64,14 @@ export function put(endpoint, body) {
  * @returns {Promise}
  */
 export function get(endpoint) {
-   return fetch(baseURL + endpoint, {
+   return safeFetch(baseURL + endpoint, {
       method: 'GET',
       ...reqConf
-   })
+    })
 }
 
 export function del(endpoint) {
-   return fetch(baseURL + endpoint, {
+   return safeFetch(baseURL + endpoint, {
       method: 'DELETE',
       ...reqConf
    })
@@ -97,14 +116,34 @@ export function registerUser(user) {
    return post("Prss", user)
 }
 
-export function getCmps(prsId) {
-   return get("Prss/" + prsId + "/Competition")
-      .then((teamData) => teamData.json())
+export function getCmps() {
+   return get("Cmps")
+   .then((cmpsData) => cmpsData.json())
+   .then((cmpsData) => {
+      var cmps = {};
+      for (var i = 0; i < cmpsData.length; i++){
+         cmps[cmpsData[i].id] = cmpsData[i];
+      }
+
+      return cmps;
+   });
+}
+
+export function getCmpsByPerson(prsId) {
+   return get("Prss/" + prsId + "/Cmps")
+   .then((CmpData) => CmpData.json())
+   .then((cmpsData) => {
+      var cmps = {};
+      for (var i = 0; i < cmpsData.length; i++){
+         cmps[cmpsData[i].id] = cmpsData[i];
+      }
+      return cmps;
+   });
 }
 
 export function getOneCmps(cmpId) {
    return get("Cmps/" + cmpId)
-      .then((Competitions) => Competitions.json());
+   .then((cmps) => cmps.json());
 }
 
 export function putCmp(id, body) {
@@ -117,19 +156,33 @@ export function delCmp(id) {
 
 export function postCmp(body) {
    return post('Cmps', body)
+   .then(rsp => rsp.headers["Location"])
 }
 
-export function getTeams(prsId) {
-   return get("Prss/" + prsId + "/Teams")
-      .then((teamData) => teamData.json())
-      .then((TeamData) => {
-         var Teams = {};
-         for (var i = 0;i < TeamData.length;i++){
-            Teams[TeamData[i].id] = TeamData[i];
-         }
+export function getTeamsByPrs(prsId) {
+   return get(`Prss/${prsId}/Teams`)
+   .then((teamData) => teamData.json())
+   .then((teamData) => {
+      var teams = {};
+      for (var i = 0; i < teamData.length; i++){
+         teams[teamData[i].id] = teamData[i];
+      }
 
-         return Teams;
-      })
+      return teams;
+   });
+}
+
+export function getTeamsByCmp(cmpId) {
+   return get(`Cmps/${cmpId}/Teams`)
+   .then((teamData) => teamData.json())
+   .then((teamData) => {
+      var teams = {};
+      for (var i = 0; i < teamData.length; i++){
+         teams[teamData[i].id] = teamData[i];
+      }
+
+      return teams;
+   });
 }
 
 export function putTeam(cmpId, teamId, body) {
@@ -142,27 +195,41 @@ export function delTeam(cmpId, teamId) {
 
 export function postTeam(cmpId, body) {
    return post(`Cmps/${cmpId}/Teams`, body)
+   .then(rsp => {
+      return parseInt(rsp.headers.get("Location").split('/').splice(-1)[0], 10);
+   })
 }
 
-/**
-  Return id -> member map rather than simple array of members,
-  which the API outta do, really.
-*/
-export function getMembers(cmpId, TeamId) {
-   return get("Cmps/" + cmpId + "/Teams/" + TeamId + "/mmbs")
-      .then((memberData) => memberData.json())
-      .then((memberData) => {
-         var members = {};
+export function getPrsByEmail(email) {
+   return get(`Prss?email={$email}`)
+   .then(rsp => rsp.json())
+   .then(prss => prss.length > 0 ? prss[0] : Promise.reject("Unknown Email"));
+}
 
-         for (var i = 0; i < memberData.length;i++)
-            members[memberData[i].id] = memberData[i];
+export function postMmb(prsId, cmpId, teamId) {
+   return post(`Cmps/${cmpId}/Teams/${teamId}/Mmbs`, {prsId})
+   .then(rsp => rsp.headers["Location"])
+}
 
-         return members;
-      })
+/** Return id -> member map rather than simple array of members, which the
+API oughta do, really.*/
+
+export function getMmbs(cmpId, teamId) {
+   return get(`Cmps/${cmpId}/Teams/${teamId}/mmbs`)
+   .then((mmbData) => mmbData.json())
+   .then((mmbData) => {
+      var mmbs = {};
+
+      for (var i = 0; i < mmbData.length;i++)
+         mmbs[mmbData[i].id] = mmbData[i];
+
+      return mmbs;
+   })
 }
 
 const errMap = {
    en: {
+      noPermission: 'Login Lacks Permission: ', //403
       missingField: 'Field missing from request: ',
       badValue: 'Field has bad value: ',
       notFound: 'Entity not present in DB',
@@ -172,9 +239,15 @@ const errMap = {
       forbiddenRole: 'Role specified is not permitted.',
       noOldPwd: 'Change of password requires an old password',
       oldPwdMismatch: 'Old password that was provided is incorrect.',
-      dupTitle: 'Conversation title duplicates an existing one',
+      dupTitle: 'title duplicates an existing one',
       dupEnrollment: 'Duplicate enrollment',
       forbiddenField: 'Field in body not allowed.',
+
+      cantRemoveLeader: 'Team leader cannot quit team, either delete team or change team leader: ',
+      noCompType: 'Competition type does not exist: ',
+      invalidPrms: 'Parameters specified do not follow competition type rules: ',
+      badTeamLead: 'Team leader given is not on the team: ',
+
       queryFailed: 'Query failed (server problem).'
    },
    es: {
@@ -187,7 +260,7 @@ const errMap = {
       forbiddenRole: '[ES] Role specified is not permitted.',
       noOldPwd: '[ES] Change of password requires an old password',
       oldPwdMismatch: '[ES] Old password that was provided is incorrect.',
-      dupTitle: '[ES] Conversation title duplicates an existing one',
+      dupTitle: '[ES] title duplicates an existing one',
       dupEnrollment: '[ES] Duplicate enrollment',
       forbiddenField: '[ES] Field in body not allowed.',
       queryFailed: '[ES] Query failed (server problem).'

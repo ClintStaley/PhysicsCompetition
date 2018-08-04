@@ -21,13 +21,10 @@ Validator.Tags = {
    dupEnrollment: "dupEnrollment",  // Duplicate enrollment
    forbiddenField: "forbiddenField",// Field in body not allowed
    badBodyFormat: "badBodyFormat",  // Body didn't parse as JSON
-   cantRemoveLeader: "CannotRemoveLeader",    // Team leader is required
-
-   // CAS FIX: We need absolute naming consistency, including capitalization
-   // rules.  These should be lowercase.  And, notFound would probably cover
-   // the NoCompType anyway.
-   noCompType: "CompetitionTypeDoesNotExist",
-   invalidPrms: "Invalid Parameters"
+   cantRemoveLeader: "cantRemoveLeader",    // Team leader is required
+   noCompType: "noCompType",        //cant fint competition type
+   invalidPrms: "invalidPrms",      //prms in competition doesn't pass prm schema
+   badTeamLead: "badTeamLead"       //user isnt in team
 };
 
 // Check |test|.  If false, add an error with tag and possibly related
@@ -97,7 +94,7 @@ Validator.prototype.hasFields = function (obj, fieldList, cb) {
 
    fieldList.forEach((name) => {
       this.chain(obj.hasOwnProperty(name) && obj[name] !== "" && obj[name]
-       !== null && obj[name] !== undefined, 
+       !== null && obj[name] !== undefined,
        Validator.Tags.missingField, [name]);
    });
 

@@ -6,19 +6,21 @@ import Main from './Main/Main';
 
 function mapStateToProps(state) {
    return {
-      prss: state.prss,
+      prs: state.prs,
       cmps: state.cmps,
-      teams: state.teams
-   };
+      teams: state.teams,
+      updateTimes: state.updateTimes,
+      errs: state.errs
+   }
 }
 
-function mapDispachToProps(dispatch) {
+function mapDispatchToProps(dispatch) {
    return bindActionCreators(actionCreators, dispatch);
 }
 
 const App = withRouter(connect(
    mapStateToProps,
-   mapDispachToProps,
+   mapDispatchToProps,
 )(Main));
 
 export default App;
