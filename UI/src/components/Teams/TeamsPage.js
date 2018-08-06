@@ -3,114 +3,160 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ListGroup, ListGroupItem, Button, Glyphicon, Popover, OverlayTrigger } from 'react-bootstrap';
-import { ConfDialog } from '../concentrator';
+import { ConfDialog, EntryDialog } from '../concentrator';
 import * as actionCreators from '../../actions/actionCreators';
 import TeamModal from './TeamModal'
 
 class TeamsPage extends Component {
    constructor(props) {
       super(props);
-      
+
       this.state = {
-         showConfirmation: null,
-         modalTeamId: null,
-         expanded: {}
+         delConfirmTeamId: null,   // ID of team to confirm for deletion
+         editTeamId: null,         // ID of team to edit
+         addMmbFunc: null,         // Function to add member to team
+         delMmbFunc: null,         // Function to do deletion of member
+         expanded: {}              // expanded state, per teamId
       }
 
+      // CAS FIX: This, and the similar call in CmpsPage, are misplaced in that
+      // they will not complete prior to render.  They need to be in a
+      // prerender action of some sort.
+      //
+      // Also, better design would remove from props all data but prs.id,
+      // teams, and prs.myTeams.
       this.props.getTeamsByPrs(this.props.prs.id);
-      console.log(JSON.stringify(this.props.teams));
    }
 
-   openConfirmation = (teamId) => {
-      this.setState({showConfirmation: teamId})
+   openDelConfirm = (teamId) => {
+      this.setState({delConfirmTeamId: teamId,
+       delConfirmTeamName: this.props.teams[teamId].name});
    }
 
    // Thus far the only confirmation is for a delete.
-   closeConfirmation = (res, teamId) => {
+   closeDelConfirm = (res, teamId) => {
       if (res === 'Yes') {
          this.props.delTeam(this.props.teams[teamId].cmpId, teamId);
       }
-      this.setState({showConfirmation: null})
+      this.setState({delConfirmTeamId: null})
    }
 
-   openConfirmation = (teamId) => {
-      this.setState({showConfirmation: teamId })
-   }
-
-   openModal = (teamId) => {
-      if (this.props.teams[teamId].mmbs ||
-       this.props.teams[teamId].mmbs.length){
+   openEdit = (teamId) => {
+      if (Object.keys(this.props.teams[teamId].mmbs).length === 0) {
          this.props.getMmbs(this.props.teams[teamId].cmpId, teamId,
-          () => this.setState({ modalTeamId: teamId }) );
-       }
+          () => this.setState({editTeamId: teamId}));
+      }
+      else {
+         this.setState({editTeamId: teamId});
+      }
    }
 
-   dismissModal = (teamId, result) => {
+   closeEdit = (teamId, result) => {
       if (result.status === "OK") {
          this.props.putTeam(this.props.teams[teamId].cmpId, teamId,
           result.updatedTeam);
       }
-      this.setState({modalTeamId: null});
+      this.setState({editTeamId: null});
    }
 
    toggleView = (teamId) => {
+      var expanded = this.state.expanded;
+      expanded[teamId] = !expanded[teamId];
+
       //check for membership data, only update when no membership data is available
       console.log("Toggling " + JSON.stringify(this.props.teams[teamId]));
       if (Object.keys(this.props.teams[teamId].mmbs).length === 0) {
-         this.props.getMmbs(this.props.teams[teamId].cmpId, teamId);
+         this.props.getMmbs(this.props.teams[teamId].cmpId, teamId,
+          () => this.setState(expanded));
       }
-
-      var expanded = this.state.expanded;
-      expanded[teamId] = !expanded[teamId];
-      this.setState({expanded});
+      else
+         this.setState({expanded});
    }
 
-   delTeam = (teamId) => {
-      this.props.delTeam(this.props.teams[teamId].cmpId, teamId);
+   openAddMmb = (teamId) => {
+      var props = this.props;
+
+      this.setState({addMmbFunc: (mmbEmail) => props.addMmb(mmbEmail,
+       props.teams[teamId].cmpId, teamId)});
    }
 
-   delMmb = (mmbId, teamId) => {
-      //add del member
-      this.props.delTeam(this.props.teams[teamId].cmpId, teamId);
+   closeAddMmb = (result) => {
+      if (result.status === "OK")
+         this.state.addMmbFunc(result.entry)
+      this.setState({addMmbFunc: null});
    }
 
-   addMmb = (mmbEmail, teamId) => {
-      this.props.addMmb(mmbEmail, this.props.teams[teamId].cmpId, teamId);
+   openDelMmbConfirm = (teamId, prsId) => {
+      var team = this.props.teams[teamId];
+
+      this.setState({
+         delMmbName: team.mmbs[prsId].firstName,
+         delMmbFunc: () => this.props.delMmb(team.cmpId, teamId, prsId)
+      });
+   }
+
+   closeDelMmbConfirm = (res) => {
+      if (res === 'Yes')
+         this.state.delMmbFunc();
+      this.setState({delMmbFunc: null});
    }
 
    render() {
+      var props = this.props;
+
+      console.log("Team Render");
       return (
       <section className="container">
-        {console.log("Team Render")}
-        {this.state.modalTeamId ?
+
+        {this.state.editTeamId ?
         <TeamModal
-            showModal={ this.state.modalTeamId }
-            title={"Edit Team"}
-            team = {this.props.teams[this.state.modalTeamId]}
-            onDismiss={(teamData) => this.dismissModal(this.state.modalTeamId, teamData)} />
+          showModal={this.state.editTeamId}
+          title={"Edit Team"}
+          team = {props.teams[this.state.editTeamId]}
+          onDismiss={(teamData) => this.closeEdit(this.state.editTeamId, teamData)} />
         : ''}
+
         <ConfDialog
-          show={this.state.showConfirmation  != null }
+          show={this.state.delConfirmTeamId !== null }
           title="Delete Team"
-          body={`Are you sure you want to delete the Team '${this.state.showConfirmation}'`}
-          buttons={['Yes', 'Abort']}
-          onClose={(res) => this.closeConfirmation(res, this.state.showConfirmation)} />
+          body={this.state.delConfirmTeamId ?
+           `Delete ${props.teams[this.state.delConfirmTeamId].teamName}` : ''}
+          buttons={['Yes', 'No']}
+          onClose={(res) => this.closeDelConfirm(res,
+           this.state.delConfirmTeamId)} />
+
+        <ConfDialog
+          show={this.state.delMmbFunc !== null }
+          title="Delete Member"
+          body={this.state.delMmbFunc ?
+           `Delete ${this.state.delMmbName}?` : ''}
+          buttons={['Yes', 'No']}
+          onClose={(res) => this.closeDelMmbConfirm(res)} />
+
+         <EntryDialog
+            show={this.state.addMmbFunc !== null }
+            title="Add Team Member"
+            label="New member's Email:"
+            onClose={(res) => this.closeAddMmb(res)} />
 
         <h1>Team Overview</h1>
         <ListGroup>
-          {Object.keys(this.props.teams).map((teamId, i) => {
-            var team = this.props.teams[teamId];
+          {props.prs.myTeams && props.prs.myTeams.map((teamId, i) => {
+            var team = props.teams[teamId];
 
             return <TeamLine
               key={i}
-              prs = {this.props.prs.id}
+              prsId = {props.prs.id}
               mmbs = {team.mmbs}
+              teamId = {team.id}
               leaderId = {team.leaderId}
-              name = {team.teamName}
+              teamName = {team.teamName}
               expanded = {this.state.expanded[teamId]}
               toggle = {() => this.toggleView(teamId)}
-              edit = {() => this.openModal(teamId)}
-              del = {() => this.openConfirmation(teamId)}/>
+              addMmb = {() => this.openAddMmb(teamId)}
+              edit = {() => this.openEdit(teamId)}
+              del = {() => this.openDelConfirm(teamId)}
+              delMmb = {(prsId) => this.openDelMmbConfirm(teamId, prsId)}/>
           })}
         </ListGroup>
       </section>
@@ -118,52 +164,61 @@ class TeamsPage extends Component {
    }
 }
 
-const TeamLine = function (props) {
+const TeamLine = function(props) {
    const addTip = (
       <Popover id="TeamsPage-addTip">Add a new team member</Popover>
    )
    const delTip = (
       <Popover id="TeamsPage-delTip">Remove this team</Popover>
    )
-   var isLeader = props.leaderId === props.prs.id;
-
+   var isLeader = props.leaderId === props.prsId;
    return (
+
    <ListGroupItem className="clearfix">
      {isLeader ?
-       <Button onClick={props.toggle}><mark>{props.name}</mark></Button>
+       <Button onClick={props.toggle}><mark>{props.teamName}</mark></Button>
        :
-       <Button onClick={props.toggle}>{props.name}</Button>
+       <Button onClick={props.toggle}>{props.teamName}</Button>
      }
      {isLeader ?
        <div className="pull-right">
-         <Button bsSize="small" onClick={props.addMmb}>
-           <Glyphicon glyph="plus" />
-         </Button>
+         <OverlayTrigger trigger={["focus", "hover"]}
+         placement="bottom" overlay={addTip}>
+           <Button bsSize="small" onClick={props.addMmb}>
+             <Glyphicon glyph="plus" />
+           </Button>
+         </OverlayTrigger>
 
          <Button bsSize="small" onClick={props.edit}>
            <Glyphicon glyph="edit" />
          </Button>
 
-         <Button bsSize="small" onClick={props.del}>
-           <Glyphicon glyph="trash" />
-         </Button>
+         <OverlayTrigger trigger={["focus", "hover"]}
+         placement="bottom" overlay={delTip}>
+           <Button bsSize="small" onClick={props.del}>
+             <Glyphicon glyph="trash" />
+           </Button>
+         </OverlayTrigger>
        </div>
        : ''
     }
     {props.expanded ?
     <ListGroup>
-      {Object.keys(props.mmbs).map((memNum, i) => {
-         var mmb = props.mmbs[memNum];
+      {Object.keys(props.mmbs).map((mmbId, i) => {
+         var mmb = props.mmbs[mmbId];
+         var weAreLeader = props.prsId === props.leaderId;
+
          return <MmbItem
-           key={i} {...mmb}
+           key={i}
+           name={mmb.firstName}
+           contact={mmb.email}
            isLeader = {mmb.id === props.leaderId}
-           canDrop = {
-             // Drop anyone but you if you're leader, otherwise only yourself
-             props.leader && mmb.id !== props.prs
-             || mmb.id === props.prs}
-            />
-         })
-       }
+           del = {
+             // If it's us, or we are leader, and if we're not dropping leader..
+             (weAreLeader || mmb.id === props.prsId) && mmb.id !== props.leaderId ? () => props.delMmb(mmbId) : null
+           }
+         />
+       })}
      </ListGroup>
      : ''}
    </ListGroupItem>
@@ -178,13 +233,13 @@ const MmbItem = function (props) {
 
    return (
    <ListGroupItem className="clearfix">
-     <Link to="#">{props.firstName}</Link>
-     {props.isLeader ? ' (lead)' : ''}
-     {props.canDrop ?
+     <Link to="#">{props.name}</Link>
+     {props.isLeader ? ` -- lead (${props.contact})` : ''}
+     {props.del ?
         <div className="pull-right">
           <OverlayTrigger trigger={["focus", "hover"]}
           placement="bottom" overlay={delTip}>
-            <Button bsSize="small" onClick={props.delMmb}>
+            <Button bsSize="small" onClick={props.del}>
               <Glyphicon glyph="trash" />
             </Button>
           </OverlayTrigger>
@@ -202,10 +257,10 @@ function mapStateToProps(state) {
    }
 }
 
-function mapDispachToProps(dispatch) {
+function mapDispatchToProps(dispatch) {
    return bindActionCreators(actionCreators, dispatch);
 }
 
 //connects TeamsPage to the store
-TeamsPage = connect(mapStateToProps, mapDispachToProps)(TeamsPage)
+TeamsPage = connect(mapStateToProps, mapDispatchToProps)(TeamsPage)
 export default TeamsPage

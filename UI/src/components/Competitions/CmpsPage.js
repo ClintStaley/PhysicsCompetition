@@ -11,96 +11,130 @@ class CmpsPage extends Component {
    constructor(props) {
       super(props);
 
-      //get all cmps from database
-      //as of now will reget all cmps from database every time page is loaded
-      if (!this.props.updateTimes.cmps)
-         this.props.getAllCmps();
-
-      this.props.getMyCmps(this.props.prs.id);
-
       this.state = {
-         showConfirmation: null
+         showDeleteConfirmation: null
       }
    }
 
-   componentWillUnmount
+   componentDidMount = () => {
+      var props = this.props;
+
+      if (props.showAll) {
+         if (!props.updateTimes.cmps)
+            this.props.getAllCmps();
+      }
+      else
+         if (!props.updateTimes.myCmps)
+            this.props.getMyCmps(this.props.prs.id);
+   }
+
+   componentDidUpdate = () => {
+      var props = this.props;
+
+      if (props.showAll) {
+         if (!props.updateTimes.cmps)
+            this.props.getAllCmps();
+      }
+      else
+         if (!props.updateTimes.myCmps)
+            this.props.getMyCmps(this.props.prs.id);
+
+   }
 
    // Thus far the only confirmation is for a delete.
    closeConfirmation = (res, cmpId) => {
       if (res === 'Yes') {
          this.props.deleteCmp(this.props.cmps[cmpId].cmpId, cmpId);
       }
-      this.setState({showConfirmation: null})
+      this.setState({showDeleteConfirmation: null})
    }
 
    openConfirmation = (cmpId) => {
-      this.setState({showConfirmation: cmpId })
+      this.setState({showDeleteConfirmation: cmpId })
    }
 
    render() {
+      var props = this.props;
+      var cmps = props.showAll ? Object.keys(props.cmps) : props.prs.myCmps;
+
       return (
       <section className="container">
-      {console.log(this.props)}
+      {console.log(props)}
       <ConfDialog
-        show={this.state.showConfirmation  != null }
+        show={this.state.showDeleteConfirmation  != null }bit
         title="Delete Competition"
-        body={`Are you sure you want to delete the Competition '${this.state.showConfirmation}'`}
+        body={`Are you sure you want to delete the Competition
+         '${this.state.showDeleteConfirmation}'`}
         buttons={['Yes', 'Abort']}
-        onClose={(res) => this.closeConfirmation(res, this.state.showConfirmation)} />
-        <h1>Competition Overview</h1>
-        {/*List all of the cmps by name for now*/}
-        {/*for now just spits out two lists with, clean up UI later*/}
+        onClose={(res) =>
+        this.closeConfirmation(res, this.state.showDeleteConfirmation)} />
+        <h1>{props.showAll ? 'Join Competition' :  'My Competitions' }</h1>
 
-        <Tabs>
-          <Tab eventKey={1} title="My Competitions">
-          <ListGroup>
-            {this.props.prs.myCmps && this.props.prs.myCmps.map((cmpId, i) => {
-             var cmp = this.props.cmps[cmpId];
+        {props.showAll ?
+           <ListGroup>
+              {cmps.map((cmpId, i) => {
+                var cmp = props.cmps[cmpId];
 
-             return <CompetitionItem
-                key={i} {...cmp}/>
-            })}
-          </ListGroup>
-          </Tab>
-          <Tab eventKey={2} title="All Competitions">
-          <ListGroup>
-              {Object.keys(this.props.cmps).map((cmpId, i) => {
-                var cmp = this.props.cmps[cmpId];
+                cmp.link = '/JoinCmpPage/' + cmp.id;
+                cmp.joiningCmp = props.showAll;
+                cmp.joined = props.prs.myCmps.includes(cmpId);
 
                 return <CompetitionItem
                   key={i} {...cmp}/>
               })}
+           </ListGroup>
+          :
+          cmps.length ?
+          <ListGroup>
+           {cmps.map((cmpId, i) => {
+             var cmp = props.cmps[cmpId];
 
-          </ListGroup>
-          </Tab>
-        </Tabs>
+             cmp.link = '/MyCmpPage/' + cmp.id;
+             cmp.joiningCmp = props.showAll;
+             cmp.joined = false;
+
+             return <CompetitionItem key={i} {...cmp}/>
+           })}
+           </ListGroup>
+           :
+           <h4>You are not in any competitions</h4>
+
+       }
       </section>
       )
   }
 }
 
-// A conversation list item
 const CompetitionItem = function (props) {
    return (
       <ListGroupItem className="clearfix">
-         <Link to = {'/CmpPage/' + props.id} >{props.title}</Link>
+         <Link to = {props.link} >{props.title}</Link>
+          {props.joined ? '(already joined)' : ''}
 
-         {/*ShowControlls is not used now will be used later*/}
-         {props.showControlls ?
-            <div className="pull-right">
-               <Button bsSize="small" onClick={props.onDelete}><Glyphicon glyph="trash" /></Button>
-               <Button bsSize="small" onClick={props.onEdit}><Glyphicon glyph="edit" /></Button>
-            </div>
+          {props.joiningCmp ?
+          <div className="pull-right">
+            <Link to = {props.link} >See Teams</Link>
+          </div>
+          : ''}
+
+          {props.joiningCmp ?
+          <div>
+           <div>{props.description}</div>
+         </div>
          : ''}
       </ListGroupItem>
    )
 }
 
 //makes CmpsPage a container componet, rather than a presentational componet
+// CAS FIX: I am impressed at your effort to reduce what we might call
+// "props footprint", but let's take it to the full level.  For instance,
+// do changes to teams or ctps necessitate a rerender of this componeent?
+// And, do changes to all updateTimes require it, or just updateTimes.cmps
+// and updateTimes.mycmps?
 function mapStateToProps(state) {
    return {
       prs: state.prs,
-      teams: state.teams,
       cmps: state.cmps,
       updateTimes: state.updateTimes
    }

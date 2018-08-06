@@ -116,6 +116,11 @@ export function registerUser(user) {
    return post("Prss", user)
 }
 
+export function getCtpById(ctpId){
+   return get(`Ctps/${ctpId}`)
+   .then((ctpData) => ctpData.json())
+}
+
 export function getCmps() {
    return get("Cmps")
    .then((cmpsData) => cmpsData.json())
@@ -130,7 +135,7 @@ export function getCmps() {
 }
 
 export function getCmpsByPerson(prsId) {
-   return get("Prss/" + prsId + "/Cmps")
+   return get(`Prss/${prsId}/Cmps`)
    .then((CmpData) => CmpData.json())
    .then((cmpsData) => {
       var cmps = {};
@@ -141,8 +146,8 @@ export function getCmpsByPerson(prsId) {
    });
 }
 
-export function getOneCmps(cmpId) {
-   return get("Cmps/" + cmpId)
+export function getCmpsById(cmpId) {
+   return get(`Cmps/${cmpId}`)
    .then((cmps) => cmps.json());
 }
 
@@ -200,10 +205,14 @@ export function postTeam(cmpId, body) {
    })
 }
 
-export function getPrsByEmail(email) {
-   return get(`Prss?email={$email}`)
+export function getPrs(prsId) {
+   return get(`Prss/${prsId}`).then(res => res.json());
+}
+
+export function getPrssByEmail(email) {
+   return get(`Prss?email=${email}`)
    .then(rsp => rsp.json())
-   .then(prss => prss.length > 0 ? prss[0] : Promise.reject("Unknown Email"));
+   .then(prss => prss.length > 0 ? prss : Promise.reject("Unknown Email"));
 }
 
 export function postMmb(prsId, cmpId, teamId) {
@@ -225,6 +234,15 @@ export function getMmbs(cmpId, teamId) {
 
       return mmbs;
    })
+}
+
+export function delMmb(cmpId, teamId, prsId) {
+   return del(`Cmps/${cmpId}/Teams/${teamId}/Mmbs/${prsId}`);
+}
+
+export function getSbms(cmpId, teamId, numSbms) {
+   return get(`Cmps/${cmpId}/Teams/${teamId}/Sbms?num=${numSbms}`)
+   .then(rsp => rsp.json());
 }
 
 const errMap = {

@@ -10,13 +10,13 @@ router.get('/', (req, res) => {
    var email = req.query.email;
    var ctpId = req.query.CompetitionType;
    var cnn = req.cnn;
-   var query = 'select Competition.id, ownerId, ctpId, title, prms, rules' +
-    ' from Competition';
+   var query = 'select Competition.id, ownerId, ctpId, title, prms, rules,' +
+    ' description from Competition';
    var fillers = [];
 
    if (email) {
-      query = 'select Competition.id, ownerId, ctpId, title, prms, rules ' +
-       'from Competition,Person where email = ? && ' +
+      query = 'select Competition.id, ownerId, ctpId, title, prms, rules, ' +
+       'description from Competition,Person where email = ? && ' +
        'Competition.ownerId = Person.id';
       fillers.push(email);
       if (ctpId) {
@@ -33,8 +33,8 @@ router.get('/', (req, res) => {
    (cb) => {
       cnn.chkQry(query, fillers, cb);
    },
-   (result, fields, cb) => {
-      res.json(result);
+   (cmps, fields, cb) => {
+      res.json(cmps);
       res.status(200);
       cb();
    }
@@ -54,16 +54,17 @@ router.post('/', (req, res) => {
       async.waterfall([
       (cb) => {
          //Get dupTitles if they exist
-         if (vld.hasOnlyFields(body, ["title", "ctpId", "prms", "rules"], cb)) {
+         if (vld.hasOnlyFields(body, ["title", "ctpId", "prms", "rules",
+          "description"], cb)) {
             body.ownerId = ssn.id;
             cnn.chkQry(
              'select * from Competition where title = ? and ownerId = ?',
              [body.title, body.ownerId], cb);
          }
       },
-      (existingCmp, fields, cb) => {
+      (cmp, fields, cb) => {
          //check dupTitle
-         if (vld.check(!existingCmp.length, Tags.dupTitle, cb)) {
+         if (vld.check(!cmp.length, Tags.dupTitle, cb)) {
             // get the prmSchema from Ctp
             cnn.chkQry('select * from CompetitionType where id = ?',
              body.ctpId, cb);
@@ -98,11 +99,11 @@ router.post('/', (req, res) => {
 router.get('/:id', (req, res) => {
    var vld = req.validator;
 
-   req.cnn.query('select Competition.id,ownerId,ctpId,title,prms,rules from ' +
-    'Competition where id = ?', [req.params.id],
-   (err, cmpArr) => {
-      if (vld.check(cmpArr.length, Tags.notFound)) {
-         res.json(cmpArr[0]);
+   req.cnn.query('select id, ownerId, ctpId, title, prms, rules, ' +
+    'description from Competition where id = ?', [req.params.id],
+   (err, cmp) => {
+      if (vld.check(cmp.length, Tags.notFound)) {
+         res.json(cmp[0]);
       }
       req.cnn.release();
    });
@@ -117,14 +118,15 @@ router.put('/:id', (req, res) => {
 
    async.waterfall([
    (cb) => {
-      if (vld.hasOnlyFields(body, ["title", "ctpId", "prms", "rules"]))
+      if (vld.hasOnlyFields(body, ["title", "ctpId", "prms", "rules",
+       "description"]))
          cnn.query("select * from Competition where id = ?",
           [req.params.id], cb);
    },
-   (qRes, fields, cb) => {
-      if (vld.check(qRes && qRes.length, Tags.notFound, cb) &&
-         vld.checkPrsOK(qRes[0].ownerId, cb)) {
-         cmpTp = qRes[0].ctpId;
+   (cmp, fields, cb) => {
+      if (vld.check(cmp && cmp.length, Tags.notFound, cb) &&
+         vld.checkPrsOK(cmp[0].ownerId, cb)) {
+         cmpTp = cmp[0].ctpId;
          if (body.title)
             cnn.chkQry(
              "select * from Competition where title = ? and ownerId = ?",
@@ -133,8 +135,8 @@ router.put('/:id', (req, res) => {
             cb(null, null, cb);
       }
    },
-   (titleRes, fields, cb) => {
-      if (!body.title || vld.check(!titleRes.length, Tags.dupTitle, cb))
+   (cmpTitle, fields, cb) => {
+      if (!body.title || vld.check(!cmpTitle.length, Tags.dupTitle, cb))
          if (body.prms)
             async.waterfall([
             (cb) => {
@@ -158,7 +160,7 @@ router.put('/:id', (req, res) => {
             cnn.chkQry("update Competition set ? where id = ?",
              [req.body, req.params.id], cb);
    },
-   (updRes, fields, cb) => {
+   (result, fields, cb) => {
       res.status(200).end();
       cb();
    }],
@@ -189,8 +191,8 @@ router.get('/:id/WaitingSbms', (req, res) => {
    var num = req.query.num;
 
    if (vld.checkAdmin()) {
-      cnn.query('select id, teamId, content, response, score, subTime from' +
-      ' Submit where cmpId = ? and response is null order by subTime DESC',
+      cnn.query('select * from Submit where cmpId = ? and response is null' +
+       ' order by sbmTime DESC',
        [req.params.id],
       (err, result) => {
          if (result.length)

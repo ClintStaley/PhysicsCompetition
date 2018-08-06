@@ -1,6 +1,6 @@
 export default function cmps(state = {}, action) {
    switch (action.type) {
-      case 'GET_MY_CMPS':
+      case 'GET_PRS_CMPS':
       case 'GET_CMPS': // Replace previous cmps
          return Object.assign({}, state, action.cmps);
       case 'ADD_CMPS': // add cmps to the master cmps object
@@ -13,18 +13,20 @@ export default function cmps(state = {}, action) {
           Object.assign({}, state[cmpId], cmpData)});
       case 'GET_CMP_TEAMS':
          var cmpId = action.cmpId;
-         var cmpArrId = Object.keys(action.teams);   //need to flush out action creator design first
+         var cmpArrId = Object.keys(action.teams);
 
          return Object.assign({}, state, {[cmpId]:
           Object.assign({}, state[cmpId], {cmpTeams: cmpArrId})});
       case 'ADD_TEAM':
-         var teamId = Object.keys(action.teamData)[0];
-         var cmpId = action.teamData[teamId].cmpId
+         var teamId = action.newTeamData.id;
+         var cmpId = action.newTeamData.cmpId
          var cmpArrId = state[cmpId].cmpTeams;
-         cmpArrId.push(teamId);
+         var newTeamArr = cmpArrId.concat(teamId.toString());
 
          return Object.assign({}, state, {[cmpId]:
-          Object.assign({}, state[cmpId], {cmpTeams: cmpArrId})});
+          Object.assign({}, state[cmpId], {cmpTeams: newTeamArr})});
+       case 'SIGN_OUT':
+          return {} // Clear user state
       default:
          return state;
    }

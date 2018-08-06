@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Register, SignIn, CmpsPage, TeamsPage, CmpPage, ConfDialog }
- from '../concentrator'
+import { Register, SignIn, CmpsPage, TeamsPage, CmpPage, ConfDialog,
+   InstructionsPage } from '../concentrator'
 import { Route, Switch } from 'react-router-dom';
 import { Navbar, Nav, NavItem, ListGroup, ListGroupItem } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
@@ -14,8 +14,8 @@ class Main extends Component {
    }
 
    signOut(event) {
-      console.log(this);
-      this.props.signOut(() => { this.props.history.push("/") });
+      this.props.history.push("/");
+      this.props.signOut();
    }
 
    render() {
@@ -35,12 +35,17 @@ class Main extends Component {
                 {this.signedIn() ?
                   // User is signed in
                   [
-                    <LinkContainer key={0} to="/CmpsPage">
+                    <LinkContainer key={0} to="/MyCmpsPage">
                       <NavItem>
-                        Competitions
+                        My Competitions
                       </NavItem>
                     </LinkContainer>,
-                    <LinkContainer key={1} to="/TeamsPage">
+                    <LinkContainer key={1} to="/AllCmpsPage">
+                      <NavItem>
+                        Join Competitions
+                      </NavItem>
+                    </LinkContainer>,
+                    <LinkContainer key={2} to="/TeamsPage">
                       <NavItem>Teams</NavItem>
                     </LinkContainer>,
                   ]
@@ -70,14 +75,29 @@ class Main extends Component {
         </div>
         <Switch>
           <Route exact path='/' children={Home} />
-          <Route path='/CmpsPage' component={CmpsPage} />} />
-          <Route path='/TeamsPage' render={() => <TeamsPage {...this.props}/>}/>
-          <Route path='/signin' render={() => <SignIn {...this.props} />} />
-          <Route path='/register' render={() => <Register {...this.props} />} />
-          <Route path='/CmpPage/:cmpId'
-           render={(props) => {
-             return <CmpPage cmpId = {props.match.params.cmpId}
-              {...this.props} />}} />
+          <Route path='/MyCmpsPage'
+           render={() => <CmpsPage {...this.props} showAll = {false}/>} />} />
+           <Route path='/AllCmpsPage'
+           render={() => <CmpsPage {...this.props} showAll = {true}/>} />} />
+          <Route path='/TeamsPage' component = {TeamsPage}/>
+          <Route path='/signin' render = {() => <SignIn {...this.props} />} />
+          <Route path='/register' render = {() => <Register {...this.props} />} />
+
+          <Route path='/MyCmpPage/:cmpId/'
+          render={(props) => {
+          return <CmpPage cmpId = {props.match.params.cmpId}
+          myCmpLink = {true}
+          {...this.props} />}} />
+
+          <Route path='/JoinCmpPage/:cmpId/'
+          render={(props) => {
+          return <CmpPage cmpId = {props.match.params.cmpId}
+          myCmpLink = {false}
+          {...this.props} />}}/>
+
+          <Route path='/Instructions/:cmpId' render = {(props) =>
+             <InstructionsPage cmpId = {props.match.params.cmpId}
+              {...this.props} />} />
         </Switch>
 
         {/*Error popup dialog*/}

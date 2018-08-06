@@ -16,6 +16,17 @@ export function signIn(credentials, cb) {
    }
 }
 
+export function getCtp(ctpId, cb){
+   return ((dispatch, prevState) => {
+      addStdHandlers(dispatch, cb,
+      api.getCtpById(ctpId)
+      .then((ctp) => {
+         dispatch({ type: 'GET_CTP', ctp });
+      })
+      .then(() => {if (cb) cb()})
+   )})
+}
+
 export function getAllCmps( cb) {
    return (dispatch, prevState) => {
       api.getCmps()
@@ -35,7 +46,7 @@ export function getMyCmps(id, cb) {
       .then((cmps) => {
          Object.keys(cmps).forEach((key) => {
             cmps[key].cmpTeams = []});
-         dispatch({ type: 'GET_MY_CMPS', cmps });
+         dispatch({ type: 'GET_PRS_CMPS', cmps });
       })
       .then(() => {if (cb) cb()});
    })
@@ -57,12 +68,13 @@ export function postTeam(cmpId, newTeamData, cb) {
       addStdHandlers(dispatch, cb,
        api.postTeam(cmpId, newTeamData)
       .then((newTeamId) => {
-         var teamData = {[newTeamId] : newTeamData};
-         teamData[newTeamId].id = newTeamId;
-         teamData[newTeamId].mmbs = {};
-         teamData[newTeamId].cmpId = cmpId;
+         var prs = prevState().prs;
+         newTeamData.id = newTeamId;
+         newTeamData.mmbs = {[prs.id]: {email: prs.email, isLeader: true,
+          firstName: prs.firstName, lastName: prs.lastName, id: prs.id}};
+         newTeamData.cmpId = cmpId;
 
-         dispatch({ type: 'ADD_TEAM', teamData});
+         dispatch({ type: 'ADD_TEAM', newTeamData});
       })
       .then(() => {if (cb) cb()}));
    }
@@ -91,7 +103,7 @@ export function getTeamsByPrs(prsId, cb) {
             teams[key] = Object.assign(teams[key],
              {mmbs : {}, toggled: false});
          })
-         dispatch({type: 'GET_PMY_TEAMS', teams})
+         dispatch({type: 'GET_PRS_TEAMS', teams})
 
       })
       .then(() => {if (cb) cb()})}
@@ -115,18 +127,29 @@ export function getTeamsByCmp(cmpId, cb) {
 export function delTeam(cmpId, teamId, cb) {
    return (dispatch, prevState) => {
       api.delTeam(cmpId , teamId).then(() =>
-       dispatch({ type: 'DEL_TEAM', teamId}))
+       dispatch({type: 'DEL_TEAM', teamId}))
       .then(() => {if (cb) cb()})
    }
 }
 
 export function addMmb(mmbEmail, cmpId, teamId, cb) {
    return (dispatch, prevState) => {
-      api.getPrsByEmail(mmbEmail)
+      api.getPrssByEmail(mmbEmail)
+      .then(prss => api.getPrs(prss[0].id))
       .then(prs => api.postMmb(prs.id, cmpId, teamId).then(() => prs))
-      .then((prs) => dispatch({type: 'ADD_TEAM_MMB', prs, teamId}))
-      .catch(err => dispatch({type: 'TEAM_ERR', details: err}))
+      .then(prs => dispatch({type: 'ADD_MMB', teamId, prs}))
+      .catch(err => dispatch({type: 'SHOW_ERR',
+        details: `Can't add member: ${err}`}))
       .then(() => {if (cb) cb()})
+   }
+}
+
+export function delMmb(cmpId, teamId, prsId, cb) {
+   console.log(`Deleting ${cmpId}/${teamId}/${prsId}`);
+
+   return (dispatch, prevState) => {
+      addStdHandlers(dispatch, cb, api.delMmb(cmpId, teamId, prsId)
+      .then(()=>dispatch({type: 'DEL_MMB', teamId, prsId})));
    }
 }
 
@@ -134,10 +157,7 @@ export function getMmbs(cmpId, teamId, cb) {
    return (dispatch, prevState) => {
       api.getMmbs(cmpId, teamId)
       .then((mmbs) => {
-         var teamData = {};
-         teamData.mmbs = mmbs;
-         teamData.teamId = teamId;
-         return dispatch({type: 'GET_TEAM_MMBS', teamData});
+         return dispatch({type: 'GET_TEAM_MMBS', teamData: {teamId, mmbs}});
       })
       .then(() => { if (cb) cb() })
    }

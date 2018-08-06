@@ -34,9 +34,9 @@ router.post('/', (req, res) => {
           [body.teamName, body.cmpId ], cb);
       }
    },
-   (existingTm, fields, cb) => {
+   (existingTeams, fields, cb) => {
       // If no duplicates, check the cmp rules
-      if (vld.check(!existingTm.length, Tags.dupTitle, cb)) {
+      if (vld.check(!existingTeams.length, Tags.dupTitle, cb)) {
          cnn.chkQry('select * from Competition where id = ?', body.cmpId, cb);
       }
    },
@@ -108,9 +108,9 @@ router.get('/:id', (req, res) => {
    req.cnn.query('select id, teamName, leaderId, bestScore, lastSubmit,'
     + ' canSubmit, cmpId, nextTeam from Team where id = ? && cmpId = ?',
     [req.params.id,req.params.cmpId],
-   (err, teamArr) => {
-      if (vld.check(teamArr.length, Tags.notFound)) {
-         res.json(teamArr[0]);
+   (err, teams) => {
+      if (vld.check(teams.length, Tags.notFound)) {
+         res.json(teams[0]);
       }
       req.cnn.release();
    });
@@ -127,9 +127,9 @@ router.put('/:id', (req, res) => {
          cnn.chkQry("select * from Team where id = ? && cmpId = ?",
           [req.params.id, req.params.cmpId], cb);
    },
-   (qRes, fields, cb) => {
-      if (vld.check(qRes.length, Tags.notFound, cb)) {
-         if (body.teamName && vld.checkPrsOK(qRes[0].leaderId,cb))
+   (team, fields, cb) => {
+      if (vld.check(team.length, Tags.notFound, cb)) {
+         if (body.teamName && vld.checkPrsOK(team[0].leaderId,cb))
             cnn.chkQry("select * from Team where" +
              " teamName = ? && cmpId = ? && id != ?",
              [body.teamName, req.params.cmpId, req.params.id], cb);
@@ -138,9 +138,9 @@ router.put('/:id', (req, res) => {
          }
       }
    },
-   (nameRes, fields, cb) => {
+   (teamDupName, fields, cb) => {
       if (!body.teamName ||
-       vld.check(nameRes  && !nameRes.length, Tags.dupTitle))
+       vld.check(teamDupName  && !teamDupName.length, Tags.dupTitle))
          ;
 
       if (body.leaderId)
@@ -150,15 +150,15 @@ router.put('/:id', (req, res) => {
          cb(null, null, cb);
       }
    },
-   (leaderRes, fields, cb) => {
+   (member, fields, cb) => {
       if (!body.leaderId ||
-       vld.check(leaderRes  && leaderRes.length, Tags.badTeamLead))
+       vld.check(member  && member.length, Tags.badTeamLead))
          ;
 
       cnn.chkQry("update Team set ? where id = ?",
        [req.body, req.params.id], cb);
    },
-   (updRes, fields, cb) => {
+   (update, fields, cb) => {
       res.status(200).end();
       cb();
    }],
@@ -178,28 +178,28 @@ router.delete('/:id', (req, res) => {
       //get data on the correct team
       cnn.chkQry('select * from Team where id = ?', [req.params.id], cb);
    },
-   (result, fields, cb) => {
+   (team, fields, cb) => {
       //checks teh team exists
-      if (vld.check(result && result.length, Tags.notFound, cb))
-         if (vld.checkPrsOK(result[0].leaderId, cb)) {
-            nextTeam = result[0].nextTeam;
+      if (vld.check(team && team.length, Tags.notFound, cb))
+         if (vld.checkPrsOK(team[0].leaderId, cb)) {
+            nextTeam = team[0].nextTeam;
             otherTeams = !(nextTeam == req.params.id);
             cnn.query('select * from Competition where id = ?',
              [req.params.cmpId], cb);
          }
    },
-   (Cmp, fields, cb) => {
+   (cmp, fields, cb) => {
       //checks the competition rules, or if the cutTeam pointer needs to change
-      if (!Cmp[0].rules || !(Cmp[0].curTeam == req.params.id))
+      if (!cmp[0].rules || !(cmp[0].curTeam == req.params.id))
          cb(null, null, cb);
       else if (!otherTeams) //checks if the curTeam needs to be null
          cnn.chkQry('update Competition set curTeamId = ? where id = ?',
-          [null, Cmp[0].id], cb);
+          [null, cmp[0].id], cb);
       else
          cnn.chkQry('update Competition set curTeamId = ? where id = ?',
-          [nextTeam, Cmp[0].id], cb);
+          [nextTeam, cmp[0].id], cb);
    },
-   (updRes, fields, cb) => {
+   (update, fields, cb) => {
       //if there are other teams update the team pointing ot the now deleted team
       if (otherTeams){
          cnn.chkQry('update Team set nextTeam = ? where nextTeam = ?',
@@ -208,7 +208,7 @@ router.delete('/:id', (req, res) => {
       else
          cb(null, null, cb);
    },
-   (updRes, fields, cb) => {
+   (update, fields, cb) => {
       //delete the team
       req.cnn.query('delete from Team where id = ? && cmpId = ?',
        [req.params.id, req.params.cmpId], cb);
