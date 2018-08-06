@@ -29,7 +29,7 @@ class Main extends Component {
                     {`Signed in as: ${this.props.prs.firstName} ${this.props.prs.lastName}`}
                 </Navbar.Text>
               : ''
-              }
+            }
             <Navbar.Collapse>
               <Nav>
                 {this.signedIn() ?

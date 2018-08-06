@@ -10,7 +10,7 @@ class SignIn extends Component {
       this.state = {
          email: 'adm@11.com',
          password: 'password'
-      }
+      };
 
       // bind event handlers to the correct context
       this.handleChange = this.handleChange.bind(this);
@@ -20,15 +20,14 @@ class SignIn extends Component {
    //calls signIn updates history
    signIn(event) {
       this.props.signIn(this.state, () => {
-        if (Object.keys(this.props.prs).length !== 0)
-           this.props.history.push("/MyCmpsPage");
+         this.props.history.push("/MyCmpsPage")
       });
 
-      event.preventDefault()//otherwise parent will respond
+      event.preventDefault(); //otherwise parent will respond
    }
 
    handleChange(event) {
-      const newState = {}
+      const newState = {};
 
       // Update form state and rerender
       newState[event.target.name] = event.target.value;

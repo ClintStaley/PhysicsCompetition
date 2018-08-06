@@ -75,8 +75,7 @@ public class LandGrabEvaluator extends Evaluator {
       eval.eval.testResult = mapper.writeValueAsString(rspLG);
 
       eval.eval.score = (double) Math
-            .round((rspLG.areaCovered * 100 / cmpDetails.goalArea) * 100d)
-            / 100d;
+            .round((rspLG.areaCovered * 100 / cmpDetails.goalArea));
 
       return eval;
    }
