@@ -6,7 +6,7 @@ public class Submit {
    public int id;
    public int cmpId;
    public String content;
-   public String response;
+   public String testResult;
    public int teamId;
    public int score;
    public Date sbmTime;

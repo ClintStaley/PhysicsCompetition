@@ -59,6 +59,7 @@ Parameter Schema
 Example Parameter
 {
    numCircles: 3,
+   goalArea: 5000.0,
    obstacles: [
      {
        loX: 0,
@@ -165,3 +166,34 @@ Example Response:
    areaCovered: 4200.2
 }
 
+
+testing prms, submissions and response
+
+test1 Parameter
+{
+   numCircles: 3,
+   goalArea: 5000.0,
+   obstacles: [{
+       loX: 0,
+       hiX: 0,
+       loY: 0,
+       hiY: 0
+     }] 
+}
+
+Test1 Submission
+
+[
+  {
+    centerX: 50.0,
+    centerY: 50.0,
+    radius: 50.0
+  }
+]
+
+Test1 Response:
+
+{
+   circleStatus: [true],
+   areaCovered: 7853.98
+}

@@ -42,7 +42,7 @@ create table Competition (
 
 create table Team (
    id int auto_increment primary key,
-   bestScore int not null default -1,
+   bestScore double not null default -1,
    teamName varchar(80) not null,
    cmpId int not null,
    leaderId int not null,
@@ -63,11 +63,11 @@ create table Submit
    id int auto_increment primary key,
    cmpId int not null,
    content varchar(2000) Not Null,
-   response varchar(2000),
+   testResult varchar(2000),
    teamId int not null,
    practiceRun boolean default false,
 
-   score int,
+   score double,
    sbmTime datetime,
 
      constraint FKSubmit_cmpId foreign key (cmpId) references

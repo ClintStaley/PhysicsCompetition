@@ -69,7 +69,7 @@ export default class CmpPage extends Component {
 
    compareTeamsByScore = (team1, team2) => {
       var teams = this.props.teams;
-      
+
       return teams[team2].bestScore - teams[team1].bestScore;
    }
 
@@ -168,7 +168,7 @@ const TeamLine = function (props) {
       (props.mmbs && Object.keys(props.mmbs).length  ?
        `TeamLeader: ${props.mmbs[props.leaderId].firstName}
        (${props.mmbs[props.leaderId].email})`
-       : 'hello')
+       : 'error, this should not be possible')
      }
      </div>
 

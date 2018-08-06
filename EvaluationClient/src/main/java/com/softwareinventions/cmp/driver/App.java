@@ -3,45 +3,49 @@ package com.softwareinventions.cmp.driver;
 import org.apache.log4j.Logger;
 
 import com.softwareinventions.cmp.dto.Competition;
-import com.softwareinventions.cmp.dto.ResponseWrapper;
-import com.softwareinventions.cmp.evaluator.LandGrabEvaluator;
+import com.softwareinventions.cmp.evaluator.Evaluator;
+import com.softwareinventions.cmp.evaluator.EvlPut;
+import com.softwareinventions.cmp.evaluator.landgrab.LandGrabEvaluator;
 
 public class App {
    final static String url = "http://localhost:3000";
    String[] CompetitionTypes = { "Territory Grab", "Rocket Slalom" };
    static Logger Lgr = Logger.getLogger(App.class);
-   
-   
+
    public static void main(String[] args) {
       try {
-    	 
+
          ClientHandler handler = new ClientHandler(url);
-         ResponseWrapper[] evaluations;
-         
-         Competition[] cmps = handler.getCmps();
-         
-         for (int i = 0; i < cmps.length; i++)
-        	 System.out.println(cmps[i].title);
-         
-         LandGrabEvaluator LandGrabEval = new LandGrabEvaluator(cmps[0].prms);
-         
-         // gets the CompetitionTypes from the server
-         evaluations = LandGrabEval.evaluateSubmissions(handler.getWaitingSubmissions(1));
+         EvlPut[] evaluations;
 
+         while (true) {
+            Competition[] cmps = handler.getCmps();
 
-         for (int i = 0; i < evaluations.length; i++)
-        	 handler.response(evaluations[i]);
-         
-         evaluations = LandGrabEval.evaluateSubmissions(handler.getWaitingSubmissions(1));
-         
-         if (evaluations.length == 0)
-        	 System.out.println("Finished all Submissions");
-         
+            for (int i = 0; i < cmps.length; i++) {
+               Evaluator LandGrabEval = cmpEvaluator(cmps[i]);
 
+               // gets the CompetitionTypes from the server
+               evaluations = LandGrabEval.evaluateSubmissions(
+                     handler.getWaitingSubmissions(cmps[i].id));
+
+               for (int c = 0; c < evaluations.length; c++)
+                  handler.response(evaluations[c]);
+            }
+         }
       } catch (Exception e) {
          System.out.println(e.getMessage());
          e.printStackTrace();
       }
 
    }
+
+   private static Evaluator cmpEvaluator(Competition cmp) {
+      switch (cmp.ctpId) {
+      case 1:
+         return new LandGrabEvaluator(cmp.prms);
+      default:
+         return new LandGrabEvaluator(cmp.prms);
+      }
+   }
+
 }

@@ -20,7 +20,8 @@ class SignIn extends Component {
    //calls signIn updates history
    signIn(event) {
       this.props.signIn(this.state, () => {
-         this.props.history.push("/MyCmpsPage")
+        if (Object.keys(this.props.prs).length !== 0)
+           this.props.history.push("/MyCmpsPage");
       });
 
       event.preventDefault()//otherwise parent will respond

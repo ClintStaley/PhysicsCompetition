@@ -38,7 +38,6 @@ class CmpsPage extends Component {
       else
          if (!props.updateTimes.myCmps)
             this.props.getMyCmps(this.props.prs.id);
-
    }
 
    // Thus far the only confirmation is for a delete.

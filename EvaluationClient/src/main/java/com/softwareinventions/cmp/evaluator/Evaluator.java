@@ -1,8 +1,16 @@
 package com.softwareinventions.cmp.evaluator;
 
-import com.softwareinventions.cmp.dto.ResponseWrapper;
+import org.codehaus.jackson.map.ObjectMapper;
+
 import com.softwareinventions.cmp.dto.Submit;
 
-public interface Evaluator {
-	public ResponseWrapper[] evaluateSubmissions(Submit[] submissions);
+public abstract class Evaluator {
+   // json to string and string to json converter
+   ObjectMapper mapper = new ObjectMapper();
+   
+   public Evaluator(String prms) {
+      
+   }
+   
+   public abstract EvlPut[] evaluateSubmissions(Submit[] submissions);
 }

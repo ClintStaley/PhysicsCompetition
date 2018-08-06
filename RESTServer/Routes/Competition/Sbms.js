@@ -29,7 +29,7 @@ router.post('/', (req, res) => {
    async.waterfall([
    (cb) => {
       if (vld.hasOnlyFields(body, ["content"], cb)) {
-         if (vld.check(( !body.response || vld.checkAdmin()),
+         if (vld.check(( !body.testResult || vld.checkAdmin()),
           Tags.forbiddenField, cb)) {
             body.cmpId = req.params.cmpId;
             body.teamId = req.params.teamId;
@@ -74,7 +74,7 @@ router.put('/:id', (req, res) => {
    async.waterfall([
    (cb) => {
      console.log("Waterfall 1");
-      if (vld.hasOnlyFields(body, ["response", "score"], cb)) {
+      if (vld.hasOnlyFields(body, ["testResult", "score"], cb)) {
          if (vld.checkAdmin(cb)) {
             cnn.chkQry('select * from Team where id = ? && cmpId = ?',
              [ teamId, cmpId ], cb);
