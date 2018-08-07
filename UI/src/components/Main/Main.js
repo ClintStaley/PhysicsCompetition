@@ -13,12 +13,22 @@ class Main extends Component {
       return Object.keys(this.props.prs).length !== 0;
    }
 
+   reRoute = (destinationComponent) => {
+     if (this && this.signedIn())
+       return destinationComponent;
+     else
+       this.props.history.push("/");
+       return Home;
+   }
+
    signOut(event) {
       this.props.history.push("/");
       this.props.signOut();
    }
 
    render() {
+     var reRoute = this.reRoute;
+
     return (
       <div>
         <div>
@@ -76,18 +86,18 @@ class Main extends Component {
         <Switch>
           <Route exact path='/' children={Home} />
           <Route path='/MyCmpsPage'
-           render={() => <CmpsPage {...this.props} showAll = {false}/>} />} />
+           render={() => reRoute(<CmpsPage {...this.props} showAll = {false}/>)} />} />
            <Route path='/AllCmpsPage'
-           render={() => <CmpsPage {...this.props} showAll = {true}/>} />} />
+           render={() => reRoute(<CmpsPage {...this.props} showAll = {true}/>)} />} />
           <Route path='/TeamsPage' component = {TeamsPage}/>
           <Route path='/signin' render = {() => <SignIn {...this.props} />} />
           <Route path='/register' render = {() => <Register {...this.props} />} />
 
           <Route path='/MyCmpPage/:cmpId/'
           render={(props) => {
-          return <CmpPage cmpId = {props.match.params.cmpId}
+          return reRoute(<CmpPage cmpId = {props.match.params.cmpId}
           myCmpLink = {true}
-          {...this.props} />}} />
+          {...this.props} />)}} />
 
           <Route path='/JoinCmpPage/:cmpId/'
           render={(props) => {

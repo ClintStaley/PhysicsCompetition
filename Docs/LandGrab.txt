@@ -2,58 +2,59 @@ Specifics for LandGrab Competition:
 
 Parameter Schema
 {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    
-    "title": "Land Grab",
-    "type": "object", 
-      
-    "properties": {
-       "numCircles": {
-          "title": "Number of circles allowed per team",
-          "type": "integer",
-          "minValue": 1
-       },
-       "goalArea": {
-          "title": "Area of coverage that gets 100%",
-          "type": "number",
-          "minimum": 0.0,
-          "maximum": 10000.0
-       }
-       "obstacles": {
-          "title": "Blocked areas in 100x100 square",
-          "type": "array",
-          "items": {
-             "title": "Blocked rectangle",
-             "type": "object",
-             "properties": {
-                "loX": {
-                   "title": "Left edge",
-                   "type": "number",
-                   "minimum": 0.0,
-                   "maximum": 100.0
-                },
-                "hiX": {
-                   "title": "Right edge",
-                   "type": "number",
-                   "minimum": 0.0,
-                   "maximum": 100.0
-                },
-                "loY": {
-                   "title": "Bottom edge",
-                   "type": "number",
-                   "minimum": 0.0,
-                   "maximum": 100.0
-                }, 
-                "hiY": {
-                   "title": "Top edge",
-                   "type": "number",
-                   "minimum": 0.0,
-                   "maximum": 100.0
-                }
-             }     
-          }
-       }
-}
+     "$schema": "http://json-schema.org/draft-07/schema#",
+     
+     "title": "Land Grab",
+     "type": "object", 
+       
+     "properties": {
+        "numCircles": {
+           "title": "Number of circles allowed per team",
+           "type": "integer",
+           "minValue": 1
+        },
+        "goalArea": {
+           "title": "Area of coverage that gets 100%",
+           "type": "number",
+           "minimum": 0.0,
+           "maximum": 10000.0
+        },
+        "obstacles": {
+           "title": "Blocked areas in 100x100 square",
+           "type": "array",
+           "items": {
+              "title": "Blocked rectangle",
+              "type": "object",
+              "properties": {
+                 "loX": {
+                    "title": "Left edge",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "maximum": 100.0
+                 },
+                 "hiX": {
+                    "title": "Right edge",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "maximum": 100.0
+                 },
+                 "loY": {
+                    "title": "Bottom edge",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "maximum": 100.0
+                 }, 
+                 "hiY": {
+                    "title": "Top edge",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "maximum": 100.0
+                 }
+              }     
+           }
+        }
+    }
+ }
 
 
 Example Parameter

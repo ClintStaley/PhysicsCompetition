@@ -26,16 +26,22 @@ router.post('/', (req, res) => {
    var body = req.body;
    var cnn = req.cnn;
 
+//first make sure the team exists
    async.waterfall([
-   (cb) => {
-      if (vld.hasOnlyFields(body, ["content"], cb)) {
-         if (vld.check(( !body.testResult || vld.checkAdmin()),
-          Tags.forbiddenField, cb)) {
-            body.cmpId = req.params.cmpId;
-            body.teamId = req.params.teamId;
-            body.sbmTime = new Date();
-            cnn.chkQry('insert into Submit set ?', body, cb);
-         }
+     (cb) => {
+        if (vld.hasOnlyFields(body, ["content"], cb)) {
+           if (vld.check( !body.testResult || vld.checkAdmin())) {
+              cnn.chkQry('select * from Team where id = ? && cmpId = ?',
+               [ req.params.teamId, req.params.cmpId ], cb);
+           }
+        }
+     },
+     (team, fields, cb) => {
+      if (vld.check(team && team.length, Tags.notFound, cb)) {
+         body.cmpId = req.params.cmpId;
+         body.teamId = req.params.teamId;
+         body.sbmTime = new Date();
+         cnn.chkQry('insert into Submit set ?', body, cb);
       }
    },
    (result, fields, cb) => {

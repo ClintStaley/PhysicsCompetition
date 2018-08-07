@@ -80,7 +80,7 @@ router.post('/', (req, res) => {
                   cnn.chkQry('insert into Competition set ?', body, cb);
             }
             catch (exception) {
-               vld.check(false, "no JSON", cb);
+               vld.check(false, Tags.invalidPrms, cb);
             }
          }
       },
