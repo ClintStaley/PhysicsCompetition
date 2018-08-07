@@ -10,7 +10,7 @@ const Home = (<h1>Home Page</h1>); // TODO make real home component
 
 class Main extends Component {
    signedIn() {
-      return Object.keys(this.props.prs).length !== 0;
+      return this.props.prs && this.props.prs.id;
    }
 
    reRoute = (destinationComponent) => {
@@ -87,28 +87,28 @@ class Main extends Component {
         <Switch>
           <Route exact path='/' children={Home} />
           <Route path='/MyCmpsPage'
-           render={() => reRoute(<CmpsPage {...this.props} showAll = {false}/>)} />} />
+           render={() => reRoute(<CmpsPage showAll = {false}/>)} />} />
            <Route path='/AllCmpsPage'
-           render={() => <CmpsPage {...this.props} showAll = {true}/>} />} />
+           render={() => reRoute(<CmpsPage showAll = {true}/>)} />} />
           <Route path='/TeamsPage' component = {TeamsPage}/>
           <Route path='/signin' render = {() => <SignIn {...this.props} />} />
           <Route path='/register' render = {() => <Register {...this.props} />} />
 
           <Route path='/MyCmpPage/:cmpId/'
           render={(props) => {
-          return <CmpPage cmpId = {props.match.params.cmpId}
+          return reRoute(<CmpPage cmpId = {props.match.params.cmpId}
           myCmpLink = {true}
-          {...this.props} />}} />
+          {...this.props} />)}} />
 
           <Route path='/JoinCmpPage/:cmpId/'
           render={(props) => {
-          return <CmpPage cmpId = {props.match.params.cmpId}
+          return reRoute(<CmpPage cmpId = {props.match.params.cmpId}
           myCmpLink = {false}
-          {...this.props} />}}/>
+          {...this.props} />)}}/>
 
           <Route path='/Instructions/:cmpId' render = {(props) =>
-             <InstructionsPage cmpId = {props.match.params.cmpId}
-              {...this.props} />} />
+             reRoute(<InstructionsPage cmpId = {props.match.params.cmpId}
+              {...this.props} />)} />
         </Switch>
 
         {/*Error popup dialog*/}

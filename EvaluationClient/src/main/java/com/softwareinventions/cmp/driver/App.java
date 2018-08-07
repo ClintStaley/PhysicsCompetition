@@ -1,5 +1,7 @@
 package com.softwareinventions.cmp.driver;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.log4j.Logger;
 
 import com.softwareinventions.cmp.dto.Competition;
@@ -30,6 +32,8 @@ public class App {
 
                for (int c = 0; c < evaluations.length; c++)
                   handler.response(evaluations[c]);
+               
+               TimeUnit.SECONDS.sleep(1);
             }
          }
       } catch (Exception e) {

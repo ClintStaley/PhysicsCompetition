@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { ListGroup, ListGroupItem, Button } from 'react-bootstrap';
 import { EntryDialog } from '../concentrator';
+import './cmp.css'
 
 export default class CmpPage extends Component {
    constructor(props) {
@@ -14,13 +15,9 @@ export default class CmpPage extends Component {
       }
    }
 
-   componentWillMount = () => {
-      if (Object.keys(this.props.prs).length === 0)
-         this.props.history.push("/");
-   }
-
    componentDidMount = () => {
-      this.props.getCtp(this.props.cmps[this.props.cmpId].ctpId);
+      if (this.props.cmps[this.props.cmpId])
+         this.props.getCtp(this.props.cmps[this.props.cmpId].ctpId);
       this.props.getTeamsByPrs(this.props.prs.id);
 
       //get all mmbs if linked to join cmps, so that i can display the team
@@ -97,53 +94,65 @@ export default class CmpPage extends Component {
         onClose={(teamData) =>
         this.closeCreateDialog(teamData)} />
 
-        <h1>{props.cmps[cmpId].title}</h1>
+        <div className = "cmpHeader">{props.cmps[cmpId].title}</div>
 
-        <h4> Competition Description </h4>
+        <div className = "cmpDescription">
+          <div className = "cmpDescription-header">
+          Competition Description </div>
 
-        <div>{props.cmps[cmpId].description}</div>
+          <div className = "cmpDescription-body">
+          {props.cmps[cmpId].description}</div>
 
-        {myCmpLink ?
-        <h4> <Link to = {'/Instructions/' + cmpId}>
-          Competiton Instructions
-        </Link></h4>
-        :
-        <div>
-          <h4>Want to Join?</h4>
+          {myCmpLink ?
+          <h4> <Link to = {'/Instructions/' + cmpId}>
+            Competiton Instructions
+          </Link></h4>
+          : '' }
 
-          <h5>To join one of the existing teams, contact the team lead who can
-           add you via their Teams tab. Or, you may start a new team with
-           yourself as leader.</h5>
-         </div>
-         }
+          </div>
 
-        <h4>Competiton Teams</h4>
+          {myCmpLink ?
+          ''
+          :
+          <div className = "cmpDescription">
+            <div className = "cmpDescription-header">Want to Join?</div>
 
+            <div className = "cmpDescription-body">To join one of the existing
+            teams, contact the team lead who can
+            add you via their Teams tab. Or, you may start a new team with
+            yourself as leader.</div>
+           </div>
+           }
 
-        { props.cmps[cmpId].cmpTeams.length > 0 ?
-        <ListGroup>
-          {this.orderTeamsByScore(props.cmps[cmpId].cmpTeams).map((teamId, i) => {
-            if (!this.props.teams[teamId])
-              return null;
+        <div className = "cmpDescription">
+          <div className = "cmpDescription-header">Competiton Teams</div>
 
-            var team = props.teams[teamId];
-            team.toggled = this.state.toggledTeams[teamId];
-            team.isMember = props.prs.myTeams.includes(teamId);
-            team.myTeamLink = myCmpLink;
+          { props.cmps[cmpId].cmpTeams.length > 0 ?
+          <ListGroup>
+            {this.orderTeamsByScore(props.cmps[cmpId].cmpTeams).map((teamId, i) => {
+              if (!this.props.teams[teamId])
+                return null;
 
-            return <TeamLine key={i} {...team}
-            toggleTeam = {() => this.toggleView(teamId)}/>
-         })}
-        </ListGroup>
-        :
-        <h4>This Competition has no Teams</h4>
-         }
+              var team = props.teams[teamId];
+              team.toggled = this.state.toggledTeams[teamId];
+              team.isMember = props.prs.myTeams.includes(teamId);
+              team.myTeamLink = myCmpLink;
 
-        {!myCmpLink ?
-        <div className="pull-right">
-           <Button onClick={this.openCreateDialog} >Create Team</Button>
+              return <TeamLine key={i} {...team}
+              toggleTeam = {() => this.toggleView(teamId)}/>
+           })}
+          </ListGroup>
+          :
+          <h4>This Competition has no Teams</h4>
+           }
+
+          {!myCmpLink ?
+          <div className="pull-right">
+             <Button onClick={this.openCreateDialog} >Create Team</Button>
+          </div>
+          : ''}
+
         </div>
-        : ''}
       </section>
       );
    }
@@ -161,7 +170,7 @@ const TeamLine = function (props) {
      <div className="pull-right">
      { props.myTeamLink ?
         <div>
-       <label>
+       <label className = "scoreLabel">
          Last Score:{props.bestScore !== -1 ? props.bestScore : "N/A"}
        </label>
        {props.isMember ?
@@ -174,7 +183,7 @@ const TeamLine = function (props) {
       (props.mmbs && Object.keys(props.mmbs).length  ?
        `TeamLeader: ${props.mmbs[props.leaderId].firstName}
        (${props.mmbs[props.leaderId].email})`
-       : 'error, this should not be possible')
+       : 'loading')
      }
      </div>
 

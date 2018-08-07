@@ -1,0 +1,26 @@
+.cmpHeader {
+  font-size: 30px;
+  text-align: center;
+}
+
+.scoreLabel {
+  padding: 5px;
+}
+
+.cmpDescription {
+  border: 1px solid lightgrey;
+  border-radius: 5px;
+  margin: 5px;
+}
+
+.cmpDescription-body {
+  padding: 5px;
+}
+
+.cmpDescription-header {
+  background-color: lightgrey;
+  border-radius: 2px;
+  font-size: 15pt;
+  padding: 4px;
+  text-align: center;
+}
