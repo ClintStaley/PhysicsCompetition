@@ -19,9 +19,9 @@ export default function prs(state = {}, action) {
          return Object.assign({}, state, {myTeams: myNewTeams});
       case 'GET_TEAM_MMBS':
          if (Object.keys(action.teamData.mmbs).includes(state.id.toString()))
-            return Object.assign({}, state, {myTeams:
-             state.myTeams.concat(action.teamData.teamId)});
-
+            if (!state.myTeams.includes(action.teamData.teamId))
+               return Object.assign({}, state, {myTeams:
+                state.myTeams.concat(action.teamData.teamId)});
          return state;
       case 'DEL_MMB':
          return Number(action.prsId) !== state.id ? state : Object.assign({}, state, {myTeams: state.myTeams.filter(teamId => teamId !== action.teamId)});

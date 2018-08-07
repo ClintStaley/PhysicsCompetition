@@ -71,19 +71,20 @@ class CmpsPage extends Component {
 
         {props.showAll ?
            <ListGroup>
-              {cmps.map((cmpId, i) => {
+              {cmps && cmps.map((cmpId, i) => {
                 var cmp = props.cmps[cmpId];
 
                 cmp.link = '/JoinCmpPage/' + cmp.id;
                 cmp.joiningCmp = props.showAll;
-                cmp.joined = props.prs.myCmps.includes(cmpId);
+                cmp.joined = props.prs.myCmps &&
+                 props.prs.myCmps.includes(cmpId);
 
                 return <CompetitionItem
                   key={i} {...cmp}/>
               })}
            </ListGroup>
           :
-          cmps.length ?
+          cmps && cmps.length ?
           <ListGroup>
            {cmps.map((cmpId, i) => {
              var cmp = props.cmps[cmpId];

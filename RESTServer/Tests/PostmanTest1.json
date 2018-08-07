@@ -6,11 +6,11 @@
 	},
 	"item": [
 		{
-			"_postman_id": "816efd8d-7102-4c8e-ad4f-aca0e4f483bf",
+			"_postman_id": "5d6541ed-8f3b-4738-9329-1672b3fdf2db",
 			"name": "1 Nuke",
 			"item": [
 				{
-					"_postman_id": "568dd89d-cb6b-4f38-8404-809802c1c103",
+					"_postman_id": "66906af0-d74c-4a69-aadd-ebf5ad9b97e5",
 					"name": "Admin Login",
 					"event": [
 						{
@@ -55,7 +55,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "abc8bae0-d3a0-42db-91cc-760afebc67b4",
+					"_postman_id": "5f23bdd5-a106-4e59-9988-1a01956ad1df",
 					"name": "Nuke",
 					"event": [
 						{
@@ -95,11 +95,11 @@
 			]
 		},
 		{
-			"_postman_id": "a1840613-3b7a-4a15-abe8-efc87ef8ca27",
+			"_postman_id": "ef276c1b-12d4-4732-910a-b230f4c04d62",
 			"name": "2 Registration",
 			"item": [
 				{
-					"_postman_id": "d078f163-ef06-4e55-af23-81f93a9b56e5",
+					"_postman_id": "914c08b4-05fb-492b-8af8-507b0e77f74c",
 					"name": "Register Student A",
 					"event": [
 						{
@@ -138,7 +138,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "d839b3d5-996b-48ee-afdc-7f4b6971ab57",
+					"_postman_id": "e747b216-8517-4186-8d01-ca592e7cec88",
 					"name": "Login as Student A",
 					"event": [
 						{
@@ -191,7 +191,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "d8c67379-c513-4f17-838d-23740cfb9f22",
+					"_postman_id": "5be620dc-ed7a-4ca3-89d1-0efd33fe2559",
 					"name": "Register Student A Duplicate",
 					"event": [
 						{
@@ -231,7 +231,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "3ed6bdd0-b529-4dbb-a9b2-903862f4444d",
+					"_postman_id": "fc8d5526-79b0-4678-b636-75bd852c7123",
 					"name": "Register Student w/o acceptance",
 					"event": [
 						{
@@ -274,7 +274,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "b6814f01-2f37-48a2-b8d6-477946f87c44",
+					"_postman_id": "fba6ff69-ec30-4432-88f2-db3930dddac9",
 					"name": "Register An Admin",
 					"event": [
 						{
@@ -315,7 +315,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "dcdbebe6-04c6-4b71-bd4d-4891c9cb9bfc",
+					"_postman_id": "e7a3219d-dd2b-4e21-8aa3-1a53d07741db",
 					"name": "Register Student w/o Body",
 					"event": [
 						{
@@ -356,7 +356,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "24668426-a530-4920-b5d6-73c56c59c9c3",
+					"_postman_id": "26e18f72-025c-487c-9a9a-f1f89228b157",
 					"name": "Get Info on admin",
 					"event": [
 						{
@@ -404,7 +404,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "6db6a963-56e5-4eca-85fd-b75af69d6791",
+					"_postman_id": "f69ab76a-e1e6-496b-a4bb-0a981d127524",
 					"name": "Get Info on me",
 					"event": [
 						{
@@ -453,7 +453,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "442bf83f-b3b7-4857-924f-be6953edf5cb",
+					"_postman_id": "56284dd4-ef86-4a2f-9d5d-80b1cdd4b6ab",
 					"name": "Get Ssn Info on me",
 					"event": [
 						{
@@ -499,7 +499,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "d4a41347-543e-4cd0-b710-742a25fa4171",
+					"_postman_id": "2706405e-c4cc-4312-b77e-3e58c698c668",
 					"name": "Change StudentA w extra fields",
 					"event": [
 						{
@@ -545,7 +545,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "4eb04301-5990-4687-a913-bfc43bd281f8",
+					"_postman_id": "515fb1df-8a15-467a-b9bb-dd8538abe065",
 					"name": "Change StudentA w null pwd",
 					"event": [
 						{
@@ -599,7 +599,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "902aef8e-e487-4569-8ae0-a33181cde66a",
+					"_postman_id": "b0b794a1-02d0-46d3-bf77-a97c41b273f1",
 					"name": "Try to change Student A password w/o old pwd",
 					"event": [
 						{
@@ -645,7 +645,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "f9c54a5d-64d7-4d7d-964b-38a03d5f7b5f",
+					"_postman_id": "22c260f1-b955-4125-95bd-7a8a7d071e9f",
 					"name": "Get All Ssns",
 					"event": [
 						{
@@ -678,7 +678,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "116ed4d3-aaa8-4375-b186-9b0a08cf755a",
+					"_postman_id": "77f82bb4-45f3-4bd9-9965-ba7a4fc5e980",
 					"name": "Try Nuke",
 					"event": [
 						{
@@ -716,7 +716,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "819279d4-2e2d-4a59-81f3-4457360531ff",
+					"_postman_id": "6aff6f5e-5461-48a9-be6b-646388657645",
 					"name": "Admin Login",
 					"event": [
 						{
@@ -761,7 +761,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "db5c33d4-bda8-4bdc-8c27-d38b0adcbc10",
+					"_postman_id": "cd8ca339-77a7-452d-8a60-5687aff58647",
 					"name": "Get All Ssns",
 					"event": [
 						{
@@ -797,7 +797,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "40943ddd-4824-47a7-98d9-9c7678e48ed7",
+					"_postman_id": "87a7f7fb-7b70-4ce4-8ead-9dfc8bf08ad8",
 					"name": "Admin Logout Std A",
 					"event": [
 						{
@@ -831,7 +831,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "b746baf2-c150-4b61-a78b-8d8bf6bb6607",
+					"_postman_id": "a11c80b4-505b-438b-a8a6-60265f6d81e4",
 					"name": "Get All Ssns Again",
 					"event": [
 						{
@@ -867,7 +867,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "d3096fec-e899-4680-a430-04aa0b04a871",
+					"_postman_id": "04712c17-88ce-4981-8c4f-fc9012677d82",
 					"name": "Register Student w/o acceptance",
 					"event": [
 						{
@@ -907,7 +907,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "c8c8da47-acff-40d9-b5dd-a9203432977f",
+					"_postman_id": "05aff4e3-f4bf-4e01-aa97-6fec3f553bb5",
 					"name": "Register Student w bad role",
 					"event": [
 						{
@@ -947,7 +947,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "3318f816-4acc-41e5-a66e-f3505d933f2b",
+					"_postman_id": "50489594-0291-413f-82be-5c4b14cd5f54",
 					"name": "Get Info on Prs 3",
 					"event": [
 						{
@@ -998,7 +998,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "28c65ab3-e611-4b07-8e2a-5a2149e24477",
+					"_postman_id": "58676d10-e1b5-4427-92c9-fc74db431280",
 					"name": "Logout",
 					"event": [
 						{
@@ -1034,11 +1034,11 @@
 			]
 		},
 		{
-			"_postman_id": "14fd7cf3-a8e2-4b65-9604-df83a2cb6240",
+			"_postman_id": "52af465c-efac-4fe0-87a2-ea5da1be7b03",
 			"name": "3 Prs Modification",
 			"item": [
 				{
-					"_postman_id": "6841edcd-7c36-43e2-be10-1628f7c65128",
+					"_postman_id": "b2d6001e-e65f-4ef9-8c70-d17f255f6f35",
 					"name": "Get Info Without Login",
 					"event": [
 						{
@@ -1080,7 +1080,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "a8ad9329-121c-4078-9716-9f8f63a70f10",
+					"_postman_id": "1f53a9a0-7211-4fd8-97f0-74d61ebb078e",
 					"name": "Login Student A",
 					"event": [
 						{
@@ -1124,7 +1124,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "cd5d61f8-80f2-475f-924f-ca32f1153292",
+					"_postman_id": "1a440a6e-9f1f-48f2-9fac-bc2eb666f608",
 					"name": "Edit Student Name",
 					"event": [
 						{
@@ -1163,7 +1163,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "ae1e377b-52d1-416c-8665-6e48b719f881",
+					"_postman_id": "72e2973d-131d-4ae7-8763-2076fe6134bb",
 					"name": "Edit other student name",
 					"event": [
 						{
@@ -1202,7 +1202,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "cc4060eb-9575-4df4-b401-b323ab46516b",
+					"_postman_id": "ffd4c281-da18-4d26-9de5-a03bfbe15d3f",
 					"name": "Edit Student PW w bad Old",
 					"event": [
 						{
@@ -1245,7 +1245,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "2b890921-503d-4cc9-a1e0-fb257d4c1c10",
+					"_postman_id": "6ca97612-de64-4a52-8b12-00cbe10d3b46",
 					"name": "Edit Nonexistent Student",
 					"event": [
 						{
@@ -1285,7 +1285,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "c3247d3f-063e-43c4-afa0-5110e654f66b",
+					"_postman_id": "e2b1da72-d78c-4dcf-bc9d-b112e40640c0",
 					"name": "Remove Student A",
 					"event": [
 						{
@@ -1321,7 +1321,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "aa4d351f-4611-4376-9805-abfa6854ad35",
+					"_postman_id": "1aa8770c-9959-48e7-bcef-db7664c6be25",
 					"name": "Logout Student A",
 					"event": [
 						{
@@ -1356,7 +1356,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "844534ee-2e2c-4043-89e4-714824f1e420",
+					"_postman_id": "61d217d4-de1d-4479-8ce9-44f901ec1abf",
 					"name": "Admin Login",
 					"event": [
 						{
@@ -1401,7 +1401,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "2d23ed8b-7aee-41da-bcb5-95dd38f3d49f",
+					"_postman_id": "530b3b8d-462d-448b-b3b2-5b16c650f31e",
 					"name": "Check New StudentA Name",
 					"event": [
 						{
@@ -1438,7 +1438,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "5231a6d0-fee3-49b3-aba1-b8f9d18eaf73",
+					"_postman_id": "534d9f2b-9009-42ce-93ce-f447fa4b8575",
 					"name": "Remove Student A",
 					"event": [
 						{
@@ -1473,7 +1473,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "63da0683-2c8a-4a40-b5c4-f4b3a81a550c",
+					"_postman_id": "033770fd-5c56-4452-a6ab-b8943aead410",
 					"name": "Check Student A Dropped",
 					"event": [
 						{
@@ -1509,7 +1509,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "bb4cc0ef-f1c5-4a4a-be91-7487d9556eb1",
+					"_postman_id": "ea92fd50-ff79-49f2-b289-55fe6f203c8d",
 					"name": "Remove Student A again",
 					"event": [
 						{
@@ -1549,11 +1549,11 @@
 			]
 		},
 		{
-			"_postman_id": "2ed2cc2f-3a12-4951-a4f6-b72c9a4086cb",
+			"_postman_id": "35940dea-9585-4118-bd4a-44ffc2939ba0",
 			"name": "4 Competition Type",
 			"item": [
 				{
-					"_postman_id": "375f90f0-eed9-414e-a280-2d20eea1d524",
+					"_postman_id": "bb8f0653-cf3d-469e-b29d-1054aa436de9",
 					"name": "Admin Login",
 					"event": [
 						{
@@ -1598,7 +1598,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "f918ee62-a9a8-44a5-8f3c-0af1c97bcce3",
+					"_postman_id": "13548dc8-b817-4364-a58f-d6146daa54ea",
 					"name": "Register Student A",
 					"event": [
 						{
@@ -1637,7 +1637,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "9b0be565-19be-44a1-8aee-ea990ebac210",
+					"_postman_id": "2253eef1-032e-4319-b3ba-71e01ffcf1bc",
 					"name": "Register Competition Type A",
 					"event": [
 						{
@@ -1660,7 +1660,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"Land Grab\",\n    \"description\": \"Claim territory by placing circles in a field of obstacles\",\n    \"tutorial\": \"Claim territory by placing circles in a field of obstacles...\",\n    \"prmSchema\": \"{\\\"$schema\\\": \\\"http://json-schema.org/draft-07/schema#\\\",      \\\"title\\\": \\\"Land Grab\\\",   \\\"type\\\": \\\"object\\\",    \\\"properties\\\": {      \\\"numCircles\\\": {    \\\"title\\\": \\\"Number of circles allowed per team\\\",    \\\"type\\\": \\\"integer\\\",    \\\"minimum\\\": 1      },    \\\"obstacles\\\": {    \\\"title\\\": \\\"Blocked areas in 100x100 square\\\",    \\\"type\\\": \\\"array\\\",    \\\"items\\\": {       \\\"title\\\": \\\"Blocked rectangle\\\",       \\\"type\\\": \\\"object\\\",       \\\"properties\\\": {     \\\"loX\\\": {   \\\"title\\\": \\\"Left edge\\\",   \\\"type\\\": \\\"number\\\",   \\\"minimum\\\": 0.0,   \\\"maximum\\\": 100.0     },     \\\"hiX\\\": {   \\\"title\\\": \\\"Right edge\\\",   \\\"type\\\": \\\"number\\\",   \\\"minimum\\\": 0.0,   \\\"maximum\\\": 100.0     },     \\\"loY\\\": {   \\\"title\\\": \\\"Bottom edge\\\",   \\\"type\\\": \\\"number\\\",   \\\"minimum\\\": 0.0,   \\\"maximum\\\": 100.0     },      \\\"hiY\\\": {   \\\"title\\\": \\\"Top edge\\\",   \\\"type\\\": \\\"number\\\",   \\\"minimum\\\": 0.0,   \\\"maximum\\\": 100.0     }       }    }      }}}\"\n}"
+							"raw": "{\n    \"title\": \"Land Grab\",\n    \"description\": \"Claim territory by placing circles in a field of obstacles\",\n    \"tutorial\": \"Claim territory by placing circles in a field of obstacles...\",\n    \"prmSchema\":  \"{ \\\"$schema\\\": \\\"http://json-schema.org/draft-07/schema#\\\",  \\\"title\\\": \\\"Land Grab\\\", \\\"type\\\": \\\"object\\\", \\\"properties\\\": {  \\\"numCircles\\\": { \\\"title\\\": \\\"Number of circles allowed per team\\\", \\\"type\\\": \\\"integer\\\", \\\"minValue\\\": 1  },  \\\"goalArea\\\": { \\\"title\\\": \\\"Area of coverage that gets 100%\\\", \\\"type\\\": \\\"number\\\", \\\"minimum\\\": 0.0, \\\"maximum\\\": 10000.0  },  \\\"obstacles\\\": { \\\"title\\\": \\\"Blocked areas in 100x100 square\\\", \\\"type\\\": \\\"array\\\", \\\"items\\\": {  \\\"title\\\": \\\"Blocked rectangle\\\",  \\\"type\\\": \\\"object\\\",  \\\"properties\\\": { \\\"loX\\\": {  \\\"title\\\": \\\"Left edge\\\",  \\\"type\\\": \\\"number\\\",  \\\"minimum\\\": 0.0,  \\\"maximum\\\": 100.0 }, \\\"hiX\\\": {  \\\"title\\\": \\\"Right edge\\\",  \\\"type\\\": \\\"number\\\",  \\\"minimum\\\": 0.0,  \\\"maximum\\\": 100.0 }, \\\"loY\\\": {  \\\"title\\\": \\\"Bottom edge\\\",  \\\"type\\\": \\\"number\\\",  \\\"minimum\\\": 0.0,  \\\"maximum\\\": 100.0 },  \\\"hiY\\\": {  \\\"title\\\": \\\"Top edge\\\",  \\\"type\\\": \\\"number\\\",  \\\"minimum\\\": 0.0,  \\\"maximum\\\": 100.0 }  }  }  }  } }\" \n}"
 						},
 						"url": {
 							"raw": "{{url}}/Ctps",
@@ -1676,7 +1676,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "10f38516-f986-413d-9e81-2736fbb6e84b",
+					"_postman_id": "4f63557a-ff01-4024-9ef6-0b4136d5966c",
 					"name": "Register Competition Type B",
 					"event": [
 						{
@@ -1715,7 +1715,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "eabfd659-69d0-44c2-b1e0-64ff7c612e53",
+					"_postman_id": "dc7c1ccf-91dd-4e6c-adcf-3124fb91e0eb",
 					"name": "Register a Competition Type w/o title",
 					"event": [
 						{
@@ -1754,7 +1754,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "66d5305b-6c58-4fad-8c9d-e6858b15f9a9",
+					"_postman_id": "995a4809-1cdc-41aa-acaf-fa22d4f7fe66",
 					"name": "Register a Competition Type copy title",
 					"event": [
 						{
@@ -1793,7 +1793,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "f3336112-c221-4ff3-a397-6e1e7d5cc0bf",
+					"_postman_id": "1d68f2e2-19db-4328-9d10-36d2c43a5f14",
 					"name": "Get all CompTypes",
 					"event": [
 						{
@@ -1841,7 +1841,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "94dce100-69d6-46bc-813e-43ba788a8fcb",
+					"_postman_id": "bae4b83f-9abd-4027-90df-2bd6038e466b",
 					"name": "Get one CompTypes",
 					"event": [
 						{
@@ -1886,7 +1886,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "bf91c7d6-5fbc-416c-9c24-2f16cc60968d",
+					"_postman_id": "649addac-a106-47af-9922-7c4969a62d60",
 					"name": "Get one CompTypes non existant",
 					"event": [
 						{
@@ -1935,7 +1935,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "87e4a987-8358-4fba-91ad-6c9ba7901b11",
+					"_postman_id": "b3068d90-9426-498c-a434-fb43f0248692",
 					"name": "Edit CompetitionType",
 					"event": [
 						{
@@ -1974,7 +1974,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "6f052c96-35b3-4fcc-9444-5398e713de62",
+					"_postman_id": "9e3dd417-bbc1-4308-bbcb-05d9448d2366",
 					"name": "Edit CompetitionType descriotion only",
 					"event": [
 						{
@@ -2013,7 +2013,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "1f856327-da1a-439e-b0e4-7e70db165141",
+					"_postman_id": "c36d5150-06c3-435c-8d4b-f8a92307fcec",
 					"name": "Remove CompetitionTypes B",
 					"event": [
 						{
@@ -2048,7 +2048,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "f80f12f4-72c7-4cd3-9924-6614b0da2b59",
+					"_postman_id": "29ceb3ae-8637-493d-9058-ce300da31e07",
 					"name": "Remove CompetitionType B again",
 					"event": [
 						{
@@ -2083,7 +2083,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "12a513ed-c470-4a8c-b3aa-fede081c6274",
+					"_postman_id": "20f8645d-368b-4d92-a69c-95d74fd1d750",
 					"name": "Logout",
 					"event": [
 						{
@@ -2117,7 +2117,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "d22f4fb1-06d7-4671-adc0-f010621317a5",
+					"_postman_id": "0b78c242-3c29-4701-9dd9-99fd9e344675",
 					"name": "Login as Student A",
 					"event": [
 						{
@@ -2170,7 +2170,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "2edfad13-dece-46db-9e8d-cdaeb11d2983",
+					"_postman_id": "ec314c68-64b1-4263-ab9a-78d4a95da3cd",
 					"name": "Get all CompTypes as student",
 					"event": [
 						{
@@ -2218,7 +2218,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "e570dea2-609b-407e-8bfc-055b1335e2c8",
+					"_postman_id": "568c4bb7-c902-41fd-8da2-6efa033649e9",
 					"name": "try to Register Competition Type B again",
 					"event": [
 						{
@@ -2257,7 +2257,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "b9f32735-8099-49df-a6f1-89b56c362be6",
+					"_postman_id": "27f53e28-2911-4e48-bcfb-49bfd5545f1c",
 					"name": "try to Remove CompetitionTypes A",
 					"event": [
 						{
@@ -2292,7 +2292,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "cba801a3-69aa-4452-931e-ef43ce6685e0",
+					"_postman_id": "705015ee-1566-4352-88a7-30043d69094c",
 					"name": "Logout",
 					"event": [
 						{
@@ -2328,11 +2328,11 @@
 			]
 		},
 		{
-			"_postman_id": "8219a8d7-5b2c-49e5-af9b-390e9832b036",
+			"_postman_id": "7866b575-82a3-4e8d-8bb0-1f64589f474a",
 			"name": "5 Competitions",
 			"item": [
 				{
-					"_postman_id": "ff684785-cdc5-465b-8fca-c2fcd1830a34",
+					"_postman_id": "c45ac347-b09e-4356-82b4-f19485980744",
 					"name": "Admin Login",
 					"event": [
 						{
@@ -2377,7 +2377,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "7a84f1c9-e1b0-476d-be65-a93bb8c4224d",
+					"_postman_id": "8bc8785a-a116-438b-8362-edc59ef97146",
 					"name": "Register Competition A",
 					"event": [
 						{
@@ -2400,7 +2400,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"ctpId\": 1,\n  \"title\": \"Land Grab A\",\n  \"prms\": \"{      \\\"numCircles\\\": 3,      \\\"obstacles\\\": [        {          \\\"loX\\\": 0,          \\\"hiX\\\": 40.2,          \\\"loY\\\": 0,          \\\"hiY\\\": 28.7        },        {          \\\"loX\\\": 0,          \\\"hiX\\\": 50,          \\\"loY\\\": 85,          \\\"hiY\\\": 100        },         {          \\\"loX\\\": 80,          \\\"hiX\\\": 100,          \\\"loY\\\": 0,          \\\"hiY\\\": 12        }      ]    }\",\n  \"rules\": 1,\n  \"description\": \"description of Land Grab .....\"\n}"
+							"raw": "{\n    \"ctpId\": 1,\n  \"title\": \"Land Grab A\",\n  \"prms\": \"{     \\\"numCircles\\\": 3,     \\\"goalArea\\\": 5000.0,    \\\"obstacles\\\": [        {          \\\"loX\\\": 0,          \\\"hiX\\\": 40.2,          \\\"loY\\\": 0,          \\\"hiY\\\": 28.7        },        {          \\\"loX\\\": 0,          \\\"hiX\\\": 50,          \\\"loY\\\": 85,          \\\"hiY\\\": 100        },         {          \\\"loX\\\": 80,          \\\"hiX\\\": 100,          \\\"loY\\\": 0,          \\\"hiY\\\": 12        }      ]    }\",\n  \"rules\": 1,\n  \"description\": \"description of Land Grab .....\"\n}"
 						},
 						"url": {
 							"raw": "{{url}}/Cmps",
@@ -2416,7 +2416,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "8f01b5ac-d61b-4f31-a739-f4c5959f14bf",
+					"_postman_id": "6fe875d0-8e81-4d18-b273-36894edeb99e",
 					"name": "Register Competition B",
 					"event": [
 						{
@@ -2439,7 +2439,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"ctpId\": 1,\n  \"title\": \"Land Grab B\",\n  \"prms\": \"{      \\\"numCircles\\\": 3,      \\\"obstacles\\\": [        {          \\\"loX\\\": 0,          \\\"hiX\\\": 40.2,          \\\"loY\\\": 0,          \\\"hiY\\\": 28.7        },        {          \\\"loX\\\": 0,          \\\"hiX\\\": 50,          \\\"loY\\\": 85,          \\\"hiY\\\": 100        },         {          \\\"loX\\\": 80,          \\\"hiX\\\": 100,          \\\"loY\\\": 0,          \\\"hiY\\\": 12        }      ]    }\",\n  \"description\": \"description of Land Grab .....\"\n}"
+							"raw": "{\n    \"ctpId\": 1,\n  \"title\": \"Land Grab B\",\n  \"prms\": \"{      \\\"numCircles\\\": 3,   \\\"goalArea\\\": 5000.0,     \\\"obstacles\\\": [        {          \\\"loX\\\": 0,          \\\"hiX\\\": 40.2,          \\\"loY\\\": 0,          \\\"hiY\\\": 28.7        },        {          \\\"loX\\\": 0,          \\\"hiX\\\": 50,          \\\"loY\\\": 85,          \\\"hiY\\\": 100        },         {          \\\"loX\\\": 80,          \\\"hiX\\\": 100,          \\\"loY\\\": 0,          \\\"hiY\\\": 12        }      ]    }\",\n  \"description\": \"description of Land Grab .....\"\n}"
 						},
 						"url": {
 							"raw": "{{url}}/Cmps",
@@ -2455,7 +2455,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "f8d03b8d-d290-4f9e-bd0b-c6246ed85e1f",
+					"_postman_id": "cd48c673-3def-46df-8819-feda5fd5c26d",
 					"name": "Get all Competitions",
 					"event": [
 						{
@@ -2503,7 +2503,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "922cb2b5-4e8f-4045-8d84-4d458005771c",
+					"_postman_id": "ba44b4f1-84a4-4b71-a134-8df53a31996c",
 					"name": "Get one Competition by id",
 					"event": [
 						{
@@ -2547,7 +2547,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "8e066d70-987f-4224-aa05-1c50eb487a6d",
+					"_postman_id": "c15619ed-cc4c-4a74-a049-786d90dd1e42",
 					"name": "Get all Competitions by owner",
 					"event": [
 						{
@@ -2601,7 +2601,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "7cf5ffd0-b0f8-4d2f-9e62-b8b00714e16a",
+					"_postman_id": "ebac5c79-6956-4660-a924-a838bd605b12",
 					"name": "Get all Competitions by Type",
 					"event": [
 						{
@@ -2655,7 +2655,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "25b89438-a453-4317-97e7-4aa8d0c4e895",
+					"_postman_id": "66f79ffc-1fa4-4523-9d5e-16b49aa00177",
 					"name": "Edit Competition",
 					"event": [
 						{
@@ -2678,7 +2678,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"title\": \"Land Grab C\",\n  \"prms\": \"{      \\\"numCircles\\\": 3,      \\\"obstacles\\\": [        {          \\\"loX\\\": 0,          \\\"hiX\\\": 40.2,          \\\"loY\\\": 0,          \\\"hiY\\\": 28.7        },        {          \\\"loX\\\": 0,          \\\"hiX\\\": 50,          \\\"loY\\\": 85,          \\\"hiY\\\": 100        },         {          \\\"loX\\\": 80,          \\\"hiX\\\": 100,          \\\"loY\\\": 0,          \\\"hiY\\\": 12        }      ]    }\"\n}"
+							"raw": "{\n  \"title\": \"Land Grab C\",\n  \"prms\": \"{      \\\"numCircles\\\": 3,     \\\"goalArea\\\": 5000.0,       \\\"obstacles\\\": [        {          \\\"loX\\\": 0,          \\\"hiX\\\": 40.2,          \\\"loY\\\": 0,          \\\"hiY\\\": 28.7        },        {          \\\"loX\\\": 0,          \\\"hiX\\\": 50,          \\\"loY\\\": 85,          \\\"hiY\\\": 100        },         {          \\\"loX\\\": 80,          \\\"hiX\\\": 100,          \\\"loY\\\": 0,          \\\"hiY\\\": 12        }      ]    }\"\n}"
 						},
 						"url": {
 							"raw": "{{url}}/Cmps/2",
@@ -2694,7 +2694,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "9b1a28de-bbc2-46b0-8780-771f18c3eda4",
+					"_postman_id": "bcaf3ac2-a2e7-4a30-a7ff-7e50471942ef",
 					"name": "Edit Competition pramaters only",
 					"event": [
 						{
@@ -2717,7 +2717,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"prms\": \"{      \\\"numCircles\\\": 3,      \\\"obstacles\\\": [        {          \\\"loX\\\": 0,          \\\"hiX\\\": 40.2,          \\\"loY\\\": 0,          \\\"hiY\\\": 28.7        },        {          \\\"loX\\\": 0,          \\\"hiX\\\": 50,          \\\"loY\\\": 80,          \\\"hiY\\\": 100        },         {          \\\"loX\\\": 80,          \\\"hiX\\\": 100,          \\\"loY\\\": 0,          \\\"hiY\\\": 12        }      ]    }\"\n}"
+							"raw": "{\n  \"prms\": \"{      \\\"numCircles\\\": 3,    \\\"goalArea\\\": 5000.0,        \\\"obstacles\\\": [        {          \\\"loX\\\": 0,          \\\"hiX\\\": 40.2,          \\\"loY\\\": 0,          \\\"hiY\\\": 28.7        },        {          \\\"loX\\\": 0,          \\\"hiX\\\": 50,          \\\"loY\\\": 80,          \\\"hiY\\\": 100        },         {          \\\"loX\\\": 80,          \\\"hiX\\\": 100,          \\\"loY\\\": 0,          \\\"hiY\\\": 12        }      ]    }\"\n}"
 						},
 						"url": {
 							"raw": "{{url}}/Cmps/1",
@@ -2733,7 +2733,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "28d2a6e6-357e-4492-956d-31dbe0aca5a1",
+					"_postman_id": "52a76934-cd76-457b-97e0-5daab19be0bf",
 					"name": "Remove Competition B",
 					"event": [
 						{
@@ -2768,7 +2768,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "7700606b-1dc4-4205-a1dd-60648b371a9d",
+					"_postman_id": "2ebd4511-65da-479a-82c3-3d8b4034e657",
 					"name": "Remove Competition B again",
 					"event": [
 						{
@@ -2803,7 +2803,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "4981e940-e260-4e78-a9db-7f8a3f88e060",
+					"_postman_id": "3aa71c3b-41ea-426f-86e3-686990de72a1",
 					"name": "Register CompetitionType C",
 					"event": [
 						{
@@ -2842,7 +2842,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "d8039912-dbb5-4cf9-a474-09fefdf90dfa",
+					"_postman_id": "b7babd66-857f-4525-816c-ab85768f5d64",
 					"name": "Register Competition Type D",
 					"event": [
 						{
@@ -2881,7 +2881,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "d803b9a1-7d51-4315-a125-924535c97145",
+					"_postman_id": "adc8caeb-4989-490c-a15f-2cc42a4ab569",
 					"name": "Register Competition C",
 					"event": [
 						{
@@ -2920,7 +2920,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "91c39203-da25-4c0d-8f85-bea538b7a047",
+					"_postman_id": "ed243c06-bb2b-4e85-a789-48903af47937",
 					"name": "Get all Competitions Again",
 					"event": [
 						{
@@ -2962,7 +2962,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "8264f74d-877f-4046-a530-a7b76e61bb12",
+					"_postman_id": "c4b06a53-ed9c-4673-a986-d2e03ce76037",
 					"name": "Remove Competition Type A",
 					"event": [
 						{
@@ -2997,7 +2997,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "5a873514-07e8-4484-981f-5117b36edf8b",
+					"_postman_id": "45227f24-8532-4789-8d88-0f00bbed370a",
 					"name": "Get all Competitions Another Time",
 					"event": [
 						{
@@ -3039,7 +3039,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "e17fc76a-7038-4188-9a5a-d5f437286afb",
+					"_postman_id": "eecacaea-08ca-45bc-8b02-6022fe1087bc",
 					"name": "Logout",
 					"event": [
 						{
@@ -3073,7 +3073,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "6de7a5a9-d658-4333-a9fc-81b70f91dc24",
+					"_postman_id": "2f32cc05-a99d-4de4-b4cb-81259792ffeb",
 					"name": "Login as Student A",
 					"event": [
 						{
@@ -3126,7 +3126,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "14200a23-65cd-448d-82cc-a815be481f9b",
+					"_postman_id": "05f62d00-6913-426e-aef7-26e42029d6ed",
 					"name": "Get all Competitions",
 					"event": [
 						{
@@ -3174,7 +3174,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "f936ff86-02bf-40f5-b6cf-f3b5a8db79a2",
+					"_postman_id": "3384e0c1-f8dd-4dcb-b968-3205cedf8f88",
 					"name": "Edit Competition as Student",
 					"event": [
 						{
@@ -3213,7 +3213,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "64e6df1c-c704-4851-9bd4-c29e02d1649e",
+					"_postman_id": "4312a82e-9908-4433-9a22-ace6af5d6bbd",
 					"name": "Remove Competition A as Student",
 					"event": [
 						{
@@ -3248,7 +3248,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "f7953d77-fd01-4722-aff5-67b6e78d43a3",
+					"_postman_id": "12bbdc17-04f5-4c87-b2b6-974e11ac431b",
 					"name": "Register Competition C as Student",
 					"event": [
 						{
@@ -3287,7 +3287,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "0f01f1de-9dfa-415a-9244-3aa8f66b7111",
+					"_postman_id": "54e4b08b-dd02-4a0a-8ae6-2b8b9aa191f4",
 					"name": "Logout",
 					"event": [
 						{
@@ -3323,11 +3323,11 @@
 			]
 		},
 		{
-			"_postman_id": "de21bdfa-5b75-4f57-8431-134880671604",
+			"_postman_id": "8729b3f8-828e-4c5c-8151-9d611a7ecec9",
 			"name": "6 Teams",
 			"item": [
 				{
-					"_postman_id": "dcc48ad7-c3ff-4b01-b6e1-f8c8898cee32",
+					"_postman_id": "8f7dced7-41ba-42d6-a1b0-a0a4cf34565b",
 					"name": "Admin Login",
 					"event": [
 						{
@@ -3372,7 +3372,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "f4e94ca3-45df-4100-bc42-1ee22140fe82",
+					"_postman_id": "0fab4278-acf7-49f6-ac4c-1ba77f5ceec7",
 					"name": "Register Team A",
 					"event": [
 						{
@@ -3413,7 +3413,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "5a443b3c-fd81-4a68-b69f-51e799d0fa72",
+					"_postman_id": "cb916c43-79bb-4b31-988a-39788e8e2e60",
 					"name": "Register Team B",
 					"event": [
 						{
@@ -3454,7 +3454,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "a1c48354-df4e-4168-bf05-902687e79410",
+					"_postman_id": "075b6008-f480-4b2e-b26c-b8bb2b66a4c2",
 					"name": "Register Team B Again",
 					"event": [
 						{
@@ -3495,7 +3495,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "1fee0e32-93dd-400d-8a5a-4580cdd592b6",
+					"_postman_id": "7e28f5d3-dd18-42a0-bdbc-74ee8f7fec3f",
 					"name": "Register Competition D",
 					"event": [
 						{
@@ -3518,7 +3518,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"ctpId\": 1,\n  \"title\": \"Competition D\",\n  \"prms\": \"{      \\\"numCircles\\\": 3,      \\\"obstacles\\\": [        {          \\\"loX\\\": 0,          \\\"hiX\\\": 40.2,          \\\"loY\\\": 0,          \\\"hiY\\\": 28.7        },        {          \\\"loX\\\": 0,          \\\"hiX\\\": 50,          \\\"loY\\\": 85,          \\\"hiY\\\": 100        },         {          \\\"loX\\\": 80,          \\\"hiX\\\": 100,          \\\"loY\\\": 0,          \\\"hiY\\\": 12        }      ]    }\",\n  \"description\": \"description of Land Grab .....\"\n}"
+							"raw": "{\n    \"ctpId\": 1,\n  \"title\": \"Competition D\",\n  \"prms\": \"{      \\\"numCircles\\\": 3,     \\\"goalArea\\\": 5000.0,       \\\"obstacles\\\": [        {          \\\"loX\\\": 0,          \\\"hiX\\\": 40.2,          \\\"loY\\\": 0,          \\\"hiY\\\": 28.7        },        {          \\\"loX\\\": 0,          \\\"hiX\\\": 50,          \\\"loY\\\": 85,          \\\"hiY\\\": 100        },         {          \\\"loX\\\": 80,          \\\"hiX\\\": 100,          \\\"loY\\\": 0,          \\\"hiY\\\": 12        }      ]    }\",\n  \"description\": \"description of Land Grab .....\"\n}"
 						},
 						"url": {
 							"raw": "{{url}}/Cmps",
@@ -3534,7 +3534,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "49e43229-744c-4f92-9117-d03309c89d88",
+					"_postman_id": "6f87e62a-feaf-47cf-8494-0aca01360689",
 					"name": "Register Team C in a Different Competition",
 					"event": [
 						{
@@ -3575,7 +3575,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "6d31ee33-d22c-402f-a20e-7be0b484845d",
+					"_postman_id": "69c06770-3ffa-48ab-8d0d-3c3567c7a6dc",
 					"name": "Get all Teams",
 					"event": [
 						{
@@ -3625,7 +3625,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "b1a6f343-79b2-47bd-9fa3-61a36d820d2c",
+					"_postman_id": "7dd37848-0177-4297-98f8-2e1888511ec7",
 					"name": "Edit Team",
 					"event": [
 						{
@@ -3666,7 +3666,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "914058a8-efe7-4845-988e-1ab31623cad0",
+					"_postman_id": "a20d62ea-70a6-4d63-82f3-8b49f2df1a24",
 					"name": "Edit Team C Wrong Cmp",
 					"event": [
 						{
@@ -3707,7 +3707,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "ece86b33-3a79-4796-b4df-1f3046a4533f",
+					"_postman_id": "a9a452c8-8612-46c3-9841-5ac5e4083dfc",
 					"name": "Edit team B Leader Only",
 					"event": [
 						{
@@ -3748,7 +3748,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "e0ad5076-7336-4eb1-a788-a3a33a1e0794",
+					"_postman_id": "0514e174-2d8d-445c-b82d-d9ab5dd9a0c1",
 					"name": "Remove Team B",
 					"event": [
 						{
@@ -3785,7 +3785,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "a94471b3-7a1d-4430-9f29-2a1d8808e674",
+					"_postman_id": "f3bf8ae5-76e8-45f0-a5bd-683c43b656dc",
 					"name": "Get one Competition by id copy",
 					"event": [
 						{
@@ -3829,7 +3829,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "374eb5b6-e06e-4e2d-96b1-736ad63c0757",
+					"_postman_id": "80dac204-a42b-467e-968d-ce8ffcc0921f",
 					"name": "Get team info",
 					"event": [
 						{
@@ -3873,7 +3873,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "05d2eb24-1f2e-4b10-918b-f42cfb36041c",
+					"_postman_id": "e3aa4b03-9639-4cc8-be4f-df15987615df",
 					"name": "Logout",
 					"event": [
 						{
@@ -3907,7 +3907,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "dddc49bd-cd10-4299-bd7e-4bfef3bbd4a2",
+					"_postman_id": "24c3c85f-3ea9-4ca5-8362-2c70fd1c831b",
 					"name": "Login as Student A",
 					"event": [
 						{
@@ -3960,7 +3960,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "827fc729-32ba-42c2-a98a-bc9b31450ccb",
+					"_postman_id": "3b17c2db-6241-46bf-80cd-e39cd42bc7ab",
 					"name": "Register Team C",
 					"event": [
 						{
@@ -4001,7 +4001,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "1ccef91e-32a8-415a-b09d-6a61959822a3",
+					"_postman_id": "370a77b3-b86f-4a79-8b6e-6d01a49f3bc7",
 					"name": "Get all Teams again",
 					"event": [
 						{
@@ -4051,7 +4051,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "e94c4aa5-91f9-46cc-9c14-27c2d9d2ae8b",
+					"_postman_id": "a45a6fa8-0ffe-47b2-abdd-9b9b704b78f4",
 					"name": "Edit Team C",
 					"event": [
 						{
@@ -4092,7 +4092,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "72c3f077-5ce0-4b2d-a3d4-ffd7bcff2c30",
+					"_postman_id": "5601cdda-8a20-40b6-9dbc-79c327230f0e",
 					"name": "Get one Team",
 					"event": [
 						{
@@ -4138,7 +4138,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "e895b93a-8176-4174-92a0-9dae3148c247",
+					"_postman_id": "5b034d4c-fcfe-4eeb-94b1-62d191aeea13",
 					"name": "Remove Team C",
 					"event": [
 						{
@@ -4175,7 +4175,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "247996da-eeb0-4156-a0b8-df00cb45592c",
+					"_postman_id": "5e060dd2-29ba-429a-8411-de52eebb00a6",
 					"name": "Try to Remove Team A",
 					"event": [
 						{
@@ -4212,7 +4212,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "68c398fb-a2f8-48d5-ac36-f0261ff0ab86",
+					"_postman_id": "f769fb3f-344b-44c2-941f-455fbd6c9136",
 					"name": "Register Team D",
 					"event": [
 						{
@@ -4253,7 +4253,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "80cf97b9-aefc-4eba-bc32-4c66c7f069d2",
+					"_postman_id": "c541ab66-bffb-4828-b68f-755ade8fd7df",
 					"name": "Logout",
 					"event": [
 						{
@@ -4289,11 +4289,11 @@
 			]
 		},
 		{
-			"_postman_id": "7da54303-76f2-4bec-bd84-32c4dd9991c2",
+			"_postman_id": "f0858b27-18da-4b68-b3dc-b58beb4c463c",
 			"name": "7 Members",
 			"item": [
 				{
-					"_postman_id": "5485c462-e916-4ed2-ab14-ef8e70ebe712",
+					"_postman_id": "7618c6af-1b79-4102-98e4-fc01300ba68f",
 					"name": "Admin Login",
 					"event": [
 						{
@@ -4338,7 +4338,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "f208d754-7ec8-4a44-8312-b3cc2b3684de",
+					"_postman_id": "929c55f0-b9db-429b-84d2-1b368cb0e767",
 					"name": "Register Member A",
 					"event": [
 						{
@@ -4381,7 +4381,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "cab88324-9613-4e6e-8d5f-503b6fdadba5",
+					"_postman_id": "71e619e1-856d-40f9-abcb-99f537b07805",
 					"name": "Register Member A again",
 					"event": [
 						{
@@ -4424,7 +4424,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "f5955b75-4014-4028-8097-cb5fed1cc6b2",
+					"_postman_id": "abab0910-6d88-42b7-a1fb-9dd98f3a8ccf",
 					"name": "Register Member C",
 					"event": [
 						{
@@ -4467,7 +4467,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "28b7d7c8-0d0e-42bd-99f2-6d5017ef386a",
+					"_postman_id": "c8d6e637-24ba-40b5-a876-483076f45d3a",
 					"name": "Register Member C copy",
 					"event": [
 						{
@@ -4510,7 +4510,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "c14577fb-18f0-4aba-b1e9-bb6306f4f49a",
+					"_postman_id": "94cd0066-51f5-46cb-bad0-68b48b268ec9",
 					"name": "Get all Members",
 					"event": [
 						{
@@ -4562,7 +4562,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "c87e1ceb-a35b-48a3-a55e-b03e58318333",
+					"_postman_id": "c5ecf5a1-e5c8-4ca4-b4ed-b65515688703",
 					"name": "Remove Team Leader",
 					"event": [
 						{
@@ -4601,7 +4601,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "9f34fe70-ba7b-4234-a1c6-cf31c587963f",
+					"_postman_id": "d32d69bd-8c98-4d14-a03d-2c650958fbde",
 					"name": "Logout",
 					"event": [
 						{
@@ -4635,7 +4635,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "86dd6a2b-b368-49cd-a924-d215d65d2b78",
+					"_postman_id": "7b22ffdc-b5ac-4483-90f1-545ba9bcc577",
 					"name": "Login as Student A",
 					"event": [
 						{
@@ -4688,7 +4688,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "358fa25c-a135-4c3c-8cdc-b8d95c307796",
+					"_postman_id": "303d2d17-ff9d-4be6-9de0-fa9e3cbfa13b",
 					"name": "Register Student A",
 					"event": [
 						{
@@ -4731,7 +4731,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "19924b22-2e65-4e70-9470-fb5013373efb",
+					"_postman_id": "49aaf81d-bfd2-4ac3-9d14-dfbe4d05578b",
 					"name": "Get all Members",
 					"event": [
 						{
@@ -4783,7 +4783,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "f6a03bce-f988-4220-9422-8048abcf29c9",
+					"_postman_id": "c1b543dc-d80c-41a9-9804-126a63c5f025",
 					"name": "Register a different Student Not leader",
 					"event": [
 						{
@@ -4826,7 +4826,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "2b09c75e-29b7-487b-a6e2-e8f38e0831d6",
+					"_postman_id": "ce89e7b7-5d65-4ed0-9e22-db1a1c9bbe36",
 					"name": "Register a different student leader",
 					"event": [
 						{
@@ -4869,7 +4869,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "74b54201-0148-4829-b3d8-2af2d003e829",
+					"_postman_id": "3dd041a3-2216-4bb0-b2f1-9b0c95c67750",
 					"name": "Remove Member Team Leader",
 					"event": [
 						{
@@ -4908,7 +4908,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "81ac0097-741a-4981-b7e8-29966fb5d69e",
+					"_postman_id": "7772e63e-7453-4602-a8dd-dd2769fada77",
 					"name": "Remove Member Not Team Leader",
 					"event": [
 						{
@@ -4947,7 +4947,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "c47e67a5-4bab-4550-acba-f364aef186a2",
+					"_postman_id": "6c0015a6-9446-43cf-98b6-db240957e598",
 					"name": "Edit team D Leader",
 					"event": [
 						{
@@ -4988,7 +4988,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "60a7d684-9401-4386-a22f-10a35316eb00",
+					"_postman_id": "8f7e96e1-d532-4e95-bfc5-17002c68de90",
 					"name": "Logout",
 					"event": [
 						{
@@ -5022,7 +5022,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "9059dd59-1476-4718-a551-b7f933eacf7d",
+					"_postman_id": "ac3d8353-6258-4936-9397-47cae6157cd4",
 					"name": "Login as Student A",
 					"event": [
 						{
@@ -5077,11 +5077,11 @@
 			]
 		},
 		{
-			"_postman_id": "56731dd3-e829-4109-acb5-09f998aff64e",
+			"_postman_id": "4d35e6c2-c489-478f-bfc7-2de4bfb20f73",
 			"name": "8 Subbmissions",
 			"item": [
 				{
-					"_postman_id": "a376325c-5504-4c5b-84a5-1658831729b8",
+					"_postman_id": "b4931272-c5a2-4562-8011-3623fa4390e9",
 					"name": "Admin Login",
 					"event": [
 						{
@@ -5126,7 +5126,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "e5a50d17-59b1-40be-9287-a598fffb62c4",
+					"_postman_id": "758864b1-0771-41b6-82e0-cec65f1a61dc",
 					"name": "Register Submission A",
 					"event": [
 						{
@@ -5169,7 +5169,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "d85ba9b6-2e94-4c5d-aaee-f6c7ebbcb9f3",
+					"_postman_id": "83d9a92b-ffb2-401e-adf6-3c8a4c895f05",
 					"name": "Register Submission B",
 					"event": [
 						{
@@ -5212,15 +5212,16 @@
 					"response": []
 				},
 				{
-					"_postman_id": "64fa91d0-26d0-41f9-b937-b977a1758e33",
+					"_postman_id": "9d544053-924f-49ed-9713-7e3e023f35d4",
 					"name": "Register Submission C in a Different Competition",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
+								"id": "1b5eed3a-922b-49ce-924e-9d11065652f3",
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"tests[\"Status code is 400\"] = responseCode.code === 400;"
 								]
 							}
 						}
@@ -5255,7 +5256,51 @@
 					"response": []
 				},
 				{
-					"_postman_id": "02e6420a-8474-47fd-a953-839a67bec0c0",
+					"_postman_id": "545cdc80-34da-4852-aba4-f76d0d8dbba5",
+					"name": "Register Submission C in a Different Competition Corect Team",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e7166f05-0a1d-41e7-8540-47d9dfbebdb8",
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"content\": \"[   {     \\\"centerX\\\": 50.0,     \\\"centerY\\\": 45.2,     \\\"radius\\\": 15.9   },   {     \\\"centerX\\\": 10.3,     \\\"centerY\\\": 42.0,     \\\"radius\\\": 11   },   {     \\\"centerX\\\": 23,     \\\"centerY\\\": 89,     \\\"radius\\\": 40   } ]\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/Cmps/4/Teams/3/Sbms",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Cmps",
+								"4",
+								"Teams",
+								"3",
+								"Sbms"
+							]
+						},
+						"description": "\n"
+					},
+					"response": []
+				},
+				{
+					"_postman_id": "708163ff-4370-48ac-bde0-8b7a9bcb2075",
 					"name": "Register Submission D in a different Team",
 					"event": [
 						{
@@ -5298,7 +5343,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "a36b97fa-1f2d-4d4e-a1f2-b0c66ffb41da",
+					"_postman_id": "51212c12-ffde-476f-9fc1-d07ccae9cb0d",
 					"name": "Get all Submissions",
 					"event": [
 						{
@@ -5345,7 +5390,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "27f40d94-fe61-46a2-b325-efaf2d31a9b4",
+					"_postman_id": "bbbeb9de-24a8-460d-8ff3-121ddb9305ce",
 					"name": "Get all Submissions in different competition",
 					"event": [
 						{
@@ -5375,7 +5420,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/4/Teams/1/Sbms",
+							"raw": "{{url}}/Cmps/4/Teams/3/Sbms",
 							"host": [
 								"{{url}}"
 							],
@@ -5383,7 +5428,7 @@
 								"Cmps",
 								"4",
 								"Teams",
-								"1",
+								"3",
 								"Sbms"
 							]
 						},
@@ -5392,7 +5437,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "6c2940d4-5390-4973-9e7d-279367f67478",
+					"_postman_id": "17729d91-bfe7-4bbe-ad19-c2d407947ea8",
 					"name": "Get all waiting Submissions by cmp",
 					"event": [
 						{
@@ -5436,7 +5481,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "743128c3-26dc-4526-9033-4b5d843f54d3",
+					"_postman_id": "3b423d3a-de6b-4f37-9df2-4a4e8719cfb2",
 					"name": "Get all waiting Submissions by cmp limit",
 					"event": [
 						{
@@ -5486,7 +5531,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "5112ec58-a67b-4c7b-bf1d-496379597a1c",
+					"_postman_id": "bc5ea5ae-4a69-4982-8d53-b6fecc2cae53",
 					"name": "Get one Submission",
 					"event": [
 						{
@@ -5535,7 +5580,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "b2586927-1558-4d9f-ae69-5d55cda4ce67",
+					"_postman_id": "c2dd17e7-7fea-4e50-9db4-5d14e7a2c23d",
 					"name": "give a response",
 					"event": [
 						{
@@ -5578,7 +5623,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "f925fffb-6eb5-4b6e-a081-41a58c2cf081",
+					"_postman_id": "d9d7ef48-1f29-4a5a-bda5-2dc715a37488",
 					"name": "Logout",
 					"event": [
 						{
@@ -5612,7 +5657,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "913cbfe5-16ab-49a2-8508-ad1ad1f9e643",
+					"_postman_id": "8af15051-b35b-421d-a2af-47d2048982db",
 					"name": "Login as Student A",
 					"event": [
 						{
@@ -5665,7 +5710,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "b5d90294-0ba8-4b03-b219-654743da8009",
+					"_postman_id": "8432b02e-394d-4e5d-8bfa-103291dd0594",
 					"name": "Register Submission C",
 					"event": [
 						{
@@ -5708,7 +5753,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "8a02f731-f9c0-47d4-91ad-bbd7266be6b2",
+					"_postman_id": "d533a2ab-a097-4e86-b21d-3cc64505ff66",
 					"name": "Get all Submissions",
 					"event": [
 						{
@@ -5754,7 +5799,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "52fab74b-c91e-4001-b038-b8c19fe0d6f9",
+					"_postman_id": "d7005b5f-53c4-44a0-8b46-ae72ccfb6ea4",
 					"name": "Logout",
 					"event": [
 						{
@@ -5790,11 +5835,11 @@
 			]
 		},
 		{
-			"_postman_id": "33b271dc-c0e7-4c90-9d37-78bed2eb1033",
+			"_postman_id": "2dbb760c-0cff-4ac8-9b32-d29b71165cf7",
 			"name": "9 LandGrabTester",
 			"item": [
 				{
-					"_postman_id": "7a2e6d79-035d-4228-b3bc-3a4929f87243",
+					"_postman_id": "5783490d-f5ff-466f-adfa-4a4fde0b7c85",
 					"name": "Admin Login",
 					"event": [
 						{
@@ -5839,7 +5884,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "07918a07-d55a-4fb7-8275-f2411e2c7c82",
+					"_postman_id": "27a443c5-fde1-4ff5-bcf4-a51670cbef7e",
 					"name": "Register Competition Test Land Grab",
 					"event": [
 						{
@@ -5878,7 +5923,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "03801f95-14f6-48a0-b351-d9ceefbd0d9e",
+					"_postman_id": "f0fa49ed-e80d-4766-b4b8-18b7301f6a11",
 					"name": "Register Team Tester",
 					"event": [
 						{
@@ -5919,7 +5964,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "d8d3b5eb-c76f-47c8-9f30-91d85a006a63",
+					"_postman_id": "02da6bdd-8aa0-455e-b5eb-a2d03aea58e4",
 					"name": "Register Submission A Tester",
 					"event": [
 						{
@@ -5962,7 +6007,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "c5553df0-625a-44b0-83d4-2097e8a0cb43",
+					"_postman_id": "d0e294fd-70ba-46e9-9427-54cb767db9e8",
 					"name": "Register Submission B Tester",
 					"event": [
 						{
@@ -6005,7 +6050,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "ad69fa0e-ecac-4382-87b8-202d8e8711d0",
+					"_postman_id": "66225a94-0778-41b3-bf44-8f168039acb3",
 					"name": "Register Submission C Tester",
 					"event": [
 						{
@@ -6048,7 +6093,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "f9b9f2f2-8a76-42d2-9c23-5f5edc05370b",
+					"_postman_id": "6af3891b-1d06-40f7-b6b9-11f3a6683b62",
 					"name": "Get all Teams Copy",
 					"event": [
 						{
@@ -6093,7 +6138,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "6e686d02-949b-46a2-974c-ee8c5f346cb7",
+					"_postman_id": "dd164b4f-9e40-4404-9305-4c9469e4816c",
 					"name": "Get all Submissions Copy",
 					"event": [
 						{
@@ -6140,7 +6185,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "31e865dd-3675-4e24-bbe6-d83965dcaca1",
+					"_postman_id": "0d28754e-a92a-4482-8c93-2aacf13f93dc",
 					"name": "Logout",
 					"event": [
 						{

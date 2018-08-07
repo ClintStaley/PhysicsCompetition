@@ -18,15 +18,14 @@ class TeamsPage extends Component {
          delMmbFunc: null,         // Function to do deletion of member
          expanded: {}              // expanded state, per teamId
       }
-
-      // CAS FIX: This, and the similar call in CmpsPage, are misplaced in that
-      // they will not complete prior to render.  They need to be in a
-      // prerender action of some sort.
-      //
-      // Also, better design would remove from props all data but prs.id,
-      // teams, and prs.myTeams.
-      this.props.getTeamsByPrs(this.props.prs.id);
    }
+
+    componentDidMount = () => {
+      var props = this.props;
+
+      if (!(props.updateTimes && props.updateTimes.myTeams))
+         this.props.getTeamsByPrs(this.props.prs.id);
+    }
 
    openDelConfirm = (teamId) => {
       this.setState({delConfirmTeamId: teamId,

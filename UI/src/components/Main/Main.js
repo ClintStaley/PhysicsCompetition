@@ -14,7 +14,7 @@ class Main extends Component {
    }
 
    reRoute = (destinationComponent) => {
-     if (this && this.signedIn())
+     if (this.signedIn())
        return destinationComponent;
      else
        this.props.history.push("/");
@@ -76,8 +76,9 @@ class Main extends Component {
               </Nav>
               {this.signedIn() ?
               <Nav pullRight>
-                <NavItem eventKey={2}
-                 onClick = {() => this.signOut()}>Sign out</NavItem>
+                <NavItem eventKey={2} onClick = {() => this.signOut()}>
+                  Sign out
+                </NavItem>
               </Nav> : ''
               }
             </Navbar.Collapse>
@@ -88,16 +89,16 @@ class Main extends Component {
           <Route path='/MyCmpsPage'
            render={() => reRoute(<CmpsPage {...this.props} showAll = {false}/>)} />} />
            <Route path='/AllCmpsPage'
-           render={() => reRoute(<CmpsPage {...this.props} showAll = {true}/>)} />} />
+           render={() => <CmpsPage {...this.props} showAll = {true}/>} />} />
           <Route path='/TeamsPage' component = {TeamsPage}/>
           <Route path='/signin' render = {() => <SignIn {...this.props} />} />
           <Route path='/register' render = {() => <Register {...this.props} />} />
 
           <Route path='/MyCmpPage/:cmpId/'
           render={(props) => {
-          return reRoute(<CmpPage cmpId = {props.match.params.cmpId}
+          return <CmpPage cmpId = {props.match.params.cmpId}
           myCmpLink = {true}
-          {...this.props} />)}} />
+          {...this.props} />}} />
 
           <Route path='/JoinCmpPage/:cmpId/'
           render={(props) => {

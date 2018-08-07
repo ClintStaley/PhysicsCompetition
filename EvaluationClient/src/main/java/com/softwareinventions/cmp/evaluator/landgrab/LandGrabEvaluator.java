@@ -62,9 +62,11 @@ public class LandGrabEvaluator extends Evaluator {
             LandGrabSubmissionCircle[].class);
 
       rspLG.areaCovered = 0;
-      rspLG.circleStatus = new boolean[data.length];
+      int index = data.length < cmpDetails.numCircles ? data.length
+            : cmpDetails.numCircles;
+      rspLG.circleStatus = new boolean[index];
 
-      for (int i = 0; i < data.length; i++) {
+      for (int i = 0; i < index; i++) {
          rspLG.circleStatus[i] = circleIsValid(data[i], validCircles);
          if (rspLG.circleStatus[i]) {
             validCircles.add(data[i]);

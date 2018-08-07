@@ -14,6 +14,11 @@ export default class CmpPage extends Component {
       }
    }
 
+   componentWillMount = () => {
+      if (Object.keys(this.props.prs).length === 0)
+         this.props.history.push("/");
+   }
+
    componentDidMount = () => {
       this.props.getCtp(this.props.cmps[this.props.cmpId].ctpId);
       this.props.getTeamsByPrs(this.props.prs.id);
@@ -76,11 +81,12 @@ export default class CmpPage extends Component {
    render() {
       var props = this.props;
       var cmpId = props.cmpId;
-      var ctpId = props.cmps[cmpId].ctpId;
-      var myCmpLink = this.props.myCmpLink;
 
       if (!this.props.cmps[cmpId])
          return (<h1>Error loading Competition</h1>)
+
+      var ctpId = props.cmps[cmpId].ctpId;
+      var myCmpLink = this.props.myCmpLink;
 
       return (
       <section className="container">
