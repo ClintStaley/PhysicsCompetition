@@ -6,4 +6,6 @@ export { default as TeamsPage } from './Teams/TeamsPage';
 export { default as ConfDialog } from './ConfDialog/ConfDialog';
 export { default as EntryDialog } from './ConfDialog/EntryDialog';
 export { default as CmpPage } from './Competitions/CmpPage';
+export { default as SbmPage } from './Submits/SbmPage'
+export { default as LandGrab } from './Submits/LandGrab'
 export { default as InstructionsPage } from './Competitions/InstructionsPage';

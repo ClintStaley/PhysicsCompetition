@@ -1,6 +1,8 @@
 import update from 'immutability-helper';
 
 export default function teams(state = {}, action) {
+   var data, team, prs;
+
    switch (action.type) {
       case 'GET_CMP_TEAMS':
       case 'GET_PRS_TEAMS': // Replace previous team
@@ -11,7 +13,7 @@ export default function teams(state = {}, action) {
           {[action.teamData.teamId]: Object.assign({},
           state[action.teamData.teamId] , {mmbs: action.teamData.mmbs})});
       case 'PUT_TEAM':
-         var data = action.newTeamData;
+         data = action.newTeamData;
          // Overwrite only actually-changed elements in the team
          return Object.assign({}, state, {[data.id]:
           Object.assign({}, state[data.id], data)});
@@ -21,13 +23,13 @@ export default function teams(state = {}, action) {
       case 'DEL_TEAM':
          return update(state, {$unset: [action.teamId]});
       case 'ADD_MMB':
-         var prs = action.prs;
-         var team = Object.assign({}, state[action.teamId]);
+         prs = action.prs;
+         team = Object.assign({}, state[action.teamId]);
 
          team.mmbs = Object.assign({}, team.mmbs, {[prs.id]: {email: prs.email, firstName: prs.firstName, lastName: prs.lastName}});
          return Object.assign({}, state, {[action.teamId]: team});
       case 'DEL_MMB':
-         var team = Object.assign({}, state[action.teamId]);
+         team = Object.assign({}, state[action.teamId]);
 
          team.mmbs = Object.assign({}, team.mmbs);
          delete team.mmbs[action.prsId];
