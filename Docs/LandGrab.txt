@@ -116,7 +116,7 @@ Submission Schema:
    }
 }
 
-Example Submission
+Example Submission Content
 
 [
   {
@@ -136,7 +136,7 @@ Example Submission
   }
 ]
 
-Response schema
+Submission Response schema
 
 {
    "$schema": "http://json-schema.org/draft-07/schema#",
@@ -159,7 +159,7 @@ Response schema
    }
 }
 
-Example Response:
+Example Submission Response:
 
 {
    circleStatus: [true, false, true],

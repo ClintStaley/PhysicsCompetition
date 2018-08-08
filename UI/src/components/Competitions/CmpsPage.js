@@ -58,7 +58,6 @@ class CmpsPage extends Component {
 
       return (
       <section className="container">
-      {console.log(props)}
       <ConfDialog
         show={this.state.showDeleteConfirmation  != null }bit
         title="Delete Competition"

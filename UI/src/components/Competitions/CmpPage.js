@@ -7,7 +7,6 @@ export default class CmpPage extends Component {
    constructor(props) {
       super(props);
 
-
       this.state = {
          toggledTeams: {},
          createTeamFunc: null
@@ -73,6 +72,10 @@ export default class CmpPage extends Component {
       return teams[team2].bestScore - teams[team1].bestScore;
    }
 
+   doSubmit = (team) => {
+      console.log("Submit team " + team.id);
+   }
+
    render() {
       var props = this.props;
       var cmpId = props.cmpId;
@@ -125,8 +128,8 @@ export default class CmpPage extends Component {
             team.isMember = props.prs.myTeams.includes(teamId);
             team.myTeamLink = myCmpLink;
 
-            return <TeamLine key={i} {...team}
-            toggleTeam = {() => this.toggleView(teamId)}/>
+            return <TeamLine key={i} doSubmit={() => this.doSubmit(team)}
+             {...team} toggleTeam = {() => this.toggleView(teamId)}/>
          })}
         </ListGroup>
         :
@@ -153,14 +156,15 @@ const TeamLine = function (props) {
       : ''}
 
      <div className="pull-right">
-     { props.myTeamLink ?
-        <div>
+      {props.myTeamLink ?
+       <div>
        <label>
          Last Score:{props.bestScore !== -1 ? props.bestScore : "N/A"}
        </label>
        {props.isMember ?
-       <Button disabled = {!props.canSubmit}> Submit </Button>
-        : ''}
+       <Button onClick = {props.doSubmit}
+       disabled = {!props.canSubmit}>
+         Submit/Check</Button>  : ''}
        </div>
 
 

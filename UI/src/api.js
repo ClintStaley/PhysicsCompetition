@@ -136,23 +136,40 @@ export function getCmps() {
 
 export function getCmpsByPerson(prsId) {
    return get(`Prss/${prsId}/Cmps`)
-   .then((CmpData) => CmpData.json())
-   .then((cmpsData) => {
-      var cmps = {};
-      for (var i = 0; i < cmpsData.length; i++){
-         cmps[cmpsData[i].id] = cmpsData[i];
+   .then((rsp) => rsp.json())
+   .then(cmpsData => {
+      try {
+         var cmps = {};
+
+         for (var i = 0; i < cmpsData.length; i++) {
+            cmpsData[i].prms = JSON.parse(cmpsData[i].prms);
+            cmps[cmpsData[i].id] = cmpsData[i];
+         }
+         return cmps;
       }
-      return cmps;
+      catch (err) {
+         return Promise.reject("Error parsing competition parameters");
+      }
    });
 }
 
 export function getCmpsById(cmpId) {
    return get(`Cmps/${cmpId}`)
-   .then((cmps) => cmps.json());
+   .then(rsp => rsp.json())
+   .then(cmp => {
+      try {
+         cmp.prms = JSON.parse(cmp.prms);
+         return cmp;
+      }
+      catch (err) {
+         return Promise.reject("Error parsing competition parameters");
+      }
+   });
 }
 
 export function putCmp(id, body) {
-   return put(`Cmps/${id}`, body)
+   return put(`Cmps/${id}`,
+    Object.assign({}, body, {prms: JSON.stringify(body.prms)}));
 }
 
 export function delCmp(id) {
@@ -160,7 +177,8 @@ export function delCmp(id) {
 }
 
 export function postCmp(body) {
-   return post('Cmps', body)
+   return post(`Cmps`,
+    Object.assign({}, body, {prms: JSON.stringify(body.prms)}))
    .then(rsp => rsp.headers["Location"])
 }
 
@@ -169,9 +187,8 @@ export function getTeamsByPrs(prsId) {
    .then((teamData) => teamData.json())
    .then((teamData) => {
       var teams = {};
-      for (var i = 0; i < teamData.length; i++){
+      for (var i = 0; i < teamData.length; i++)
          teams[teamData[i].id] = teamData[i];
-      }
 
       return teams;
    });
@@ -242,7 +259,19 @@ export function delMmb(cmpId, teamId, prsId) {
 
 export function getSbms(cmpId, teamId, numSbms) {
    return get(`Cmps/${cmpId}/Teams/${teamId}/Sbms?num=${numSbms}`)
-   .then(rsp => rsp.json());
+   .then(rsp => rsp.json())
+   .then(sbms => {
+      try {
+         for (var sbm in sbms) {
+            sbm.content = JSON.parse(sbm.content);
+            sbm.response = sbm.response && JSON.parse(sbm.response);
+         }
+         return sbms;
+      }
+      catch (err) {
+         return Promise.reject(["Unexpected error in submission parse."]);
+      }
+   });
 }
 
 const errMap = {
