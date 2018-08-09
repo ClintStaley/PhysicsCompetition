@@ -30,10 +30,10 @@ export default class CmpPage extends Component {
    getAllTeamMmbs = () => {
       var props = this.props;
 
-      props.cmps[props.cmpId].cmpTeams.map((teamId, i) => {
+      props.cmps[props.cmpId].cmpTeams.forEach((teamId, i) => {
          if (this.props.teams[teamId] && this.props.teams[teamId].mmbs &&
           Object.keys(this.props.teams[teamId].mmbs).length  === 0)
-            props.getMmbs(props.cmpId ,teamId);
+            props.getMmbs(props.cmpId, teamId);
       })
    }
 
@@ -76,6 +76,7 @@ export default class CmpPage extends Component {
 
    doSubmit = (team) => {
       console.log("Submit team " + team.id);
+      this.props.history.push(`/SbmPage/${team.id}`);
    }
 
    render() {
@@ -142,11 +143,12 @@ export default class CmpPage extends Component {
               team.myTeamLink = myCmpLink;
 
               return <TeamLine key={i} {...team}
-              toggleTeam = {() => this.toggleView(teamId)}/>
+                  toggleTeam = {() => this.toggleView(teamId)}
+                  doSubmit = {() => this.doSubmit(team)}/>
            })}
           </ListGroup>
           :
-          <h4>This Competition has no Teams</h4>
+          <h4>This competition has no competing teams</h4>
            }
 
           {!myCmpLink ?
@@ -181,8 +183,6 @@ const TeamLine = function (props) {
        disabled = {!props.canSubmit}>
          Submit/Check</Button>  : ''}
        </div>
-
-
      :
       (props.mmbs && Object.keys(props.mmbs).length  ?
        `TeamLeader: ${props.mmbs[props.leaderId].firstName}
