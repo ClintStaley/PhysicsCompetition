@@ -262,10 +262,10 @@ export function getSbms(cmpId, teamId, numSbms) {
    .then(rsp => rsp.json())
    .then(sbms => {
       try {
-         for (var sbm in sbms) {
+         sbms.forEach(sbm => {
             sbm.content = JSON.parse(sbm.content);
             sbm.response = sbm.response && JSON.parse(sbm.response);
-         }
+         });
          return sbms;
       }
       catch (err) {
