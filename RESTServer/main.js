@@ -105,10 +105,10 @@ app.delete('/DB', function (req, res) {
 
    // Callback to reinsert Land Grab CompetitionType
    cbs.push(function (cb) {
-      req.cnn.query(`insert into CompetitionType (title, description, ` +
-        `tutorial, prmSchema)  VALUES ("Land Grab", "Claim territory by ` +
-        `placing circles in a field of obstacles", "Claim territory by ` +
-        `placing circles in a field of obstacles...", '{\
+      req.cnn.query(`insert into CompetitionType (title, description, codeName,
+        tutorial, prmSchema)  VALUES ("Land Grab", "Claim territory by
+        placing circles in a field of obstacles", "LandGrab",
+        "Claim territory by placing circles in a field of obstacles...", '{\
      "$schema": "http://json-schema.org/draft-07/schema#",\
      \
      "title": "Land Grab",\
@@ -165,15 +165,15 @@ app.delete('/DB', function (req, res) {
     },\
     "additionalProperties": false,\
     "minProperties": 3   \
- }');`, cb);
+}');`, cb);
 });
 
    // Callback to reinsert Bounce CompetitionType
    cbs.push(function (cb) {
       req.cnn.query(
-   `insert into CompetitionType (title, description, tutorial, prmSchema)` +
-   ` VALUES ("Bounce", "Bounce a ball across platforms", " a ball across` +
-   `platforms by inputing a speed",
+   `insert into CompetitionType (title, description, codeName, tutorial, prmSchema)` +
+   ` VALUES ("Bounce", "Bounce a ball across platforms", "Bounce", ` +
+   `" a ball across platforms by inputing a speed", ` +
    '{
      "$schema": "http://json-schema.org/draft-07/schema#",
 
