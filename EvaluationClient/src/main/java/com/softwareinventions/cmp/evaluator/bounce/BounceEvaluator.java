@@ -51,13 +51,18 @@ public class BounceEvaluator extends Evaluator  {
       eval.sbmId = submission.id;
       eval.eval = new Evl();
       
+      LinkedList<BounceBallEvent> Events = new LinkedList<BounceBallEvent>();
+      
       eval.eval.score = 0;
       eval.eval.testResult = "temp";
+      
+      
+      
+      
+      
       
       System.out.println("Bounce Eval");
       return eval;
    }
-
-
 
 }

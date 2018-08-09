@@ -17,6 +17,7 @@ create table Person (
 
 create table CompetitionType (
    id int auto_increment primary key,
+   codeName varchar(80) not null, 
    title varchar(80) not null unique,
    description varchar(500) not null,
    tutorial varchar(10000) not null,

@@ -25,6 +25,11 @@
   text-align: center;
 }
 
+.instructionLink {
+  text-align: right;
+  margin: 5px;
+}
+
 .rightButton {
   margin: 5px;
   float: right;

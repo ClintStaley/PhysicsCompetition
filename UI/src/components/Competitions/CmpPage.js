@@ -104,14 +104,16 @@ export default class CmpPage extends Component {
           <div className = "cmpDescription-header">
           Competition Description </div>
 
+          {myCmpLink ?
+          <div className = "instructionLink">
+           <Link to = {'/Instructions/' + cmpId}>
+            Full Instructions
+           </Link>
+          </div>
+          : '' }
+
           <div className = "cmpDescription-body">
           {props.cmps[cmpId].description}</div>
-
-          {myCmpLink ?
-          <h4> <Link to = {'/Instructions/' + cmpId}>
-            Competiton Instructions
-          </Link></h4>
-          : '' }
 
           </div>
 
@@ -129,7 +131,7 @@ export default class CmpPage extends Component {
            }
 
         <div className = "cmpDescription">
-          <div className = "cmpDescription-header">Competiton Teams</div>
+          <div className = "cmpDescription-header">Competing Teams</div>
 
           { props.cmps[cmpId].cmpTeams.length > 0 ?
           <ListGroup>
@@ -169,7 +171,7 @@ const TeamLine = function (props) {
      <Button onClick = {props.toggleTeam}>{props.teamName}</Button>
 
      {props.isMember ?
-      ' (Member of this team) '
+      ' (Your team) '
       : ''}
 
      <div className="pull-right">
