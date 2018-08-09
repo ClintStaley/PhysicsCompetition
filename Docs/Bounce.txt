@@ -1,0 +1,205 @@
+Specifics for LandGrab Competition:
+
+Parameter Schema
+{
+     "$schema": "http://json-schema.org/draft-07/schema#",
+     
+     "title": "Bounce",
+     "type": "object", 
+       
+     "properties": {
+        "numBalls": {
+           "title": "Number of balls allowed per team",
+           "type": "integer",
+           "minimum": 1
+        },
+        "platforms": {
+           "title": "platforms to bounce off of",
+           "type": "array",
+           "items": {
+              "title": "Blocked rectangle",
+              "type": "object",
+              "properties": {
+                 "loX": {
+                    "title": "Left edge",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "maximum": 100.0
+                 },
+                 "hiX": {
+                    "title": "Right edge",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "maximum": 100.0
+                 },
+                 "loY": {
+                    "title": "top edge",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "maximum": 100.0
+                 },
+                 "hiY": {
+                    "title": "bottom edge",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "maximum": 100.0
+                 }
+              },
+   	     "additionalProperties": false,
+ 	     "minProperties": 4  
+                
+           }  
+        } 
+    },
+    "additionalProperties": false,
+    "minProperties": 2   
+ }
+
+
+Example Parameter
+{
+   "numBalls": 3,
+   "platforms": [
+     {
+       "loX": 0,
+       "hiX": 40.2,
+       "hiY": 40,
+       "loY": 30
+     },
+     {
+       "loX": 0,
+       "hiX": 50,
+       "hiY": 7,
+       "loY": 5
+     },
+      {
+       "loX": 80,
+       "hiX": 100,
+       "hiY": 60,
+       "loY": 50
+     }
+   ] 
+}
+
+Submission Schema:
+
+
+{
+   "$schema": "http://json-schema.org/draft-07/schema#",
+    
+   "title": "Bounce Submit",
+   "type": "array",
+   "items": {
+      "title": "speed",
+      "type": "object",
+      "properties": {
+         "speed": {
+            "title": "ball speed units/sec",
+            "type": "number",
+            "minimum": 0.0
+         }
+      },
+      "additionalProperties": false
+   },
+   "additionalProperties": false
+}
+
+Example Submission
+
+[
+  {
+    "speed": 50.0
+  },
+  {
+    "speed": 10.3
+  },
+  {
+    "speed": 23
+  }
+]
+
+Response schema
+
+{
+   "$schema": "http://json-schema.org/draft-07/schema#",
+    
+   "title": "Bounce Response",
+   "type": "object",
+   "properties": {
+     "platformsHit": {
+         "title": "number of platforms hit",
+         "type": "integer"
+      },
+      "ballMap" : {
+         "title": "Blocked rectangle",
+         "type": "array",
+         "items": {
+           "title": "Blocked rectangle",
+           "type": "object",
+           "properties": {
+             "time": {
+               "title": "time of event",
+               "type": "number",
+               "minimum": 0.0
+             },
+             "velocityX": {
+               "title": "X velocity of Ball",
+               "type": "number"
+             },
+             "velocityY": {
+               "title": "y velocity of ball",
+               "type": "number"
+             },
+             "posX": {
+               "title": "X position fo ball",
+               "type": "number",
+               "minimum": 0.0
+             },
+             "posY": {
+               "title": "Y position iof the ball",
+               "type": "number",
+               "minimum": 0.0
+             },
+             "obstacleHit": {
+               "title": "id of obstacle hit",
+               "type": "integer",
+               "minimum": -1
+             }
+           },   
+      	   "additionalProperties": false,
+           "minProperties": 6   
+         }
+      }
+     
+   },
+    "additionalProperties": false,
+    "minProperties": 2   
+}
+
+Example Response:
+
+{
+   "platformsHit": 3,
+   "ballMap": [
+     {
+       "time": 0,
+       "velocityX": 40.2,
+       "velocityY": 40,
+       "posX": 30,
+       "posY": 30,
+       "obstacleHit": -1
+     },
+     {
+       "time": 6.6,
+       "velocityX": 50,
+       "velocityY": 7,
+       "posX": 5,
+       "posY": 9,
+       "obstacleHit": 2
+     }
+   ] 
+}
+
+testing prms, submissions and response
+
+
