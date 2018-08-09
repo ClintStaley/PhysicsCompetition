@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as actionCreators from '../../actions/actionCreators';
-import { ListGroup, ListGroupItem, Button, Glyphicon, Tabs, Tab} from 'react-bootstrap';
+import { ListGroup, ListGroupItem} from 'react-bootstrap';
 import { ConfDialog } from '../concentrator';
 
 
@@ -58,7 +58,6 @@ class CmpsPage extends Component {
 
       return (
       <section className="container">
-      {console.log(props)}
       <ConfDialog
         show={this.state.showDeleteConfirmation  != null }bit
         title="Delete Competition"

@@ -8,7 +8,6 @@ export default class CmpPage extends Component {
    constructor(props) {
       super(props);
 
-
       this.state = {
          toggledTeams: {},
          createTeamFunc: null
@@ -75,11 +74,15 @@ export default class CmpPage extends Component {
       return teams[team2].bestScore - teams[team1].bestScore;
    }
 
+   doSubmit = (team) => {
+      console.log("Submit team " + team.id);
+   }
+
    render() {
       var props = this.props;
       var cmpId = props.cmpId;
 
-      if (!this.props.cmps[cmpId])
+      if (!props.cmps[cmpId])
          return (<h1>Error loading Competition</h1>)
 
       var ctpId = props.cmps[cmpId].ctpId;
@@ -174,8 +177,9 @@ const TeamLine = function (props) {
          Last Score:{props.bestScore !== -1 ? props.bestScore : "N/A"}
        </label>
        {props.isMember ?
-       <Button disabled = {!props.canSubmit}> Submit </Button>
-        : ''}
+       <Button onClick = {props.doSubmit}
+       disabled = {!props.canSubmit}>
+         Submit/Check</Button>  : ''}
        </div>
 
 

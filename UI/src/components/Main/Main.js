@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Register, SignIn, CmpsPage, TeamsPage, CmpPage, ConfDialog,
+import { Register, SignIn, CmpsPage, TeamsPage, CmpPage, SbmPage, ConfDialog,
    InstructionsPage } from '../concentrator'
 import { Route, Switch } from 'react-router-dom';
 import { Navbar, Nav, NavItem, ListGroup, ListGroupItem } from 'react-bootstrap';
@@ -14,11 +14,12 @@ class Main extends Component {
    }
 
    reRoute = (destinationComponent) => {
-     if (this.signedIn())
-       return destinationComponent;
-     else
-       this.props.history.push("/");
-       return Home;
+      if (this.signedIn())
+         return destinationComponent;
+      else {   
+         this.props.history.push("/");
+         return Home;
+      }
    }
 
    signOut(event) {
@@ -51,9 +52,7 @@ class Main extends Component {
                       </NavItem>
                     </LinkContainer>,
                     <LinkContainer key={1} to="/AllCmpsPage">
-                      <NavItem>
-                        Join Competitions
-                      </NavItem>
+                      <NavItem>Join Competitions</NavItem>
                     </LinkContainer>,
                     <LinkContainer key={2} to="/TeamsPage">
                       <NavItem>Teams</NavItem>
@@ -62,14 +61,10 @@ class Main extends Component {
                   :
                   [
                     <LinkContainer key={0} to="/signin">
-                      <NavItem>
-                        Sign In
-                      </NavItem>
+                      <NavItem>Sign In</NavItem>
                     </LinkContainer>,
                     <LinkContainer key={1} to="/register">
-                      <NavItem>
-                        Register
-                      </NavItem>
+                      <NavItem>Register</NavItem>
                     </LinkContainer>,
                   ]
                 }
@@ -92,23 +87,32 @@ class Main extends Component {
            render={() => reRoute(<CmpsPage showAll = {true}/>)} />} />
           <Route path='/TeamsPage' component = {TeamsPage}/>
           <Route path='/signin' render = {() => <SignIn {...this.props} />} />
-          <Route path='/register' render = {() => <Register {...this.props} />} />
+          <Route path='/register' render = {() => <Register {...this.props} />}/>
 
           <Route path='/MyCmpPage/:cmpId/'
-          render={(props) => {
-          return reRoute(<CmpPage cmpId = {props.match.params.cmpId}
-          myCmpLink = {true}
-          {...this.props} />)}} />
+              render={(props) => {
+              return reRoute(<CmpPage cmpId = {props.match.params.cmpId}
+              myCmpLink = {true}
+              {...props} />)}} />
 
           <Route path='/JoinCmpPage/:cmpId/'
-          render={(props) => {
-          return reRoute(<CmpPage cmpId = {props.match.params.cmpId}
-          myCmpLink = {false}
-          {...this.props} />)}}/>
+              render={(props) => {
+                 return reRoute(<CmpPage cmpId = {props.match.params.cmpId}
+              myCmpLink = {false}
+              {...props} />)}}/>
 
           <Route path='/Instructions/:cmpId' render = {(props) =>
-             reRoute(<InstructionsPage cmpId = {props.match.params.cmpId}
-              {...this.props} />)} />
+              reRoute(<InstructionsPage cmpId = {props.match.params.cmpId}
+              {...props} />)} />
+
+          <Route path='/MyCmpPage/:cmpId/SbmPage/:teamId'
+              render={(props) => {
+                 var team = props.teams[props.match.params.teamId];
+                 var cmp = props.cmps[props.match.params.cmpid];
+
+                 return reRoute(<SbmPage team={team} cmp={cmp}/>);
+              }}/>
+
         </Switch>
 
         {/*Error popup dialog*/}
