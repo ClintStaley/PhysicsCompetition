@@ -95,8 +95,8 @@ insert into Person (firstName, lastName, email,       password,   whenRegistered
             VALUES ("Joe",     "Admin", "adm@11.com", "password", NOW(), 1);
 
 
-insert into CompetitionType (title, description, tutorial, prmSchema)
-            VALUES ("Land Grab", "Claim territory by placing circles in a field of obstacles", "Claim territory by placing circles in a field of obstacles...", '{\
+insert into CompetitionType (title, codeName, description, tutorial, prmSchema)
+            VALUES ("Land Grab", "LandGrab", "Claim territory by placing circles in a field of obstacles", "Claim territory by placing circles in a field of obstacles...", '{\
      "$schema": "http://json-schema.org/draft-07/schema#",\
      \
      "title": "Land Grab",\
@@ -155,19 +155,14 @@ insert into CompetitionType (title, description, tutorial, prmSchema)
     "minProperties": 3   \
  }');
 
-insert into CompetitionType (title, description, tutorial, prmSchema)
-            VALUES ("Bounce", "Bounce a ball across platforms", "Bounce a ball across platforms by inputing a speed", '{\
+insert into CompetitionType (title, codeName, description, tutorial, prmSchema)
+            VALUES ("Bounce", "Bounce","Bounce a ball across platforms", "Bounce a ball across platforms by inputing a speed", '{\
      "$schema": "http://json-schema.org/draft-07/schema#",\
      \
      "title": "Bounce",\
      "type": "object", \
        \
-     "properties": {\
-        "numBalls": {\
-           "title": "Number of balls allowed per team",\
-           "type": "integer",\
-           "minimum": 1\
-        },\
+     "properties": {
         "platforms": {\
            "title": "platforms to bounce off of",\
            "type": "array",\
@@ -207,7 +202,7 @@ insert into CompetitionType (title, description, tutorial, prmSchema)
         } \
     },\
     "additionalProperties": false,\
-    "minProperties": 2   \
+    "minProperties": 1   \
  }');
 
 select * from Person;

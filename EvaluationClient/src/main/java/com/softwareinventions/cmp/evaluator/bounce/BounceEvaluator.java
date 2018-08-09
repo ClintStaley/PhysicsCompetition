@@ -1,5 +1,6 @@
 package com.softwareinventions.cmp.evaluator.bounce;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 
 import org.codehaus.jackson.map.ObjectMapper;
@@ -11,11 +12,14 @@ import com.softwareinventions.cmp.evaluator.EvlPut;
 import com.softwareinventions.cmp.evaluator.landgrab.LandGrabEvl;
 import com.softwareinventions.cmp.evaluator.landgrab.LandGrabSubmissionCircle;
 
-public class BounceEvaluator extends Evaluator  {
+public class BounceEvaluator extends Evaluator {
+   // for now constant, could change later
+   public static final double startingHeight = 100.0;
+   // final
 
    BounceParameters cmpDetails;
    ObjectMapper mapper = new ObjectMapper();
-   
+
    public BounceEvaluator(String prms) {
       super(prms);
 
@@ -25,7 +29,6 @@ public class BounceEvaluator extends Evaluator  {
          e.printStackTrace();
       }
    }
-
 
    @Override
    public EvlPut[] evaluateSubmissions(Submit[] submissions) {
@@ -41,8 +44,10 @@ public class BounceEvaluator extends Evaluator  {
 
       return evaluations;
    }
-   
+
    private EvlPut evaluate(Submit submission) {
+      int numberOfPlatforms = cmpDetails.platforms.length;
+      
       EvlPut eval = new EvlPut();
       eval.eval = new Evl();
 
@@ -50,19 +55,30 @@ public class BounceEvaluator extends Evaluator  {
       eval.teamId = submission.teamId;
       eval.sbmId = submission.id;
       eval.eval = new Evl();
-      
+
+      BounceBallEvent startEvent = new BounceBallEvent();
+      startEvent.obstacleHit = -1;
+      startEvent.posX = 0;
+      startEvent.posY = startingHeight;
+
+      LinkedList<BouncePlatform> Platforms = new LinkedList<BouncePlatform>(
+            Arrays.asList(cmpDetails.platforms));
+
       LinkedList<BounceBallEvent> Events = new LinkedList<BounceBallEvent>();
-      
+
+      Events.add(new BounceBallEvent());
+
       eval.eval.score = 0;
       eval.eval.testResult = "temp";
-      
-      
-      
-      
-      
-      
+
       System.out.println("Bounce Eval");
       return eval;
+   }
+
+   private BounceBallEvent[] calculateOneBall(
+         LinkedList<BouncePlatform> Platforms, BounceBallEvent StartingPoint) {
+
+      return null;
    }
 
 }

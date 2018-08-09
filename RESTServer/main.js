@@ -181,11 +181,6 @@ app.delete('/DB', function (req, res) {
      "type": "object",
 
      "properties": {
-        "numBalls": {
-           "title": "Number of balls allowed per team",
-           "type": "integer",
-           "minimum": 1
-        },
         "platforms": {
            "title": "platforms to bounce off of",
            "type": "array",
@@ -225,7 +220,7 @@ app.delete('/DB', function (req, res) {
         }
     },
     "additionalProperties": false,
-    "minProperties": 2
+    "minProperties": 1
  }');`
    , cb);
  });

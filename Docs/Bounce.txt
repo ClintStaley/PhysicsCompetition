@@ -8,11 +8,6 @@ Parameter Schema
      "type": "object", 
        
      "properties": {
-        "numBalls": {
-           "title": "Number of balls allowed per team",
-           "type": "integer",
-           "minimum": 1
-        },
         "platforms": {
            "title": "platforms to bounce off of",
            "type": "array",
@@ -52,13 +47,12 @@ Parameter Schema
         } 
     },
     "additionalProperties": false,
-    "minProperties": 2   
+    "minProperties": 1   
  }
 
 
 Example Parameter
 {
-   "numBalls": 3,
    "platforms": [
      {
        "loX": 0,
@@ -134,41 +128,45 @@ Response schema
          "title": "Blocked rectangle",
          "type": "array",
          "items": {
-           "title": "Blocked rectangle",
-           "type": "object",
-           "properties": {
-             "time": {
-               "title": "time of event",
-               "type": "number",
-               "minimum": 0.0
-             },
-             "velocityX": {
-               "title": "X velocity of Ball",
-               "type": "number"
-             },
-             "velocityY": {
-               "title": "y velocity of ball",
-               "type": "number"
-             },
-             "posX": {
-               "title": "X position fo ball",
-               "type": "number",
-               "minimum": 0.0
-             },
-             "posY": {
-               "title": "Y position iof the ball",
-               "type": "number",
-               "minimum": 0.0
-             },
-             "obstacleHit": {
-               "title": "id of obstacle hit",
-               "type": "integer",
-               "minimum": -1
-             }
+           "title": "All events for one ball",
+           "type": "array",
+           "items": {
+             "title": "Ball Event",
+             "type": "object",
+             "properties": {
+               "time": {
+                 "title": "time of event",
+                 "type": "number",
+                 "minimum": 0.0
+               },
+               "velocityX": {
+                 "title": "X velocity of Ball",
+                 "type": "number"
+               },
+               "velocityY": {
+                 "title": "y velocity of ball",
+                 "type": "number"
+               },
+               "posX": {
+                 "title": "X position fo ball",
+                 "type": "number",
+                 "minimum": 0.0
+               },
+               "posY": {
+                 "title": "Y position iof the ball",
+                 "type": "number",
+                 "minimum": 0.0
+               },
+               "obstacleHit": {
+                 "title": "id of obstacle hit",
+                 "type": "integer",
+                 "minimum": -1
+               }
            },   
       	   "additionalProperties": false,
            "minProperties": 6   
          }
+       }
       }
      
    },
@@ -181,7 +179,7 @@ Example Response:
 {
    "platformsHit": 3,
    "ballMap": [
-     {
+     [{
        "time": 0,
        "velocityX": 40.2,
        "velocityY": 40,
@@ -196,7 +194,23 @@ Example Response:
        "posX": 5,
        "posY": 9,
        "obstacleHit": 2
-     }
+     }],
+     [{
+       "time": 6.6,
+       "velocityX": 50,
+       "velocityY": 7,
+       "posX": 5,
+       "posY": 9,
+       "obstacleHit": 2
+     },
+     {
+       "time": 0,
+       "velocityX": 40.2,
+       "velocityY": 40,
+       "posX": 30,
+       "posY": 30,
+       "obstacleHit": -1
+     }]
    ] 
 }
 
