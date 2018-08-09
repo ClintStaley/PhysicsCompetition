@@ -16,7 +16,7 @@ class Main extends Component {
    reRoute = (destinationComponent) => {
       if (this.signedIn())
          return destinationComponent;
-      else {   
+      else {
          this.props.history.push("/");
          return Home;
       }
@@ -47,9 +47,7 @@ class Main extends Component {
                   // User is signed in
                   [
                     <LinkContainer key={0} to="/MyCmpsPage">
-                      <NavItem>
-                        My Competitions
-                      </NavItem>
+                      <NavItem>My Competitions</NavItem>
                     </LinkContainer>,
                     <LinkContainer key={1} to="/AllCmpsPage">
                       <NavItem>Join Competitions</NavItem>
@@ -90,25 +88,25 @@ class Main extends Component {
           <Route path='/register' render = {() => <Register {...this.props} />}/>
 
           <Route path='/MyCmpPage/:cmpId/'
-              render={(props) => {
-              return reRoute(<CmpPage cmpId = {props.match.params.cmpId}
+              render={(pathProps) => {
+              return reRoute(<CmpPage cmpId = {pathProps.match.params.cmpId}
               myCmpLink = {true}
-              {...props} />)}} />
+              {...this.props} />)}} />
 
           <Route path='/JoinCmpPage/:cmpId/'
-              render={(props) => {
-                 return reRoute(<CmpPage cmpId = {props.match.params.cmpId}
+              render={(pathProps) => {
+                 return reRoute(<CmpPage cmpId = {pathProps.match.params.cmpId}
               myCmpLink = {false}
-              {...props} />)}}/>
+              {...this.props} />)}}/>
 
-          <Route path='/Instructions/:cmpId' render = {(props) =>
-              reRoute(<InstructionsPage cmpId = {props.match.params.cmpId}
-              {...props} />)} />
+          <Route path='/Instructions/:cmpId' render = {(pathProps) =>
+              reRoute(<InstructionsPage cmpId = {pathProps.match.params.cmpId}
+              {...this.props} />)} />
 
-          <Route path='/MyCmpPage/:cmpId/SbmPage/:teamId'
-              render={(props) => {
-                 var team = props.teams[props.match.params.teamId];
-                 var cmp = props.cmps[props.match.params.cmpid];
+          <Route path='/SbmPage/:teamId'
+              render={(pathProps) => {
+                 var team = this.props.teams[pathProps.match.params.teamId];
+                 var cmp = this.props.cmps[team.cmpId];
 
                  return reRoute(<SbmPage team={team} cmp={cmp}/>);
               }}/>

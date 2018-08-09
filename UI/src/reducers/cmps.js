@@ -1,4 +1,6 @@
 export default function cmps(state = {}, action) {
+   var cmpId, teamId, cmpArrId, newTeamArr, cmpData;
+
    switch (action.type) {
       case 'GET_PRS_CMPS':
       case 'GET_CMPS': // Replace previous cmps
@@ -6,22 +8,22 @@ export default function cmps(state = {}, action) {
       case 'ADD_CMPS': // add cmps to the master cmps object
          return Object.assign({}, state, action.cmps);
       case 'PUT_CMP':
-         var cmpId = action.cmpData.cmpId;
-         var cmpData = action.cmpData.newCmpData;
+         cmpId = action.cmpData.cmpId;
+         cmpData = action.cmpData.newCmpData;
 
          return Object.assign({}, state, {[cmpId]:
           Object.assign({}, state[cmpId], cmpData)});
       case 'GET_CMP_TEAMS':
-         var cmpId = action.cmpId;
-         var cmpArrId = Object.keys(action.teams);
+         cmpId = action.cmpId;
+         cmpArrId = Object.keys(action.teams);
 
          return Object.assign({}, state, {[cmpId]:
           Object.assign({}, state[cmpId], {cmpTeams: cmpArrId})});
       case 'ADD_TEAM':
-         var teamId = action.newTeamData.id;
-         var cmpId = action.newTeamData.cmpId
-         var cmpArrId = state[cmpId].cmpTeams;
-         var newTeamArr = cmpArrId.concat(teamId.toString());
+         teamId = action.newTeamData.id;
+         cmpId = action.newTeamData.cmpId
+         cmpArrId = state[cmpId].cmpTeams;
+         newTeamArr = cmpArrId.concat(teamId.toString());
 
          return Object.assign({}, state, {[cmpId]:
           Object.assign({}, state[cmpId], {cmpTeams: newTeamArr})});
