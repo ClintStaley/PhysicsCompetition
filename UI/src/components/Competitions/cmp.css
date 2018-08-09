@@ -19,8 +19,13 @@
 
 .cmpDescription-header {
   background-color: lightgrey;
-  border-radius: 2px;
+  border-radius: 1px;
   font-size: 15pt;
   padding: 4px;
   text-align: center;
+}
+
+.rightButton {
+  margin: 5px;
+  float: right;
 }

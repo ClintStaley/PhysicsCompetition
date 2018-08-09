@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import com.softwareinventions.cmp.dto.Competition;
 import com.softwareinventions.cmp.evaluator.Evaluator;
 import com.softwareinventions.cmp.evaluator.EvlPut;
+import com.softwareinventions.cmp.evaluator.bounce.BounceEvaluator;
 import com.softwareinventions.cmp.evaluator.landgrab.LandGrabEvaluator;
 
 public class App {
@@ -47,6 +48,8 @@ public class App {
       switch (cmp.ctpId) {
       case 1:
          return new LandGrabEvaluator(cmp.prms);
+      case 2:
+         return new BounceEvaluator(cmp.prms);
       default:
          return new LandGrabEvaluator(cmp.prms);
       }
