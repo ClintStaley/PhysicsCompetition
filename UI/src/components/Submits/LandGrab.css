@@ -11,7 +11,7 @@
 .graphBkg {
    fill:#F0F0FF;
    stroke:"gray";
-   stroke-width:.1";
+   stroke-width:.1;
 }
 
 .obstacle {
@@ -29,7 +29,7 @@
 }
 
 .openCircle {
-   fill:#EEEEEE40;
+   fill:#80808040;
 }
 
 .text, .rhsText {

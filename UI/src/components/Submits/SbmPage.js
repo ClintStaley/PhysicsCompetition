@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ConfDialog } from '../concentrator';
+import { ConfDialog, LandGrab } from '../concentrator';
 import * as api from '../../api';
 
 // Expected props are:
@@ -10,8 +10,8 @@ export default class SbmPage extends Component {
       super(props);
 
       this.state = {
-         ctpTitle: "", // Name of competition type (of first and all submits)
-         sbms: null   // Current submission history.
+         ctpCodeName: "", // Ctp codeName (of first and all submits)
+         sbms: null       // Current submission history.
       }
    }
 
@@ -24,7 +24,7 @@ export default class SbmPage extends Component {
    updateSbms = () => {
       api.getSbms(this.props.cmp.id, this.props.team.id, 1)
       .then(sbms => api.getCtpById(this.props.cmp.ctpId)
-         .then(ctp => ({ctpTitle: ctp.title, sbms})))
+         .then(ctp => ({ctpCodeName: ctp.codeName, sbms})))
       .then((newState) => this.setState(newState));
       //.catch((errList) => dsp({type: 'SHOW_ERR', details: errList})// use props.team.id and props.cmp.id to update sbm
    }
@@ -32,15 +32,17 @@ export default class SbmPage extends Component {
    render() {
       var cmp = this.props.cmp;
       var sbm = this.state.sbms && this.state.sbms[0];
-      var ctpTitle = this.state.ctpTitle;
+      var ctpCodeName = this.state.ctpCodeName;
 
       return (
          <div>
-            <h2>{ctpTitle}</h2>
-            <h2>{cmp.title}</h2>
+            <h2>{ctpCodeName}</h2>
             <h3>{JSON.stringify(cmp.prms)}</h3>
             <h3>{sbm && JSON.stringify(sbm.content)}</h3>
             <h3>{sbm && JSON.stringify(sbm.testResult)}</h3>
+            {sbm && ctpCodeName === "LandGrab" ?
+                <LandGrab prms={cmp.prms} sbm={sbm} />
+            : ""}
          </div>
       );
    }
