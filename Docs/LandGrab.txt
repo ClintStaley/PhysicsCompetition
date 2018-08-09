@@ -11,7 +11,7 @@ Parameter Schema
         "numCircles": {
            "title": "Number of circles allowed per team",
            "type": "integer",
-           "minValue": 1
+           "minimum": 1
         },
         "goalArea": {
            "title": "Area of coverage that gets 100%",
@@ -50,10 +50,14 @@ Parameter Schema
                     "minimum": 0.0,
                     "maximum": 100.0
                  }
-              }     
+              },
+              "additionalProperties": false,
+    		  "minProperties": 4   
            }
         }
-    }
+    },
+    "additionalProperties": false,
+    "minProperties": 3   
  }
 
 
@@ -113,10 +117,11 @@ Submission Schema:
             "minimum": 0.0,
             "maximum": 50.0
          }
-      }
+      },
+      "additionalProperties": false,
+      "minProperties": 3     
    }
 }
-
 Example Submission
 
 [
@@ -157,8 +162,11 @@ Response schema
          "title": "Area covered by valid circles",
          "type": "number"
       }
-   }
+   },
+   "additionalProperties": false,
+   "minProperties": 2     
 }
+
 
 Example Response:
 

@@ -15,6 +15,7 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', (req, res) => {
+  console.log("test");
    var vld = req.validator;  // Shorthands
    var body = req.body;
    var cnn = req.cnn;

@@ -100,6 +100,141 @@ app.delete('/DB', function (req, res) {
          '("Joe", "Admin", "adm@11.com","password", NOW(), 1);', cb);
    });
 
+   // Callback to reinsert Bounce CompetitionType TEST
+
+
+   // Callback to reinsert Land Grab CompetitionType
+   cbs.push(function (cb) {
+      req.cnn.query(`insert into CompetitionType (title, description, ` +
+        `tutorial, prmSchema)  VALUES ("Land Grab", "Claim territory by ` +
+        `placing circles in a field of obstacles", "Claim territory by ` +
+        `placing circles in a field of obstacles...", '{\
+     "$schema": "http://json-schema.org/draft-07/schema#",\
+     \
+     "title": "Land Grab",\
+     "type": "object", \
+       \
+     "properties": {\
+        "numCircles": {\
+           "title": "Number of circles allowed per team",\
+           "type": "integer",\
+           "minimum": 1\
+        },\
+        "goalArea": {\
+           "title": "Area of coverage that gets 100%",\
+           "type": "number",\
+           "minimum": 0.0,\
+           "maximum": 10000.0\
+        },\
+        "obstacles": {\
+           "title": "Blocked areas in 100x100 square",\
+           "type": "array",\
+           "items": {\
+              "title": "Blocked rectangle",\
+              "type": "object",\
+              "properties": {\
+                 "loX": {\
+                    "title": "Left edge",\
+                    "type": "number",\
+                    "minimum": 0.0,\
+                    "maximum": 100.0\
+                 },\
+                 "hiX": {\
+                    "title": "Right edge",\
+                    "type": "number",\
+                    "minimum": 0.0,\
+                    "maximum": 100.0\
+                 },\
+                 "loY": {\
+                    "title": "Bottom edge",\
+                    "type": "number",\
+                    "minimum": 0.0,\
+                    "maximum": 100.0\
+                 }, \
+                 "hiY": {\
+                    "title": "Top edge",\
+                    "type": "number",\
+                    "minimum": 0.0,\
+                    "maximum": 100.0\
+                 }\
+              },\
+              "additionalProperties": false,\
+    		  "minProperties": 4   \
+           }\
+        }\
+    },\
+    "additionalProperties": false,\
+    "minProperties": 3   \
+ }');`, cb);
+});
+
+   // Callback to reinsert Bounce CompetitionType
+   cbs.push(function (cb) {
+      req.cnn.query(
+   `insert into CompetitionType (title, description, tutorial, prmSchema)` +
+   ` VALUES ("Bounce", "Bounce a ball across platforms", " a ball across` +
+   `platforms by inputing a speed",
+   '{
+        "$schema": "http://json-schema.org/draft-07/schema#",
+
+        "title": "Land Grab",
+        "type": "object",
+
+        "properties": {
+           "numCircles": {
+              "title": "Number of circles allowed per team",
+              "type": "integer",
+              "minimum": 1
+           },
+           "goalArea": {
+              "title": "Area of coverage that gets 100%",
+              "type": "number",
+              "minimum": 0.0,
+              "maximum": 10000.0
+           },
+           "obstacles": {
+              "title": "Blocked areas in 100x100 square",
+              "type": "array",
+              "items": {
+                 "title": "Blocked rectangle",
+                 "type": "object",
+                 "properties": {
+                    "loX": {
+                       "title": "Left edge",
+                       "type": "number",
+                       "minimum": 0.0,
+                       "maximum": 100.0
+                    },
+                    "hiX": {
+                       "title": "Right edge",
+                       "type": "number",
+                       "minimum": 0.0,
+                       "maximum": 100.0
+                    },
+                    "loY": {
+                       "title": "Bottom edge",
+                       "type": "number",
+                       "minimum": 0.0,
+                       "maximum": 100.0
+                    },
+                    "hiY": {
+                       "title": "Top edge",
+                       "type": "number",
+                       "minimum": 0.0,
+                       "maximum": 100.0
+                    }
+                 },
+                 "additionalProperties": false,
+            "minProperties": 4
+              }
+           }
+       },
+       "additionalProperties": false,
+       "minProperties": 3
+    }');`
+   , cb);
+ });
+
    // Callback to clear sessions, release connection and return result
    cbs.push(function (callback) {
       for (var session in Session.sessions)

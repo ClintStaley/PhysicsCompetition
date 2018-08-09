@@ -95,17 +95,119 @@ insert into Person (firstName, lastName, email,       password,   whenRegistered
 
 
 insert into CompetitionType (title, description, tutorial, prmSchema)
-            VALUES ("Bridge Builder", "What yo do: Build Bridges", "How to build Bridges: Build Bridges", "{}");
+            VALUES ("Land Grab", "Claim territory by placing circles in a field of obstacles", "Claim territory by placing circles in a field of obstacles...", '{\
+     "$schema": "http://json-schema.org/draft-07/schema#",\
+     \
+     "title": "Land Grab",\
+     "type": "object", \
+       \
+     "properties": {\
+        "numCircles": {\
+           "title": "Number of circles allowed per team",\
+           "type": "integer",\
+           "minimum": 1\
+        },\
+        "goalArea": {\
+           "title": "Area of coverage that gets 100%",\
+           "type": "number",\
+           "minimum": 0.0,\
+           "maximum": 10000.0\
+        },\
+        "obstacles": {\
+           "title": "Blocked areas in 100x100 square",\
+           "type": "array",\
+           "items": {\
+              "title": "Blocked rectangle",\
+              "type": "object",\
+              "properties": {\
+                 "loX": {\
+                    "title": "Left edge",\
+                    "type": "number",\
+                    "minimum": 0.0,\
+                    "maximum": 100.0\
+                 },\
+                 "hiX": {\
+                    "title": "Right edge",\
+                    "type": "number",\
+                    "minimum": 0.0,\
+                    "maximum": 100.0\
+                 },\
+                 "loY": {\
+                    "title": "Bottom edge",\
+                    "type": "number",\
+                    "minimum": 0.0,\
+                    "maximum": 100.0\
+                 }, \
+                 "hiY": {\
+                    "title": "Top edge",\
+                    "type": "number",\
+                    "minimum": 0.0,\
+                    "maximum": 100.0\
+                 }\
+              },\
+              "additionalProperties": false,\
+    		  "minProperties": 4   \
+           }\
+        }\
+    },\
+    "additionalProperties": false,\
+    "minProperties": 3   \
+ }');
 
-
-insert into Competition (ownerId, ctpId, title, prms, description)
-            VALUES (1,     1, "bridge building", "{}", "description goes here");
-
-insert into Team (teamName, cmpId, leaderId)
-            VALUES ("Team1", 1, 1);
-
-insert into Membership (prsId, teamId)
-            VALUES (1,     1);
+insert into CompetitionType (title, description, tutorial, prmSchema)
+            VALUES ("Bounce", "Bounce a ball across platforms", "Bounce a ball across platforms by inputing a speed", '{\
+     "$schema": "http://json-schema.org/draft-07/schema#",\
+     \
+     "title": "Bounce",\
+     "type": "object", \
+       \
+     "properties": {\
+        "numBalls": {\
+           "title": "Number of balls allowed per team",\
+           "type": "integer",\
+           "minimum": 1\
+        },\
+        "platforms": {\
+           "title": "platforms to bounce off of",\
+           "type": "array",\
+           "items": {\
+              "title": "Blocked rectangle",\
+              "type": "object",\
+              "properties": {\
+                 "loX": {\
+                    "title": "Left edge",\
+                    "type": "number",\
+                    "minimum": 0.0,\
+                    "maximum": 100.0\
+                 },\
+                 "hiX": {\
+                    "title": "Right edge",\
+                    "type": "number",\
+                    "minimum": 0.0,\
+                    "maximum": 100.0\
+                 },\
+                 "loY": {\
+                    "title": "top edge",\
+                    "type": "number",\
+                    "minimum": 0.0,\
+                    "maximum": 100.0\
+                 },\
+                 "hiY": {\
+                    "title": "bottom edge",\
+                    "type": "number",\
+                    "minimum": 0.0,\
+                    "maximum": 100.0\
+                 }\
+              },\
+   	     "additionalProperties": false,\
+ 	     "minProperties": 4  \
+                \
+           }  \
+        } \
+    },\
+    "additionalProperties": false,\
+    "minProperties": 2   \
+ }');
 
 select * from Person;
 select * from CompetitionType;

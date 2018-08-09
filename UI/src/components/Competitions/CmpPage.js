@@ -147,7 +147,7 @@ export default class CmpPage extends Component {
            }
 
           {!myCmpLink ?
-          <div className="pull-right">
+          <div className = "rightButton">
              <Button onClick={this.openCreateDialog} >Create Team</Button>
           </div>
           : ''}
