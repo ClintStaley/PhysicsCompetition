@@ -10,11 +10,22 @@ public class BounceCollisionCalculator {
          BounceBallEvent current) {
 
       BounceCollision[] collisions = new BounceCollision[Platforms.size()];
+      int platformIdx = -1;
 
+      //check all platforms for a collision 
       for (int i = 0; i < collisions.length; i++) {
          collisions[i] = getPlatformCollision(Platforms.get(i), current);
+         if (collisions[i] != null) {
+            platformIdx = i;
+            collisions[i].obstacleIdx = Platforms.get(i).platformId;
+         }
       }
-
+      
+      if (platformIdx > -1) {
+         System.out.println("Collision detected at: " + Platforms.get(platformIdx).platformId);
+         Platforms.remove(platformIdx);
+      }
+      
       return getFirstCollision(collisions);
    }
 
@@ -22,7 +33,7 @@ public class BounceCollisionCalculator {
    private static BounceCollision getPlatformCollision(BouncePlatform platform,
          BounceBallEvent current) {
 
-      // 8 for all 4 edeges and 4 corners
+      // 8 for all 4 edges and 4 corners
       BounceCollision[] collisions = new BounceCollision[8];
 
       // get horizontal edges and checking if they hit, or whose first
@@ -41,27 +52,71 @@ public class BounceCollisionCalculator {
       collisions[6] = getCornerCollision(platform.loX, platform.hiY, current);
       collisions[7] = getCornerCollision(platform.loX, platform.loY, current);
 
-      // testValues
 
       // returns the correct collision
       return getFirstCollision(collisions);
    }
 
-   // calculates if the ball will hit any edge of the platform
+   // calculates if the ball will hit horizontal any edge of the platform
    private static BounceCollision getHorizontalEdgeCollision(double loX, double hiX,
          double y, BounceBallEvent current) {
+      //get equations for event
+      UnivariateFunction[] equations = BounceHelper.getAllFunctions(current);
+      
+      // solve for y
+      double yHitTime = BounceHelper.quadraticSolution(BounceHelper.GRAVITY,
+            current.velocityY, current.posY - y);
+      
+      //throw out negative times
+      if (yHitTime < 0)
+         return null;
 
-      // TODO
-
+      double xValue = equations[0].value(yHitTime);
+      
+      if (xValue > loX && xValue < hiX) {
+         BounceCollision collision = new BounceCollision();
+         
+         collision.time = yHitTime;
+         collision.hit = BounceCollision.hitType.VERTICAL;
+         
+         //not necessary for edge hit
+         collision.xHit = -1;
+         collision.yHit = -1;
+         
+         return collision;
+      }
+      
       return null;
    }
 
-   // calculates if the ball will hit any edge of the platform
+   // calculates if the ball will hit any vertical edge of the platform
    private static BounceCollision getVerticalEdgeCollision(double loY, double hiY,
          double x, BounceBallEvent current) {
+      //get equations for event
+      UnivariateFunction[] equations = BounceHelper.getAllFunctions(current);
+      
+      // solve for x
+      double xHitTime = (x - current.posX) / current.velocityX;
+      
+      //throw out negative times
+      if (xHitTime < 0)
+         return null;
 
-      // TODO
-
+      double yValue = equations[2].value(xHitTime);
+      
+      if (yValue > loY && yValue < hiY) {
+         BounceCollision collision = new BounceCollision();
+         
+         collision.time = xHitTime;
+         collision.hit = BounceCollision.hitType.HORIZONTAL;
+         
+         //not necessary for edge hit
+         collision.xHit = -1;
+         collision.yHit = -1;
+         
+         return collision;
+      }
+      
       return null;
    }
 

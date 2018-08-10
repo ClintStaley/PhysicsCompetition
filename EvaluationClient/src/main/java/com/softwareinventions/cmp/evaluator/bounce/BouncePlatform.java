@@ -5,4 +5,5 @@ public class BouncePlatform {
    public double hiX;
    public double hiY;
    public double loY;
+   public int platformId;
 }

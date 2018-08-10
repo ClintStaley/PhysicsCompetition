@@ -36,8 +36,37 @@ public class BounceHelper {
       newEvent.velocityX = ballFunctions[1].value(time);
       newEvent.posY = ballFunctions[2].value(time);
       newEvent.velocityY = ballFunctions[3].value(time);
-      newEvent.time = time;
+      newEvent.time = time + current.time;
 
       return newEvent;
+   }
+   
+   // quadratic solution returns time when zero
+   // if no valid solution returns 10000
+   public static double quadraticSolution(double a, double b, double c) {
+      double d = b * b - 4 * a * c;
+      double root1;
+      double root2;
+
+      if (d > 0) {
+         root1 = (-b + Math.sqrt(d)) / (2 * a);
+         root2 = (-b - Math.sqrt(d)) / (2 * a);
+         if (root1 >= 0 || root2 >= 0)
+            if (root2 < 0)
+               return root1;
+            else if (root1 < 0)
+               return root2;
+            else
+               return (root1 > root2) ? root2 : root1;
+
+      }
+      if (d == 0) {
+         root1 = (-b + Math.sqrt(d)) / (2 * a);
+         if (root1 >= 0)
+            return root1;
+      }
+
+      // imaginary solution should never occur
+      return 100000;
    }
 }

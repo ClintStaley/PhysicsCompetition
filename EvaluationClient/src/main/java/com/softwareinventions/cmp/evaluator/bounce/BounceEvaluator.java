@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedList;
 
-import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -54,9 +53,16 @@ public class BounceEvaluator extends Evaluator {
 
       // keep track of the number of platforms for later
       int numberOfPlatforms = cmpDetails.platforms.length;
-      // Linked list so that i can delete
+      
+
+      //assign all platforms ID numbers based on their index
+      for (int i = 0; i < cmpDetails.platforms.length; i++)
+         cmpDetails.platforms[i].platformId = i;
+      
+      // Linked list so that I can delete them later on
       LinkedList<BouncePlatform> platforms = new LinkedList<BouncePlatform>(
             Arrays.asList(cmpDetails.platforms));
+      
 
       // start a BounceEvl to turn into a json string
       BounceEvl rspB = new BounceEvl();
@@ -106,7 +112,7 @@ public class BounceEvaluator extends Evaluator {
             .getNextCollision(Platforms, StartingPoint);
 
       while (nextCollision != null) {
-
+         System.out.println("Collision Detected");
          ballEvents
                .add(calculateBallColision(ballEvents.getLast(), nextCollision));
 
@@ -134,11 +140,11 @@ public class BounceEvaluator extends Evaluator {
          newBallEvent.velocityY = -newBallEvent.velocityY;
          break;
       case CORNER:
-         //TODO
+         // TODO
          System.out.println("Corner Collision");
          break;
       default:
-         //should never happen
+         // should never happen
          System.out.println("Invalid Collision Detected");
          return null;
 
@@ -149,65 +155,25 @@ public class BounceEvaluator extends Evaluator {
    }
 
    private BounceBallEvent calculateBorderEvent(BounceBallEvent current) {
-      // get all equations
-      UnivariateFunction[] ballFunctions = BounceHelper
-            .getAllFunctions(current);
 
       // solve for y
-      double yOutOfBounds = quadraticSolution(BounceHelper.GRAVITY,
+      double yOutOfBounds = BounceHelper.quadraticSolution(BounceHelper.GRAVITY,
             current.velocityY, current.posY);
 
       // solve for x
       double xOutOfBounds = (100.0 - current.posX) / current.velocityX;
 
-      System.out.println(xOutOfBounds);
-      System.out.println(yOutOfBounds);
       // gets the lower time
       double boundsTime = (xOutOfBounds > yOutOfBounds) ? yOutOfBounds
             : xOutOfBounds;
 
       // calculate the out of bounds event
-      BounceBallEvent outOfBounds = new BounceBallEvent();
-      outOfBounds.obstacleHit = -1;
-      outOfBounds.posX = ballFunctions[0].value(boundsTime);
-      outOfBounds.velocityX = ballFunctions[1].value(boundsTime);
-      outOfBounds.posY = ballFunctions[2].value(boundsTime);
-      outOfBounds.velocityY = ballFunctions[3].value(boundsTime);
-      outOfBounds.time = boundsTime;
+      BounceBallEvent outOfBounds = BounceHelper.createNewEvent(current,
+            boundsTime);
 
       return outOfBounds;
    }
 
-   // quadratic solution returns time when zero
-   // if no valid solution returns 10000
-   private double quadraticSolution(double a, double b, double c) {
-      double d = b * b - 4 * a * c;
-      double root1;
-      double root2;
 
-      System.out.println("d is: " + d);
-
-      if (d > 0) {
-         root1 = (-b + Math.sqrt(d)) / (2 * a);
-         root2 = (-b - Math.sqrt(d)) / (2 * a);
-         System.out.println("root1 is: " + root1 + ", root2 is: " + root2);
-         if (root1 >= 0 || root2 >= 0)
-            if (root2 < 0)
-               return root1;
-            else if (root1 < 0)
-               return root2;
-            else
-               return (root1 > root2) ? root2 : root1;
-
-      }
-      if (d == 0) {
-         root1 = (-b + Math.sqrt(d)) / (2 * a);
-         if (root1 >= 0)
-            return root1;
-      }
-
-      // imaginary solution should never occur
-      return 100000;
-   }
 
 }
