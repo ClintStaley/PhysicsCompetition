@@ -25,10 +25,10 @@ public class App {
             Competition[] cmps = handler.getCmps();
 
             for (int i = 0; i < cmps.length; i++) {
-               Evaluator LandGrabEval = cmpEvaluator(cmps[i]);
+               Evaluator evaluator = cmpEvaluator(cmps[i]);
 
                // gets the CompetitionTypes from the server
-               evaluations = LandGrabEval.evaluateSubmissions(
+               evaluations = evaluator.evaluateSubmissions(
                      handler.getWaitingSubmissions(cmps[i].id));
 
                for (int c = 0; c < evaluations.length; c++)
