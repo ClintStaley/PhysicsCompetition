@@ -17,12 +17,12 @@ export class LGSubmitModal extends Component {
       super(props);
 
       var idx, circles = [];
-
+      
       for (idx = 0; idx < props.prms.numCircles; idx++)
          circles.push({
-            centerX: "10",
-            centerY: "20",
-            radius: "42"
+            centerX: "",
+            centerY: "",
+            radius: ""
          });
 
       this.state = {circles};
@@ -78,8 +78,8 @@ export class LGSubmitModal extends Component {
 
          lines.push(<div className="container" key={idx}>
            <div className="row">
-             <div className="col-sm-2">Circle {idx}</div>
-             <div className="col-sm-10">
+             <div className="col-sm-1"><h5>Circle {idx}</h5></div>
+             <div className="col-sm-4">
 
                <FormGroup controlId={idX}>
                  <ControlLabel>X Coord</ControlLabel>
@@ -168,7 +168,7 @@ export class LandGrab extends Component {
          grid.push(<line key={"YL" + offs} x1="0" y1={offs} x2="100" y2={offs}
           className={hashClass}/>);
       }
-
+console.log(prms);
       // Obstacle rectangles
       obstacles = [];
       prms.obstacles.forEach((rect, idx) => {
@@ -185,7 +185,6 @@ export class LandGrab extends Component {
          obstacles.push(<text key={"LR"+idx} x={rect.hiX} y={100-rect.loY}
           className="rhsText">{"(" + rect.hiX + "," + rect.loY + ")"}</text>);
       });
-
 
       if (sbm) {
          tr = sbm.testResult;

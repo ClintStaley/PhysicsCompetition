@@ -35,10 +35,18 @@ export default class SbmPage extends Component {
    doSubmit = (submit) => {
       if (submit)
          api.postSbm(this.props.cmp.id, this.props.team.id, submit)
-         .then(uri => api.get(uri))
+         .then(uri => api.get(uri.substr(1)))//get rid of first / its unnessary
+         .then((sbmData) => sbmData.json())//because we use api and not action creator
+         .then((sbm) => {
+           sbm.content = JSON.parse(sbm.content);
+           return sbm;
+         })
          .then(newSbm => {this.setState( // Add new sbm to state; close dialog
             {sbms: [newSbm].concat(this.state.sbms), sbmFunction: null}
          )});
+     else {
+       this.setState({sbmFunction : null});
+     }
    }
 
    render() {
@@ -59,7 +67,7 @@ export default class SbmPage extends Component {
            <div className="row">
              <div className="col-sm-9">
                <h4>Submission received at {timeStr} on {dateStr}</h4>
-               <h4>{sbm.score ? `Score: ${sbm.score}` : "Result pending..."}</h4>
+               <h4>{sbm.score != null ? `Score: ${sbm.score}` : "Result pending..."}</h4>
              </div>
              <div className="col-sm-3">
                <Button disabled={!this.props.team.canSubmit}

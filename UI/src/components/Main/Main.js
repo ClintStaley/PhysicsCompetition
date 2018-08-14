@@ -22,6 +22,15 @@ class Main extends Component {
       }
    }
 
+   reRouteV2 = (paramaters, renderFunc) => {
+      if (this.signedIn())
+         return renderFunc(paramaters);
+      else {
+         this.props.history.push("/");
+         return Home;
+      }
+   }
+
    signOut(event) {
       this.props.history.push("/");
       this.props.signOut();
@@ -106,7 +115,8 @@ class Main extends Component {
           <Route path='/SbmPage/:teamId'
               render={(pathProps) => {
                  var team = this.props.teams[pathProps.match.params.teamId];
-                 var cmp = this.props.cmps[team.cmpId];
+                 if (team) //easiest fix to reload on submit page
+                    var cmp = this.props.cmps[team.cmpId];
 
                  return reRoute(<SbmPage team={team} cmp={cmp}/>);
               }}/>

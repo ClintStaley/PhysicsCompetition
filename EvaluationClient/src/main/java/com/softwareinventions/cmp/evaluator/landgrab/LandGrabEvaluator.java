@@ -41,7 +41,7 @@ public class LandGrabEvaluator extends Evaluator {
          e.printStackTrace();
          return new EvlPut[0];
       }
-
+      
       return evaluations;
    }
 
@@ -79,6 +79,8 @@ public class LandGrabEvaluator extends Evaluator {
       eval.eval.score = (double) Math
             .round((rspLG.areaCovered * 100 / cmpDetails.goalArea));
 
+      System.out.println("Graded Land Grab Submission# " + eval.sbmId);
+      
       return eval;
    }
 
@@ -122,7 +124,6 @@ public class LandGrabEvaluator extends Evaluator {
          if (circleCollision(circle, temp))
             return false;
 
-      System.out.printf("(%f, %f) is good\n", circle.centerX, circle.centerY);
       return true;
    }
 

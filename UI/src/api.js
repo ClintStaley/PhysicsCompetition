@@ -273,11 +273,11 @@ export function getSbms(cmpId, teamId, numSbms) {
       }
    });
 }
- Stopped here.  Why is this not returning a valid uri??
+ //Stopped here.  Why is this not returning a valid uri??
 export function postSbm(cmpId, teamId, content) {
    return post(`Cmps/${cmpId}/Teams/${teamId}/Sbms`,
     {content: JSON.stringify(content)})
-   .then(rsp => rsp.headers["Location"]);
+   .then(rsp => rsp.headers.get("Location"));
 }
 
 const errMap = {

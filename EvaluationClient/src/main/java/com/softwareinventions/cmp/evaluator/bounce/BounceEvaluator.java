@@ -23,6 +23,7 @@ public class BounceEvaluator extends Evaluator {
    public static final double GRAVITY = -9.80665;
    public static final double VELOCITY = GRAVITY/2;
    public static final double RADIUS = 1;
+   public static final double ZERO = 0.00000001;
 
    BounceParameters cmpDetails;
    ObjectMapper mapper = new ObjectMapper();
@@ -107,7 +108,8 @@ public class BounceEvaluator extends Evaluator {
             / 100;
       eval.eval.testResult = mapper.writeValueAsString(rspB);
 
-      System.out.println("Bounce Eval");
+      System.out.println("Graded Bounce Submission# " + eval.sbmId);
+      
       return eval;
    }
 
@@ -121,7 +123,6 @@ public class BounceEvaluator extends Evaluator {
       BounceCollision nextCollision = getNextCollision(Platforms, StartingPoint);
 
       while (nextCollision != null) {
-         System.out.println("Collision Detected");
          ballEvents
                .add(calculateBallColision(ballEvents.getLast(), nextCollision));
 
@@ -236,15 +237,15 @@ public class BounceEvaluator extends Evaluator {
       BounceCollision[] collisions = new BounceCollision[8];
 
       // get horizontal edges and checking if they hit, or whose first
-      collisions[0] = getHorizontalEdgeCollision(platform.loX, platform.hiX,
-            platform.hiY, current);
-      collisions[1] = getHorizontalEdgeCollision(platform.loX, platform.hiX,
-            platform.loY, current);
+      collisions[0] = getVerticalEdgeCollision(platform.loX, platform.hiX,
+            platform.hiY + RADIUS, current);
+      collisions[1] = getVerticalEdgeCollision(platform.loX, platform.hiX,
+            platform.loY - RADIUS, current);
 
-      collisions[2] = getVerticalEdgeCollision(platform.loY, platform.hiY,
-            platform.hiX, current);
-      collisions[3] = getVerticalEdgeCollision(platform.loY, platform.hiY,
-            platform.loX, current);
+      collisions[2] = getHorizontalEdgeCollision(platform.loY, platform.hiY,
+            platform.hiX + RADIUS, current);
+      collisions[3] = getHorizontalEdgeCollision(platform.loY, platform.hiY,
+            platform.loX - RADIUS, current);
 
       collisions[4] = getCornerCollision(platform.hiX, platform.hiY, current);
       collisions[5] = getCornerCollision(platform.hiX, platform.loY, current);
@@ -256,7 +257,7 @@ public class BounceEvaluator extends Evaluator {
    }
 
    // calculates if the ball will hit horizontal any edge of the platform
-   private BounceCollision getHorizontalEdgeCollision(double loX,
+   private BounceCollision getVerticalEdgeCollision(double loX,
          double hiX, double y, BounceBallEvent current) {
       // get equations for event
       UnivariateFunction[] equations = getAllFunctions(current);
@@ -288,7 +289,7 @@ public class BounceEvaluator extends Evaluator {
    }
 
    // calculates if the ball will hit any vertical edge of the platform
-   private BounceCollision getVerticalEdgeCollision(double loY,
+   private BounceCollision getHorizontalEdgeCollision(double loY,
          double hiY, double x, BounceBallEvent current) {
       // get equations for event
       UnivariateFunction[] equations = getAllFunctions(current);
@@ -329,12 +330,7 @@ public class BounceEvaluator extends Evaluator {
       Complex[] solutions = solver.solveAllComplex(cornerEquation.getCoefficients(), 0);
       
       Double timeOfImpact = simplifyComplex(current.time, solutions);
-      
-      //temp
-      for (int i = 0; i < solutions.length; i++)
-         System.out.println(solutions[i]);
-      //temp
-      
+ 
       //we hit a corner
       if (timeOfImpact != null) {
          BounceCollision collision = new BounceCollision();
@@ -372,7 +368,7 @@ public class BounceEvaluator extends Evaluator {
       Double lowestTime = null;
 
       for (int i = 0; i < solutions.length; i++)
-         if (solutions[i].getImaginary() == 0)
+         if (Math.abs(solutions[i].getImaginary()) < ZERO)
             if ((solutions[i].getReal() > currentTime && (lowestTime == null
                   || lowestTime.doubleValue() > solutions[i].getReal())))
                lowestTime = solutions[i].getReal();
@@ -415,7 +411,7 @@ public class BounceEvaluator extends Evaluator {
       double dX = (event.posX - cX);
       
       //coefficient of t^0
-      coef[0] = Math.pow(dX, 2) + Math.pow(dY, 2);// + Math.pow(BounceHelper.RADIUS, 2);
+      coef[0] = Math.pow(dX, 2) + Math.pow(dY, 2) - Math.pow(RADIUS, 2);
       
       //coefficient of t^1
       coef[1] = 2 * (dY * event.velocityY + dX * event.velocityX);
@@ -513,9 +509,9 @@ public class BounceEvaluator extends Evaluator {
       BouncePlatform plat = new BouncePlatform();
       
       plat.hiX = 60;
-      plat.loX = 14;
-      plat.hiY = 1000;
-      plat.loY = 10;
+      plat.loX = 50;
+      plat.hiY = 10;
+      plat.loY = 0;
       plat.platformId = 0;
       
       platforms.add(plat);
@@ -523,13 +519,13 @@ public class BounceEvaluator extends Evaluator {
       BounceBallEvent start = new BounceBallEvent();
       start.posX = 10;
       start.posY = 10;
-      start.velocityX = 0;
-      start.velocityY = 40;
+      start.velocityX = 5;
+      start.velocityY = 50;
       
       
       BounceEvaluator eval = new BounceEvaluator();
       
-      /*BounceCollision testCollision = eval.getPlatformCollision(plat, start);
+      BounceCollision testCollision = eval.getPlatformCollision(plat, start);
       
       if (testCollision != null) {
          System.out.println(testCollision.hit);
@@ -539,9 +535,9 @@ public class BounceEvaluator extends Evaluator {
       else {
          System.out.println("miss");
       }
-      */
-      double x = 15;
-      double y = 10;
+      
+      double x = 10;
+      double y = 15;
       
       BounceCollision cornerTest = eval.getCornerCollision( x, y, start);
       
