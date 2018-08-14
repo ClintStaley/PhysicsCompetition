@@ -175,7 +175,7 @@ class Register extends Component {
         </form>
         {this.state.password !== this.state.passwordTwo ?
           <Alert bsStyle="warning">
-            <strong>Holy guacamole!</strong> Yo passwords don not seem to match up.
+            Passwords do not match.
         </Alert> : ''}
 
         <Button

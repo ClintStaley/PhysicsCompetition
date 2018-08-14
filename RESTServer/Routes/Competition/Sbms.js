@@ -26,33 +26,34 @@ router.post('/', (req, res) => {
    var body = req.body;
    var cnn = req.cnn;
 
-//first make sure the team exists
+   // First make sure the team exists
    async.waterfall([
      (cb) => {
         if (vld.hasOnlyFields(body, ["content"], cb)) {
-           if (vld.check( !body.testResult || vld.checkAdmin())) {
+           if (vld.check(!body.testResult || vld.checkAdmin())) {
               cnn.chkQry('select * from Team where id = ? && cmpId = ?',
                [ req.params.teamId, req.params.cmpId ], cb);
            }
         }
      },
      (team, fields, cb) => {
-      if (vld.check(team && team.length, Tags.notFound, cb)) {
-         body.cmpId = req.params.cmpId;
-         body.teamId = req.params.teamId;
-         body.sbmTime = new Date();
-         cnn.chkQry('insert into Submit set ?', body, cb);
-      }
-   },
-   (result, fields, cb) => {
-      // Return location of inserted Submissions
-      res.location(router.baseURL.replace(":cmpId", req.params.cmpId)
-      .replace(":teamId", req.params.teamId) + '/' + result.insertId).end();
-      cb();
-   }],
-   () => {
-      cnn.release();
-   });
+        if (vld.check(team && team.length, Tags.notFound, cb)) {
+           body.cmpId = req.params.cmpId;
+           body.teamId = req.params.teamId;
+           body.sbmTime = new Date();
+           console.log(JSON.stringify(body));
+           cnn.chkQry('insert into Submit set ?', body, cb);
+        }
+     },
+     (result, fields, cb) => {
+        // Return location of inserted Submissions
+        res.location(router.baseURL.replace(":cmpId", req.params.cmpId)
+         .replace(":teamId", req.params.teamId) + '/' + result.insertId).end();
+        cb();
+     }],
+     () => {
+        cnn.release();
+     });
 });
 
 router.get('/:id', (req, res) => {

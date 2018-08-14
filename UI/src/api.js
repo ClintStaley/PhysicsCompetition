@@ -264,7 +264,7 @@ export function getSbms(cmpId, teamId, numSbms) {
       try {
          sbms.forEach(sbm => {
             sbm.content = JSON.parse(sbm.content);
-            sbm.response = sbm.response && JSON.parse(sbm.response);
+            sbm.testResult = sbm.testResult && JSON.parse(sbm.testResult);
          });
          return sbms;
       }
@@ -272,6 +272,12 @@ export function getSbms(cmpId, teamId, numSbms) {
          return Promise.reject(["Unexpected error in submission parse."]);
       }
    });
+}
+ Stopped here.  Why is this not returning a valid uri??
+export function postSbm(cmpId, teamId, content) {
+   return post(`Cmps/${cmpId}/Teams/${teamId}/Sbms`,
+    {content: JSON.stringify(content)})
+   .then(rsp => rsp.headers["Location"]);
 }
 
 const errMap = {

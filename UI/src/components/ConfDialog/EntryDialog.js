@@ -17,6 +17,8 @@ export default class EntryDialog extends PureComponent {
       this.state = {
          value: ""
       };
+
+      this.handleChange = this.handleChange.bind(this);
    }
 
    close = (status) => {

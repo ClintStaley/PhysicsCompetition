@@ -75,7 +75,6 @@ export default class CmpPage extends Component {
    }
 
    doSubmit = (team) => {
-      console.log("Submit team " + team.id);
       this.props.history.push(`/SbmPage/${team.id}`);
    }
 
