@@ -1,5 +1,6 @@
 package com.softwareinventions.cmp.evaluator.bounce;
 
+//class used for detecting collisions 
 public class BounceCollision {
    public double time;
    
