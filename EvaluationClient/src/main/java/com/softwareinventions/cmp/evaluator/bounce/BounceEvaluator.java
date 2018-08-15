@@ -131,7 +131,7 @@ public class BounceEvaluator extends Evaluator {
          ballEvents
                .add(calculateBallColision(ballEvents.getLast(), nextCollision));
 
-         nextCollision = getNextCollision(Platforms, StartingPoint);
+         nextCollision = getNextCollision(Platforms, ballEvents.getLast());
       }
 
       //calculate where the ball will go out of bounds
@@ -160,7 +160,6 @@ public class BounceEvaluator extends Evaluator {
          newBallEvent.obstacleHit = collision.obstacleIdx;
          break;
       case CORNER:
-         System.out.println("--Corner Hit--");
          double Dx = (collision.xHit - newBallEvent.posX) / RADIUS;
          double Dy = (collision.yHit - newBallEvent.posY) / RADIUS;
 
@@ -236,7 +235,7 @@ public class BounceEvaluator extends Evaluator {
                Platforms.remove(platform);
                break;
             }
-        }
+         }
       }
 
       return firstCollision;
@@ -250,16 +249,16 @@ public class BounceEvaluator extends Evaluator {
       // 8 for all 4 edges and 4 corners
       BounceCollision[] collisions = new BounceCollision[8];
          
-      // get vertical edges and checking if they hit, or whose first
-      collisions[0] = getVerticalEdgeCollision(platform.loX, platform.hiX,
+      // get horizontal edges and checking if they hit, or whose first
+      collisions[0] = getHorizontalEdgeCollision(platform.loX, platform.hiX,
             platform.hiY + RADIUS, current);
-      collisions[1] = getVerticalEdgeCollision(platform.loX, platform.hiX,
+      collisions[1] = getHorizontalEdgeCollision(platform.loX, platform.hiX,
             platform.loY - RADIUS, current);
 
-      //check horizontal edge collisions
-      collisions[2] = getHorizontalEdgeCollision(platform.loY, platform.hiY,
+      //check vertical edge collisions
+      collisions[2] = getVerticalEdgeCollision(platform.loY, platform.hiY,
             platform.hiX + RADIUS, current);
-      collisions[3] = getHorizontalEdgeCollision(platform.loY, platform.hiY,
+      collisions[3] = getVerticalEdgeCollision(platform.loY, platform.hiY,
             platform.loX - RADIUS, current);
 
       //check all corners for collisions
@@ -273,7 +272,7 @@ public class BounceEvaluator extends Evaluator {
    }
 
    // calculates if the ball will hit horizontal any edge of the platform
-   private BounceCollision getVerticalEdgeCollision(double loX,
+   private BounceCollision getHorizontalEdgeCollision(double loX,
          double hiX, double y, BounceBallEvent current) {
       // get equations for event
       UnivariateFunction[] equations = getAllFunctions(current);
@@ -285,7 +284,7 @@ public class BounceEvaluator extends Evaluator {
       // throw out negative times
       if (yHitTime < 0)
          return null;
-
+      
       //calculate x value at time of collision
       double xValue = equations[0].value(yHitTime);
 
@@ -294,7 +293,7 @@ public class BounceEvaluator extends Evaluator {
          BounceCollision collision = new BounceCollision();
          collision.time = yHitTime;
          collision.hit = BounceCollision.hitType.VERTICAL;
-
+         
          return collision;
       }
 
@@ -302,7 +301,7 @@ public class BounceEvaluator extends Evaluator {
    }
 
    // calculates if the ball will hit any vertical edge of the platform
-   private BounceCollision getHorizontalEdgeCollision(double loY,
+   private BounceCollision getVerticalEdgeCollision(double loY,
          double hiY, double x, BounceBallEvent current) {
       // get equations for event
       UnivariateFunction[] equations = getAllFunctions(current);
@@ -321,7 +320,7 @@ public class BounceEvaluator extends Evaluator {
          BounceCollision collision = new BounceCollision();
          collision.time = xHitTime;
          collision.hit = BounceCollision.hitType.HORIZONTAL;
-
+         
          return collision;
       }
 
