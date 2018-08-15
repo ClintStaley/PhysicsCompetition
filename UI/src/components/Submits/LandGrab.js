@@ -17,7 +17,7 @@ export class LGSubmitModal extends Component {
       super(props);
 
       var idx, circles = [];
-      
+
       for (idx = 0; idx < props.prms.numCircles; idx++)
          circles.push({
             centerX: "",
@@ -78,9 +78,9 @@ export class LGSubmitModal extends Component {
 
          lines.push(<div className="container" key={idx}>
            <div className="row">
-             <div className="col-sm-1"><h5>Circle {idx}</h5></div>
-             <div className="col-sm-4">
+             <div className="col-sm-2"><h5>Circle {idx}</h5></div>
 
+             <div className="col-sm-2">
                <FormGroup controlId={idX}>
                  <ControlLabel>X Coord</ControlLabel>
                  <FormControl
@@ -88,12 +88,14 @@ export class LGSubmitModal extends Component {
                    id={idX}
                    value={this.state.circles[idx].centerX}
                    required={true}
-                   placeholder="Enter X value"
+                   placeholder="Center X"
                    onChange={this.handleChange}
                  />
                  <FormControl.Feedback/>
                </FormGroup>
+             </div>
 
+             <div className="col-sm-2">
                <FormGroup controlId={idY}>
                  <ControlLabel>Y Coord</ControlLabel>
                  <FormControl
@@ -101,12 +103,14 @@ export class LGSubmitModal extends Component {
                    id={idY}
                    value={this.state.circles[idx].centerY}
                    required={true}
-                   placeholder="Enter Y value"
+                   placeholder="Center Y"
                    onChange={this.handleChange}
                  />
                  <FormControl.Feedback/>
                </FormGroup>
+             </div>
 
+             <div className="col-sm-2">
                <FormGroup controlId={idR}>
                  <ControlLabel>Radius</ControlLabel>
                  <FormControl
@@ -114,7 +118,7 @@ export class LGSubmitModal extends Component {
                    id={idR}
                    value={this.state.circles[idx].radius}
                    required={true}
-                   placeholder="Enter Radius"
+                   placeholder="Radius"
                    onChange={this.handleChange}
                  />
                  <FormControl.Feedback/>
@@ -126,7 +130,7 @@ export class LGSubmitModal extends Component {
 
       return (
       <Modal show={this.props.submitFn !== null}
-          onHide={()=>this.close("Cancel")}>
+          onHide={()=>this.close("Cancel")} bsSize="lg">
         <Modal.Header closeButton>
           <Modal.Title>Submit LandGrab Solution</Modal.Title>
         </Modal.Header>
@@ -168,7 +172,7 @@ export class LandGrab extends Component {
          grid.push(<line key={"YL" + offs} x1="0" y1={offs} x2="100" y2={offs}
           className={hashClass}/>);
       }
-console.log(prms);
+
       // Obstacle rectangles
       obstacles = [];
       prms.obstacles.forEach((rect, idx) => {
