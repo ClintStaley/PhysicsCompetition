@@ -10,8 +10,8 @@
 
 .graphBkg {
    fill:#F0F0FF;
-   stroke:"gray"; 
-   stroke-width:.1";
+   stroke:"gray";
+   stroke-width:.1;
 }
 
 .obstacle {
@@ -35,4 +35,3 @@
 .rhsText {
    text-anchor:end;
 }
-

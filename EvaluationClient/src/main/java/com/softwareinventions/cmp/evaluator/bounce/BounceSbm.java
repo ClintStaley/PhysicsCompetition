@@ -1,5 +1,5 @@
 package com.softwareinventions.cmp.evaluator.bounce;
 
-public class BounceSubmission {
+public class BounceSbm {
    public double speed;
 }

@@ -83,14 +83,14 @@ public class BounceEvaluator extends Evaluator {
          cmpDetails.platforms[i].platformId = i;
 
       // Linked list so that we can delete platforms as they are hit
-      LinkedList<BouncePlatform> platforms = new LinkedList<BouncePlatform>(
+      LinkedList<BounceObstacle> platforms = new LinkedList<BounceObstacle>(
             Arrays.asList(cmpDetails.platforms));
 
       // start a BounceEvl to turn into a json string
       BounceEvl rspB = new BounceEvl();
       //double array of events, every speed has an array of events
       // CAS FIX: Comma splice, and "speed" really is "ball", yes?  Two balls might have the same speed...
-      rspB.events = new BounceBallEvent[sbmData.length][];
+      rspB.events = new BounceEvent[sbmData.length][];
 
       // start an evaluation so that I can return it later.
       // CAS FIX: This comment not needed. It's clear what youre doing.
@@ -103,7 +103,7 @@ public class BounceEvaluator extends Evaluator {
       // loop through all speeds CAS FIX: balls, not speeds.
       for (int i = 0; i < sbmData.length; i++) {
          //set up starting ball event
-         BounceBallEvent startEvent = new BounceBallEvent();
+         BounceEvent startEvent = new BounceEvent();
          
          // CAS FIX: Do this via a constructor.
          startEvent.obstacleHit = -1;
@@ -132,10 +132,10 @@ public class BounceEvaluator extends Evaluator {
    }
 
    // 100 - 9.8t^2 = 0
-   private BounceBallEvent[] calculateOneBall(
-         LinkedList<BouncePlatform> Platforms, BounceBallEvent StartingPoint) {
+   private BounceEvent[] calculateOneBall(
+         LinkedList<BounceObstacle> Platforms, BounceEvent StartingPoint) {
       //dont know how many events there will be, so i use a linked list
-      LinkedList<BounceBallEvent> ballEvents = new LinkedList<BounceBallEvent>();
+      LinkedList<BounceEvent> ballEvents = new LinkedList<BounceEvent>();
       ballEvents.add(StartingPoint);
 
       BounceCollision nextCollision = getNextCollision(Platforms, StartingPoint);
@@ -152,14 +152,14 @@ public class BounceEvaluator extends Evaluator {
       ballEvents.add(calculateBorderEvent(StartingPoint));
 
       //return events as array, so that I can send the correct format as response
-      return ballEvents.toArray(new BounceBallEvent[ballEvents.size()]);
+      return ballEvents.toArray(new BounceEvent[ballEvents.size()]);
    }
 
    // returns the new ball event after calculating all values,
    // may return null, if no collisions occur
-   private BounceBallEvent calculateBallColision(BounceBallEvent current,
+   private BounceEvent calculateBallColision(BounceEvent current,
          BounceCollision collision) {
-      BounceBallEvent newBallEvent = createNewEvent(current,
+      BounceEvent newBallEvent = createNewEvent(current,
             collision.time);
 
       //horizontal or vertical hits, mean just flip velocity
@@ -201,7 +201,7 @@ public class BounceEvaluator extends Evaluator {
    }
 
    //calculates where and when the ball will hit the border, last event
-   private BounceBallEvent calculateBorderEvent(BounceBallEvent current) {
+   private BounceEvent calculateBorderEvent(BounceEvent current) {
       
       double xOutOfBounds;
       
@@ -229,7 +229,7 @@ public class BounceEvaluator extends Evaluator {
    
    // will return the next collision that occurs, will also delete the platform
    public BounceCollision getNextCollision(
-         LinkedList<BouncePlatform> Platforms, BounceBallEvent current) {
+         LinkedList<BounceObstacle> Platforms, BounceEvent current) {
 
       //create an array of collisions, so we can check all platforms
       BounceCollision[] collisions = new BounceCollision[Platforms.size()];
@@ -244,7 +244,7 @@ public class BounceEvaluator extends Evaluator {
       BounceCollision firstCollision = getFirstCollision(collisions);
       
       if (firstCollision != null) {
-         for (BouncePlatform platform : Platforms) {
+         for (BounceObstacle platform : Platforms) {
             if (platform.platformId == firstCollision.obstacleIdx) {
                Platforms.remove(platform);
                break;
@@ -257,8 +257,8 @@ public class BounceEvaluator extends Evaluator {
 
    //checks all edges, does not optimize by excluding edges
    // calculates if the ball will hit the platform
-   private BounceCollision getPlatformCollision(BouncePlatform platform,
-         BounceBallEvent current) {
+   private BounceCollision getPlatformCollision(BounceObstacle platform,
+         BounceEvent current) {
 
       // 8 for all 4 edges and 4 corners
       BounceCollision[] collisions = new BounceCollision[8];
@@ -287,7 +287,7 @@ public class BounceEvaluator extends Evaluator {
 
    // calculates if the ball will hit horizontal any edge of the platform
    private BounceCollision getHorizontalEdgeCollision(double loX,
-         double hiX, double y, BounceBallEvent current) {
+         double hiX, double y, BounceEvent current) {
       // get equations for event
       UnivariateFunction[] equations = getAllFunctions(current);
 
@@ -316,7 +316,7 @@ public class BounceEvaluator extends Evaluator {
 
    // calculates if the ball will hit any vertical edge of the platform
    private BounceCollision getVerticalEdgeCollision(double loY,
-         double hiY, double x, BounceBallEvent current) {
+         double hiY, double x, BounceEvent current) {
       // get equations for event
       UnivariateFunction[] equations = getAllFunctions(current);
 
@@ -343,7 +343,7 @@ public class BounceEvaluator extends Evaluator {
 
    // calculates if the ball will hit any edge of the platform
    private BounceCollision getCornerCollision(double x, double y,
-         BounceBallEvent current) {
+         BounceEvent current) {
 
       PolynomialFunction cornerEquation = getPolynomial(current, x, y);
       
@@ -425,7 +425,7 @@ public class BounceEvaluator extends Evaluator {
     * the polynomial function will get an array of doubles based on the values
     * in the equation above
     */
-   public PolynomialFunction getPolynomial(BounceBallEvent event,
+   public PolynomialFunction getPolynomial(BounceEvent event,
          double cX, double cY) {
       double[] coef = new double[5];
       
@@ -452,7 +452,7 @@ public class BounceEvaluator extends Evaluator {
 
    // returns an array wiht [xPosFunction, xVelocityFunction, yPositionFunction,
    // and yVelocityFunction]
-   public static UnivariateFunction[] getAllFunctions(BounceBallEvent current) {
+   public static UnivariateFunction[] getAllFunctions(BounceEvent current) {
       UnivariateFunction[] ballFunctions = new UnivariateFunction[4];
 
       // xposition function
@@ -468,13 +468,13 @@ public class BounceEvaluator extends Evaluator {
       return ballFunctions;
    }
 
-   public static BounceBallEvent createNewEvent(BounceBallEvent current,
+   public static BounceEvent createNewEvent(BounceEvent current,
          double time) {
       // get all equations
       UnivariateFunction[] ballFunctions = getAllFunctions(current);
 
       // calculate the out of bounds event
-      BounceBallEvent newEvent = new BounceBallEvent();
+      BounceEvent newEvent = new BounceEvent();
       newEvent.obstacleHit = -1;
       newEvent.posX = ballFunctions[0].value(time);
       newEvent.velocityX = ballFunctions[1].value(time);
@@ -517,8 +517,8 @@ public class BounceEvaluator extends Evaluator {
    //tester main, used only to test functions
    public static void main(String[] args) {
       //test platforms to use
-      LinkedList<BouncePlatform> platforms = new LinkedList<BouncePlatform>();
-      BouncePlatform plat = new BouncePlatform();
+      LinkedList<BounceObstacle> platforms = new LinkedList<BounceObstacle>();
+      BounceObstacle plat = new BounceObstacle();
       
       plat.hiX = 60;
       plat.loX = 50;
@@ -528,7 +528,7 @@ public class BounceEvaluator extends Evaluator {
       
       platforms.add(plat);
       
-      BounceBallEvent start = new BounceBallEvent();
+      BounceEvent start = new BounceEvent();
       start.posX = 10;
       start.posY = 10;
       start.velocityX = 5;
@@ -564,4 +564,31 @@ public class BounceEvaluator extends Evaluator {
       }
    }
 
+   //
+   private static class BounceCollision {
+      public double time;
+      
+      public enum HitType {
+         CORNER, HORIZONTAL, VERTICAL
+      };
+      public HitType hType;
+      
+      public double xHit;
+      public double yHit;
+      
+      public int obstacleIdx;
+   }
+   
+   private static class BounceObstacle {
+      public double loX;
+      public double hiX;
+      public double hiY;
+      public double loY;
+      public int platformId;
+   }
+   
+   private static class BounceParameters {
+      public BounceObstacle[] platforms;
+   }
+   
 }
