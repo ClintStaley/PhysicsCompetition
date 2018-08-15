@@ -76,11 +76,9 @@ router.put('/:id', (req, res) => {
    var cmpId = req.params.cmpId;
    var teamId = req.params.teamId;
    var smbId = req.params.id;
-   console.log("Pre-Waterfall");
-   console.log(body);
+
    async.waterfall([
    (cb) => {
-     console.log("Waterfall 1");
       if (vld.hasOnlyFields(body, ["testResult", "score"], cb)) {
          if (vld.checkAdmin(cb)) {
             cnn.chkQry('select * from Team where id = ? && cmpId = ?',
@@ -89,7 +87,6 @@ router.put('/:id', (req, res) => {
       }
    },
    (team, err, cb) => {
-     console.log("Waterfall 2");
       var teamBody = {};
       if (vld.check(team && team.length, Tags.notFound, cb)) {
         if (team[0].bestScore < body.score) {
@@ -102,22 +99,18 @@ router.put('/:id', (req, res) => {
       }
    },
    (result, err, cb) => {
-     console.log("Waterfall 3");
       body.cmpId = cmpId;
       body.teamId = teamId;
-      body.sbmTime = new Date();
       cnn.chkQry('select * from Submit where id = ? && cmpId = ? && ' +
        'teamId = ?',
        [smbId, cmpId, teamId], cb);
    },
    (submission, err, cb) => {
-     console.log("Waterfall 4");
       if (vld.check(submission && submission.length, Tags.notFound, cb))
          cnn.chkQry("update Submit set ? where id = ?",
           [req.body, req.params.id], cb);
    },
    (result, fields, cb) => {
-     console.log("Waterfall 5");
       // Return location of inserted Submissions
       res.location(router.baseURL + '/' + result.insertId).end();
       cb();
