@@ -150,7 +150,7 @@ public class BounceEvaluator extends Evaluator {
 
       //horizontal or vertical hits, mean just flip velocity
       //corner hit means calculate new x velocity and y velocity
-      switch (collision.hit) {
+      switch (collision.hType) {
       case VERTICAL:
          newBallEvent.velocityX = -newBallEvent.velocityX;
          newBallEvent.obstacleHit = collision.obstacleIdx;
@@ -292,7 +292,7 @@ public class BounceEvaluator extends Evaluator {
          //we have a hit on the vertical edge
          BounceCollision collision = new BounceCollision();
          collision.time = yHitTime;
-         collision.hit = BounceCollision.hitType.VERTICAL;
+         collision.hType = BounceCollision.HitType.VERTICAL;
          
          return collision;
       }
@@ -319,7 +319,7 @@ public class BounceEvaluator extends Evaluator {
       if (yValue > loY && yValue < hiY) {
          BounceCollision collision = new BounceCollision();
          collision.time = xHitTime;
-         collision.hit = BounceCollision.hitType.HORIZONTAL;
+         collision.hType = BounceCollision.HitType.HORIZONTAL;
          
          return collision;
       }
@@ -344,7 +344,7 @@ public class BounceEvaluator extends Evaluator {
          BounceCollision collision = new BounceCollision();
 
          collision.time = timeOfImpact;
-         collision.hit = BounceCollision.hitType.CORNER;
+         collision.hType = BounceCollision.HitType.CORNER;
 
          collision.xHit = x;
          collision.yHit = y;
@@ -526,7 +526,7 @@ public class BounceEvaluator extends Evaluator {
       BounceCollision testCollision = eval.getPlatformCollision(plat, start);
       
       if (testCollision != null) {
-         System.out.println(testCollision.hit);
+         System.out.println(testCollision.hType);
          System.out.println(testCollision.xHit);
          System.out.println(testCollision.yHit);
       }
@@ -541,7 +541,7 @@ public class BounceEvaluator extends Evaluator {
       
       System.out.println("");
       if (cornerTest != null) {
-         System.out.println(cornerTest.hit);
+         System.out.println(cornerTest.hType);
          System.out.println(cornerTest.xHit);
          System.out.println(cornerTest.yHit);
       }
