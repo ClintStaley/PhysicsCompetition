@@ -7,5 +7,5 @@ public abstract class Evaluator {
    public Evaluator(String prms) {
    }
    
-   public abstract EvlPut[] evaluateSubmissions(Submit[] submissions);
+   public abstract EvlPut[] evaluateSbms(Submit[] submissions);
 }

@@ -28,7 +28,7 @@ public class App {
                Evaluator evaluator = cmpEvaluator(cmps[i]);
 
                // gets the CompetitionTypes from the server
-               evaluations = evaluator.evaluateSubmissions(
+               evaluations = evaluator.evaluateSbms(
                      handler.getWaitingSubmissions(cmps[i].id));
 
                for (int c = 0; c < evaluations.length; c++)

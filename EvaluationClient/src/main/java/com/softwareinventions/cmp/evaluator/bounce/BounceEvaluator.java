@@ -25,7 +25,12 @@ public class BounceEvaluator extends Evaluator {
    public static final double RADIUS = 1;
    public static final double ZERO = 0.00000001;
 
+   // CAS FIX: Suggested scoring
+   // 1. Compute total time, which is time of final collision, plus 10s per ball as a penalty
+   // 2. Problem config includes a target time.  Score is 100*targetTime/totalTime.
+   
    //class variables
+   // CAS FIX: private
    BounceParameters cmpDetails;
    ObjectMapper mapper = new ObjectMapper();
 
@@ -39,19 +44,19 @@ public class BounceEvaluator extends Evaluator {
       }
    }
 
-   //constructor only for testing this class
+   // Constructor only for testing this class.
    private BounceEvaluator() {
       super("");
    }
 
-   //only function that should be called form outsiders
+   // Only function that should be called from outsider.
    @Override
-   public EvlPut[] evaluateSubmissions(Submit[] submissions) {
-      EvlPut[] evaluations = new EvlPut[submissions.length];
+   public EvlPut[] evaluateSbms(Submit[] sbms) {
+      EvlPut[] evaluations = new EvlPut[sbms.length];
 
       try {
-         for (int i = 0; i < submissions.length; i++)
-            evaluations[i] = evaluate(submissions[i]);
+         for (int i = 0; i < sbms.length; i++)
+            evaluations[i] = evaluate(sbms[i]);
       } catch (Exception e) {
          e.printStackTrace();
          return new EvlPut[0];
@@ -60,51 +65,60 @@ public class BounceEvaluator extends Evaluator {
       return evaluations;
    }
 
-   // evaluate a list of differing speeds, a single submission
-   private EvlPut evaluate(Submit submission)
+   // Evaluate a list of differing speeds comprising a single sbm
+   private EvlPut evaluate(Submit sbm)
          throws JsonParseException, JsonMappingException, IOException {
-      BounceSubmission[] sbmData = mapper.readValue(submission.content,
-            BounceSubmission[].class);
+      BounceSbm[] sbmData = mapper.readValue(sbm.content,
+            BounceSbm[].class);
 
       // keep track of the number of platforms for later
+      // CAS FIX: Keep variable names shorter when possible.  platformCount.  Also
+      // no need to comment the obvious.  It's clear what you're doing here.
       int numberOfPlatforms = cmpDetails.platforms.length;
 
       // assign all platforms ID numbers based on their index
+      // CAS FIX: Use idx instead of i (avoid single-letter names, even  though they are brief)
+      // Also, why aren't you using platformCount here?
       for (int i = 0; i < cmpDetails.platforms.length; i++)
          cmpDetails.platforms[i].platformId = i;
 
-      // Linked list so that I can delete platforms as they are hit
+      // Linked list so that we can delete platforms as they are hit
       LinkedList<BouncePlatform> platforms = new LinkedList<BouncePlatform>(
             Arrays.asList(cmpDetails.platforms));
 
       // start a BounceEvl to turn into a json string
       BounceEvl rspB = new BounceEvl();
       //double array of events, every speed has an array of events
+      // CAS FIX: Comma splice, and "speed" really is "ball", yes?  Two balls might have the same speed...
       rspB.events = new BounceBallEvent[sbmData.length][];
 
-      // start an evaluation so that I can return it later
+      // start an evaluation so that I can return it later.
+      // CAS FIX: This comment not needed. It's clear what youre doing.
       EvlPut eval = new EvlPut();
       eval.eval = new Evl();
-      eval.cmpId = submission.cmpId;
-      eval.teamId = submission.teamId;
-      eval.sbmId = submission.id;
+      eval.cmpId = sbm.cmpId;
+      eval.teamId = sbm.teamId;
+      eval.sbmId = sbm.id;
 
-      // loop through all speeds
+      // loop through all speeds CAS FIX: balls, not speeds.
       for (int i = 0; i < sbmData.length; i++) {
          //set up starting ball event
          BounceBallEvent startEvent = new BounceBallEvent();
+         
+         // CAS FIX: Do this via a constructor.
          startEvent.obstacleHit = -1;
          startEvent.posX = 0;
          startEvent.posY = STARTINGHEIGHT;
          startEvent.velocityX = sbmData[i].speed;
          startEvent.velocityY = 0.0;
-         startEvent.time = 0.0; // all can start at time zero?
+         startEvent.time = 0.0; // all can start at time zero? CAS FIX: No, they need to start at the exit time of the prior ball.
 
-         //will get all other events and return an array starting with even given
+         //will get all other events and return an array starting with even given  CAS FIX Doesn't parse....  And if it really does what
+         // you say, why is it calculate*One*Ball????
          rspB.events[i] = calculateOneBall(platforms, startEvent);
       }
 
-      rspB.platformsHit = numberOfPlatforms - platforms.size();
+      rspB.platformsHit = numberOfPlatforms - platforms.size();  // CAS FIX: Thot we now required all to be hit, and isn't this number missed anyway??
 
       // fill in score and array of arrays in response
       eval.eval.score = Math.round(
@@ -112,7 +126,7 @@ public class BounceEvaluator extends Evaluator {
             / 100;
       eval.eval.testResult = mapper.writeValueAsString(rspB);
 
-      System.out.println("Graded Bounce Submission# " + eval.sbmId);
+      System.out.println("Graded Bounce Sbm# " + eval.sbmId);
       
       return eval;
    }

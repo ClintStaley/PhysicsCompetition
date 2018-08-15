@@ -31,7 +31,7 @@ public class LandGrabEvaluator extends Evaluator {
       }
    }
 
-   public EvlPut[] evaluateSubmissions(Submit[] submissions) {
+   public EvlPut[] evaluateSbms(Submit[] submissions) {
       EvlPut[] evaluations = new EvlPut[submissions.length];
 
       try {
