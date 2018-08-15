@@ -21,7 +21,6 @@ public class BounceEvaluator extends Evaluator {
    // constants
    public static final double STARTINGHEIGHT = 100.0;
    public static final double GRAVITY = -9.80665;
-   public static final double VELOCITY = GRAVITY/2;
    public static final double RADIUS = 1;
    public static final double ZERO = 0.00000001;
 
@@ -121,9 +120,9 @@ public class BounceEvaluator extends Evaluator {
       rspB.platformsHit = numberOfPlatforms - platforms.size();  // CAS FIX: Thot we now required all to be hit, and isn't this number missed anyway??
 
       // fill in score and array of arrays in response
-      eval.eval.score = Math.round(
-            (double) rspB.platformsHit / (double) numberOfPlatforms * 10000.0)
-            / 100;
+      eval.eval.score = Math.round((double) rspB.platformsHit
+    		/ (double) numberOfPlatforms * 10000.0) / 100;
+      
       eval.eval.testResult = mapper.writeValueAsString(rspB);
 
       System.out.println("Graded Bounce Sbm# " + eval.sbmId);
@@ -174,16 +173,19 @@ public class BounceEvaluator extends Evaluator {
          newBallEvent.obstacleHit = collision.obstacleIdx;
          break;
       case CORNER:
+    	 // CAS FIX: dx, dy...
          double Dx = (collision.xHit - newBallEvent.posX) / RADIUS;
          double Dy = (collision.yHit - newBallEvent.posY) / RADIUS;
 
+         // Magnitude of velocity component in collision direction
          double magnitude = Dx * newBallEvent.velocityX
                + Dy * newBallEvent.velocityY;
          
-         double newVelocityX = current.velocityX + (-2 * magnitude * Dx);
-         double newVelocityY = current.velocityY + (-2 * magnitude * Dy);
+         double newVelocityX = current.velocityX + (-2.0 * magnitude * Dx);
+         double newVelocityY = current.velocityY + (-2.0 * magnitude * Dy);
 
          //test
+         // CAS FIX Why do you not just assign straight into these above?
          newBallEvent.velocityX = newVelocityX;
          newBallEvent.velocityY = newVelocityY;
          
@@ -191,12 +193,16 @@ public class BounceEvaluator extends Evaluator {
          break;
       default:
          // should never happen
+    	 // CAS FIX: Never-happen events are covered by assertions, not printlns, and this one is so
+    	 // impossible I don't think I'd do even that.
          System.out.println("Invalid Collision Detected");
          return null;
 
       }
 
       System.out.println("Obstacle Hit is: " +  newBallEvent.obstacleHit);
+      // CAS FIX: This might be a good time to start working with a logger.  I've had good luck
+      // with Apache Commons logger.  Let's put that into our Maven .pom and use it.
       return newBallEvent;
    }
 
@@ -205,25 +211,28 @@ public class BounceEvaluator extends Evaluator {
       
       double xOutOfBounds;
       
-      // solve for y, as the ball goes radius out of bounds
+      // solve for y, as the ball goes one radius out of bounds
+      // CAS FIX:
       double yOutOfBounds = quadraticSolution(
-            VELOCITY, current.velocityY, current.posY + RADIUS);
+            GRAVITY/2.0, current.velocityY, current.posY + RADIUS);
 
       // solve for x + radius out of bounds
       double xOutOfBoundsLeft = (-RADIUS - current.posX) / current.velocityX;
       double xOutOfBoundsRight = (100.0 + RADIUS - current.posX) / current.velocityX;
       
-      //figure out witch side the ball will go out on
+      // CAS FIX: Use Math.min -- always assume a routine action has library support unless you are sure otherwise.
+      //figure out which side the ball will go out on
       if (xOutOfBoundsLeft < 0)
          xOutOfBounds = xOutOfBoundsRight;
       else
          xOutOfBounds = xOutOfBoundsLeft;
 
       // gets the lower time
+      // CAS FIX: Ditto:  Math.min  And the comment is needless.  Anyone who has any business reading the code
+      // can see it's a min computation.
       double boundsTime = (xOutOfBounds > yOutOfBounds) ? yOutOfBounds
             : xOutOfBounds;
 
-      // calculate the out of bounds event
       return createNewEvent(current, boundsTime);
    }
    
@@ -292,7 +301,7 @@ public class BounceEvaluator extends Evaluator {
       UnivariateFunction[] equations = getAllFunctions(current);
 
       // get time when y value will be lined up with edge
-      double yHitTime = quadraticSolution(VELOCITY,
+      double yHitTime = quadraticSolution(GRAVITY/2.0,
             current.velocityY, current.posY - y);
 
       // throw out negative times
@@ -445,7 +454,7 @@ public class BounceEvaluator extends Evaluator {
       coef[3] = (GRAVITY * event.velocityY);
       
       //coefficient of t^4
-      coef[4] = Math.pow(VELOCITY, 2);
+      coef[4] = Math.pow(GRAVITY/2.0, 2);
       
       return new PolynomialFunction(coef);
    }
@@ -460,10 +469,10 @@ public class BounceEvaluator extends Evaluator {
       // xvelocity function, could be useful later
       ballFunctions[1] = t -> current.velocityX;
       // ypos function
-      ballFunctions[2] = t -> VELOCITY * Math.pow(t, 2) + current.velocityY * t
+      ballFunctions[2] = t -> GRAVITY/2.0 * Math.pow(t, 2) + current.velocityY * t
             + current.posY;
       // y velociyty function
-      ballFunctions[3] = t -> 2 * VELOCITY * t + current.velocityY;
+      ballFunctions[3] = t -> 2 * GRAVITY/2.0 * t + current.velocityY;
 
       return ballFunctions;
    }
@@ -474,6 +483,7 @@ public class BounceEvaluator extends Evaluator {
       UnivariateFunction[] ballFunctions = getAllFunctions(current);
 
       // calculate the out of bounds event
+      // CAS FIX: Use a constructor.
       BounceBallEvent newEvent = new BounceBallEvent();
       newEvent.obstacleHit = -1;
       newEvent.posX = ballFunctions[0].value(time);
@@ -487,11 +497,17 @@ public class BounceEvaluator extends Evaluator {
    
    // quadratic solution returns time when zero
    // if no valid solution returns 10000
+   // CAS FIX: More careful commenting: "time"?? And which one if two answers?
+   // And it doesn't return 10,000, which is good because flag values are prone to error if they could conceivably be good results,
+   // as 10000 could. Try the comment below.
+   // 
+   // Return lowest positive real root, or Double.MAX_VALUE if no root qualifies.
    public static double quadraticSolution(double a, double b, double c) {
       double d = b * b - 4 * a * c;
       double root1;
       double root2;
 
+      // CAS FIX: I think you can use just this one case for d == 0 as well, can't you?
       if (d > 0) {
          root1 = (-b + Math.sqrt(d)) / (2 * a);
          root2 = (-b - Math.sqrt(d)) / (2 * a);
