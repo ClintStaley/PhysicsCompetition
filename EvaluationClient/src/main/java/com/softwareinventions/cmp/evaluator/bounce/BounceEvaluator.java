@@ -21,7 +21,6 @@ public class BounceEvaluator extends Evaluator {
    // constants
    public static final double STARTINGHEIGHT = 100.0;
    public static final double GRAVITY = -9.80665;
-   public static final double VELOCITY = GRAVITY/2;
    public static final double RADIUS = 1;
    public static final double ZERO = 0.00000001;
 
@@ -30,9 +29,8 @@ public class BounceEvaluator extends Evaluator {
    // 2. Problem config includes a target time.  Score is 100*targetTime/totalTime.
    
    //class variables
-   // CAS FIX: private
-   BounceParameters cmpDetails;
-   ObjectMapper mapper = new ObjectMapper();
+   private BounceParameters cmpDetails;
+   private ObjectMapper mapper = new ObjectMapper();
 
    public BounceEvaluator(String prms) {
       super(prms);
@@ -68,25 +66,20 @@ public class BounceEvaluator extends Evaluator {
    // Evaluate a list of differing speeds comprising a single sbm
    private EvlPut evaluate(Submit sbm)
          throws JsonParseException, JsonMappingException, IOException {
-      BounceSbm[] sbmData = mapper.readValue(sbm.content,
-            BounceSbm[].class);
+      LaunchSpec[] sbmData = mapper.readValue(sbm.content,
+            LaunchSpec[].class);
 
-      // keep track of the number of platforms for later
-      // CAS FIX: Keep variable names shorter when possible.  platformCount.  Also
-      // no need to comment the obvious.  It's clear what you're doing here.
-      int numberOfPlatforms = cmpDetails.platforms.length;
+      int obstacleCount = cmpDetails.platforms.length;
 
       // assign all platforms ID numbers based on their index
-      // CAS FIX: Use idx instead of i (avoid single-letter names, even  though they are brief)
-      // Also, why aren't you using platformCount here?
-      for (int i = 0; i < cmpDetails.platforms.length; i++)
-         cmpDetails.platforms[i].platformId = i;
+      for (int idx = 0; idx < obstacleCount; idx++)
+         cmpDetails.platforms[idx].platformId = idx;
 
       // Linked list so that we can delete platforms as they are hit
       LinkedList<BounceObstacle> platforms = new LinkedList<BounceObstacle>(
             Arrays.asList(cmpDetails.platforms));
 
-      // start a BounceEvl to turn into a json string
+      // start a BounceEvl to turn into a JSON string
       BounceEvl rspB = new BounceEvl();
       //double array of events, every speed has an array of events
       // CAS FIX: Comma splice, and "speed" really is "ball", yes?  Two balls might have the same speed...
@@ -103,14 +96,8 @@ public class BounceEvaluator extends Evaluator {
       // loop through all speeds CAS FIX: balls, not speeds.
       for (int i = 0; i < sbmData.length; i++) {
          //set up starting ball event
-         BounceEvent startEvent = new BounceEvent();
-         
-         // CAS FIX: Do this via a constructor.
-         startEvent.obstacleHit = -1;
-         startEvent.posX = 0;
-         startEvent.posY = STARTINGHEIGHT;
-         startEvent.velocityX = sbmData[i].speed;
-         startEvent.velocityY = 0.0;
+         BounceEvent startEvent = new BounceEvent(STARTINGHEIGHT, sbmData[i].speed);
+         //temp
          startEvent.time = 0.0; // all can start at time zero? CAS FIX: No, they need to start at the exit time of the prior ball.
 
          //will get all other events and return an array starting with even given  CAS FIX Doesn't parse....  And if it really does what
@@ -118,12 +105,12 @@ public class BounceEvaluator extends Evaluator {
          rspB.events[i] = calculateOneBall(platforms, startEvent);
       }
 
-      rspB.platformsHit = numberOfPlatforms - platforms.size();  // CAS FIX: Thot we now required all to be hit, and isn't this number missed anyway??
+      rspB.platformsHit = obstacleCount - platforms.size();  // CAS FIX: Thot we now required all to be hit, and isn't this number missed anyway??
 
       // fill in score and array of arrays in response
-      eval.eval.score = Math.round(
-            (double) rspB.platformsHit / (double) numberOfPlatforms * 10000.0)
-            / 100;
+      eval.eval.score = Math.round((double) rspB.platformsHit
+    		/ (double) obstacleCount * 10000.0) / 100;
+      
       eval.eval.testResult = mapper.writeValueAsString(rspB);
 
       System.out.println("Graded Bounce Sbm# " + eval.sbmId);
@@ -159,7 +146,7 @@ public class BounceEvaluator extends Evaluator {
    // may return null, if no collisions occur
    private BounceEvent calculateBallColision(BounceEvent current,
          BounceCollision collision) {
-      BounceEvent newBallEvent = createNewEvent(current,
+      BounceEvent newBallEvent = new BounceEvent(current,
             collision.time);
 
       //horizontal or vertical hits, mean just flip velocity
@@ -167,36 +154,40 @@ public class BounceEvaluator extends Evaluator {
       switch (collision.hType) {
       case VERTICAL:
          newBallEvent.velocityX = -newBallEvent.velocityX;
-         newBallEvent.obstacleHit = collision.obstacleIdx;
+         newBallEvent.obstacleIdx = collision.obstacleIdx;
          break;
       case HORIZONTAL:
          newBallEvent.velocityY = -newBallEvent.velocityY;
-         newBallEvent.obstacleHit = collision.obstacleIdx;
+         newBallEvent.obstacleIdx = collision.obstacleIdx;
          break;
       case CORNER:
+    	 // CAS FIX: dx, dy...
          double Dx = (collision.xHit - newBallEvent.posX) / RADIUS;
          double Dy = (collision.yHit - newBallEvent.posY) / RADIUS;
 
+         // Magnitude of velocity component in collision direction
          double magnitude = Dx * newBallEvent.velocityX
                + Dy * newBallEvent.velocityY;
          
-         double newVelocityX = current.velocityX + (-2 * magnitude * Dx);
-         double newVelocityY = current.velocityY + (-2 * magnitude * Dy);
+         double newVelocityX = current.velocityX + (-2.0 * magnitude * Dx);
+         double newVelocityY = current.velocityY + (-2.0 * magnitude * Dy);
 
          //test
+         // CAS FIX Why do you not just assign straight into these above?
          newBallEvent.velocityX = newVelocityX;
          newBallEvent.velocityY = newVelocityY;
          
-         newBallEvent.obstacleHit = collision.obstacleIdx;
+         newBallEvent.obstacleIdx = collision.obstacleIdx;
          break;
       default:
          // should never happen
-         System.out.println("Invalid Collision Detected");
          return null;
 
       }
 
-      System.out.println("Obstacle Hit is: " +  newBallEvent.obstacleHit);
+      System.out.println("Obstacle Hit is: " +  newBallEvent.obstacleIdx);
+      // CAS FIX: This might be a good time to start working with a logger.  I've had good luck
+      // with Apache Commons logger.  Let's put that into our Maven .pom and use it.
       return newBallEvent;
    }
 
@@ -205,26 +196,29 @@ public class BounceEvaluator extends Evaluator {
       
       double xOutOfBounds;
       
-      // solve for y, as the ball goes radius out of bounds
+      // solve for y, as the ball goes one radius out of bounds
+      // CAS FIX:
       double yOutOfBounds = quadraticSolution(
-            VELOCITY, current.velocityY, current.posY + RADIUS);
+            GRAVITY/2.0, current.velocityY, current.posY + RADIUS);
 
       // solve for x + radius out of bounds
       double xOutOfBoundsLeft = (-RADIUS - current.posX) / current.velocityX;
       double xOutOfBoundsRight = (100.0 + RADIUS - current.posX) / current.velocityX;
       
-      //figure out witch side the ball will go out on
+      // CAS FIX: Use Math.min -- always assume a routine action has library support unless you are sure otherwise.
+      //figure out which side the ball will go out on
       if (xOutOfBoundsLeft < 0)
          xOutOfBounds = xOutOfBoundsRight;
       else
          xOutOfBounds = xOutOfBoundsLeft;
 
       // gets the lower time
+      // CAS FIX: Ditto:  Math.min  And the comment is needless.  Anyone who has any business reading the code
+      // can see it's a min computation.
       double boundsTime = (xOutOfBounds > yOutOfBounds) ? yOutOfBounds
             : xOutOfBounds;
 
-      // calculate the out of bounds event
-      return createNewEvent(current, boundsTime);
+      return new BounceEvent(current, boundsTime);
    }
    
    // will return the next collision that occurs, will also delete the platform
@@ -292,7 +286,7 @@ public class BounceEvaluator extends Evaluator {
       UnivariateFunction[] equations = getAllFunctions(current);
 
       // get time when y value will be lined up with edge
-      double yHitTime = quadraticSolution(VELOCITY,
+      double yHitTime = quadraticSolution(GRAVITY/2.0,
             current.velocityY, current.posY - y);
 
       // throw out negative times
@@ -445,7 +439,7 @@ public class BounceEvaluator extends Evaluator {
       coef[3] = (GRAVITY * event.velocityY);
       
       //coefficient of t^4
-      coef[4] = Math.pow(VELOCITY, 2);
+      coef[4] = Math.pow(GRAVITY/2.0, 2);
       
       return new PolynomialFunction(coef);
    }
@@ -460,38 +454,27 @@ public class BounceEvaluator extends Evaluator {
       // xvelocity function, could be useful later
       ballFunctions[1] = t -> current.velocityX;
       // ypos function
-      ballFunctions[2] = t -> VELOCITY * Math.pow(t, 2) + current.velocityY * t
+      ballFunctions[2] = t -> GRAVITY/2.0 * Math.pow(t, 2) + current.velocityY * t
             + current.posY;
       // y velociyty function
-      ballFunctions[3] = t -> 2 * VELOCITY * t + current.velocityY;
+      ballFunctions[3] = t -> 2 * GRAVITY/2.0 * t + current.velocityY;
 
       return ballFunctions;
-   }
-
-   public static BounceEvent createNewEvent(BounceEvent current,
-         double time) {
-      // get all equations
-      UnivariateFunction[] ballFunctions = getAllFunctions(current);
-
-      // calculate the out of bounds event
-      BounceEvent newEvent = new BounceEvent();
-      newEvent.obstacleHit = -1;
-      newEvent.posX = ballFunctions[0].value(time);
-      newEvent.velocityX = ballFunctions[1].value(time);
-      newEvent.posY = ballFunctions[2].value(time);
-      newEvent.velocityY = ballFunctions[3].value(time);
-      newEvent.time = time + current.time;
-
-      return newEvent;
    }
    
    // quadratic solution returns time when zero
    // if no valid solution returns 10000
+   // CAS FIX: More careful commenting: "time"?? And which one if two answers?
+   // And it doesn't return 10,000, which is good because flag values are prone to error if they could conceivably be good results,
+   // as 10000 could. Try the comment below.
+   // 
+   // Return lowest positive real root, or Double.MAX_VALUE if no root qualifies.
    public static double quadraticSolution(double a, double b, double c) {
       double d = b * b - 4 * a * c;
       double root1;
       double root2;
 
+      // CAS FIX: I think you can use just this one case for d == 0 as well, can't you?
       if (d > 0) {
          root1 = (-b + Math.sqrt(d)) / (2 * a);
          root2 = (-b - Math.sqrt(d)) / (2 * a);
@@ -528,7 +511,7 @@ public class BounceEvaluator extends Evaluator {
       
       platforms.add(plat);
       
-      BounceEvent start = new BounceEvent();
+      BounceEvent start = new BounceEvent(STARTINGHEIGHT, 10);
       start.posX = 10;
       start.posY = 10;
       start.velocityX = 5;

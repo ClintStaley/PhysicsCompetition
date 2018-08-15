@@ -1,5 +1,5 @@
 package com.softwareinventions.cmp.evaluator.bounce;
 
-public class BounceSbm {
+public class LaunchSpec {
    public double speed;
 }

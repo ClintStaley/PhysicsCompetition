@@ -1,0 +1,39 @@
+.graph5 {
+   stroke: #E0E0E0;
+   stroke-width:.1;
+}
+
+.graph10 {
+   stroke:#C8C8C8;
+   stroke-width:.1;
+}
+
+.graphBkg {
+   fill:#F0F0FF;
+   stroke:"gray";
+   stroke-width:.1;
+}
+
+.platform {
+   stroke: black;
+   stroke-width:.1;
+   fill:#A0A0FF;
+}
+
+.startingPosition {
+   fill:black;
+}
+
+.ball {
+   fill:#FF8080;
+   stroke: black;
+   stroke-width:.1;
+}
+
+.text, .rhsText {
+   font-size:1.8px;
+}
+
+.rhsText {
+   text-anchor:end;
+}
