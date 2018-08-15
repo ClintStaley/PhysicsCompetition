@@ -12,8 +12,6 @@ export default class SbmPage extends Component {
       super(props);
 
       this.state = {
-         ctpCodeName: "",  // Ctp codeName (of first and all submits)
-         sbms: null,       // Current submission history.
          sbmFunction: null // Function to support modal submit dialog
       }
    }
@@ -35,8 +33,8 @@ export default class SbmPage extends Component {
    doSubmit = (submit) => {
       if (submit)
          api.postSbm(this.props.cmp.id, this.props.team.id, submit)
-         .then(uri => api.get(uri.substr(1)))//get rid of first / its unnessary
-         .then((sbmData) => sbmData.json())//because we use api and not action creator
+         .then(uri => api.get(uri.substr(1))) // get rid of first / its unnessary
+         .then((sbmData) => sbmData.json())   // because we use api and not action creator
          .then((sbm) => {
            sbm.content = JSON.parse(sbm.content);
            return sbm;
@@ -45,7 +43,7 @@ export default class SbmPage extends Component {
             {sbms: [newSbm].concat(this.state.sbms), sbmFunction: null}
          )});
      else {
-       this.setState({sbmFunction : null});
+        this.setState({sbmFunction : null});
      }
    }
 
