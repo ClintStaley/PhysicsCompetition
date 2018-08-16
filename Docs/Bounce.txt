@@ -8,7 +8,11 @@ Parameter Schema
      "type": "object", 
        
      "properties": {
-        "platforms": {
+        "targetTime": {
+           "title": "time to get all platforms that will get 100",
+           "type": "number"
+        },
+        "obstacles": {
            "title": "platforms to bounce off of",
            "type": "array",
            "items": {
@@ -47,13 +51,14 @@ Parameter Schema
         } 
     },
     "additionalProperties": false,
-    "minProperties": 1   
+    "minProperties": 2   
  }
 
 
 Example Parameter
 {
-   "platforms": [
+   "targetTime" : 10.0,
+   "obstacles": [
      {
        "loX": 0,
        "hiX": 40.2,
@@ -120,7 +125,7 @@ Response schema
    "title": "Bounce Response",
    "type": "object",
    "properties": {
-     "platformsHit": {
+     "obstaclesHit": {
          "title": "number of platforms hit",
          "type": "integer"
       },
@@ -177,7 +182,7 @@ Response schema
 Example Response:
 
 {
-   "platformsHit": 3,
+   "obstaclesHit": 3,
    "ballMap": [
      [{
        "time": 0,

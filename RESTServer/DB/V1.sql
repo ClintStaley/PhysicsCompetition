@@ -162,8 +162,12 @@ insert into CompetitionType (title, codeName, description, tutorial, prmSchema)
      "title": "Bounce",\
      "type": "object", \
        \
-     "properties": {
-        "platforms": {\
+     "properties": {\
+        "targetTime": {\
+           "title": "time to get all platforms that will get 100",\
+           "type": "number"\
+        },\
+        "obstacles": {\
            "title": "platforms to bounce off of",\
            "type": "array",\
            "items": {\

@@ -181,7 +181,11 @@ app.delete('/DB', function (req, res) {
      "type": "object",
 
      "properties": {
-        "platforms": {
+        "targetTime": {
+           "title": "time to get all platforms that will get 100",
+           "type": "number"
+        },
+        "obstacles": {
            "title": "platforms to bounce off of",
            "type": "array",
            "items": {
