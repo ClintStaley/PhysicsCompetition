@@ -19,25 +19,21 @@ import com.softwareinventions.cmp.evaluator.EvlPut;
 import com.softwareinventions.cmp.util.GenUtil;
 
 public class BounceEvaluator extends Evaluator {
-   // constants
+   // Constants
    public static final double STARTINGHEIGHT = 100.0;
    public static final double GRAVITY = -9.80665;
    public static final double RADIUS = 1;
    public static final double ZERO = 0.00000001;
 
-   // CAS FIX: Suggested scoring
-   // 1. Compute total time, which is time of final collision, plus 10s per ball as a penalty
-   // 2. Problem config includes a target time.  Score is 100*targetTime/totalTime.
-   
-   //class variables
-   private BounceParameters cmpDetails;
+   // Class variables
+   private Parameters prms;
    private ObjectMapper mapper = new ObjectMapper();
 
    public BounceEvaluator(String prms) {
       super(prms);
 
       try {
-         cmpDetails = mapper.readValue(prms, BounceParameters.class);
+         this.prms = mapper.readValue(prms, Parameters.class);
       } catch (Exception e) {
          e.printStackTrace();
       }
@@ -64,26 +60,26 @@ public class BounceEvaluator extends Evaluator {
       return evaluations;
    }
 
-   // Evaluate a list of differing speeds comprising a single sbm
+   // Evaluate a list of differing balls comprising a single sbm.
    private EvlPut evaluate(Submit sbm)
          throws JsonParseException, JsonMappingException, IOException {
       LaunchSpec[] sbmData = mapper.readValue(sbm.content,
             LaunchSpec[].class);
 
       int numBalls = sbmData.length;
-      int obstacleCount = cmpDetails.obstacles.length;
+      int obstacleCount = prms.obstacles.length;
 
-      // assign all obstacles ID numbers based on their index
+      // Assign all obstacles ID numbers based on their index.
       for (int idx = 0; idx < obstacleCount; idx++)
-         cmpDetails.obstacles[idx].obstacleId = idx;
+         prms.obstacles[idx].obstacleId = idx;
 
-      // Linked list so that we can delete obstacles as they are hit
-      LinkedList<BounceObstacle> obstacles = new LinkedList<BounceObstacle>(
-            Arrays.asList(cmpDetails.obstacles));
+      // Linked list so that we can delete obstacles as they are hit.
+      LinkedList<Obstacle> obstacles = new LinkedList<Obstacle>(
+            Arrays.asList(prms.obstacles));
 
-      // start a BounceEvl to turn into a JSON string
+      // Start a BounceEvl to turn into a JSON string.
       BounceEvl rspB = new BounceEvl();
-      //double array of events every ball has an array of events
+      // Double array of events every ball has an array of events.
       rspB.events = new BounceEvent[numBalls][];
 
       EvlPut eval = new EvlPut();
@@ -94,22 +90,24 @@ public class BounceEvaluator extends Evaluator {
       
       double totalTime = 0.0;
       
-      // loop through all balls 
+      // Loop through all balls.
       for (int i = 0; i < numBalls; i++) {
-         //set up starting ball event
-         BounceEvent startEvent = new BounceEvent(STARTINGHEIGHT, sbmData[i].speed);
-         startEvent.time = 0.0; //all balls start at time zero 
+         // Set up starting ball event.
+         BounceEvent startEvent = 
+               new BounceEvent(STARTINGHEIGHT, sbmData[i].speed);
+         startEvent.time = 0.0; // All balls start at time zero.
 
-         // gets all other events for a given ball and return an array starting with event given 
+         // Gets all other events for a given ball and return an array starting
+         // with event given.
          rspB.events[i] = calculateOneBall(obstacles, startEvent);
          totalTime += rspB.events[i][rspB.events[i].length - 1].time;
       }
 
       rspB.obstaclesHit = obstacleCount - obstacles.size(); 
 
-      // fill in score and array of arrays in response
+      // Fill in score and array of arrays in response.
       if (obstacles.size() == 0)
-         eval.eval.score = Math.round((double)cmpDetails.targetTime * 10000.0 /
+         eval.eval.score = Math.round((double)prms.targetTime * 10000.0 /
                (totalTime + 10.0 * ((double)numBalls - 1.0))) / 100.0;
       else
          eval.eval.score = 0;
@@ -122,14 +120,14 @@ public class BounceEvaluator extends Evaluator {
    }
 
    private BounceEvent[] calculateOneBall(
-         LinkedList<BounceObstacle> obstacles, BounceEvent StartingPoint) {
-      //linked list used for undefined size
+         LinkedList<Obstacle> obstacles, BounceEvent StartingPoint) {
+      // Linked list used for undefined size.
       LinkedList<BounceEvent> ballEvents = new LinkedList<BounceEvent>();
       ballEvents.add(StartingPoint);
 
-      BounceCollision nextCollision = getNextCollision(obstacles, StartingPoint);
+      Collision nextCollision = getNextCollision(obstacles, StartingPoint);
 
-      //loops until there are no more collisions calculated
+      // Loops until there are no more collisions calculated.
       while (nextCollision != null) {
          ballEvents
                .add(calculateBallColision(ballEvents.getLast(), nextCollision));
@@ -137,22 +135,23 @@ public class BounceEvaluator extends Evaluator {
          nextCollision = getNextCollision(obstacles, ballEvents.getLast());
       }
 
-      //calculate where the ball will go out of bounds
+      // Calculate where the ball will go out of bounds.
       ballEvents.add(calculateBorderEvent(StartingPoint));
 
-      //return events as array, so that I can send the correct format as response
+      // Return events as array, so that I can send the correct format as 
+      // response.
       return ballEvents.toArray(new BounceEvent[ballEvents.size()]);
    }
 
-   // returns the new ball event after calculating all values,
-   // may return null, if no collisions occur
+   // Returns the new ball event after calculating all values,
+   // may return null, if no collisions occur.
    private BounceEvent calculateBallColision(BounceEvent current,
-         BounceCollision collision) {
+         Collision collision) {
       BounceEvent newBallEvent = new BounceEvent(current,
             collision.time);
 
-      //horizontal or vertical hits, mean just flip velocity
-      //corner hit means calculate new x velocity and y velocity
+      // Horizontal or vertical hits, mean just flip velocity.
+      // Corner hit means calculate new x velocity and y velocity.
       switch (collision.hType) {
       case VERTICAL:
          newBallEvent.velocityX = -newBallEvent.velocityX;
@@ -166,7 +165,7 @@ public class BounceEvaluator extends Evaluator {
          double dx = (collision.xHit - newBallEvent.posX) / RADIUS;
          double dy = (collision.yHit - newBallEvent.posY) / RADIUS;
 
-         // Magnitude of velocity component in collision direction
+         // Magnitude of velocity component in collision direction.
          double magnitude = dx * newBallEvent.velocityX
                + dy * newBallEvent.velocityY;
          
@@ -187,16 +186,16 @@ public class BounceEvaluator extends Evaluator {
       return newBallEvent;
    }
 
-   // Calculate where and when the ball will hit the border, last event
+   // Calculate where and when the ball will hit the border, last event.
    private BounceEvent calculateBorderEvent(BounceEvent current) {
       
       double xOutOfBounds;
       
-      // solve for y, as the ball goes one radius below the lower bound
+      // Solve for y, as the ball goes one radius below the lower bound.
       double yOutOfBounds = quadraticSolution(
             GRAVITY/2.0, current.velocityY, current.posY + RADIUS);
 
-      // solve for x + radius out of bounds
+      // Solve for x + radius out of bounds.
       if (current.velocityX < 0.0)
          xOutOfBounds = (-RADIUS - current.posX) / current.velocityX;
       else if (current.velocityX > 0.0)
@@ -209,22 +208,22 @@ public class BounceEvaluator extends Evaluator {
       return new BounceEvent(current, boundsTime);
    }
    
-   // return the next collision that occurs, also delete the obstacle
-   public BounceCollision getNextCollision(
-         LinkedList<BounceObstacle> obstacles, BounceEvent current) {
+   // Return the next collision that occurs, also delete the obstacle.
+   public Collision getNextCollision(
+         LinkedList<Obstacle> obstacles, BounceEvent current) {
 
-      // create an array of collisions, so we can check all obstacles
-      BounceCollision[] collisions = new BounceCollision[obstacles.size()];
+      // Create an array of collisions, so we can check all obstacles.
+      Collision[] collisions = new Collision[obstacles.size()];
 
-      // check all obstacles for a collision
+      // Check all obstacles for a collision.
       for (int i = 0; i < collisions.length; i++) {
          collisions[i] = getobstacleCollision(obstacles.get(i), current);
       }
 
-      BounceCollision firstCollision = getFirstCollision(collisions);
+      Collision firstCollision = getFirstCollision(collisions);
       
       if (firstCollision != null) {
-         for (BounceObstacle obstacle : obstacles) {
+         for (Obstacle obstacle : obstacles) {
             if (obstacle.obstacleId == firstCollision.obstacleIdx) {
                obstacles.remove(obstacle);
                break;
@@ -235,61 +234,59 @@ public class BounceEvaluator extends Evaluator {
       return firstCollision;
    }
 
-   //checks all edges, does not optimize by excluding edges
-   // calculates if the ball will hit the obstacle
-   private BounceCollision getobstacleCollision(BounceObstacle obstacle,
+   // Checks all edges, does not optimize by excluding edges and corners.
+   // Calculates if the ball will hit the obstacle.
+   private Collision getobstacleCollision(Obstacle obstacle,
          BounceEvent current) {
-
-      // 8 for all 4 edges and 4 corners
-      BounceCollision[] collisions = new BounceCollision[8];
+      Collision[] collisions = new Collision[8];
          
-      // get horizontal edges and checking if they hit, or whose first
+      // Check horizontal edge collisions.
       collisions[0] = getHorizontalEdgeCollision(obstacle.loX, obstacle.hiX,
             obstacle.hiY + RADIUS, current);
       collisions[1] = getHorizontalEdgeCollision(obstacle.loX, obstacle.hiX,
             obstacle.loY - RADIUS, current);
 
-      //check vertical edge collisions
+      // Check vertical edge collisions.
       collisions[2] = getVerticalEdgeCollision(obstacle.loY, obstacle.hiY,
             obstacle.hiX + RADIUS, current);
       collisions[3] = getVerticalEdgeCollision(obstacle.loY, obstacle.hiY,
             obstacle.loX - RADIUS, current);
 
-      //check all corners for collisions
+      // Check all corners for collisions.
       collisions[4] = getCornerCollision(obstacle.hiX, obstacle.hiY, current);
       collisions[5] = getCornerCollision(obstacle.hiX, obstacle.loY, current);
       collisions[6] = getCornerCollision(obstacle.loX, obstacle.hiY, current);
       collisions[7] = getCornerCollision(obstacle.loX, obstacle.loY, current);
 
-      BounceCollision firsCollision = getFirstCollision(collisions);
+      Collision firsCollision = getFirstCollision(collisions);
       if (firsCollision != null)
          firsCollision.obstacleIdx = obstacle.obstacleId;
       
       return firsCollision;
    }
 
-   // calculates if the ball will hit horizontal any edge of the obstacle
-   private BounceCollision getHorizontalEdgeCollision(double loX,
+   // Calculates if the ball will hit any horizontal edge of the obstacle at y,
+   // bounded by loX and hiX.
+   private Collision getHorizontalEdgeCollision(double loX,
          double hiX, double y, BounceEvent current) {
-      // get equations for event
+      // Get equations for event.
       UnivariateFunction[] equations = getAllFunctions(current);
 
-      // get time when y value will be lined up with edge
+      // Get time when y value will be lined up with edge.
       double yHitTime = quadraticSolution(GRAVITY/2.0,
             current.velocityY, current.posY - y);
 
-      // throw out negative times
+      // Throw out negative times.
       if (yHitTime == Double.MAX_VALUE)
          return null;
       
-      //calculate x value at time of collision
+      // Calculate x value at time of collision.
       double xValue = equations[0].value(yHitTime);
 
-      if (xValue > loX && xValue < hiX) {
-         //we have a hit on the vertical edge
-         BounceCollision collision = new BounceCollision();
-         collision.time = yHitTime;
-         collision.hType = BounceCollision.HitType.VERTICAL;
+      if (GenUtil.inBounds(loX, xValue, hiX)) {
+         // We have a hit on the horizontal edge.
+         Collision collision = new Collision(yHitTime,
+               Collision.HitType.HORIZONTAL, -1, -1 );
          
          return collision;
       }
@@ -297,27 +294,26 @@ public class BounceEvaluator extends Evaluator {
       return null;
    }
 
-   // calculates if the ball will hit any vertical edge of the obstacle at x,
-   // bounded by loY and hiY
-   private BounceCollision getVerticalEdgeCollision(double loY,
+   // Calculates if the ball will hit any vertical edge of the obstacle at x,
+   // bounded by loY and hiY.
+   private Collision getVerticalEdgeCollision(double loY,
          double hiY, double x, BounceEvent current) {
-      // get equations for event
+      // Get equations for event.
       UnivariateFunction[] equations = getAllFunctions(current);
 
-      //  get time when x value will be lined up with edge
+      // Get time when x value will be lined up with edge.
       double xHitTime = (x - current.posX) / current.velocityX;
 
-      // throw out negative times
+      // Throw out negative times.
       if (xHitTime < 0)
          return null;
 
-      //get y value at possible collision time
+      // Get y value at possible collision time.
       double yValue = equations[2].value(xHitTime);
 
-      if (yValue > loY && yValue < hiY) {
-         BounceCollision collision = new BounceCollision();
-         collision.time = xHitTime;
-         collision.hType = BounceCollision.HitType.HORIZONTAL;
+      if (GenUtil.inBounds(loY, yValue, hiY)) {
+         Collision collision = new Collision(xHitTime, 
+               Collision.HitType.VERTICAL, -1, -1);
          
          return collision;
       }
@@ -325,39 +321,35 @@ public class BounceEvaluator extends Evaluator {
       return null;
    }
 
-   // calculates if the ball will hit any edge of the obstacle
-   private BounceCollision getCornerCollision(double x, double y,
+   // Calculates if the ball will hit any edge of the obstacle.
+   private Collision getCornerCollision(double x, double y,
          BounceEvent current) {
 
       PolynomialFunction cornerEquation = getPolynomial(current, x, y);
       
       LaguerreSolver solver = new LaguerreSolver();
 
-      Complex[] solutions = solver.solveAllComplex(cornerEquation.getCoefficients(), 0);
+      Complex[] solutions = solver.solveAllComplex
+            (cornerEquation.getCoefficients(), 0);
       
       Double timeOfImpact = simplifyComplex(current.time, solutions);
  
-      //we hit a corner
+      // We hit a corner
       if (timeOfImpact != null) {
-         BounceCollision collision = new BounceCollision();
-
-         collision.time = timeOfImpact;
-         collision.hType = BounceCollision.HitType.CORNER;
-
-         collision.xHit = x;
-         collision.yHit = y;
-
+         Collision collision = new Collision(timeOfImpact, 
+               Collision.HitType.CORNER, x, y);
+         
          return collision;
       }
 
       return null;
    }
 
-   // function takes an array of collisions, and returns the first,
-   // any can be null
-   private BounceCollision getFirstCollision(
-         BounceCollision[] collisions) {
-      BounceCollision firstCollision = null;
+   // Function takes an array of collisions, and returns the first,
+   // any can be null.
+   private Collision getFirstCollision(
+         Collision[] collisions) {
+      Collision firstCollision = null;
 
       for (int i = 0; i < collisions.length; i++)
          if (collisions[i] != null)
@@ -368,7 +360,8 @@ public class BounceEvaluator extends Evaluator {
       return firstCollision;
    }
 
-   // helper for the LaguerreSolver
+   // Helper for the LaguerreSolver, returns the lowest time that is greater 
+   // than currentTime and not a complex number.
    public Double simplifyComplex(double currentTime,
          Complex[] solutions) {
       Double lowestTime = null;
@@ -383,14 +376,14 @@ public class BounceEvaluator extends Evaluator {
    }
 
    /*
-    * getCoefficients, will return a PolynomialFunction used for the solver the
+    * GetCoefficients, will return a PolynomialFunction used for the solver the
     * equation represents the distance to a corner represented by a point.
     * 
-    * the equation is:
+    * The equation is:
     * 
     * (Dx + tVx)^2 + (Dy + tVy - 4.9t^2)^2 = r^2
     * 
-    * where 
+    * Where: 
     * Dx = (Px - Cx) 
     * Px = current position of ball along x-axis 
     * Cx = thecorner's x value 
@@ -401,13 +394,13 @@ public class BounceEvaluator extends Evaluator {
     * Vy = the ball's current velocity along the y-axis 
     * r = radius of the ball
     * 
-    * the equation results to:
+    * The equation results to:
     * 
     * (4.9)^2t^4 + (-9.8Vy)t^3 + (Vy^2 + Vx^2 - 9.8Dy)t^2 + 2(DyVy + DxVx)t +
     * (Dy^2 + Dx^2 + r^2) = r
     * 
-    * the polynomial function will get an array of doubles based on the values
-    * in the equation above
+    * The polynomial function will get an array of doubles based on the values
+    * in the equation above.
     */
    public PolynomialFunction getPolynomial(BounceEvent event,
          double cX, double cY) {
@@ -416,38 +409,38 @@ public class BounceEvaluator extends Evaluator {
       double dY = (event.posY - cY);
       double dX = (event.posX - cX);
       
-      //coefficient of t^0
+      // Coefficient of t^0
       coef[0] = GenUtil.square(dX) + GenUtil.square(dY) - GenUtil.square(RADIUS);
       
-      //coefficient of t^1
+      // Coefficient of t^1
       coef[1] = 2 * (dY * event.velocityY + dX * event.velocityX);
             
-      //coefficient of t^2
-      coef[2] = GenUtil.square(event.velocityY) + GenUtil.square(event.velocityX)
-            + GRAVITY * dY;
+      // Coefficient of t^2
+      coef[2] = GenUtil.square(event.velocityY) + 
+            GenUtil.square(event.velocityX) + GRAVITY * dY;
       
-      //coefficient of t^3
+      // Coefficient of t^3
       coef[3] = (GRAVITY * event.velocityY);
       
-      //coefficient of t^4
-      coef[4] = Math.pow(GRAVITY/2.0, 2);
+      // Coefficient of t^4
+      coef[4] = GenUtil.square(GRAVITY/2.0);
       
       return new PolynomialFunction(coef);
    }
 
-   // returns an array with [xPosFunction, xVelocityFunction, yPositionFunction,
-   // and yVelocityFunction]
+   // Returns an array with [xPosFunction, xVelocityFunction, yPositionFunction,
+   // and yVelocityFunction].
    public static UnivariateFunction[] getAllFunctions(BounceEvent current) {
       UnivariateFunction[] ballFunctions = new UnivariateFunction[4];
 
-      // xposition function
+      // X position function
       ballFunctions[0] = t -> t * current.velocityX + current.posX;
-      // xvelocity function, could be useful later
+      // X velocity function
       ballFunctions[1] = t -> current.velocityX;
-      // ypos function
-      ballFunctions[2] = t -> GRAVITY/2.0 * Math.pow(t, 2) + current.velocityY * t
-            + current.posY;
-      // y velociyty function
+      // Y position function
+      ballFunctions[2] = t -> GRAVITY/2.0 * GenUtil.square(t) + 
+            current.velocityY * t + current.posY;
+      // Y velocity function
       ballFunctions[3] = t -> 2 * GRAVITY/2.0 * t + current.velocityY;
 
       return ballFunctions;
@@ -471,15 +464,15 @@ public class BounceEvaluator extends Evaluator {
                return (root1 > root2) ? root2 : root1;
       }
 
-      // imaginary solution should rarely occur
+      // Imaginary solution should rarely occur.
       return Double.MAX_VALUE;
    }
    
-   //tester main, used only to test functions
+   // Tester main, used only to test functions
    public static void main(String[] args) {
-      //test obstacles to use
-      LinkedList<BounceObstacle> obstacles = new LinkedList<BounceObstacle>();
-      BounceObstacle plat = new BounceObstacle();
+      // Test obstacles to use
+      LinkedList<Obstacle> obstacles = new LinkedList<Obstacle>();
+      Obstacle plat = new Obstacle();
       
       plat.hiX = 60;
       plat.loX = 50;
@@ -498,7 +491,7 @@ public class BounceEvaluator extends Evaluator {
       
       BounceEvaluator eval = new BounceEvaluator();
       
-      BounceCollision testCollision = eval.getobstacleCollision(plat, start);
+      Collision testCollision = eval.getobstacleCollision(plat, start);
       
       if (testCollision != null) {
          System.out.println(testCollision.hType);
@@ -512,7 +505,7 @@ public class BounceEvaluator extends Evaluator {
       double x = 10;
       double y = 15;
       
-      BounceCollision cornerTest = eval.getCornerCollision( x, y, start);
+      Collision cornerTest = eval.getCornerCollision( x, y, start);
       
       System.out.println("");
       if (cornerTest != null) {
@@ -525,8 +518,15 @@ public class BounceEvaluator extends Evaluator {
       }
    }
 
-   //
-   private static class BounceCollision {
+   private static class Collision {
+      public Collision(double time, HitType hType, double xHit,
+            double yHit) {
+         this.time = time;
+         this.hType = hType;
+         this.xHit = xHit;
+         this.yHit = yHit;
+      }
+
       public double time;
       
       public enum HitType {
@@ -540,7 +540,7 @@ public class BounceEvaluator extends Evaluator {
       public int obstacleIdx;
    }
    
-   private static class BounceObstacle {
+   private static class Obstacle {
       public double loX;
       public double hiX;
       public double hiY;
@@ -548,9 +548,9 @@ public class BounceEvaluator extends Evaluator {
       public int obstacleId;
    }
    
-   private static class BounceParameters {
+   private static class Parameters {
       public double targetTime;
-      public BounceObstacle[] obstacles;
+      public Obstacle[] obstacles;
    }
    
 }
