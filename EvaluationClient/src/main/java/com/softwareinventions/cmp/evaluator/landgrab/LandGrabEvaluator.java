@@ -4,6 +4,7 @@ import com.softwareinventions.cmp.dto.Submit;
 import com.softwareinventions.cmp.evaluator.Evaluator;
 import com.softwareinventions.cmp.evaluator.Evl;
 import com.softwareinventions.cmp.evaluator.EvlPut;
+import com.softwareinventions.cmp.util.GenUtil;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -42,7 +43,7 @@ public class LandGrabEvaluator extends Evaluator {
    
    Parameters prms;
    int score;
-   static final int cGridSize = 100;
+   static final double cGridSize = 100.0;
 
    ObjectMapper mapper = new ObjectMapper();
 
@@ -113,38 +114,32 @@ public class LandGrabEvaluator extends Evaluator {
    private boolean circleIsValid(SbmCircle circle,
          LinkedList<SbmCircle> validCircles) {
 
-      // check for bounds collision
+      // Check for bounds collision
       if (!circleInBounds(circle))
          return false;
 
-      // check for obstacle collision
-      for (int i = 0; i < prms.obstacles.length; i++) {
-         if (prms.obstacles[i].hiX > circle.centerX
-               && circle.centerX > prms.obstacles[i].loX)
-            if (!(circle.centerY > (prms.obstacles[i].hiY + circle.radius)
-                  || circle.centerY < (prms.obstacles[i].loY
-                        + circle.radius)))
-               return false;
+      // Check for noncorner obstacle collision
+      for (BlockedRectangle obs: prms.obstacles) {
+    	 // Overlap with horizontal sides
+    	 if (GenUtil.inBounds(obs.loX, circle.centerX, obs.hiX)
+    	       && GenUtil.inBounds(obs.loY-circle.radius, 
+    	       circle.centerY, obs.hiY+circle.radius))
+            return false;
+    	 
+    	 // Overlap with vertical sides
+    	 if (GenUtil.inBounds(obs.loY, circle.centerY, obs.hiY)
+      	       && GenUtil.inBounds(obs.loX-circle.radius, 
+      	       circle.centerX, obs.hiX+circle.radius))
+            return false;
 
-         if (prms.obstacles[i].hiY > circle.centerY
-               && circle.centerY > prms.obstacles[i].loY)
-            if (!(circle.centerX > (prms.obstacles[i].hiX + circle.radius)
-                  || circle.centerX < (prms.obstacles[i].loX
-                        + circle.radius)))
-               return false;
-
-         if ((!cornerValid(circle, prms.obstacles[i].hiX,
-               prms.obstacles[i].hiY))
-               || (!cornerValid(circle, prms.obstacles[i].hiX,
-                     prms.obstacles[i].loY))
-               || (!cornerValid(circle, prms.obstacles[i].loX,
-                     prms.obstacles[i].hiY))
-               || (!cornerValid(circle, prms.obstacles[i].loX,
-                     prms.obstacles[i].loY)))
+         if (cornerHit(circle, obs.hiX, obs.hiY)
+               || cornerHit(circle, obs.hiX, obs.loY)
+               || cornerHit(circle, obs.loX, obs.hiY)
+               || cornerHit(circle, obs.loX, obs.loY))
             return false;
       }
 
-      // check for circle collision
+      // Check for circle collision
       for (SbmCircle temp : validCircles)
          if (circleCollision(circle, temp))
             return false;
@@ -152,24 +147,21 @@ public class LandGrabEvaluator extends Evaluator {
       return true;
    }
 
-   // returns true if circles have collision otherwise false
+   // Return true iff circles have collision.
    private boolean circleCollision(SbmCircle crc1, SbmCircle crc2) {
       return (Point2D.distance(crc1.centerX, crc1.centerY,
             crc2.centerX, crc2.centerY) < crc1.radius + crc2.radius);
    }
 
-   // assumes a grid size of 100 X 100
-   private boolean circleInBounds(SbmCircle circle) {
-      return (circle.centerX + circle.radius <= cGridSize
-            && circle.centerX - circle.radius >= 0
-            && circle.centerY + circle.radius <= cGridSize
-            && circle.centerY - circle.radius >= 0);
+   private boolean circleInBounds(SbmCircle crc) {
+      return GenUtil.inBounds(crc.radius, crc.centerX, cGridSize-crc.radius) &&
+            GenUtil.inBounds(crc.radius,  crc.centerY, cGridSize - crc.radius);
    }
 
-   // return true if corner is ok false otherwise
-   private boolean cornerValid(SbmCircle circle, double x, double y) {
-      return circle.radius <= Point2D.distance(circle.centerX, circle.centerY,
-            x, y);
+   // Return true iff circle overlaps {x,y}
+   private boolean cornerHit(SbmCircle circle, double x, double y) {
+      return Point2D.distance(circle.centerX, circle.centerY, x, y)
+    		  < circle.radius;
    }
 
    private double area(double radius) {
