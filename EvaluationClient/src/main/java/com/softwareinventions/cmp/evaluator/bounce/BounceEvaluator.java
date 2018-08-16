@@ -191,29 +191,39 @@ public class BounceEvaluator extends Evaluator {
       return newBallEvent;
    }
 
-   //calculates where and when the ball will hit the border, last event
+   // Calculate where and when the ball will hit the border, last event
    private BounceEvent calculateBorderEvent(BounceEvent current) {
       
       double xOutOfBounds;
       
-      // solve for y, as the ball goes one radius out of bounds
-      // CAS FIX:
+      // solve for y, as the ball goes one radius below the lower bound
       double yOutOfBounds = quadraticSolution(
             GRAVITY/2.0, current.velocityY, current.posY + RADIUS);
 
       // solve for x + radius out of bounds
+      /* CAS FIX See below
       double xOutOfBoundsLeft = (-RADIUS - current.posX) / current.velocityX;
       double xOutOfBoundsRight = (100.0 + RADIUS - current.posX) / current.velocityX;
       
-      // CAS FIX: Use Math.min -- always assume a routine action has library support unless you are sure otherwise.
       //figure out which side the ball will go out on
       if (xOutOfBoundsLeft < 0)
          xOutOfBounds = xOutOfBoundsRight;
       else
          xOutOfBounds = xOutOfBoundsLeft;
+      */
+      
+      // CAS FIX: Elegance matters; find the cleaner way to code things.
+      // CAS FIX: Special cases matter, especially when they're rare so they are hard to find in testing.
+      if (current.velocityX < 0.0)
+         xOutOfBounds = (-RADIUS - current.posX) / current.velocityX;
+      else if (current.velocityX > 0.0)
+         xOutOfBounds = (100.0 + RADIUS - current.posX) / current.velocityX;
+      else
+    	 xOutOfBounds = Double.MAX_VALUE;
 
       // gets the lower time
-      // CAS FIX: Ditto:  Math.min  And the comment is needless.  Anyone who has any business reading the code
+      // CAS FIX: Use Math.min -- always assume a routine action has library support unless you are sure otherwise.
+      // And the comment is needless.  Anyone who has any business reading the code
       // can see it's a min computation.
       double boundsTime = (xOutOfBounds > yOutOfBounds) ? yOutOfBounds
             : xOutOfBounds;
@@ -221,6 +231,7 @@ public class BounceEvaluator extends Evaluator {
       return new BounceEvent(current, boundsTime);
    }
    
+   // CAS FIX: Use imperative voice in comments.
    // will return the next collision that occurs, will also delete the platform
    public BounceCollision getNextCollision(
          LinkedList<BounceObstacle> Platforms, BounceEvent current) {
@@ -251,6 +262,9 @@ public class BounceEvaluator extends Evaluator {
 
    //checks all edges, does not optimize by excluding edges
    // calculates if the ball will hit the platform
+   // CAS FIX: Why isn't obstacleIdx set here???  It shouldn't be an afterthought above.
+   // Each method does one thing, and does it *completely* so we don't need to worry about 
+   // fixup details after calling it.
    private BounceCollision getPlatformCollision(BounceObstacle platform,
          BounceEvent current) {
 
@@ -318,6 +332,7 @@ public class BounceEvaluator extends Evaluator {
       double xHitTime = (x - current.posX) / current.velocityX;
 
       // throw out negative times
+      // CAS FIX: Missed collisions return MAX_VALUE, not negative???
       if (xHitTime < 0)
          return null;
 
