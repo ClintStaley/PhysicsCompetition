@@ -95,7 +95,6 @@ public class BounceEvaluator extends Evaluator {
          // Set up starting ball event.
          BounceEvent startEvent = 
                new BounceEvent(STARTINGHEIGHT, sbmData[i].speed);
-         startEvent.time = 0.0; // All balls start at time zero.
 
          // Gets all other events for a given ball and return an array starting
          // with event given.
@@ -107,8 +106,8 @@ public class BounceEvaluator extends Evaluator {
 
       // Fill in score and array of arrays in response.
       if (obstacles.size() == 0)
-         eval.eval.score = Math.round((double)prms.targetTime * 10000.0 /
-               (totalTime + 10.0 * ((double)numBalls - 1.0))) / 100.0;
+         eval.eval.score = Math.round(prms.targetTime * 10000.0 /
+               (totalTime + 10.0 * (numBalls - 1.0))) / 100.0;
       else
          eval.eval.score = 0;
       
@@ -553,4 +552,48 @@ public class BounceEvaluator extends Evaluator {
       public Obstacle[] obstacles;
    }
    
+   public static class LaunchSpec {
+      public double speed;
+   }
+
+   
+   /*
+    *   BounceEvent, describes a bounce off of a platform, the starting point of 
+    *   the ball, or the ball going out of bounds. in the case of a bounce, the
+    *   velocityX and velocityY of the ball are the velocities after the bounce, 
+    *   the obstacleIdx describes the obstacle that was hit, or -1 if the event is 
+    *   a starting event or an out of bounds event. 
+    * 
+    * */
+   public static class BounceEvent {
+      public double time;
+      public double velocityX;
+      public double velocityY;
+      public double posX;
+      public double posY;
+      public int obstacleIdx;
+      
+      // Creates an starting bounce event.
+      public BounceEvent(double startingHeight, double speed) {
+         obstacleIdx = -1;
+         posX = 0;
+         posY = startingHeight;
+         velocityX = speed;
+         velocityY = 0.0;
+         time = 0.0;
+      }
+      
+      // Creates a copy of the bounce event sent in with updated position and velocity.
+      public BounceEvent(BounceEvent current, double time) {
+         // Get all equations.
+         UnivariateFunction[] ballFunctions = BounceEvaluator.getAllFunctions(current);
+         
+         obstacleIdx = -1;
+         posX = ballFunctions[0].value(time);
+         velocityX = ballFunctions[1].value(time);
+         posY = ballFunctions[2].value(time);
+         velocityY = ballFunctions[3].value(time);
+         this.time = time + current.time;
+      }
+   }
 }
