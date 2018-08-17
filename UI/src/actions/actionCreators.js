@@ -4,12 +4,13 @@ import * as api from '../api';
 // add a standard "then" handler for |cb|, ultimately returning the final
 // value of the promise.
 function addStdHandlers(dsp, cb, promise) {
-   return promise.catch((errList) => dsp({type: 'SHOW_ERR', details: errList}))
+   promise
+   .catch((errList) => dsp({type: 'SHOW_ERR', details: errList}))
    .then((val) => {if (cb) cb(); return val;});
 }
 
 export function signIn(credentials, cb) {
-   return (dispatch, prevState) => {
+   return (dispatch, getState) => {
       addStdHandlers(dispatch, cb,
        api.signIn(credentials)
       .then((userInfo) => dispatch({ user: userInfo, type: "SIGN_IN" })));
@@ -17,7 +18,7 @@ export function signIn(credentials, cb) {
 }
 
 export function getCtp(ctpId, cb){
-   return ((dispatch, prevState) => {
+   return ((dispatch, getState) => {
       addStdHandlers(dispatch, cb,
       api.getCtpById(ctpId)
       .then((ctp) => {
@@ -28,7 +29,7 @@ export function getCtp(ctpId, cb){
 }
 
 export function getAllCmps( cb) {
-   return (dispatch, prevState) => {
+   return (dispatch, getState) => {
       api.getCmps()
       .then((cmps) => {
          Object.keys(cmps).forEach((key) => {
@@ -41,7 +42,7 @@ export function getAllCmps( cb) {
 }
 
 export function getMyCmps(id, cb) {
-   return ((dispatch, prevState) => {
+   return ((dispatch, getState) => {
       api.getCmpsByPerson(id)
       .then((cmps) => {
          Object.keys(cmps).forEach((key) => {
@@ -53,7 +54,7 @@ export function getMyCmps(id, cb) {
 }
 
 export function putCmp(cmpId, newCmpData, cb) {
-   return (dispatch, prevState) => {
+   return (dispatch, getState) => {
       api.putCmp(cmpId, newCmpData)
       .then(() => {
           var cmpData = {newCmpData : newCmpData, cmpId: cmpId};
@@ -64,11 +65,11 @@ export function putCmp(cmpId, newCmpData, cb) {
 }
 
 export function postTeam(cmpId, newTeamData, cb) {
-   return (dispatch, prevState) => {
+   return (dispatch, getState) => {
       addStdHandlers(dispatch, cb,
        api.postTeam(cmpId, newTeamData)
       .then((newTeamId) => {
-         var prs = prevState().prs;
+         var prs = getState().prs;
          newTeamData.id = newTeamId;
          newTeamData.mmbs = {[prs.id]: {email: prs.email, isLeader: true,
           firstName: prs.firstName, lastName: prs.lastName, id: prs.id}};
@@ -82,7 +83,7 @@ export function postTeam(cmpId, newTeamData, cb) {
 
 
 export function putTeam(cmpId, teamId, newTeamData, cb) {
-   return (dispatch, prevState) => {
+   return (dispatch, getState) => {
       api.putTeam(cmpId, teamId, newTeamData)
       .then(() => {
           newTeamData.id = teamId;
@@ -96,7 +97,7 @@ export function putTeam(cmpId, teamId, newTeamData, cb) {
 // Leave members empty and toggled false.  (Later actions may populate members.)
 // Dispatch an update for the teams property of app state.
 export function getTeamsByPrs(prsId, cb) {
-   return (dispatch, prevState) => {
+   return (dispatch, getState) => {
       api.getTeamsByPrs(prsId)
       .then((teams) => {
          Object.keys(teams).forEach((key) => {
@@ -110,7 +111,7 @@ export function getTeamsByPrs(prsId, cb) {
 }
 
 export function getTeamsByCmp(cmpId, cb) {
-   return (dispatch, prevState) => {
+   return (dispatch, getState) => {
       api.getTeamsByCmp(cmpId)
       .then((teams) => {
          Object.keys(teams).forEach((key) => {
@@ -125,7 +126,7 @@ export function getTeamsByCmp(cmpId, cb) {
 
 
 export function delTeam(cmpId, teamId, cb) {
-   return (dispatch, prevState) => {
+   return (dispatch, getState) => {
       api.delTeam(cmpId , teamId).then(() =>
        dispatch({type: 'DEL_TEAM', teamId}))
       .then(() => {if (cb) cb()})
@@ -133,7 +134,7 @@ export function delTeam(cmpId, teamId, cb) {
 }
 
 export function addMmb(mmbEmail, cmpId, teamId, cb) {
-   return (dispatch, prevState) => {
+   return (dispatch, getState) => {
       api.getPrssByEmail(mmbEmail)
       .then(prss => api.getPrs(prss[0].id))
       .then(prs => api.postMmb(prs.id, cmpId, teamId)
@@ -148,24 +149,58 @@ export function addMmb(mmbEmail, cmpId, teamId, cb) {
 export function delMmb(cmpId, teamId, prsId, cb) {
    console.log(`Deleting ${cmpId}/${teamId}/${prsId}`);
 
-   return (dispatch, prevState) => {
+   return (dispatch, getState) => {
       addStdHandlers(dispatch, cb, api.delMmb(cmpId, teamId, prsId)
       .then(()=>dispatch({type: 'DEL_MMB', teamId, prsId})));
    }
 }
 
 export function getMmbs(cmpId, teamId, cb) {
-   return (dispatch, prevState) => {
+   return (dispatch, getState) => {
       api.getMmbs(cmpId, teamId)
       .then((mmbs) => {
          return dispatch({type: 'GET_TEAM_MMBS', teamData: {teamId, mmbs}});
       })
-      .then(() => { if (cb) cb() })
+      .then(() => {if (cb) cb()})
+   }
+}
+
+export function postSbm(cmpId, teamId, submit, cb) {
+   return (dispatch, getState) => {
+      addStdHandlers(dispatch, cb,
+       api.postSbm(cmpId, teamId, submit)
+       .then(() => api.getSbms(cmpId, teamId, 1))
+       .then(sbms => dispatch({type: "POST_SBM", sbm: sbms[0]}))
+    )};
+}
+
+export function getSbms(cmp, teamId, cb) {
+   return (dispatch) => {
+      addStdHandlers(dispatch, cb,
+       api.getSbms(cmp.id, teamId, 1)
+       .then(sbm =>
+          api.getCtpById(cmp.ctpId)
+          .then(ctp => dispatch({
+             type: "GET_SBMS",
+             sbms: {ctpName: ctp.codeName, current: sbm[0], history: []}
+          }))
+        ));
+   };
+}
+
+export function refreshSbms(cb) {
+   return (dispatch, getState) => {
+      console.log("Binding refreshSbms with ", getState());
+      var current = getState().sbms.current;
+
+      addStdHandlers(dispatch, cb,
+       api.getSbms(current.cmpId, current.teamId, 1)
+       .then(sbms => dispatch({type: "REFRESH_SBM", sbm: sbms[0]})));
    }
 }
 
 export function signOut(cb) {
-   return (dispatch, prevState) => {
+   return (dispatch, getState) => {
       api.signOut()
       .then(() => dispatch({ type: 'SIGN_OUT' }))
       .then(() => {if (cb) cb()})
@@ -177,7 +212,7 @@ export function signOut(cb) {
 }
 
 export function clearErrors(cb) {
-   return (dispatch, prevState) => {
+   return (dispatch, getState) => {
       dispatch({type: "CLEAR_ERRS"});
       if (cb)
          cb();

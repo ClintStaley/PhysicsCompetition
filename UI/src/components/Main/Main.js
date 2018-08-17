@@ -118,7 +118,8 @@ class Main extends Component {
                  if (team) //easiest fix to reload on submit page
                     var cmp = this.props.cmps[team.cmpId];
 
-                 return reRoute(<SbmPage team={team} cmp={cmp}/>);
+                 return reRoute(<SbmPage team={team} cmp={cmp}
+                  {...this.props}/>);
               }}/>
 
         </Switch>

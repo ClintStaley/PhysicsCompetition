@@ -11,7 +11,8 @@ function mapStateToProps(state) {
       teams: state.teams,
       updateTimes: state.updateTimes,
       errs: state.errs,
-      ctps: state.ctps
+      ctps: state.ctps,
+      sbms: state.sbms
    }
 }
 
