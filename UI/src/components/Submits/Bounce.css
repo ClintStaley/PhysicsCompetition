@@ -1,0 +1,63 @@
+.graph5 {
+   stroke: #E0E0E0;
+   stroke-width:.1;
+}
+
+.graph10 {
+   stroke:#C8C8C8;
+   stroke-width:.1;
+}
+
+.graphBkg {
+   fill:#F0F0FF;
+   stroke:"gray";
+   stroke-width:.1;
+}
+
+.platform {
+   stroke: black;
+   stroke-width:.1;
+   fill:#A0A0FF;
+}
+
+.startingPosition {
+   fill:black;
+}
+
+.hitPlatform {
+   fill:#FF808000;
+}
+
+.ball {
+   fill:#FF8080;
+   stroke: black;
+   stroke-width:.1;
+}
+
+.text, .rhsText {
+   font-size:1.8px;
+}
+
+.rhsText {
+   text-anchor:end;
+}
+
+.controlButton {
+  padding: 5px;
+}
+
+table {
+  width: 50%;
+  margin-left: 10%;
+}
+
+table, th, tr  {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+th, td {
+    padding: 9px;
+}
+
+tr:nth-child(even) {background-color: #f2f2f2;}
