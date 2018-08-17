@@ -206,7 +206,7 @@ export class LandGrab extends Component {
          });
 
          if (tr)
-            summary = (<h4>Area covered: {tr.areaCovered}</h4>);
+            summary = (<h4>Area covered: {tr.areaCovered.toFixed(4)}</h4>);
       }
 
       return (<section className="container">
