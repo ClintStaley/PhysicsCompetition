@@ -60,7 +60,7 @@ export class Bounce extends Component {
          frame++;
 
          drawBall(ballLocation);
-      }, frameRate);
+      }, 1000 * (frame/frameRate));
       setTimeout(function() {
          clearInterval(this.intervalID);
       }, 10000);//(nextEvent.time * 1000));
