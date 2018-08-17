@@ -1,6 +1,8 @@
+
 import React, { Component } from 'react';
 import {FormGroup, FormControl, ControlLabel, Button, Modal }
   from 'react-bootstrap';
+import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 import './Bounce.css'
 
 
@@ -32,43 +34,81 @@ export class Bounce extends Component {
    positionEquations = (event) => {
      var equations = [];
 
-     equations.push((time) => {
-       return time * event.velocityX + event.posX;
-     });
+     equations.push((time) =>
+       (time * event.velocityX) + event.posX
+     );
 
-     equations.push((time) => {
-       return time * time * -4.9 + time * event.velocityY + event.posY
-     });
+     equations.push((time) =>
+       (time * time * -9.80665 / 2) + (time * event.velocityY) + event.posY
+     );
 
      return equations;
    }
 
-   playEvent = (event, nextEvent) => {
-      var ballLocation = {};
-      var equations = this.positionEquations(event);
-      var drawBall = this.drawBall;
+   startMovie = (events) => {
       var frameRate = this.frameRate;
-      var frame = this.frame;
 
       if (this.intervalID)
         clearInterval(this.intervalID);
 
-       this.intervalID = setInterval(function() {
-         ballLocation.posX = equations[0]((frameRate * frame)/1000);
-         ballLocation.posY = equations[1]((frameRate * frame)/1000);
-         frame++;
+     this.intervalID = setInterval( () => this.playEvents(events) , 1000/frameRate);
 
-         drawBall(ballLocation);
-      }, 1000 * (frame/frameRate));
-      setTimeout(function() {
+
+      /*setTimeout(function() {
          clearInterval(this.intervalID);
-      }, 10000);//(nextEvent.time * 1000));
+      }, 1000);//(nextEvent.time * 1000));*/
+   }
+
+   //array of arrays
+   playEvents = (events) => {
+     var ballLocation = {};
+     var time = this.frame/this.frameRate;
+     var returnValue = this.getEvent(events, time);
+
+     if (returnValue === null){
+        console.log("ending at time " + time);
+        clearInterval(this.intervalID);
+      }
+     else{
+       var event = returnValue.event;
+       var timeElapsed = returnValue.timeElapsed;
+
+       console.log(event);
+
+       var equations = this.positionEquations(event);
+
+       ballLocation.posX = equations[0](time - event.time - timeElapsed);
+       ballLocation.posY = equations[1](time - event.time - timeElapsed);
+
+       console.log("X is: " +  ballLocation.posX + " Y is: " +  ballLocation.posY);
+
+       this.frame++;
+
+       this.drawBall(ballLocation);
+     }
+   }
+
+
+   getEvent = (events, time) => {
+     var event;
+     var timeElapsed = 0;
+
+     console.log(time);
+
+     for (var idxA = 0; idxA < events.length; idxA++) {
+        for (var idxB = 0; idxB < events[idxA].length; idxB++) {
+          event = events[idxA][idxB];
+          if (time <= event.time)
+             return {event: event, timeElapsed: timeElapsed};
+        }
+        timeElapsed += event.time;
+        time = time - event.time;
+      }
+      return null;
    }
 
    drawBall = (event) => {
      var props = this.props;
-
-     console.log(event);
 
      this.setState({ ballPos :  Object.assign( {}, event )});
    }
@@ -159,7 +199,7 @@ export class Bounce extends Component {
          <h2>Problem Diagram</h2>
          <Button className="pull-right">Replay</Button>
          <Button className="pull-right" onClick={() => clearInterval(this.intervalID)}>Pause</Button>
-         <Button className="pull-right" onClick={() => this.playEvent(sbm.testResult.events[0][0])}>Play</Button>
+         <Button className="pull-right" onClick={() => this.startMovie(sbm.testResult.events)}>Play</Button>
          <svg viewBox="-1 -1 101 101" width="100%" className="panel">
             <rect x="0" y="0" width="100" height="100" className="graphBkg"/>
             {grid}
