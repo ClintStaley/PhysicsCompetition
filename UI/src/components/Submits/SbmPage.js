@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { ConfDialog } from '../concentrator';
 import { Button } from 'react-bootstrap';
-import {LandGrab, LGSubmitModal} from './LandGrab'
+import { LandGrab, LGSubmitModal} from './LandGrab'
+import { Bounce } from './Bounce'
 import * as api from '../../api';
 
 // Expected props are:
@@ -79,6 +80,13 @@ export default class SbmPage extends Component {
 
       if (ctpCodeName === "LandGrab") {
          prbDiagram = (<LandGrab className="clearfix"
+             prms={cmp.prms} sbm={sbm}/>);
+         sbmDialog = (<LGSubmitModal prms={cmp.prms}
+             submitFn={this.state.sbmFunction}/>);
+      }
+
+      if (ctpCodeName === "Bounce") {
+         prbDiagram = (<Bounce className="clearfix"
              prms={cmp.prms} sbm={sbm}/>);
          sbmDialog = (<LGSubmitModal prms={cmp.prms}
              submitFn={this.state.sbmFunction}/>);

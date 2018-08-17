@@ -24,6 +24,10 @@
    fill:black;
 }
 
+.hitPlatform {
+   fill:#FF808000;
+}
+
 .ball {
    fill:#FF8080;
    stroke: black;
