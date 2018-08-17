@@ -32,10 +32,24 @@
    fill:#80808040;
 }
 
-.text, .rhsText {
+.URText, .ULText, .LRText, .LLText {
    font-size:1.8px;
 }
 
-.rhsText {
+.ULText {
+   alignment-baseline:hanging;
+}
+
+.URText {
+   alignment-baseline:hanging;
+   text-anchor:end;
+}
+
+.LLText {
+   alignment-baseline:ideographic;
+}
+
+.LRText {
+   alignment-baseline:ideographic;
    text-anchor:end;
 }

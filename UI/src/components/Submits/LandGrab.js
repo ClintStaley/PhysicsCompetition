@@ -88,7 +88,6 @@ export class LGSubmitModal extends Component {
                    id={idX}
                    value={this.state.circles[idx].centerX}
                    required={true}
-                   placeholder="Center X"
                    onChange={this.handleChange}
                  />
                  <FormControl.Feedback/>
@@ -103,7 +102,6 @@ export class LGSubmitModal extends Component {
                    id={idY}
                    value={this.state.circles[idx].centerY}
                    required={true}
-                   placeholder="Center Y"
                    onChange={this.handleChange}
                  />
                  <FormControl.Feedback/>
@@ -118,7 +116,6 @@ export class LGSubmitModal extends Component {
                    id={idR}
                    value={this.state.circles[idx].radius}
                    required={true}
-                   placeholder="Radius"
                    onChange={this.handleChange}
                  />
                  <FormControl.Feedback/>
@@ -161,7 +158,7 @@ export class LandGrab extends Component {
       var prms = this.props.prms;
       var sbm = this.props.sbm;
       var hashClass, offs, rect, grid, obstacles;
-      var tr, timeStr, dateStr, circles, sbmTime, summary = null;
+      var tr, circles, summary = null;
 
       // Heavy cross hatches every 10, with light cross hatches between
       grid = [];
@@ -180,14 +177,14 @@ export class LandGrab extends Component {
           width={rect.hiX - rect.loX} height={rect.hiY - rect.loY}
           className="obstacle"/>);
 
-         obstacles.push(<text key={"UL"+idx} x={rect.loX} y={100-rect.hiY+2}
-          className="text">{"(" + rect.loX + "," + rect.hiY + ")"}</text>);
-         obstacles.push(<text key={"UR"+idx} x={rect.hiX} y={100-rect.hiY+2}
-          className="rhsText">{"(" + rect.hiX + "," + rect.hiY + ")"}</text>);
+         obstacles.push(<text key={"UL"+idx} x={rect.loX} y={100-rect.hiY}
+          className="ULText">{"(" + rect.loX + "," + rect.hiY + ")"}</text>);
+         obstacles.push(<text key={"UR"+idx} x={rect.hiX} y={100-rect.hiY}
+          className="URText">{"(" + rect.hiX + "," + rect.hiY + ")"}</text>);
          obstacles.push(<text key={"LL"+idx} x={rect.loX} y={100-rect.loY}
-          className="text">{"(" + rect.loX + "," + rect.loY + ")"}</text>);
+          className="LLText">{"(" + rect.loX + "," + rect.loY + ")"}</text>);
          obstacles.push(<text key={"LR"+idx} x={rect.hiX} y={100-rect.loY}
-          className="rhsText">{"(" + rect.hiX + "," + rect.loY + ")"}</text>);
+          className="LRText">{"(" + rect.hiX + "," + rect.loY + ")"}</text>);
       });
 
       if (sbm) {
@@ -203,7 +200,7 @@ export class LandGrab extends Component {
             circles.push(<circle key={"center"+idx} cx={crc.centerX}
              cy={100-crc.centerY} r=".2"/>);
             circles.push(<text key={"crcLbl"+idx} x={crc.centerX+1}
-                y={100-crc.centerY} className="text">
+                y={100-crc.centerY} className="LLText">
               {"(" + crc.centerX + "," + crc.centerY + ")"}
             </text>);
          });

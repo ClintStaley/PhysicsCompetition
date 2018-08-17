@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
-import { ConfDialog } from '../concentrator';
 import { Button } from 'react-bootstrap';
 import {LandGrab, LGSubmitModal} from './LandGrab'
-import * as api from '../../api';
 
 // Expected props are:
 //   cmp -- competition object to be worked with
@@ -11,50 +9,66 @@ export default class SbmPage extends Component {
    constructor(props) {
       super(props);
 
+console.log("Constructing SbmPage with ", props);
+
+      this.cRefreshDelay = 4000; // Every 4 s
+      this.cNoteDelay = 333;     // Show notice for 1/3 s
+
       this.state = {
-         sbmFunction: null // Function to support modal submit dialog
+         sbmFunction: null,   // Function to support modal submit dialog
+         refreshNote: "No results yet..." // Refresh state
       }
    }
 
    componentDidMount = () => {
-      this.updateSbms();
+      this.props.getSbms(this.props.cmp, this.props.team.id,
+       () => this.startTimer());
    }
 
-   // Fetch relevant sbm(s) and also the ctp name, updating state as
-   // a single step since ctpName is essential to display of sbms.
-   updateSbms = () => {
-      api.getSbms(this.props.cmp.id, this.props.team.id, 1)
-      .then(sbms => api.getCtpById(this.props.cmp.ctpId)
-         .then(ctp => ({ctpCodeName: ctp.codeName, sbms})))
-      .then((newState) => this.setState(newState));
-      //.catch((errList) => dsp({type: 'SHOW_ERR', details: errList})// use props.team.id and props.cmp.id to update sbm
+   componentWillUnmount = () => {
+      this.stopTimer();
+   }
+
+   startTimer = () => {
+      this.timerId = setInterval(() => this.refreshSbm(), this.cRefreshDelay);
+      console.log("Started " + this.timerId);
+   }
+
+   stopTimer = () => {
+      console.log("Clearing " + this.timerId);
+      this.timerId && clearInterval(this.timerId);
+      this.timerId = null;
    }
 
    doSubmit = (submit) => {
       if (submit)
-         api.postSbm(this.props.cmp.id, this.props.team.id, submit)
-         .then(uri => api.get(uri.substr(1))) // get rid of first / its unnessary
-         .then((sbmData) => sbmData.json())   // because we use api and not action creator
-         .then((sbm) => {
-           sbm.content = JSON.parse(sbm.content);
-           return sbm;
-         })
-         .then(newSbm => {this.setState( // Add new sbm to state; close dialog
-            {sbms: [newSbm].concat(this.state.sbms), sbmFunction: null}
-         )});
-     else {
-        this.setState({sbmFunction : null});
-     }
+         this.props.postSbm(this.props.cmp.id, this.props.team.id, submit);
+      this.setState({sbmFunction : null});
+   }
+
+   refreshSbm = () => {
+      var current = this.props.sbms && this.props.sbms.current;
+
+      if (current)
+         if (current.response && this.timerId)
+            this.stopTimer();
+         else {
+            this.setState({refreshNote: "Checking for results..."});
+            this.props.refreshSbms(() => setTimeout(() =>
+             this.setState({refreshNote: "No results yet.."}), this.cNoteDelay)
+            );
+         }
    }
 
    render() {
       var sbm, sbmTime, dateStr, timeStr, sbmFunction, sbmDialog;
-      var cmp = this.props.cmp, ctpCodeName = this.state.ctpCodeName;
+      var cmp = this.props.cmp, ctpName;
       var sbmStatus = null;
       var prbDiagram = null;
 
-      if (this.state.sbms && this.state.sbms.length > 0) {
-         sbm = this.state.sbms[0];
+      if (this.props.sbms.current) {
+         sbm = this.props.sbms.current;
+         ctpName = this.props.sbms.ctpName;
          sbmTime = new Date(sbm.sbmTime);
          dateStr = sbmTime.toLocaleDateString('en-US',
           {month:"short", day:"numeric"});
@@ -65,7 +79,8 @@ export default class SbmPage extends Component {
            <div className="row">
              <div className="col-sm-9">
                <h4>Submission received at {timeStr} on {dateStr}</h4>
-               <h4>{sbm.score != null ? `Score: ${sbm.score}` : "Result pending..."}</h4>
+               <h4>{sbm.score != null ? `Score: ${sbm.score}` :
+                this.state.refreshNote}</h4>
              </div>
              <div className="col-sm-3">
                <Button disabled={!this.props.team.canSubmit}
@@ -77,7 +92,7 @@ export default class SbmPage extends Component {
          </div>);
       }
 
-      if (ctpCodeName === "LandGrab") {
+      if (ctpName === "LandGrab") {
          prbDiagram = (<LandGrab className="clearfix"
              prms={cmp.prms} sbm={sbm}/>);
          sbmDialog = (<LGSubmitModal prms={cmp.prms}
