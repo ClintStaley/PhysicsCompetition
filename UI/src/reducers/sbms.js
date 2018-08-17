@@ -11,7 +11,7 @@ export default function sbms(state = {}, action) {
       case 'REFRESH_SBM':  // Replace just response and score in current
          return Object.assign({}, state,
           {current: Object.assign({}, state.current,
-          {response: action.sbm.response, score: action.sbm.score})});
+          {testResult: action.sbm.testResult, score: action.sbm.score})});
       default:
          return state;
    }

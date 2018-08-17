@@ -50,7 +50,7 @@ console.log("Constructing SbmPage with ", props);
       var current = this.props.sbms && this.props.sbms.current;
 
       if (current)
-         if (current.response && this.timerId)
+         if (current.testResult && this.timerId)
             this.stopTimer();
          else {
             this.setState({refreshNote: "Checking for results..."});
