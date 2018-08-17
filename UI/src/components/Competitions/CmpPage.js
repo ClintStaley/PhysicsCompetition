@@ -80,11 +80,11 @@ export default class CmpPage extends Component {
 
    openInstrictions = () => {
      var props = this.props;
-     var link = '/Cmps/Instructions/';
+     var link = '/Cmps/';
      var ctpId = props.cmps[props.cmpId].ctpId;
      var ctpType = props.ctps[ctpId].codeName;
 
-     link = link.concat(ctpType + '.html');
+     link = link.concat(ctpType + '/Instructions.html');
 
      window.open(link, "_blank");
    }
