@@ -78,6 +78,17 @@ export default class CmpPage extends Component {
       this.props.history.push(`/SbmPage/${team.id}`);
    }
 
+   openInstrictions = () => {
+     var props = this.props;
+     var link = '/Cmps/Instructions/';
+     var ctpId = props.cmps[props.cmpId].ctpId;
+     var ctpType = props.ctps[ctpId].codeName;
+
+     link = link.concat(ctpType + '.html');
+
+     window.open(link, "_blank");
+   }
+
    render() {
       var props = this.props;
       var cmpId = props.cmpId;
@@ -105,9 +116,9 @@ export default class CmpPage extends Component {
 
           {myCmpLink ?
           <div className = "instructionLink">
-           <Link to = {'/Instructions/' + cmpId}>
+           <a onClick = {this.openInstrictions}>
             Full Instructions
-           </Link>
+           </a>
           </div>
           : '' }
 
