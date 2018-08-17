@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import {FormGroup, FormControl, ControlLabel, Button, Modal }
   from 'react-bootstrap';
-import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 import './Bounce.css'
 
 

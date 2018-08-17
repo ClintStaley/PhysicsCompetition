@@ -1,7 +1,6 @@
 export default function sbms(state = {}, action) {
    switch (action.type) {
       case 'GET_SBMS':
-      console.log("GET_SBMS", action.sbms)
          return action.sbms;
       case 'POST_SBM':
          return {

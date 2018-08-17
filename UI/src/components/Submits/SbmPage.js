@@ -43,7 +43,8 @@ console.log("Constructing SbmPage with ", props);
 
    doSubmit = (submit) => {
       if (submit)
-         this.props.postSbm(this.props.cmp.id, this.props.team.id, submit);
+         this.props.postSbm(this.props.cmp.id, this.props.team.id, submit,
+          () => this.startTimer());
       this.setState({sbmFunction : null});
    }
 
