@@ -5,11 +5,9 @@ import {FormGroup, FormControl, ControlLabel, Button, Modal }
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 import './Bounce.css'
 
-
 export class BSubmitModal extends Component {
 
 }
-
 
 // Expected props are:
 //  prms -- the parameters for the displayed competition
@@ -23,14 +21,15 @@ export class Bounce extends Component {
       this.state = {
          sbmConfirm: null, // Function to post current submission
          ballPos: null
-		  }
+		}
    }
 
-   intervalID;
-   frameRate = 24;
+   intervalID;      // Timer ID of interval timer
+   frameRate = 24;  // Frames per second to display
    frame = 0;
+   G - 9.80665;
 
-   //xposition is equations[0] and y position is equations[1]
+   // x position is equations[0] and y position is equations[1]
    positionEquations = (event) => {
      var equations = [];
 
@@ -39,7 +38,7 @@ export class Bounce extends Component {
      );
 
      equations.push((time) =>
-       (time * time * -9.80665 / 2) + (time * event.velocityY) + event.posY
+        (time * time * -this.G / 2) + (time * event.velocityY) + event.posY
      );
 
      return equations;
