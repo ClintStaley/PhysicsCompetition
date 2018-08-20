@@ -2,6 +2,7 @@ package com.softwareinventions.cmp.driver;
 
 import java.util.concurrent.TimeUnit;
 
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 import com.softwareinventions.cmp.dto.Competition;
@@ -16,6 +17,11 @@ public class App {
    static Logger Lgr = Logger.getLogger(App.class);
 
    public static void main(String[] args) {
+      String arg = "-";
+      
+      if (arg.equals("-s"))
+         LogManager.resetConfiguration();
+      
       try {
 
          ClientHandler handler = new ClientHandler(url);
@@ -23,6 +29,7 @@ public class App {
 
          while (true) {
             Competition[] cmps = handler.getCmps();
+            Lgr.info("Getting all compeitions");
 
             for (int i = 0; i < cmps.length; i++) {
                Evaluator evaluator = cmpEvaluator(cmps[i]);
@@ -31,8 +38,9 @@ public class App {
                evaluations = evaluator.evaluateSbms(
                      handler.getWaitingSubmissions(cmps[i].id));
 
-               for (int c = 0; c < evaluations.length; c++)
+               for (int c = 0; c < evaluations.length; c++) 
                   handler.response(evaluations[c]);
+               
                
                TimeUnit.SECONDS.sleep(1);
             }

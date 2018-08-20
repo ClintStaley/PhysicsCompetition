@@ -11,4 +11,5 @@ public class Submit {
    public int score;
    public Date sbmTime;
    public boolean practiceRun;
+   public String errorResult;
 }

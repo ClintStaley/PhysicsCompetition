@@ -67,7 +67,7 @@ create table Submit
    testResult varchar(2000),
    teamId int not null,
    practiceRun boolean default false,
-
+   errorResult varchar(1000) default Null,
    score double,
    sbmTime datetime,
 

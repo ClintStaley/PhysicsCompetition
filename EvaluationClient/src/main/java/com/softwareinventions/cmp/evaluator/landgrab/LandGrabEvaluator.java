@@ -1,5 +1,6 @@
 package com.softwareinventions.cmp.evaluator.landgrab;
 
+import com.softwareinventions.cmp.driver.App;
 import com.softwareinventions.cmp.dto.Submit;
 import com.softwareinventions.cmp.evaluator.Evaluator;
 import com.softwareinventions.cmp.evaluator.Evl;
@@ -8,12 +9,15 @@ import com.softwareinventions.cmp.util.GenUtil;
 
 import java.util.LinkedList;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.awt.geom.Point2D;
 
 public class LandGrabEvaluator extends Evaluator {
 
+   static final double cGridSize = 100.0;
+   
    static class SbmCircle {
       public double centerX;
       public double centerY;
@@ -40,8 +44,7 @@ public class LandGrabEvaluator extends Evaluator {
    
    Parameters prms;
    int score;
-   static final double cGridSize = 100.0;
-
+   static Logger Lgr = Logger.getLogger(LandGrabEvaluator.class);
    ObjectMapper mapper = new ObjectMapper();
 
    public LandGrabEvaluator(String prms) {
@@ -77,13 +80,8 @@ public class LandGrabEvaluator extends Evaluator {
 
       LinkedList<SbmCircle> validCircles = new LinkedList<SbmCircle>();
 
-      EvlPut eval = new EvlPut();
-      eval.eval = new Evl();
-
-      eval.cmpId = sbm.cmpId;
-      eval.teamId = sbm.teamId;
-      eval.sbmId = sbm.id;
-
+      EvlPut eval = new EvlPut(new Evl(), sbm.teamId, sbm.id, sbm.cmpId);
+      
       SbmCircle[] sbmCircles = mapper.readValue(sbm.content, SbmCircle[].class);
 
       rspLG.circleStatus
@@ -102,7 +100,7 @@ public class LandGrabEvaluator extends Evaluator {
       eval.eval.score = (double) Math
             .round((rspLG.areaCovered * 100 / prms.goalArea));
 
-      System.out.println("Graded Land Grab Submission# " + eval.sbmId);
+      Lgr.info("Graded Land Grab Submission# " + eval.sbmId);
       
       return eval;
    }
