@@ -7,8 +7,10 @@ import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
 import org.apache.commons.math3.analysis.solvers.LaguerreSolver;
 import org.apache.commons.math3.complex.Complex;
+import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 
+import com.softwareinventions.cmp.driver.ClientHandler;
 import com.softwareinventions.cmp.dto.Submit;
 import com.softwareinventions.cmp.evaluator.Evaluator;
 import com.softwareinventions.cmp.evaluator.Evl;
@@ -59,6 +61,27 @@ public class BounceEvaluator implements Evaluator {
       public double targetTime; // 100% credit for this total time in s.
       public Obstacle[] obstacles; // Obstacles to hit
    }
+   
+   private static class ballEquations {
+      public UnivariateFunction xPos;
+      public UnivariateFunction yPos;
+      public UnivariateFunction xVelocity;
+      public UnivariateFunction yVelocity;
+      
+      public ballEquations(BounceEvent current) {
+         double curTime = current.time;
+         
+         // X position function
+         xPos = t -> (t - curTime) * current.velocityX + current.posX;
+         // X velocity function
+         xVelocity = t  -> current.velocityX;
+         // Y position function
+         yPos = t -> GRAVITY / 2.0 * GenUtil.sqr((t - curTime)) + 
+               current.velocityY * (t - curTime) + current.posY;
+         // Y velocity function
+         yVelocity = t -> 2 * GRAVITY / 2.0 * (t - curTime) + current.velocityY;
+      }
+   }
 
    public static class LaunchSpec {
       public double speed;
@@ -93,14 +116,13 @@ public class BounceEvaluator implements Evaluator {
       // velocity.
       public BounceEvent(BounceEvent current, double time) {
          // Get all equations.
-         UnivariateFunction[] ballFunctions = BounceEvaluator
-               .getAllFunctions(current);
+         ballEquations ballFunctions = new ballEquations(current);
 
          obstacleIdx = -1;
-         posX = ballFunctions[0].value(time);
-         velocityX = ballFunctions[1].value(time);
-         posY = ballFunctions[2].value(time);
-         velocityY = ballFunctions[3].value(time);
+         posX = ballFunctions.xPos.value(time);
+         velocityX = ballFunctions.xVelocity.value(time);
+         posY = ballFunctions.yPos.value(time);
+         velocityY = ballFunctions.yVelocity.value(time);
          this.time = time + current.time;
       }
    }
@@ -110,6 +132,7 @@ public class BounceEvaluator implements Evaluator {
       public BounceEvaluator.BounceEvent[][] events;
    }
 
+   static Logger lgr = Logger.getLogger(BounceEvaluator.class);
    private Parameters prms;
 
    public BounceEvaluator(String prms) {
@@ -144,7 +167,6 @@ public class BounceEvaluator implements Evaluator {
       // Double array of events, one array per ball
       rspB.events = new BounceEvent[numBalls][];
 
-
       double totalTime = 0.0;
 
       for (int i = 0; i < numBalls; i++) {
@@ -169,7 +191,7 @@ public class BounceEvaluator implements Evaluator {
       EvlPut eval = new EvlPut(sbm.cmpId, sbm.teamId, sbm.id, new Evl(
             mapper.writeValueAsString(rspB), score));
 
-      System.out.println("Graded Bounce Sbm# " + eval.sbmId);
+      lgr.info("Graded Bounce Sbm# " + eval.sbmId);
 
       return eval;
    }
@@ -191,7 +213,7 @@ public class BounceEvaluator implements Evaluator {
       }
 
       // Calculate where the ball will go out of bounds.
-      ballEvents.add(calculateBorderEvent(StartingPoint));
+      ballEvents.add(calculateBorderEvent(ballEvents.getLast()));
 
       // Return events as array, so that I can send the correct format as
       // response.
@@ -234,12 +256,7 @@ public class BounceEvaluator implements Evaluator {
 
       }
 
-      System.out.println("Obstacle Hit is: " + newBallEvent.obstacleIdx);
-      // CAS FIX: This might be a good time to start working with a logger. I've
-      // had
-      // good luck
-      // with Apache Commons logger. Let's put that into our Maven .pom and use
-      // it.
+      lgr.info("Obstacle Hit is: " + newBallEvent.obstacleIdx);
       return newBallEvent;
    }
 
@@ -329,7 +346,7 @@ public class BounceEvaluator implements Evaluator {
    private Collision getHorizontalEdgeCollision(double loX, double hiX,
          double y, BounceEvent current) {
       // Get equations for event.
-      UnivariateFunction[] equations = getAllFunctions(current);
+      ballEquations equations = new ballEquations(current);
 
       // Get time when y value will be lined up with edge.
       double yHitTime = quadraticSolution(GRAVITY / 2.0, current.velocityY,
@@ -340,7 +357,7 @@ public class BounceEvaluator implements Evaluator {
          return null;
 
       // Calculate x value at time of collision.
-      double xValue = equations[0].value(yHitTime);
+      double xValue = equations.xPos.value(yHitTime);
 
       if (GenUtil.inBounds(loX, xValue, hiX)) {
          // We have a hit on the horizontal edge.
@@ -359,7 +376,7 @@ public class BounceEvaluator implements Evaluator {
    private Collision getVerticalEdgeCollision(double loY, double hiY, double x,
          BounceEvent current) {
       // Get equations for event.
-      UnivariateFunction[] equations = getAllFunctions(current);
+      ballEquations equations = new ballEquations(current);
 
       // Get time when x value will be lined up with edge.
       double xHitTime = (x - current.posX) / current.velocityX;
@@ -369,7 +386,7 @@ public class BounceEvaluator implements Evaluator {
          return null;
 
       // Get y value at possible collision time.
-      double yValue = equations[2].value(xHitTime);
+      double yValue = equations.yPos.value(xHitTime);
 
       if (GenUtil.inBounds(loY, yValue, hiY)) {
          Collision collision = new Collision(xHitTime,

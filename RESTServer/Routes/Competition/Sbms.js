@@ -79,7 +79,7 @@ router.put('/:id', (req, res) => {
 
    async.waterfall([
    (cb) => {
-      if (vld.hasOnlyFields(body, ["testResult", "score"], cb)) {
+      if (vld.hasOnlyFields(body, ["testResult", "errorResult", "score"], cb)) {
          if (vld.checkAdmin(cb)) {
             cnn.chkQry('select * from Team where id = ? && cmpId = ?',
              [ teamId, cmpId ], cb);

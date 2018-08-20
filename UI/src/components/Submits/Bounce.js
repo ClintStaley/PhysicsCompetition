@@ -21,23 +21,22 @@ export class Bounce extends Component {
       this.state = {
          sbmConfirm: null, // Function to post current submission
          ballPos: null
-		}
+      }
    }
 
    intervalID;      // Timer ID of interval timer
    frameRate = 24;  // Frames per second to display
    frame = 0;
-   G - 9.80665;
+   G = 9.80665;
 
    // x position is equations[0] and y position is equations[1]
    positionEquations = (event) => {
-     var equations = [];
+     var equations = {};
 
-     equations.push((time) =>
-       (time * event.velocityX) + event.posX
-     );
+     equations.xPos = ((time) =>
+       (time * event.velocityX) + event.posX);
 
-     equations.push((time) =>
+     equations.yPos = ((time) =>
         (time * time * -this.G / 2) + (time * event.velocityY) + event.posY
      );
 
@@ -69,21 +68,21 @@ export class Bounce extends Component {
         clearInterval(this.intervalID);
       }
      else{
-       var event = returnValue.event;
-       var timeElapsed = returnValue.timeElapsed;
+        var event = returnValue.event;
+        var timeElapsed = returnValue.timeElapsed;
 
-       console.log(event);
+        console.log(event);
 
-       var equations = this.positionEquations(event);
+        var equations = this.positionEquations(event);
 
-       ballLocation.posX = equations[0](time - event.time - timeElapsed);
-       ballLocation.posY = equations[1](time - event.time - timeElapsed);
+        ballLocation.posX = equations.xPos(time - event.time - timeElapsed);
+        ballLocation.posY = equations.yPos(time - event.time - timeElapsed);
 
-       console.log("X is: " +  ballLocation.posX + " Y is: " +  ballLocation.posY);
+        console.log("X is: " +  ballLocation.posX + " Y is: " +  ballLocation.posY);
 
-       this.frame++;
+        this.frame++;
 
-       this.drawBall(ballLocation);
+        this.drawBall(ballLocation);
      }
    }
 

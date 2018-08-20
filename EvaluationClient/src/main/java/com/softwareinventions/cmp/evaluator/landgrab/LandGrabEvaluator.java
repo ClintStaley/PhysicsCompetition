@@ -1,5 +1,6 @@
 package com.softwareinventions.cmp.evaluator.landgrab;
 
+import com.softwareinventions.cmp.driver.App;
 import com.softwareinventions.cmp.dto.Submit;
 import com.softwareinventions.cmp.evaluator.Evaluator;
 import com.softwareinventions.cmp.evaluator.Evl;
@@ -8,12 +9,15 @@ import com.softwareinventions.cmp.util.GenUtil;
 
 import java.util.LinkedList;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.awt.geom.Point2D;
 
 public class LandGrabEvaluator implements Evaluator {
 
+   static final double cGridSize = 100.0;
+   
    static class SbmCircle {
       public double centerX;
       public double centerY;
@@ -40,7 +44,7 @@ public class LandGrabEvaluator implements Evaluator {
 
    Parameters prms;
    int score;
-   static final double cGridSize = 100.0;
+   static Logger lgr = Logger.getLogger(LandGrabEvaluator.class);
 
    public LandGrabEvaluator(String prms) {
       try {
@@ -72,7 +76,7 @@ public class LandGrabEvaluator implements Evaluator {
             new Evl(mapper.writeValueAsString(rspLG),
             (double) Math.round(rspLG.areaCovered * 100.0 / prms.goalArea)));
       
-      System.out.println("Graded Land Grab Submission# " + eval.sbmId);
+      lgr.info("Graded Land Grab Submission# " + eval.sbmId);
       
       return eval;
    }
