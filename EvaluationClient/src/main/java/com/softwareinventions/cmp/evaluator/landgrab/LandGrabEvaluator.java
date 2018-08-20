@@ -6,11 +6,8 @@ import com.softwareinventions.cmp.evaluator.Evl;
 import com.softwareinventions.cmp.evaluator.EvlPut;
 import com.softwareinventions.cmp.util.GenUtil;
 
-import java.io.IOException;
 import java.util.LinkedList;
 
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.awt.geom.Point2D;
