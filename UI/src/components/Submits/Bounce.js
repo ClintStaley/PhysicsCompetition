@@ -71,14 +71,13 @@ export class Bounce extends Component {
         var event = returnValue.event;
         var timeElapsed = returnValue.timeElapsed;
 
-        console.log(event);
-
         var equations = this.positionEquations(event);
 
-        ballLocation.posX = equations.xPos(time - event.time - timeElapsed);
+        ballLocation.posX = equations.xPos(time - event.time - timeElapsed );
         ballLocation.posY = equations.yPos(time - event.time - timeElapsed);
 
-        console.log("X is: " +  ballLocation.posX + " Y is: " +  ballLocation.posY);
+        if ((time - event.time - timeElapsed ) < 0)
+           console.log("X is: " +  ballLocation.posX + " Y is: " +  ballLocation.posY + " time is: " + (time - event.time - timeElapsed ));
 
         this.frame++;
 
@@ -88,19 +87,21 @@ export class Bounce extends Component {
 
 
    getEvent = (events, time) => {
-     var event;
+     var event = events[0][0];
+     var prevEvent = events[0][0];
      var timeElapsed = 0;
-
-     console.log(time);
 
      for (var idxA = 0; idxA < events.length; idxA++) {
         for (var idxB = 0; idxB < events[idxA].length; idxB++) {
+          prevEvent = event;
           event = events[idxA][idxB];
-          if (time <= event.time)
-             return {event: event, timeElapsed: timeElapsed};
+          if (time <= event.time) {
+             console.log("Ball #: " + idxA);
+             return {event: prevEvent, timeElapsed: timeElapsed};
+          }
         }
         timeElapsed += event.time;
-        time = time - event.time;
+        time -= event.time;
       }
       return null;
    }
@@ -195,7 +196,12 @@ export class Bounce extends Component {
 
       return (<section className="container">
          <h2>Problem Diagram</h2>
-         <Button className="pull-right">Replay</Button>
+         <Button className="pull-right" onClick={() => {
+           this.frame = 0;
+           this.startMovie(sbm.testResult.events)
+         }}>
+           Replay
+        </Button>
          <Button className="pull-right" onClick={() => clearInterval(this.intervalID)}>Pause</Button>
          <Button className="pull-right" onClick={() => this.startMovie(sbm.testResult.events)}>Play</Button>
          <svg viewBox="-1 -1 101 101" width="100%" className="panel">
@@ -204,7 +210,7 @@ export class Bounce extends Component {
             {obstacles}
             {this.state.ballPos ?
             <circle key={"crc"} cx={this.state.ballPos.posX}
-            cy={100-this.state.ballPos.posY} r = {5} className="ball"/>
+            cy={100-this.state.ballPos.posY} r = {1} className="ball"/>
             : '' }
          </svg>
          {summary}

@@ -62,13 +62,13 @@ public class BounceEvaluator implements Evaluator {
       public Obstacle[] obstacles; // Obstacles to hit
    }
    
-   private static class ballEquations {
+   private static class BallEquations {
       public UnivariateFunction xPos;
       public UnivariateFunction yPos;
       public UnivariateFunction xVelocity;
       public UnivariateFunction yVelocity;
       
-      public ballEquations(BounceEvent current) {
+      public BallEquations(BounceEvent current) {
          double curTime = current.time;
          
          // X position function
@@ -116,14 +116,14 @@ public class BounceEvaluator implements Evaluator {
       // velocity.
       public BounceEvent(BounceEvent current, double time) {
          // Get all equations.
-         ballEquations ballFunctions = new ballEquations(current);
+         BallEquations ballFunctions = new BallEquations(current);
 
          obstacleIdx = -1;
-         posX = ballFunctions.xPos.value(time);
-         velocityX = ballFunctions.xVelocity.value(time);
-         posY = ballFunctions.yPos.value(time);
-         velocityY = ballFunctions.yVelocity.value(time);
          this.time = time + current.time;
+         posX = ballFunctions.xPos.value(this.time);
+         velocityX = ballFunctions.xVelocity.value(this.time);
+         posY = ballFunctions.yPos.value(this.time);
+         velocityY = ballFunctions.yVelocity.value(this.time);
       }
    }
 
@@ -192,6 +192,7 @@ public class BounceEvaluator implements Evaluator {
             mapper.writeValueAsString(rspB), score));
 
       lgr.info("Graded Bounce Sbm# " + eval.sbmId);
+      System.out.println("Graded Bounce Sbm# " + eval.sbmId);
 
       return eval;
    }
@@ -267,8 +268,12 @@ public class BounceEvaluator implements Evaluator {
       double xOutOfBounds;
 
       // Solve for y, as the ball goes one radius below the lower bound.
-      double yOutOfBounds = quadraticSolution(GRAVITY / 2.0, current.velocityY,
-            current.posY + RADIUS);
+      double[] possibleYOutOfBounds = quadraticSolution
+            (GRAVITY / 2.0, current.velocityY, current.posY + RADIUS);
+      
+      double yOutOfBounds = possibleYOutOfBounds[0] >= 0.0 ? 
+            possibleYOutOfBounds[0] : possibleYOutOfBounds[1];
+      
 
       // Solve for x + radius out of bounds.
       if (current.velocityX < 0.0)
@@ -315,6 +320,9 @@ public class BounceEvaluator implements Evaluator {
          BounceEvent current) {
       Collision[] collisions = new Collision[8];
 
+
+      System.out.println("Platform #: " + obstacle.obstacleId);
+      
       // Check horizontal edge collisions.
       collisions[0] = getHorizontalEdgeCollision(obstacle.loX, obstacle.hiX,
             obstacle.hiY + RADIUS, current);
@@ -337,6 +345,12 @@ public class BounceEvaluator implements Evaluator {
       if (firsCollision != null)
          firsCollision.obstacleIdx = obstacle.obstacleId;
 
+
+      if (firsCollision != null)
+         System.out.println("Best Time is: " + firsCollision.time);
+      
+      System.out.println("");
+      
       return firsCollision;
    }
 
@@ -346,25 +360,36 @@ public class BounceEvaluator implements Evaluator {
    private Collision getHorizontalEdgeCollision(double loX, double hiX,
          double y, BounceEvent current) {
       // Get equations for event.
-      ballEquations equations = new ballEquations(current);
-
+      BallEquations equations = new BallEquations(current);
+      
       // Get time when y value will be lined up with edge.
-      double yHitTime = quadraticSolution(GRAVITY / 2.0, current.velocityY,
+      double[] yHitTimes = quadraticSolution(GRAVITY / 2.0, current.velocityY,
             current.posY - y);
-
-      // Throw out negative times.
-      if (yHitTime == Double.MAX_VALUE)
+      
+      if (yHitTimes == null)
          return null;
 
-      // Calculate x value at time of collision.
-      double xValue = equations.xPos.value(yHitTime);
-
-      if (GenUtil.inBounds(loX, xValue, hiX)) {
-         // We have a hit on the horizontal edge.
-         Collision collision = new Collision(yHitTime,
-               Collision.HitType.HORIZONTAL, -1, -1);
-
-         return collision;
+      for (int idx = 0; idx < yHitTimes.length; idx++) {
+         // Throw out negative times.
+         if (yHitTimes[idx] < 0.0)
+            continue;
+         
+         // Calculate x value at time of collision.
+         double xValue = equations.xPos.value(yHitTimes[idx]);
+         
+         if (GenUtil.inBounds(loX, xValue, hiX)) {
+            // We have a hit on the horizontal edge.
+            Collision collision = new Collision(yHitTimes[idx],
+                  Collision.HitType.HORIZONTAL, -1, -1);
+   
+   
+            System.out.println( "y Hit with a: " + GRAVITY / 2.0 + " b: " + current.velocityY + " c: " + (current.posY - y));
+            
+            System.out.println( "y Hit at: " + y + " yHitTime: " + yHitTimes[idx]);
+            System.out.println( "x Hit at: " + xValue + " between : " + loX + " and " + hiX);
+            
+            return collision;
+         }
       }
 
       return null;
@@ -376,7 +401,7 @@ public class BounceEvaluator implements Evaluator {
    private Collision getVerticalEdgeCollision(double loY, double hiY, double x,
          BounceEvent current) {
       // Get equations for event.
-      ballEquations equations = new ballEquations(current);
+      BallEquations equations = new BallEquations(current);
 
       // Get time when x value will be lined up with edge.
       double xHitTime = (x - current.posX) / current.velocityX;
@@ -526,26 +551,24 @@ public class BounceEvaluator implements Evaluator {
       return ballFunctions;
    }
 
-   // Return lowest positive real root, or Double.MAX_VALUE if no root
-   // qualifies.
-   public static double quadraticSolution(double a, double b, double c) {
+   // Return solutions to the quadratic equation as an array of doubles, in 
+   // ascending order, if no solutions exist returns null.
+   public static double[] quadraticSolution(double a, double b, double c) {
       double d = b * b - 4 * a * c;
       double root1;
       double root2;
+      double[] solution = null;
 
       if (d >= 0) {
          root1 = (-b + Math.sqrt(d)) / (2 * a);
          root2 = (-b - Math.sqrt(d)) / (2 * a);
-         if (root1 >= 0 || root2 >= 0)
-            if (root2 < 0)
-               return root1;
-            else if (root1 < 0)
-               return root2;
-            else
-               return Math.min(root1, root2);
+         
+         solution = new double[2];
+         solution[0] = Math.min(root1, root2);
+         solution[1] = Math.max(root1, root2);
       }
 
-      return Double.MAX_VALUE;
+      return solution;
    }
 
    // Tester main, used only to test functions
