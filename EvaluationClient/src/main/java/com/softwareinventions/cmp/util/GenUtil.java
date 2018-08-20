@@ -2,7 +2,7 @@ package com.softwareinventions.cmp.util;
 
 public class GenUtil {
 
-   public static double square(double num) {
+   public static double sqr(double num) {
       return num * num;
    }
    

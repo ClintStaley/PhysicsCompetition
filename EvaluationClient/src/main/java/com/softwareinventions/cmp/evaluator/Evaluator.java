@@ -1,10 +1,26 @@
 package com.softwareinventions.cmp.evaluator;
 
+import org.codehaus.jackson.map.ObjectMapper;
+
 import com.softwareinventions.cmp.dto.Submit;
 
-public abstract class Evaluator {
+public interface Evaluator {
    
-   public Evaluator(String prms) {}
+   static public ObjectMapper mapper = new ObjectMapper();
+
+   default public EvlPut[] evaluateSbms(Submit[] sbms) {
+      EvlPut[] evaluations = new EvlPut[sbms.length];
+
+      try {
+         for (int i = 0; i < sbms.length; i++)
+            evaluations[i] = evaluate(sbms[i]);
+      } catch (Exception e) {
+         e.printStackTrace();
+         return new EvlPut[0];
+      }
+
+      return evaluations;
+   }
    
-   public abstract EvlPut[] evaluateSbms(Submit[] submissions);
+   public EvlPut evaluate(Submit sbm) throws Exception;
 }
