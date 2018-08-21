@@ -2,15 +2,16 @@ package com.softwareinventions.cmp.evaluator.bounce;
 
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+import java.util.OptionalDouble;
+import java.util.stream.Stream;
 
 import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
 import org.apache.commons.math3.analysis.solvers.LaguerreSolver;
 import org.apache.commons.math3.complex.Complex;
 import org.apache.log4j.Logger;
-import org.codehaus.jackson.map.ObjectMapper;
-
-import com.softwareinventions.cmp.driver.ClientHandler;
 import com.softwareinventions.cmp.dto.Submit;
 import com.softwareinventions.cmp.evaluator.Evaluator;
 import com.softwareinventions.cmp.evaluator.Evl;
@@ -288,6 +289,23 @@ public class BounceEvaluator implements Evaluator {
       return new BounceEvent(current, boundsTime);
    }
 
+   /* CAS FIX: Alternate getNextCollision.  Pls test this and adjust
+    * calls of it to assume an "Optional", which is a good way to provide
+    * a value or null.
+   public Optional<Collision> getNextCollision(List<Obstacle> obstacles,
+         BounceEvent evt) {
+      Optional<Collision> rtn =
+            obstacles.stream().map(o -> getObstacleCollision(o, evt))
+            .filter(c -> c != null)
+            .max((c1, c2) -> Double.compare(c1.time, c2.time));
+      
+      if (rtn.isPresent())
+         obstacles.removeIf(o -> o.obstacleId == rtn.get().obstacleIdx);
+      
+      return rtn;
+   }
+   */
+   
    // Return the next collision that occurs, and delete the obstacle.
    public Collision getNextCollision(LinkedList<Obstacle> obstacles,
          BounceEvent current) {
@@ -297,7 +315,7 @@ public class BounceEvaluator implements Evaluator {
 
       // Check all obstacles for a collision.
       for (int i = 0; i < collisions.length; i++) {
-         collisions[i] = getobstacleCollision(obstacles.get(i), current);
+         collisions[i] = getObstacleCollision(obstacles.get(i), current);
       }
 
       Collision firstCollision = getFirstCollision(collisions);
@@ -314,9 +332,48 @@ public class BounceEvaluator implements Evaluator {
       return firstCollision;
    }
 
+   // Return the first collision in |collisions|, ignoring nulls.
+   private Collision getFirstCollision(Collision[] collisions) {
+      Collision firstCollision = null;
+
+      for (int i = 0; i < collisions.length; i++)
+         if (collisions[i] != null)
+            if (firstCollision == null
+                  || firstCollision.time > collisions[i].time)
+               firstCollision = collisions[i];
+
+      return firstCollision;
+   }
+
+   // Calculates and return the first Collision of the ball with |obstacle|,
+   // or null if there is no collision.
+   // CAS FIX: Try this one out too, and eliminate getFirstCollision if
+   // possible.
+   private Optional<Collision> getObstacleCollision2(Obstacle obs,
+         BounceEvent evt) {
+      Optional<Collision> rtn = Stream.of(
+         getHorizontalEdgeCollision(obs.loX, obs.hiX, obs.hiY + RADIUS, evt),
+         getHorizontalEdgeCollision(obs.loX, obs.hiX, obs.loY - RADIUS, evt),
+         getVerticalEdgeCollision(obs.loY, obs.hiY, obs.hiX + RADIUS, evt),
+         getVerticalEdgeCollision(obs.loY, obs.hiY, obs.loX - RADIUS, evt),
+         getCornerCollision(obs.hiX, obs.hiY, evt),
+         getCornerCollision(obs.hiX, obs.loY, evt),
+         getCornerCollision(obs.loX, obs.hiY, evt),
+         getCornerCollision(obs.loX, obs.loY, evt))
+      .filter(c -> c != null)
+      .min((c1, c2) -> Double.compare(c1.time, c2.time));
+      
+      if (rtn.isPresent()) {
+         rtn.get().obstacleIdx = obs.obstacleId;
+         System.out.println("Best Time is: " + rtn.get().time);
+      }
+      
+      return rtn;
+   }
+
    // Calculates and return the first Collision of the ball with |obstacle|,
    // or null if there is no collision. 
-   private Collision getobstacleCollision(Obstacle obstacle,
+   private Collision getObstacleCollision(Obstacle obstacle,
          BounceEvent current) {
       Collision[] collisions = new Collision[8];
 
@@ -433,11 +490,11 @@ public class BounceEvaluator implements Evaluator {
       Complex[] solutions = new LaguerreSolver().solveAllComplex
         (cornerEquation.getCoefficients(), 0);
 
-      Double timeOfImpact = findUsefulSolution(current.time, solutions);
+      OptionalDouble timeOfImpact = findUsefulSolution(current.time, solutions);
 
       // We hit a corner
-      if (timeOfImpact != null) {
-         Collision collision = new Collision(timeOfImpact,
+      if (timeOfImpact.isPresent()) {
+         Collision collision = new Collision(timeOfImpact.getAsDouble(),
                Collision.HitType.CORNER, x, y);
 
          return collision;
@@ -446,25 +503,18 @@ public class BounceEvaluator implements Evaluator {
       return null;
    }
 
-   // Return the first collision in |collisions|, ignoring nulls.
-   private Collision getFirstCollision(Collision[] collisions) {
-      Collision firstCollision = null;
-
-      for (int i = 0; i < collisions.length; i++)
-         if (collisions[i] != null)
-            if (firstCollision == null
-                  || firstCollision.time > collisions[i].time)
-               firstCollision = collisions[i];
-
-      return firstCollision;
-   }
 
    // Helper for the LaguerreSolver, returns the lowest time in |solutions|
-   // that is greater than currentTime and not a complex number, or return NULL
+   // that is greater than curTime and not a complex number, or return NULL
    // if none is found.
-   public Double findUsefulSolution(double currentTime, Complex[] solutions) {
-      Double lowestTime = null;
+   public OptionalDouble findUsefulSolution(double curTime,
+         Complex[] solutions) {
 
+      return Arrays.stream(solutions).filter
+            (s -> Math.abs(s.getImaginary()) < EPS && s.getReal() > curTime)
+            .mapToDouble(s -> s.getReal()).min();
+      /*
+      Double lowestTime = null;
       for (int i = 0; i < solutions.length; i++)
          if (Math.abs(solutions[i].getImaginary()) < EPS)
             if ((solutions[i].getReal() > currentTime
@@ -473,6 +523,7 @@ public class BounceEvaluator implements Evaluator {
                lowestTime = solutions[i].getReal();
 
       return lowestTime;
+      */
    }
 
    /* Return a PolynomialFunction whose real roots give the times at which the
@@ -593,7 +644,7 @@ public class BounceEvaluator implements Evaluator {
 
       BounceEvaluator eval = new BounceEvaluator();
 
-      Collision testCollision = eval.getobstacleCollision(plat, start);
+      Collision testCollision = eval.getObstacleCollision(plat, start);
 
       if (testCollision != null) {
          System.out.println(testCollision.hType);
