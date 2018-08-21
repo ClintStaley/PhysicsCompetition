@@ -25,13 +25,39 @@
 }
 
 .hitPlatform {
-   fill:#FF808000;
+  stroke: #00000040;
+  stroke-width:.1;
+  fill:#A0A0FF10;
 }
 
 .ball {
-   fill:#FF8080;
    stroke: black;
    stroke-width:.1;
+}
+
+.red {
+  fill:#FF0000;
+  color:#FF0000;
+}
+
+.green {
+   fill:#00FF00;
+   color:#00FF00;
+}
+
+.orange {
+   fill:#FF8C00;
+   color:#FF8C00;
+}
+
+.purple {
+   fill:#FF00FF;
+   color:#FF00FF;
+}
+
+.cyan {
+   fill:#00FFFF;
+   color:#00FFFF;
 }
 
 .text, .rhsText {
