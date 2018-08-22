@@ -36,13 +36,13 @@
 }
 
 .red {
-  fill:#FF0000;
-  color:#FF0000;
+  fill:#F00;
+  color:#F00;
 }
 
 .green {
-   fill:#00FF00;
-   color:#00FF00;
+   fill:#0F0;
+   color:#0F0;
 }
 
 .orange {
@@ -51,13 +51,17 @@
 }
 
 .purple {
-   fill:#FF00FF;
-   color:#FF00FF;
+   fill:#F0F;
+   color:#F0F;
 }
 
 .cyan {
-   fill:#00FFFF;
-   color:#00FFFF;
+   fill:#0FF;
+   color:#0FF;
+}
+
+.invisible {
+  visibility: hidden;
 }
 
 .text, .rhsText {

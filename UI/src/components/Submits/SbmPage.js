@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Button } from 'react-bootstrap';
-import { Bounce } from './Bounce'
+import { Bounce, BSubmitModal } from './Bounce'
 import {LandGrab, LGSubmitModal} from './LandGrab'
 
 // Expected props are:
@@ -104,7 +104,7 @@ console.log("Constructing SbmPage with ", props);
       else if (ctpName === "Bounce") {
          prbDiagram = (<Bounce className="clearfix"
              prms={cmp.prms} sbm={sbm}/>);
-         sbmDialog = (<LGSubmitModal prms={cmp.prms}
+         sbmDialog = (<BSubmitModal prms={cmp.prms}
              submitFn={this.state.sbmFunction}/>);
       }
 

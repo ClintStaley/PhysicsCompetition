@@ -6,7 +6,132 @@ import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 import './Bounce.css'
 
 export class BSubmitModal extends Component {
+  constructor(props) {
+     super(props);
 
+     var idx, balls = [];
+
+     balls.push({speed: 0})
+
+     this.state = {balls};
+
+     this.handleChange = this.handleChange.bind(this);
+  }
+
+  handleChange(ev) {
+    var bIdx, field, val;
+
+    [field, bIdx] = ev.target.id.split(":");
+
+    var balls = this.state.balls.splice(0);
+    balls[bIdx].speed = ev.target.value;
+
+     this.setState({balls: balls});
+  }
+
+  getValidationState = () => {
+
+     for (var idx = 0; idx < this.state.balls.length; idx++) {
+        if (this.getSingleValidationState(idx) != "success")
+           return "error";
+     }
+
+     return "success";
+  }
+
+  getSingleValidationState = (idx) => {
+     var ball = this.state.balls[idx];
+     console.log(this.state.balls);
+     console.log(idx);
+     var val = Number.parseFloat(ball.speed);
+
+     if (isNaN(val) || val < 0)
+        return "error";
+
+     return "success";
+  }
+
+  addBall = () => {
+    var balls = this.state.balls.splice(0);
+
+    balls.push({speed: 0});
+
+    this.setState({balls: balls});
+  }
+
+  removeBall = () => {
+    var balls = this.state.balls.splice(0);
+
+    balls.pop();
+
+    this.setState({balls: balls});
+  }
+
+  close = (status) => {
+     if (status === 'OK') {
+        this.props.submitFn(this.state.balls.map(ball =>
+         ({
+            speed: Number.parseFloat(ball.speed)
+         })));
+     }
+     else
+        this.props.submitFn(null);
+  }
+
+  render() {
+     var idS, idx, lines = [];
+
+     console.log(this.state.balls);
+
+     for (idx = 0; idx < this.state.balls.length; idx++) {
+        idS = `speed:${idx}`;
+
+        lines.push(<div className="container" key={idx}>
+          <div className="row">
+            <div className="col-sm-2"><h5>Ball {idx}</h5></div>
+
+            <div className="col-sm-4">
+              <FormGroup controlId={idS}
+              validationState={this.getSingleValidationState(idx)}>
+                <ControlLabel>Speed</ControlLabel>
+                <FormControl
+                  type="text"
+                  id={idS}
+                  value={this.state.balls[idx].speed}
+                  required={true}
+                  onChange={this.handleChange}
+                />
+                <FormControl.Feedback/>
+              </FormGroup>
+            </div>
+          </div>
+        </div>)
+     }
+
+     return (
+     <Modal show={this.props.submitFn !== null}
+         onHide={()=>this.close("Cancel")} bsSize="lg">
+       <Modal.Header closeButton>
+         <Modal.Title>Submit Bounce Solution</Modal.Title>
+       </Modal.Header>
+
+
+
+       <Modal.Body><form>{lines}</form></Modal.Body>
+
+
+
+       <Modal.Footer>
+         <Button key={0} onClick={() => {this.addBall()}}>Add Ball</Button>
+         <Button key={1} disabled = {this.state.balls.length === 1}
+             onClick={() => {this.removeBall()}}>Remove Ball</Button>
+
+         <Button key={2}  disabled = {this.getValidationState() !== "success"}
+             onClick={() => this.close('OK')}>OK</Button>
+         <Button key={3} onClick={() => this.close('Cancel')}>Cancel</Button>
+       </Modal.Footer>
+     </Modal>)
+  }
 }
 
 // Expected props are:
@@ -61,52 +186,6 @@ export class Bounce extends Component {
       }, 1000/frameRate);
    }
 
-   //array of arrays
-   /*playEvent = (events) => {
-     var ballState = {};
-     var time = this.frame/this.frameRate;
-     var returnValue = this.getEvent(events, time);
-     var newState = {};
-
-     if (returnValue === null){
-        ballState.posX = -2;
-        ballState.posY = -2;
-        ballState.color = this.colors[0];
-
-        this.updateState(ballState, newState);
-
-        console.log("ending at time " + time);
-        clearInterval(this.intervalID);
-      }
-     else{
-        var event = returnValue.event;
-        var timeElapsed = returnValue.timeElapsed;
-        var obstaclesHit = returnValue.obstaclesHit;
-
-        var equations = this.positionEquations(event);
-
-        ballState.posX = equations.xPos(time - event.time - timeElapsed);
-        ballState.posY = equations.yPos(time - event.time - timeElapsed);
-        ballState.color = this.colors[returnValue.ballNum % this.colors.length];
-
-        if ((time - event.time - timeElapsed ) < 0)
-           console.log("X is: " +  ballState.posX + " Y is: " +  ballState.posY + " time is: " + (time - event.time - timeElapsed ));
-
-        this.frame++;
-
-        this.state.ballPath.push(ballState);
-        newState.ballPath = this.state.ballPath.splice(0);
-
-        //makes obstacles disappear
-        if (event.obstacleIdx != -1 && this.state.obstacleStatus[event.obstacleIdx]){
-           this.state.obstacleStatus[event.obstacleIdx] = false;
-           newState.obstacleStatus =  this.state.obstacleStatus.splice(0);
-         }
-
-        this.updateState(ballState, newState);
-     }
-   }*/
-
    playSingleEvent = (event, color, timeElapsed, nextEvent, events) => {
      var time = this.frame/this.frameRate;
      var newState = {};
@@ -115,49 +194,58 @@ export class Bounce extends Component {
      var colors = this.colors;
      var nextEventInfo = null;
 
-     console.log("single event");
+     if (nextEvent == null){
+       ballState.posX = event.posX;
+       ballState.posY = event.posY;
+       ballState.color = color;
 
-     if (event.obstacleIdx != -1 &&
-      this.state.obstacleStatus[event.obstacleIdx]) {
-        this.state.obstacleStatus[event.obstacleIdx] = false;
-        newState.obstacleStatus =  this.state.obstacleStatus.splice(0);
+       newState.ballPos = ballState;
+
+       this.setState(newState)
+       clearInterval(this.intervalID);
      }
-
-     if (time + 1/frameRate > nextEvent.time){
-        clearInterval(this.intervalID);
-
-        if (nextEvent != null){
-          nextEventInfo = this.getNextEvent(events, nextEvent);
-
-          console.log(nextEvent);
-
-          setTimeout(() => {
-             this.intervalID = setInterval( () => {
-                this.playSingleEvent(this.nextEvent,
-                  this.colors[nextEventInfo.ballNum % 5], nextEventInfo.timeElapsed,
-                 nextEventInfo.nextEvent, this.events);
-             }, 1000/frameRate);
-           }, (nextEvent.time - time) * 1000);
-         }
-      }
      else{
-        var equations = this.positionEquations(event);
 
-        ballState.posX = equations.xPos(time - timeElapsed);
-        ballState.posY = equations.yPos(time - timeElapsed);
-        ballState.color = color;
+       if (event.obstacleIdx != -1 &&
+        this.state.obstacleStatus[event.obstacleIdx]) {
+          this.state.obstacleStatus[event.obstacleIdx] = false;
+          this.setState({obstacleStatus: this.state.obstacleStatus.splice(0)});
+       }
 
-        if ((time - timeElapsed ) < 0)
-           console.log("X is: " +  ballState.posX + " Y is: " +  ballState.posY + " time is: " + (time - event.time - timeElapsed ));
+       if ((time - (timeElapsed - event.time)) + 1/frameRate > nextEvent.time){
+          clearInterval(this.intervalID);
 
-        this.frame++;
+          if (nextEvent != null){
+            nextEventInfo = this.getNextEvent(events, nextEvent);
 
-        newState.ballPath = this.state.ballPath.splice(0);
-        newState.ballPath.push(ballState);
+            setTimeout(() => {
+               this.intervalID = setInterval( () => {
+                  this.playSingleEvent(nextEvent,
+                   this.colors[nextEventInfo.ballNum % 5],
+                   nextEventInfo.timeElapsed,
+                   nextEventInfo.nextEvent, events);
+               }, 1000/frameRate);
+             }, (nextEvent.time - time) * 1000);
+           }
+        }
+       else{
+          var equations = this.positionEquations(event);
 
-        newState.ballPos = ballState;
+          console.log(event);
 
-        this.setState(newState)
+          ballState.posX = equations.xPos(time - timeElapsed);
+          ballState.posY = equations.yPos(time - timeElapsed);
+          ballState.color = color;
+
+          this.frame++;
+
+          newState.ballPath = this.state.ballPath.splice(0);
+          newState.ballPath.push(ballState);
+
+          newState.ballPos = ballState;
+
+          this.setState(newState)
+       }
      }
    }
 
@@ -170,12 +258,14 @@ export class Bounce extends Component {
      for (var idxA = 0; idxA < events.length; idxA++) {
         for (var idxB = 0; idxB < events[idxA].length; idxB++) {
           event = events[idxA][idxB];
-          if (currentEvent.time === event.time) {
+          if (currentEvent === event) {
             //get next object
              if (idxB < events[idxA].length - 1)
                 nextEvent = events[idxA][idxB + 1];
-             else if(idxA < events.length - 1)
-                nextEvent = events[++idxA][idxB];
+             else if(idxA < events.length - 1){
+               timeElapsed += event.time;
+               nextEvent = events[++idxA][0];
+             }
 
              return {timeElapsed: (timeElapsed + event.time), ballNum: idxA, nextEvent: nextEvent};
           }
@@ -307,6 +397,51 @@ export class Bounce extends Component {
          {summary}
       </section>);
    }
+}
 
 
+class ballArc extends Component {
+  constructor(props) {
+     super(props);
+
+     this.ballArc = [];
+
+     var equations = this.positionEquations(props.event);
+
+     //push the initial collision
+     this.ballArc.push(<circle key={"ballArc" + key} 
+     cx={equations.xPos(0)}
+     cy={100 - equations.yPos(0)}
+     r = {.2}
+     className={props.color + " invisible"}/>)
+
+     //push all other collisions
+     for (var timer = props.startTime; timer < props.endTime; timer += 1.0/props.frameRate ){
+        this.ballArc.push(<circle key={"ballArc" + key}
+        cx={equations.xPos(timer)}
+        cy={100 - equations.yPos(timer)}
+        r = {.2}
+        className={props.color + " invisible"}/>)
+     }
+  }
+
+  ballArc;
+
+  // x position is equations.xPos and y position is equations.yPos
+  positionEquations = (event) => {
+    var equations = {};
+
+    equations.xPos = ((time) =>
+      (time * event.velocityX) + event.posX);
+
+    equations.yPos = ((time) =>
+       (time * time * -this.G / 2) + (time * event.velocityY) + event.posY
+    );
+
+    return equations;
+  }
+
+  render() {
+    return <h1>Hello, {this.props.name}</h1>;
+  }
 }
