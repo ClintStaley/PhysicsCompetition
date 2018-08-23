@@ -231,8 +231,6 @@ export class Bounce extends Component {
        else{
           var equations = this.positionEquations(event);
 
-          console.log(event);
-
           ballState.posX = equations.xPos(time - timeElapsed);
           ballState.posY = equations.yPos(time - timeElapsed);
           ballState.color = color;
@@ -368,15 +366,14 @@ export class Bounce extends Component {
 
       });
 
-      ballPath = [];
+      /*ballPath = [];
       this.state.ballPath.forEach((point, key) => {
          ballPath.push(<circle key={"crc" + key} cx={point.posX}
          cy={100-point.posY} r = {.2} className={point.color}/>);
-      });
+      });*/
 
       if (sbm.testResult)
          summary = this.getSummary(sbm.testResult);
-
 
       return (<section className="container">
          <h2>Problem Diagram</h2>
@@ -387,45 +384,78 @@ export class Bounce extends Component {
             <rect x="0" y="0" width="100" height="100" className="graphBkg"/>
             {grid}
             {obstacles}
-            {ballPath}
             {this.state.ballPos ?
             <circle key={"crc"} cx={this.state.ballPos.posX}
             cy={100-this.state.ballPos.posY} r = {1}
             className={'ball ' + this.state.ballPos.color}/>
             : '' }
+            <TrackManager
+            frameRate = {this.frameRate}
+            frame = {this.state.frame}
+            events = {sbm.testResult.events}/>
          </svg>
          {summary}
       </section>);
    }
 }
 
-
-class ballArc extends Component {
+class TrackManager extends Component {
   constructor(props) {
      super(props);
 
-     this.ballArc = [];
+  }
+  colors = ["red", "green", "orange", "purple", "cyan"];
 
-     var equations = this.positionEquations(props.event);
+  render() {
+     var props = this.props;
+     var ballTracks = [];
 
-     //push the initial collision
-     this.ballArc.push(<circle key={"ballArc" + key} 
-     cx={equations.xPos(0)}
-     cy={100 - equations.yPos(0)}
-     r = {.2}
-     className={props.color + " invisible"}/>)
-
-     //push all other collisions
-     for (var timer = props.startTime; timer < props.endTime; timer += 1.0/props.frameRate ){
-        this.ballArc.push(<circle key={"ballArc" + key}
-        cx={equations.xPos(timer)}
-        cy={100 - equations.yPos(timer)}
-        r = {.2}
-        className={props.color + " invisible"}/>)
+     //push all arcs
+     for (var trackNum = 0; trackNum < props.events.length; trackNum++ ){
+        ballTracks.push(
+          <BallTrack key={"BallTrack" + trackNum}
+          frameRate = {props.frameRate}
+          currentTime = {props.frame/props.frameRate}
+          color = {this.colors[trackNum % 5]}
+          events = {this.props.events[trackNum]}/>);
      }
+
+    console.log("Track Manager");
+    return (<g> {ballTracks} </g>);
+  }
+}
+
+class BallTrack extends Component {
+  constructor(props) {
+     super(props);
   }
 
-  ballArc;
+  render() {
+    var props = this.props;
+    var ballTrack = [];
+
+    //push all arcs
+    for (var eventNum = 0; eventNum < props.events.length - 1; eventNum++ )
+       ballTrack.push(
+       <BallArc key={"BallArc" + eventNum}
+       startTime = {props.events[eventNum].time}
+       endTime = {props.events[eventNum + 1].time}
+       frameRate = {props.frameRate}
+       currentTime = {props.currentTime}
+       color = {props.color}
+       event = {props.events[eventNum]}/>);
+
+
+    return (<g> {ballTrack} </g>);
+  }
+}
+
+class BallArc extends Component {
+  constructor(props) {
+     super(props);
+  }
+
+  G = 9.80665;
 
   // x position is equations.xPos and y position is equations.yPos
   positionEquations = (event) => {
@@ -442,6 +472,30 @@ class ballArc extends Component {
   }
 
   render() {
-    return <h1>Hello, {this.props.name}</h1>;
+    var ballArc = [];
+    var props = this.props;
+
+    var equations = this.positionEquations(props.event);
+
+    //push the initial collision
+    //this.ballArc.push(<circle key={"ballArc" + 0}
+    //cx={equations.xPos(0)}
+    //cy={100 - equations.yPos(0)}
+    //r = {.2}
+    //className={props.color}/>); //+ " invisible"}/>)
+
+    for (var timer = 0; timer < props.endTime - props.startTime; timer += 1.0/props.frameRate ){
+       ballArc.push(<circle key={"ballPoint" + (timer + props.startTime)}
+       cx={equations.xPos(timer)}
+       cy={100 - equations.yPos(timer)}
+       r = {.2}
+       className={props.color}/>); //+ " invisible"}/>);
+    }
+
+    return (
+      <g>
+       {ballArc}
+      </g>
+    );
   }
 }
