@@ -115,11 +115,7 @@ export class BSubmitModal extends Component {
          <Modal.Title>Submit Bounce Solution</Modal.Title>
        </Modal.Header>
 
-
-
        <Modal.Body><form>{lines}</form></Modal.Body>
-
-
 
        <Modal.Footer>
          <Button key={0} onClick={() => {this.addBall()}}>Add Ball</Button>
@@ -149,27 +145,27 @@ export class Bounce extends Component {
 
       this.state = {
          sbmConfirm: null, // Function to post current submission
-         ballPos: null,
          obstacleStatus: obstacleStatus,
-         ballPath: []
+         frame: 0
       }
    }
 
    intervalID;      // Timer ID of interval timer
    frameRate = 24;  // Frames per second to display
-   frame = 0;
    G = 9.80665;
    colors = ["red", "green", "orange", "purple", "cyan"];
 
    // x position is equations[0] and y position is equations[1]
    positionEquations = (event) => {
+     var GRAVITY = 9.80665;
+
      var equations = {};
 
      equations.xPos = ((time) =>
        (time * event.velocityX) + event.posX);
 
      equations.yPos = ((time) =>
-        (time * time * -this.G / 2) + (time * event.velocityY) + event.posY
+        (time * time * -GRAVITY / 2) + (time * event.velocityY) + event.posY
      );
 
      return equations;
@@ -178,99 +174,44 @@ export class Bounce extends Component {
    startMovie = (events) => {
       var frameRate = this.frameRate;
 
+      //saftey so that two seperate intevals are running
       if (this.intervalID)
         clearInterval(this.intervalID);
 
       this.intervalID = setInterval( () => {
-        this.playSingleEvent(events[0][0], "red", 0, events[0][1], events);
+        this.playBall();
       }, 1000/frameRate);
    }
 
-   playSingleEvent = (event, color, timeElapsed, nextEvent, events) => {
-     var time = this.frame/this.frameRate;
+   playBall = () => {
+     var frame = this.state.frame;
+     var events = this.props.sbm.testResult.events;
+     var totalTime = 0;
      var newState = {};
-     var ballState = {};
-     var frameRate = this.frameRate;
-     var colors = this.colors;
-     var nextEventInfo = null;
 
-     if (nextEvent == null){
-       ballState.posX = event.posX;
-       ballState.posY = event.posY;
-       ballState.color = color;
-
-       newState.ballPos = ballState;
-
-       this.setState(newState)
-       clearInterval(this.intervalID);
+     for (var idx = 0; idx < events.length; idx++) {
+        totalTime += events[idx][events[idx].length - 1].time;
      }
-     else{
 
-       if (event.obstacleIdx != -1 &&
-        this.state.obstacleStatus[event.obstacleIdx]) {
-          this.state.obstacleStatus[event.obstacleIdx] = false;
-          this.setState({obstacleStatus: this.state.obstacleStatus.splice(0)});
-       }
+     if (++frame / this.frameRate > totalTime)
+        clearInterval(this.intervalID);
 
-       if ((time - (timeElapsed - event.time)) + 1/frameRate > nextEvent.time){
-          clearInterval(this.intervalID);
+     newState.frame = frame;
 
-          if (nextEvent != null){
-            nextEventInfo = this.getNextEvent(events, nextEvent);
+     //newState.obstacleStatus = this.calculateObstacles(frame);
 
-            setTimeout(() => {
-               this.intervalID = setInterval( () => {
-                  this.playSingleEvent(nextEvent,
-                   this.colors[nextEventInfo.ballNum % 5],
-                   nextEventInfo.timeElapsed,
-                   nextEventInfo.nextEvent, events);
-               }, 1000/frameRate);
-             }, (nextEvent.time - time) * 1000);
-           }
-        }
-       else{
-          var equations = this.positionEquations(event);
-
-          ballState.posX = equations.xPos(time - timeElapsed);
-          ballState.posY = equations.yPos(time - timeElapsed);
-          ballState.color = color;
-
-          this.frame++;
-
-          newState.ballPath = this.state.ballPath.splice(0);
-          newState.ballPath.push(ballState);
-
-          newState.ballPos = ballState;
-
-          this.setState(newState)
-       }
-     }
+     this.setState(newState);
    }
 
+   calculateObstacles = (frame) => {
+     var events = this.props.sbm.testResult.events;
+     var time = frame/this.frameRate;
 
-   getNextEvent = (events, currentEvent) => {
-     var event = events[0][0];
-     var nextEvent = null;
-     var timeElapsed = 0;
-
-     for (var idxA = 0; idxA < events.length; idxA++) {
-        for (var idxB = 0; idxB < events[idxA].length; idxB++) {
-          event = events[idxA][idxB];
-          if (currentEvent === event) {
-            //get next object
-             if (idxB < events[idxA].length - 1)
-                nextEvent = events[idxA][idxB + 1];
-             else if(idxA < events.length - 1){
-               timeElapsed += event.time;
-               nextEvent = events[++idxA][0];
-             }
-
-             return {timeElapsed: (timeElapsed + event.time), ballNum: idxA, nextEvent: nextEvent};
-          }
-        }
-        timeElapsed += event.time;
-      }
-      return null;
+     events.forEach((eventArr) => {
+       eventArr.forEach((event) => {
+         //if (time > )
+       })
+     });
    }
 
    getSummary = (testResult) => {
@@ -326,9 +267,8 @@ export class Bounce extends Component {
 
      var obstacleStatus = [];
      this.props.prms.obstacles.forEach(() => obstacleStatus.push(true));
-     this.setState({ obstacleStatus : obstacleStatus });
 
-     this.setState({ ballPath : [] });
+     this.setState({ frame : 0, obstacleStatus : obstacleStatus });
    }
 
    render() {
@@ -366,12 +306,6 @@ export class Bounce extends Component {
 
       });
 
-      /*ballPath = [];
-      this.state.ballPath.forEach((point, key) => {
-         ballPath.push(<circle key={"crc" + key} cx={point.posX}
-         cy={100-point.posY} r = {.2} className={point.color}/>);
-      });*/
-
       if (sbm.testResult)
          summary = this.getSummary(sbm.testResult);
 
@@ -384,40 +318,94 @@ export class Bounce extends Component {
             <rect x="0" y="0" width="100" height="100" className="graphBkg"/>
             {grid}
             {obstacles}
-            {this.state.ballPos ?
-            <circle key={"crc"} cx={this.state.ballPos.posX}
-            cy={100-this.state.ballPos.posY} r = {1}
-            className={'ball ' + this.state.ballPos.color}/>
-            : '' }
+
+            <BallManager frameRate = {this.frameRate}
+            frame = {this.state.frame}
+            events = {sbm.testResult.events}
+            positionEquations = {this.positionEquations}
+            colors = {this.colors}/>
+
             <TrackManager
             frameRate = {this.frameRate}
             frame = {this.state.frame}
-            events = {sbm.testResult.events}/>
+            events = {sbm.testResult.events}
+            positionEquations = {this.positionEquations}
+            colors = {this.colors}/>
          </svg>
          {summary}
       </section>);
    }
 }
 
+class BallManager extends Component {
+  constructor(props) {
+     super(props);
+
+     console.log("Ball Manager Constructed");
+  }
+
+  render() {
+    var props = this.props;
+    var ballNum = 0;
+    var events = props.events
+
+    var event = events[0][0];
+    var nextEvent = events[0][0];
+    var timeElapsed = 0;
+
+    var currentTime = props.frame / props.frameRate;
+
+    for (var idxA = 0; idxA < events.length; idxA++) {
+       for (var idxB = 0; idxB < events[idxA].length; idxB++) {
+         nextEvent = events[idxA][idxB];
+         if (nextEvent.time + timeElapsed > currentTime ) {
+            break;
+         }
+         event = nextEvent;
+         }
+      if (nextEvent.time + timeElapsed > currentTime ) {
+        break;
+      }
+      timeElapsed += nextEvent.time;
+      ballNum++;
+    }
+
+    var equations = props.positionEquations(event);
+
+    return (  <circle key={"crc"}
+    cx={equations.xPos(currentTime - timeElapsed - event.time)}
+    cy={100 - equations.yPos(currentTime - timeElapsed - event.time)} r = {1}
+    className={'ball ' + props.colors[ballNum % 5]}/>);
+  }
+}
+
 class TrackManager extends Component {
   constructor(props) {
      super(props);
 
+     console.log("Track Manager Constructed");
   }
+
   colors = ["red", "green", "orange", "purple", "cyan"];
 
   render() {
      var props = this.props;
      var ballTracks = [];
+     var elapsedTime = 0;
 
      //push all arcs
-     for (var trackNum = 0; trackNum < props.events.length; trackNum++ ){
+     for ( var trackNum = 0; trackNum < props.events.length; trackNum++ ) {
         ballTracks.push(
           <BallTrack key={"BallTrack" + trackNum}
+          startTime = {elapsedTime}
           frameRate = {props.frameRate}
           currentTime = {props.frame/props.frameRate}
-          color = {this.colors[trackNum % 5]}
+          color = {this.props.colors[trackNum % 5]}
+          positionEquations = {this.props.positionEquations}
           events = {this.props.events[trackNum]}/>);
+
+        elapsedTime += this.props.events[trackNum]
+         [this.props.events[trackNum].length - 1].time;
      }
 
     console.log("Track Manager");
@@ -428,23 +416,39 @@ class TrackManager extends Component {
 class BallTrack extends Component {
   constructor(props) {
      super(props);
+
+     console.log("Ball Track Constructed");
   }
+
+  shouldComponentUpdate(nextProps, nextState) {
+     var props = this.props;
+
+     //need to re-render, the ball has been reset
+     if (nextProps.currentTime < props.currentTime &&
+      props.startTime > props.currentTime)
+        return true;
+
+     return (nextProps.currentTime >= props.startTime) ||
+      (props.currentTime <=  props.events[props.events.length - 1].time
+      + props.startTime);
+   }
 
   render() {
     var props = this.props;
     var ballTrack = [];
 
     //push all arcs
-    for (var eventNum = 0; eventNum < props.events.length - 1; eventNum++ )
+    for (var eventNum = 0; eventNum < props.events.length - 1; eventNum++ ) {
        ballTrack.push(
        <BallArc key={"BallArc" + eventNum}
-       startTime = {props.events[eventNum].time}
+       startTime = {props.startTime}
        endTime = {props.events[eventNum + 1].time}
        frameRate = {props.frameRate}
        currentTime = {props.currentTime}
        color = {props.color}
+       positionEquations = {this.props.positionEquations}
        event = {props.events[eventNum]}/>);
-
+    }
 
     return (<g> {ballTrack} </g>);
   }
@@ -453,43 +457,55 @@ class BallTrack extends Component {
 class BallArc extends Component {
   constructor(props) {
      super(props);
+
+     console.log("Ball Arc Constructed");
   }
 
-  G = 9.80665;
+  shouldComponentUpdate(nextProps, nextState) {
+    var props = this.props;
 
-  // x position is equations.xPos and y position is equations.yPos
-  positionEquations = (event) => {
-    var equations = {};
+    //need to re-render, the ball has been reset
+    if (nextProps.currentTime < props.currentTime &&
+     props.startTime + props.event.time > props.currentTime)
+       return true;
 
-    equations.xPos = ((time) =>
-      (time * event.velocityX) + event.posX);
-
-    equations.yPos = ((time) =>
-       (time * time * -this.G / 2) + (time * event.velocityY) + event.posY
-    );
-
-    return equations;
+   return (nextProps.currentTime >= props.startTime + props.event.time) ||
+    (props.currentTime <= props.endTime + props.startTime);
   }
 
   render() {
     var ballArc = [];
     var props = this.props;
+    var event = props.event;
+    var color = props.color;
 
-    var equations = this.positionEquations(props.event);
+    var equations = props.positionEquations(props.event);
 
-    //push the initial collision
-    //this.ballArc.push(<circle key={"ballArc" + 0}
-    //cx={equations.xPos(0)}
-    //cy={100 - equations.yPos(0)}
-    //r = {.2}
-    //className={props.color}/>); //+ " invisible"}/>)
+    //the current time is before the start
+    if ( event.time + props.startTime >= props.currentTime )
+      color += " invisible";
 
-    for (var timer = 0; timer < props.endTime - props.startTime; timer += 1.0/props.frameRate ){
+    //push the initial collision, not first event
+    if (event.time != 0.0)
+       ballArc.push(<circle key={"ballArc" + event.time}
+       cx={equations.xPos(0)}
+       cy={100 - equations.yPos(0)}
+       r = {1}
+       className={"ball faded " + color}/>);
+
+    var startTime = (Math.ceil(event.time * props.frameRate) / props.frameRate);
+
+    for (var timer = startTime - event.time ; timer < props.endTime - event.time; timer += 1.0/props.frameRate ){
+       color = props.color;
+
+       if (props.startTime + startTime + timer >= props.currentTime)
+          color += " invisible";
+
        ballArc.push(<circle key={"ballPoint" + (timer + props.startTime)}
        cx={equations.xPos(timer)}
        cy={100 - equations.yPos(timer)}
        r = {.2}
-       className={props.color}/>); //+ " invisible"}/>);
+       className={color}/>);
     }
 
     return (
