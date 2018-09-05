@@ -20,6 +20,7 @@ import com.softwareinventions.cmp.util.GenUtil;
 
 public class BounceEvaluator implements Evaluator {
    // Constants
+   public static final double WORLD_LENGTH = 100.0;
    public static final double STARTING_HEIGHT = 100.0;
    public static final double GRAVITY = -9.80665;
    public static final double RADIUS = 1;
@@ -79,7 +80,7 @@ public class BounceEvaluator implements Evaluator {
          yPos = t -> GRAVITY / 2.0 * GenUtil.sqr((t )) + 
                current.velocityY * (t ) + current.posY;
          // Y velocity function
-         yVelocity = t -> 2 * GRAVITY / 2.0 * (t ) + current.velocityY;
+         yVelocity = t -> GRAVITY * (t ) + current.velocityY;
       }
    }
 
@@ -247,8 +248,8 @@ public class BounceEvaluator implements Evaluator {
          double magnitude = dx * newBallEvent.velocityX
                + dy * newBallEvent.velocityY;
 
-         newBallEvent.velocityX = current.velocityX + (-2.0 * magnitude * dx);
-         newBallEvent.velocityY = current.velocityY + (-2.0 * magnitude * dy);
+         newBallEvent.velocityX = newBallEvent.velocityX + (-2.0 * magnitude * dx);
+         newBallEvent.velocityY = newBallEvent.velocityY + (-2.0 * magnitude * dy);
 
          newBallEvent.obstacleIdx = collision.obstacleIdx;
          break;
@@ -257,7 +258,7 @@ public class BounceEvaluator implements Evaluator {
          return null;
 
       }
-
+      
       lgr.info("Obstacle Hit is: " + newBallEvent.obstacleIdx);
       return newBallEvent;
    }
@@ -280,7 +281,7 @@ public class BounceEvaluator implements Evaluator {
       if (current.velocityX < 0.0)
          xOutOfBounds = (-RADIUS - current.posX) / current.velocityX;
       else if (current.velocityX > 0.0)
-         xOutOfBounds = (100.0 + RADIUS - current.posX) / current.velocityX;
+         xOutOfBounds = (WORLD_LENGTH + RADIUS - current.posX) / current.velocityX;
       else
          xOutOfBounds = Double.MAX_VALUE;
 
@@ -424,17 +425,6 @@ public class BounceEvaluator implements Evaluator {
       return Arrays.stream(solutions).filter
             (s -> Math.abs(s.getImaginary()) < EPS && s.getReal() > curTime)
             .mapToDouble(s -> s.getReal()).min();
-      /*
-      Double lowestTime = null;
-      for (int i = 0; i < solutions.length; i++)
-         if (Math.abs(solutions[i].getImaginary()) < EPS)
-            if ((solutions[i].getReal() > currentTime
-                  && (lowestTime == null
-                        || lowestTime.doubleValue() > solutions[i].getReal())))
-               lowestTime = solutions[i].getReal();
-
-      return lowestTime;
-      */
    }
 
    /* Return a PolynomialFunction whose real roots give the times at which the
@@ -540,9 +530,9 @@ public class BounceEvaluator implements Evaluator {
       Obstacle plat = new Obstacle();
 
       plat.hiX = 60;
-      plat.loX = 50;
-      plat.hiY = 10;
-      plat.loY = 0;
+      plat.loX = 0;
+      plat.hiY = 25;
+      plat.loY = 20;
       plat.obstacleId = 0;
 
       obstacles.add(plat);
@@ -550,8 +540,8 @@ public class BounceEvaluator implements Evaluator {
       BounceEvent start = new BounceEvent(STARTING_HEIGHT, 10);
       start.posX = 10;
       start.posY = 10;
-      start.velocityX = 5;
-      start.velocityY = 50;
+      start.velocityX = 0;
+      start.velocityY = 0;
 
       BounceEvaluator eval = new BounceEvaluator();
 

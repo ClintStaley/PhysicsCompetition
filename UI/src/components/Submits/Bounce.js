@@ -41,11 +41,9 @@ export class BSubmitModal extends Component {
 
   getSingleValidationState = (idx) => {
      var ball = this.state.balls[idx];
-     console.log(this.state.balls);
-     console.log(idx);
      var val = Number.parseFloat(ball.speed);
 
-     if (isNaN(val) || val < 0)
+     if (isNaN(ball.speed) || val < 0)
         return "error";
 
      return "success";
@@ -150,14 +148,20 @@ export class Bounce extends Component {
       }
    }
 
+   componentWillUnmount = () => {
+     clearInterval(this.intervalID);
+   }
+
+
    intervalID;      // Timer ID of interval timer
    frameRate = 24;  // Frames per second to display
    G = 9.80665;
    colors = ["red", "green", "orange", "purple", "cyan"];
+   fieldLength = 100; //the stage length in parameters
+   fieldHeight = 100; //the sage height in meters
 
    // x position is equations[0] and y position is equations[1]
    positionEquations = (event) => {
-     var GRAVITY = 9.80665;
 
      var equations = {};
 
@@ -165,7 +169,7 @@ export class Bounce extends Component {
        (time * event.velocityX) + event.posX);
 
      equations.yPos = ((time) =>
-        (time * time * -GRAVITY / 2) + (time * event.velocityY) + event.posY
+        (time * time * -this.G / 2) + (time * event.velocityY) + event.posY
      );
 
      return equations;
@@ -173,6 +177,7 @@ export class Bounce extends Component {
 
    startMovie = (events) => {
       var frameRate = this.frameRate;
+      var secondsToMiliseconds = 1000;
 
       //saftey so that two seperate intevals are running
       if (this.intervalID)
@@ -180,7 +185,7 @@ export class Bounce extends Component {
 
       this.intervalID = setInterval( () => {
         this.playBall();
-      }, 1000/frameRate);
+      }, secondsToMiliseconds/frameRate);
    }
 
    playBall = () => {
@@ -198,7 +203,7 @@ export class Bounce extends Component {
 
      newState.frame = frame;
 
-     //newState.obstacleStatus = this.calculateObstacles(frame);
+     newState.obstacleStatus = this.calculateObstacles(frame);
 
      this.setState(newState);
    }
@@ -206,12 +211,22 @@ export class Bounce extends Component {
    calculateObstacles = (frame) => {
      var events = this.props.sbm.testResult.events;
      var time = frame/this.frameRate;
+     var elapsedTime = 0;
+     var obstacleState = this.state.obstacleStatus.splice(0);
 
+     //fill out the state array so that hit obstacles are greyed out
      events.forEach((eventArr) => {
        eventArr.forEach((event) => {
-         //if (time > )
-       })
+         if (event.obstacleIdx != -1
+          && obstacleState[event.obstacleIdx]
+          && time > event.time + elapsedTime)
+           obstacleState[event.obstacleIdx] = false;
+       });
+
+       elapsedTime += eventArr[eventArr.length - 1].time;
      });
+
+     return obstacleState;
    }
 
    getSummary = (testResult) => {
@@ -277,31 +292,37 @@ export class Bounce extends Component {
       var hashClass, offs, rect, grid, obstacles;
       var tr, timeStr, dateStr, circle, sbmTime, summary = null;
       var ballPath;
+      var dimensions =
+       {fieldLength: this.fieldLength, fieldHeight: this.fieldHeight};
+
+      var fieldHeight = this.fieldHeight;
+      var fieldLength = this.fieldLength;
+      var longerSide = fieldLength > fieldHeight ? fieldLength : fieldHeight;
 
       // Heavy cross hatches every 10, with light cross hatches between
       grid = [];
-      for (offs = 5; offs < 100; offs += 5) {
+      for (offs = 5; offs < longerSide; offs += 5) {
          hashClass = offs % 10 === 5 ? "graph5" : "graph10";
-         grid.push(<line key={"XL" + offs} x1={offs} y1="0" x2={offs} y2="100"
+         grid.push(<line key={"XL" + offs} x1={offs} y1="0" x2={offs} y2={fieldHeight}
           className={hashClass}/>);
-         grid.push(<line key={"YL" + offs} x1="0" y1={offs} x2="100" y2={offs}
+         grid.push(<line key={"YL" + offs} x1="0" y1={offs} x2={fieldLength} y2={offs}
           className={hashClass}/>);
       }
 
       // Obstacle rectangles
       obstacles = [];
       prms.obstacles.forEach((rect, idx) => {
-         obstacles.push(<rect key={"R"+idx} x={rect.loX} y={100-rect.hiY}
+         obstacles.push(<rect key={"R"+idx} x={rect.loX} y={fieldHeight-rect.hiY}
           width={rect.hiX - rect.loX} height={rect.hiY - rect.loY}
           className= {this.state.obstacleStatus[idx] ? "platform" : "hitPlatform"}/>);
 
-         obstacles.push(<text key={"UL"+idx} x={rect.loX} y={100-rect.hiY+2}
+         obstacles.push(<text key={"UL"+idx} x={rect.loX} y={fieldHeight-rect.hiY+2}
           className="text">{"(" + rect.loX + "," + rect.hiY + ")"}</text>);
-         obstacles.push(<text key={"UR"+idx} x={rect.hiX} y={100-rect.hiY+2}
+         obstacles.push(<text key={"UR"+idx} x={rect.hiX} y={fieldHeight-rect.hiY+2}
           className="rhsText">{"(" + rect.hiX + "," + rect.hiY + ")"}</text>);
-         obstacles.push(<text key={"LL"+idx} x={rect.loX} y={100-rect.loY}
+         obstacles.push(<text key={"LL"+idx} x={rect.loX} y={fieldHeight-rect.loY}
           className="text">{"(" + rect.loX + "," + rect.loY + ")"}</text>);
-         obstacles.push(<text key={"LR"+idx} x={rect.hiX} y={100-rect.loY}
+         obstacles.push(<text key={"LR"+idx} x={rect.hiX} y={fieldHeight-rect.loY}
           className="rhsText">{"(" + rect.hiX + "," + rect.loY + ")"}</text>);
 
       });
@@ -311,26 +332,36 @@ export class Bounce extends Component {
 
       return (<section className="container">
          <h2>Problem Diagram</h2>
-         <Button className="pull-right" onClick={() => this.replay()}>Replay</Button>
-         <Button className="pull-right" onClick={() => clearInterval(this.intervalID)}>Pause</Button>
-         <Button className="pull-right" onClick={() => this.startMovie(sbm.testResult.events)}>Play</Button>
-         <svg viewBox="-1 -1 101 101" width="100%" className="panel">
-            <rect x="0" y="0" width="100" height="100" className="graphBkg"/>
+         <Button className="pull-right" disabled = {!sbm.testResult}
+          onClick={() => this.replay()}>Replay</Button>
+         <Button className="pull-right" disabled = {!sbm.testResult}
+          onClick={() => clearInterval(this.intervalID)}>Pause</Button>
+         <Button className="pull-right" disabled = {!sbm.testResult}
+          onClick={() => this.startMovie(sbm.testResult.events)}>Play</Button>
+         <svg viewBox={"-1 -1 " + (fieldLength + 1) + " " + (fieldHeight + 1)}
+          width="100%" className="panel">
+            <rect x="0" y="0" width={fieldLength} height={fieldHeight} className="graphBkg"/>
             {grid}
             {obstacles}
 
-            <BallManager frameRate = {this.frameRate}
-            frame = {this.state.frame}
-            events = {sbm.testResult.events}
-            positionEquations = {this.positionEquations}
-            colors = {this.colors}/>
+            {sbm.testResult ?
+            <g>
+              <BallManager frameRate = {this.frameRate}
+              frame = {this.state.frame}
+              events = {sbm.testResult.events}
+              positionEquations = {this.positionEquations}
+              colors = {this.colors}
+              dimensions = {dimensions}/>
 
-            <TrackManager
-            frameRate = {this.frameRate}
-            frame = {this.state.frame}
-            events = {sbm.testResult.events}
-            positionEquations = {this.positionEquations}
-            colors = {this.colors}/>
+              <TrackManager
+              frameRate = {this.frameRate}
+              frame = {this.state.frame}
+              events = {sbm.testResult.events}
+              positionEquations = {this.positionEquations}
+              colors = {this.colors}
+              dimensions = {dimensions}/>
+            </g>
+            : ''}
          </svg>
          {summary}
       </section>);
@@ -347,7 +378,8 @@ class BallManager extends Component {
   render() {
     var props = this.props;
     var ballNum = 0;
-    var events = props.events
+    var events = props.events;
+    var fieldHeight = props.dimensions.fieldHeight;
 
     var event = events[0][0];
     var nextEvent = events[0][0];
@@ -374,7 +406,7 @@ class BallManager extends Component {
 
     return (  <circle key={"crc"}
     cx={equations.xPos(currentTime - timeElapsed - event.time)}
-    cy={100 - equations.yPos(currentTime - timeElapsed - event.time)} r = {1}
+    cy={fieldHeight - equations.yPos(currentTime - timeElapsed - event.time)} r = {1}
     className={'ball ' + props.colors[ballNum % 5]}/>);
   }
 }
@@ -402,7 +434,8 @@ class TrackManager extends Component {
           currentTime = {props.frame/props.frameRate}
           color = {this.props.colors[trackNum % 5]}
           positionEquations = {this.props.positionEquations}
-          events = {this.props.events[trackNum]}/>);
+          events = {this.props.events[trackNum]}
+          dimensions = {this.props.dimensions}/>);
 
         elapsedTime += this.props.events[trackNum]
          [this.props.events[trackNum].length - 1].time;
@@ -447,7 +480,8 @@ class BallTrack extends Component {
        currentTime = {props.currentTime}
        color = {props.color}
        positionEquations = {this.props.positionEquations}
-       event = {props.events[eventNum]}/>);
+       event = {props.events[eventNum]}
+       dimensions = {props.dimensions}/>);
     }
 
     return (<g> {ballTrack} </g>);
@@ -478,6 +512,7 @@ class BallArc extends Component {
     var props = this.props;
     var event = props.event;
     var color = props.color;
+    var fieldHeight = props.dimensions.fieldHeight;
 
     var equations = props.positionEquations(props.event);
 
@@ -489,7 +524,7 @@ class BallArc extends Component {
     if (event.time != 0.0)
        ballArc.push(<circle key={"ballArc" + event.time}
        cx={equations.xPos(0)}
-       cy={100 - equations.yPos(0)}
+       cy={fieldHeight - equations.yPos(0)}
        r = {1}
        className={"ball faded " + color}/>);
 
@@ -503,7 +538,7 @@ class BallArc extends Component {
 
        ballArc.push(<circle key={"ballPoint" + (timer + props.startTime)}
        cx={equations.xPos(timer)}
-       cy={100 - equations.yPos(timer)}
+       cy={fieldHeight - equations.yPos(timer)}
        r = {.2}
        className={color}/>);
     }
