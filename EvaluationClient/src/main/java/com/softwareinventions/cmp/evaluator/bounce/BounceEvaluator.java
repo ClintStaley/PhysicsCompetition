@@ -8,9 +8,7 @@ import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
 import org.apache.commons.math3.analysis.solvers.LaguerreSolver;
 import org.apache.commons.math3.complex.Complex;
 import org.apache.log4j.Logger;
-import org.codehaus.jackson.map.ObjectMapper;
 
-import com.softwareinventions.cmp.driver.ClientHandler;
 import com.softwareinventions.cmp.dto.Submit;
 import com.softwareinventions.cmp.evaluator.Evaluator;
 import com.softwareinventions.cmp.evaluator.Evl;
@@ -263,7 +261,6 @@ public class BounceEvaluator implements Evaluator {
    // Calculate where and when the ball will hit the border, resulting in
    // the last event.
    private BounceEvent calculateBorderEvent(BounceEvent current) {
-
       double xOutOfBounds;
 
       // Solve for y, as the ball goes one radius below the lower bound.
