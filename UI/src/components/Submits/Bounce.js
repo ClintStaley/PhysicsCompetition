@@ -38,6 +38,8 @@ export class BSubmitModal extends Component {
    }
 
    //valid iff speed is a number, and greater than 0
+   // CAS FIX: If this is only for internal use, return a boolean, e.g.
+   // return ball.speed && Number.parseFloat(ball.speed) >= 0
    getSingleValidationState = (idx) => {
       var ball = this.state.balls[idx];
       var val = Number.parseFloat(ball.speed);
@@ -52,14 +54,14 @@ export class BSubmitModal extends Component {
    addBall = () => {
       var newBalls = this.state.balls.splice(0);
 
-      newBalls.push({speed: 0});
+      newBalls.push({speed: 0});  // CAS use concat?
 
       this.setState({balls: newBalls});
    }
 
    //remove one text box
    removeBall = () => {
-      var balls = this.state.balls.splice(0);
+      var balls = this.state.balls.splice(0);  // Can't you "pop" with a splice?
 
       balls.pop();
 
