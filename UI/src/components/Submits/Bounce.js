@@ -38,6 +38,8 @@ export class BSubmitModal extends Component {
    }
 
    //valid iff speed is a number, and greater than 0
+   // CAS FIX: If this is only for internal use, return a boolean, e.g.
+   // return ball.speed && Number.parseFloat(ball.speed) >= 0
    getSingleValidationState = (idx) => {
       var ball = this.state.balls[idx];
       var val = Number.parseFloat(ball.speed);
@@ -52,14 +54,14 @@ export class BSubmitModal extends Component {
    addBall = () => {
       var newBalls = this.state.balls.splice(0);
 
-      newBalls.push({speed: 0});
+      newBalls.push({speed: 0});  // CAS use concat?
 
       this.setState({balls: newBalls});
    }
 
    //remove one text box
    removeBall = () => {
-      var balls = this.state.balls.splice(0);
+      var balls = this.state.balls.splice(0);  // Can't you "pop" with a splice?
 
       balls.pop();
 
@@ -69,6 +71,8 @@ export class BSubmitModal extends Component {
    //close, submist iff status is OK, closes modal no matter what
    close = (status) => {
       if (status === 'OK') {
+         //this.props.reset();
+
          this.props.submitFn(this.state.balls.map(ball => ({
             speed: Number.parseFloat(ball.speed)
          })));
@@ -136,8 +140,7 @@ export class Bounce extends Component {
    constructor(props) {
       super(props);
 
-      //debug, BUGS KNOWN: Frame does not reset on submit,
-      // New balls appear after time
+      //debug, BUGS KNOWN: Frame does not reset on submit
       console.log(props);
 
       //boolean array, matched up with obstacle array, determines if hit
@@ -148,6 +151,25 @@ export class Bounce extends Component {
          obstacleStatus: obstacleStatus,
          frame: 0
       }
+   }
+
+   //sets frame to zero
+   reset = () => {
+      var obstacleStatus = [];
+      this.props.prms.obstacles.forEach(() => obstacleStatus.push(true));
+
+      this.setState({ frame : 0, obstacleStatus : obstacleStatus });
+   }
+
+   //hack
+   shouldComponentUpdate(nextProps, nextState) {
+      var props = this.props;
+
+      if (props !== nextProps)
+         this.reset();
+
+
+      return true;
    }
 
    //clear interval when component closes,
@@ -409,7 +431,9 @@ class BallManager extends Component {
          if (nextEvent.time + timeElapsed > currentTime ) {
             break;
          }
-         timeElapsed += nextEvent.time;
+         //makes sure ther is another ball
+         if (events[idxA + 1])
+            timeElapsed += nextEvent.time;
       }
 
       var equations = props.positionEquations(event);

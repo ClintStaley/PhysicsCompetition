@@ -127,6 +127,7 @@ export function getCmps() {
    .then((cmpsData) => {
       var cmps = {};
       for (var i = 0; i < cmpsData.length; i++){
+         cmpsData[i].prms = JSON.parse(cmpsData[i].prms);
          cmps[cmpsData[i].id] = cmpsData[i];
       }
 

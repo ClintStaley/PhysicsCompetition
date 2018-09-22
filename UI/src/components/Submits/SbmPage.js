@@ -106,6 +106,7 @@ console.log("Constructing SbmPage with ", props);
              prms={cmp.prms} sbm={sbm}/>);
          sbmDialog = (<BSubmitModal prms={cmp.prms}
              submitFn={this.state.sbmFunction}/>);
+//reset = {prbDiagram.setState({frame: 0})}/>);
       }
 
       return (<div className="container">
