@@ -41,7 +41,6 @@ public class App {
                for (int c = 0; c < evaluations.length; c++) 
                   handler.response(evaluations[c]);
                
-               System.out.println("Waiting");
             }
             TimeUnit.SECONDS.sleep(1);
          }
@@ -53,14 +52,21 @@ public class App {
    }
 
    private static Evaluator cmpEvaluator(Competition cmp) {
+      Evaluator evl = null;
       switch (cmp.ctpId) {
       case 1:
-         return new LandGrabEvaluator(cmp.prms);
+         evl = new LandGrabEvaluator();
+         evl.setPrms(cmp.prms);
+         break;
       case 2:
-         return new BounceEvaluator(cmp.prms);
+         evl = new BounceEvaluator();
+         evl.setPrms(cmp.prms);
+         return evl;
       default:
-         return new LandGrabEvaluator(cmp.prms);
+         evl = new LandGrabEvaluator();
+         evl.setPrms(cmp.prms);
       }
+      return evl;
    }
 
 }

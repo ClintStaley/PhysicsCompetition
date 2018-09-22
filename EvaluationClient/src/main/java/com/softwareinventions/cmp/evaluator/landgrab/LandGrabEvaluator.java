@@ -46,7 +46,7 @@ public class LandGrabEvaluator implements Evaluator {
    int score;
    static Logger lgr = Logger.getLogger(LandGrabEvaluator.class);
 
-   public LandGrabEvaluator(String prms) {
+   public void setPrms(String prms) {
       try {
          this.prms = mapper.readValue(prms, Parameters.class);
       } catch (Exception e) {

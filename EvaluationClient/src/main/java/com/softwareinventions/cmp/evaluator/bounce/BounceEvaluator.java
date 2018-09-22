@@ -136,7 +136,7 @@ public class BounceEvaluator implements Evaluator {
    static Logger lgr = Logger.getLogger(BounceEvaluator.class);
    private Parameters prms;
 
-   public BounceEvaluator(String prms) {
+   public void setPrms(String prms) {
       try {
          this.prms = mapper.readValue(prms, Parameters.class);
       } catch (Exception e) {
@@ -145,7 +145,7 @@ public class BounceEvaluator implements Evaluator {
    }
 
    // Constructor only for testing this class.
-   private BounceEvaluator() {}
+   public BounceEvaluator() {}
 
    // Evaluate a list of ball speeds comprising a single sbm.
    @Override
