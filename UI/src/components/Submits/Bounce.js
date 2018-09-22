@@ -337,24 +337,31 @@ export class Bounce extends Component {
          hashClass = offs % (graphOffset * 2) === graphOffset ? "graph5" : "graph10";
          grid.push(<line key={"XL" + offs} x1={offs} y1="0" x2={offs} y2={fieldHeight}
           className={hashClass}/>);
-         grid.push(<line key={"YL" + offs} x1="0" y1={offs} x2={fieldLength} y2={offs}
+         grid.push(
+          <line key={"YL" + offs} x1="0" y1={offs} x2={fieldLength} y2={offs}
           className={hashClass}/>);
       }
 
       // Obstacle rectangles
       obstacles = [];
       prms.obstacles.forEach((rect, idx) => {
-         obstacles.push(<rect key={"R"+idx} x={rect.loX} y={fieldHeight-rect.hiY}
+         obstacles.push(
+          <rect key={"R"+idx} x={rect.loX} y={fieldHeight-rect.hiY}
           width={rect.hiX - rect.loX} height={rect.hiY - rect.loY}
-          className= {this.state.obstacleStatus[idx] ? "platform" : "hitPlatform"}/>);
+          className= {this.state.obstacleStatus[idx] ? "platform" :
+          "hitPlatform"}/>);
 
-         obstacles.push(<text key={"UL"+idx} x={rect.loX} y={fieldHeight-rect.hiY+2}
+         obstacles.push(
+          <text key={"UL"+idx} x={rect.loX} y={fieldHeight-rect.hiY+2}
           className="text">{"(" + rect.loX + "," + rect.hiY + ")"}</text>);
-         obstacles.push(<text key={"UR"+idx} x={rect.hiX} y={fieldHeight-rect.hiY+2}
+         obstacles.push(
+          <text key={"UR"+idx} x={rect.hiX} y={fieldHeight-rect.hiY+2}
           className="rhsText">{"(" + rect.hiX + "," + rect.hiY + ")"}</text>);
-         obstacles.push(<text key={"LL"+idx} x={rect.loX} y={fieldHeight-rect.loY}
+         obstacles.push(
+          <text key={"LL"+idx} x={rect.loX} y={fieldHeight-rect.loY}
           className="text">{"(" + rect.loX + "," + rect.loY + ")"}</text>);
-         obstacles.push(<text key={"LR"+idx} x={rect.hiX} y={fieldHeight-rect.loY}
+         obstacles.push(
+          <text key={"LR"+idx} x={rect.hiX} y={fieldHeight-rect.loY}
           className="rhsText">{"(" + rect.hiX + "," + rect.loY + ")"}</text>);
       });
 
@@ -532,7 +539,8 @@ class BallArc extends Component {
        props.startTime + props.event.time > props.currentTime)
          return true;
 
-      //returns true iff current time is after arcx start, and before arc end time
+      //returns true iff current time is after arc start,
+      //and before arc end time
       return (nextProps.currentTime >= props.startTime + props.event.time) ||
        (props.currentTime <= props.endTime + props.startTime);
    }
@@ -558,7 +566,8 @@ class BallArc extends Component {
           r = {1}
           className={"ball faded " + color}/>);
 
-      var startTime = (Math.ceil(event.time * props.frameRate) / props.frameRate);
+      var startTime =
+       (Math.ceil(event.time * props.frameRate) / props.frameRate);
 
       for (var timer = startTime - event.time;
        timer < props.endTime - event.time; timer += 1.0/props.frameRate ){
