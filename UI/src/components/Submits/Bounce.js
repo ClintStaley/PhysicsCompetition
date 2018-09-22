@@ -38,8 +38,6 @@ export class BSubmitModal extends Component {
    }
 
    //valid iff speed is a number, and greater than 0
-   // CAS FIX: If this is only for internal use, return a boolean, e.g.
-   // return ball.speed && Number.parseFloat(ball.speed) >= 0
    getSingleValidationState = (idx) => {
       var ball = this.state.balls[idx];
       var val = Number.parseFloat(ball.speed);
@@ -61,11 +59,11 @@ export class BSubmitModal extends Component {
 
    //remove one text box
    removeBall = () => {
-      var balls = this.state.balls.splice(0);  // Can't you "pop" with a splice?
+      var newBalls = this.state.balls.splice(0);
 
-      balls.pop();
+      newBalls.pop();
 
-      this.setState({balls: balls});
+      this.setState({balls: newBalls});
    }
 
    //close, submist iff status is OK, closes modal no matter what
@@ -334,8 +332,10 @@ export class Bounce extends Component {
       // Heavy cross hatches every 10 meters, with light cross hatches between
       grid = [];
       for (offs = graphOffset; offs < longerSide; offs += graphOffset) {
-         hashClass = offs % (graphOffset * 2) === graphOffset ? "graph5" : "graph10";
-         grid.push(<line key={"XL" + offs} x1={offs} y1="0" x2={offs} y2={fieldHeight}
+         hashClass = offs % (graphOffset * 2) ===
+          graphOffset ? "graph5" : "graph10";
+         grid.push(
+          <line key={"XL" + offs} x1={offs} y1="0" x2={offs} y2={fieldHeight}
           className={hashClass}/>);
          grid.push(
           <line key={"YL" + offs} x1="0" y1={offs} x2={fieldLength} y2={offs}
