@@ -41,9 +41,9 @@ public class App {
                for (int c = 0; c < evaluations.length; c++) 
                   handler.response(evaluations[c]);
                
-               
-               TimeUnit.SECONDS.sleep(1);
+               System.out.println("Waiting");
             }
+            TimeUnit.SECONDS.sleep(1);
          }
       } catch (Exception e) {
          System.out.println(e.getMessage());
