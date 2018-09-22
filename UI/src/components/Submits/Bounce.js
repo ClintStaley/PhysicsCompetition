@@ -21,10 +21,10 @@ export class Bounce extends Component {
       this.state = {
          sbmConfirm: null, // Function to post current submission
          ballPos: null
-      }
+      };
    }
 
-   intervalID;      // Timer ID of interval timer
+   intervalID = 0;      // Timer ID of interval timer
    frameRate = 24;  // Frames per second to display
    frame = 0;
    G = 9.80665;
