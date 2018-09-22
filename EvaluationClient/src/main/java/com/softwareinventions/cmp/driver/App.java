@@ -13,8 +13,8 @@ import com.softwareinventions.cmp.evaluator.landgrab.LandGrabEvaluator;
 
 public class App {
    final static String url = "http://localhost:3000";
-   String[] CompetitionTypes = { "Territory Grab", "Rocket Slalom" };
-   static Logger Lgr = Logger.getLogger(App.class);
+   String[] competitionTypes = { "Territory Grab", "Rocket Slalom" };
+   static Logger lgr = Logger.getLogger(App.class);
 
    public static void main(String[] args) {
       String arg = "-";
@@ -29,7 +29,7 @@ public class App {
 
          while (true) {
             Competition[] cmps = handler.getCmps();
-            Lgr.info("Getting all compeitions");
+            lgr.info("Getting all compeitions");
 
             for (int i = 0; i < cmps.length; i++) {
                Evaluator evaluator = cmpEvaluator(cmps[i]);

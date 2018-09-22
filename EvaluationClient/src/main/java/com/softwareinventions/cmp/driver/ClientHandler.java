@@ -23,7 +23,7 @@ import org.apache.log4j.Logger;
 public class ClientHandler {
    private Client client;
    private String url;
-   static Logger Lgr = Logger.getLogger(ClientHandler.class);
+   static Logger lgr = Logger.getLogger(ClientHandler.class);
 
    public ClientHandler(String url) {
       this.url = url;
@@ -66,7 +66,7 @@ public class ClientHandler {
       prs.email = "adm@11.com";
       prs.password = "password";
 
-      Lgr.info("Logging in " + prs.email);
+      lgr.info("Logging in " + prs.email);
       ClientResponse response = client.resource(url + "/Ssns")
             .type("application/json").post(ClientResponse.class, prs);
 
@@ -103,7 +103,7 @@ public class ClientHandler {
          if (response.getStatus() == 200)
             result = type == null ? null : response.getEntity(type);
          else {
-            Lgr.info(response.getEntity(String.class));
+            lgr.info(response.getEntity(String.class));
 
             throw new EVCException(String.format("Error code %d on resource %s",
                   response.getStatus(), response.getLocation()));

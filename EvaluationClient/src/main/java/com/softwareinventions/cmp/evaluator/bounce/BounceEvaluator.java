@@ -2,13 +2,16 @@ package com.softwareinventions.cmp.evaluator.bounce;
 
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+import java.util.OptionalDouble;
+import java.util.stream.Stream;
 
 import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
 import org.apache.commons.math3.analysis.solvers.LaguerreSolver;
 import org.apache.commons.math3.complex.Complex;
 import org.apache.log4j.Logger;
-
 import com.softwareinventions.cmp.dto.Submit;
 import com.softwareinventions.cmp.evaluator.Evaluator;
 import com.softwareinventions.cmp.evaluator.Evl;
@@ -17,6 +20,7 @@ import com.softwareinventions.cmp.util.GenUtil;
 
 public class BounceEvaluator implements Evaluator {
    // Constants
+   public static final double WORLD_LENGTH = 100.0;
    public static final double STARTING_HEIGHT = 100.0;
    public static final double GRAVITY = -9.80665;
    public static final double RADIUS = 1;
@@ -60,24 +64,23 @@ public class BounceEvaluator implements Evaluator {
       public Obstacle[] obstacles; // Obstacles to hit
    }
    
-   private static class ballEquations {
+   private static class BallEquations {
       public UnivariateFunction xPos;
       public UnivariateFunction yPos;
       public UnivariateFunction xVelocity;
       public UnivariateFunction yVelocity;
       
-      public ballEquations(BounceEvent current) {
-         double curTime = current.time;
+      public BallEquations(BounceEvent current) {
          
          // X position function
-         xPos = t -> (t - curTime) * current.velocityX + current.posX;
+         xPos = t -> (t ) * current.velocityX + current.posX;
          // X velocity function
          xVelocity = t  -> current.velocityX;
          // Y position function
-         yPos = t -> GRAVITY / 2.0 * GenUtil.sqr((t - curTime)) + 
-               current.velocityY * (t - curTime) + current.posY;
+         yPos = t -> GRAVITY / 2.0 * GenUtil.sqr((t )) + 
+               current.velocityY * (t ) + current.posY;
          // Y velocity function
-         yVelocity = t -> 2 * GRAVITY / 2.0 * (t - curTime) + current.velocityY;
+         yVelocity = t -> GRAVITY * (t ) + current.velocityY;
       }
    }
 
@@ -114,14 +117,14 @@ public class BounceEvaluator implements Evaluator {
       // velocity.
       public BounceEvent(BounceEvent current, double time) {
          // Get all equations.
-         ballEquations ballFunctions = new ballEquations(current);
+         BallEquations ballFunctions = new BallEquations(current);
 
          obstacleIdx = -1;
+         this.time = time + current.time;
          posX = ballFunctions.xPos.value(time);
          velocityX = ballFunctions.xVelocity.value(time);
          posY = ballFunctions.yPos.value(time);
          velocityY = ballFunctions.yVelocity.value(time);
-         this.time = time + current.time;
       }
    }
 
@@ -190,6 +193,7 @@ public class BounceEvaluator implements Evaluator {
             mapper.writeValueAsString(rspB), score));
 
       lgr.info("Graded Bounce Sbm# " + eval.sbmId);
+      System.out.println("Graded Bounce Sbm# " + eval.sbmId);
 
       return eval;
    }
@@ -200,12 +204,13 @@ public class BounceEvaluator implements Evaluator {
       LinkedList<BounceEvent> ballEvents = new LinkedList<BounceEvent>();
       ballEvents.add(StartingPoint);
 
-      Collision nextCollision = getNextCollision(obstacles, StartingPoint);
+      Optional<Collision> nextCollision = 
+            getNextCollision(obstacles, StartingPoint);
 
       // Loops until there are no more collisions calculated.
-      while (nextCollision != null) {
-         ballEvents
-               .add(calculateBallColision(ballEvents.getLast(), nextCollision));
+      while (nextCollision.isPresent()) {
+         ballEvents.add(calculateBallColision(ballEvents.getLast(),
+               nextCollision.get()));
 
          nextCollision = getNextCollision(obstacles, ballEvents.getLast());
       }
@@ -243,8 +248,8 @@ public class BounceEvaluator implements Evaluator {
          double magnitude = dx * newBallEvent.velocityX
                + dy * newBallEvent.velocityY;
 
-         newBallEvent.velocityX = current.velocityX + (-2.0 * magnitude * dx);
-         newBallEvent.velocityY = current.velocityY + (-2.0 * magnitude * dy);
+         newBallEvent.velocityX = newBallEvent.velocityX + (-2.0 * magnitude * dx);
+         newBallEvent.velocityY = newBallEvent.velocityY + (-2.0 * magnitude * dy);
 
          newBallEvent.obstacleIdx = collision.obstacleIdx;
          break;
@@ -253,7 +258,7 @@ public class BounceEvaluator implements Evaluator {
          return null;
 
       }
-
+      
       lgr.info("Obstacle Hit is: " + newBallEvent.obstacleIdx);
       return newBallEvent;
    }
@@ -264,14 +269,18 @@ public class BounceEvaluator implements Evaluator {
       double xOutOfBounds;
 
       // Solve for y, as the ball goes one radius below the lower bound.
-      double yOutOfBounds = quadraticSolution(GRAVITY / 2.0, current.velocityY,
-            current.posY + RADIUS);
+      double[] possibleYOutOfBounds = quadraticSolution
+            (GRAVITY / 2.0, current.velocityY, current.posY + RADIUS);
+      
+      double yOutOfBounds = possibleYOutOfBounds[0] >= 0.0 ? 
+            possibleYOutOfBounds[0] : possibleYOutOfBounds[1];
+      
 
       // Solve for x + radius out of bounds.
       if (current.velocityX < 0.0)
          xOutOfBounds = (-RADIUS - current.posX) / current.velocityX;
       else if (current.velocityX > 0.0)
-         xOutOfBounds = (100.0 + RADIUS - current.posX) / current.velocityX;
+         xOutOfBounds = (WORLD_LENGTH + RADIUS - current.posX) / current.velocityX;
       else
          xOutOfBounds = Double.MAX_VALUE;
 
@@ -280,61 +289,43 @@ public class BounceEvaluator implements Evaluator {
       return new BounceEvent(current, boundsTime);
    }
 
-   // Return the next collision that occurs, and delete the obstacle.
-   public Collision getNextCollision(LinkedList<Obstacle> obstacles,
-         BounceEvent current) {
-
-      // Create an array of collisions, so we can check all obstacles.
-      Collision[] collisions = new Collision[obstacles.size()];
-
-      // Check all obstacles for a collision.
-      for (int i = 0; i < collisions.length; i++) {
-         collisions[i] = getobstacleCollision(obstacles.get(i), current);
-      }
-
-      Collision firstCollision = getFirstCollision(collisions);
-
-      if (firstCollision != null) {
-         for (Obstacle obstacle : obstacles) {
-            if (obstacle.obstacleId == firstCollision.obstacleIdx) {
-               obstacles.remove(obstacle);
-               break;
-            }
-         }
-      }
-
-      return firstCollision;
+   //calculates next collision that occurs
+   public Optional<Collision> getNextCollision(List<Obstacle> obstacles,
+         BounceEvent evt) {
+      Optional<Collision> rtn =
+            obstacles.stream().map(o -> getObstacleCollision(o, evt))
+            .filter(c -> c != null)
+            .min((c1, c2) -> Double.compare(c1.time, c2.time));
+      
+      if (rtn.isPresent())
+         obstacles.removeIf(o -> o.obstacleId == rtn.get().obstacleIdx);
+      
+      return rtn;
    }
-
+   
    // Calculates and return the first Collision of the ball with |obstacle|,
-   // or null if there is no collision. 
-   private Collision getobstacleCollision(Obstacle obstacle,
-         BounceEvent current) {
-      Collision[] collisions = new Collision[8];
-
-      // Check horizontal edge collisions.
-      collisions[0] = getHorizontalEdgeCollision(obstacle.loX, obstacle.hiX,
-            obstacle.hiY + RADIUS, current);
-      collisions[1] = getHorizontalEdgeCollision(obstacle.loX, obstacle.hiX,
-            obstacle.loY - RADIUS, current);
-
-      // Check vertical edge collisions.
-      collisions[2] = getVerticalEdgeCollision(obstacle.loY, obstacle.hiY,
-            obstacle.hiX + RADIUS, current);
-      collisions[3] = getVerticalEdgeCollision(obstacle.loY, obstacle.hiY,
-            obstacle.loX - RADIUS, current);
-
-      // Check all corners for collisions.
-      collisions[4] = getCornerCollision(obstacle.hiX, obstacle.hiY, current);
-      collisions[5] = getCornerCollision(obstacle.hiX, obstacle.loY, current);
-      collisions[6] = getCornerCollision(obstacle.loX, obstacle.hiY, current);
-      collisions[7] = getCornerCollision(obstacle.loX, obstacle.loY, current);
-
-      Collision firsCollision = getFirstCollision(collisions);
-      if (firsCollision != null)
-         firsCollision.obstacleIdx = obstacle.obstacleId;
-
-      return firsCollision;
+   // or null if there is no collision.
+   private Collision getObstacleCollision(Obstacle obs,
+         BounceEvent evt) {
+      Optional<Collision> rtn = Stream.of(
+         getHorizontalEdgeCollision(obs.loX, obs.hiX, obs.hiY + RADIUS, evt),
+         getHorizontalEdgeCollision(obs.loX, obs.hiX, obs.loY - RADIUS, evt),
+         getVerticalEdgeCollision(obs.loY, obs.hiY, obs.hiX + RADIUS, evt),
+         getVerticalEdgeCollision(obs.loY, obs.hiY, obs.loX - RADIUS, evt),
+         getCornerCollision(obs.hiX, obs.hiY, evt),
+         getCornerCollision(obs.hiX, obs.loY, evt),
+         getCornerCollision(obs.loX, obs.hiY, evt),
+         getCornerCollision(obs.loX, obs.loY, evt))
+      .filter(c -> c != null)
+      .min((c1, c2) -> Double.compare(c1.time, c2.time));
+      
+      if (rtn.isPresent()) {
+         rtn.get().obstacleIdx = obs.obstacleId;
+         System.out.println("Best Time is: " + rtn.get().time);
+         return rtn.get();
+      }
+      
+      return null;
    }
 
    // Calculate and return the Collision between the ball and the horizontal
@@ -343,25 +334,30 @@ public class BounceEvaluator implements Evaluator {
    private Collision getHorizontalEdgeCollision(double loX, double hiX,
          double y, BounceEvent current) {
       // Get equations for event.
-      ballEquations equations = new ballEquations(current);
-
+      BallEquations equations = new BallEquations(current);
+      
       // Get time when y value will be lined up with edge.
-      double yHitTime = quadraticSolution(GRAVITY / 2.0, current.velocityY,
+      double[] yHitTimes = quadraticSolution(GRAVITY / 2.0, current.velocityY,
             current.posY - y);
-
-      // Throw out negative times.
-      if (yHitTime == Double.MAX_VALUE)
+      
+      if (yHitTimes == null)
          return null;
 
-      // Calculate x value at time of collision.
-      double xValue = equations.xPos.value(yHitTime);
-
-      if (GenUtil.inBounds(loX, xValue, hiX)) {
-         // We have a hit on the horizontal edge.
-         Collision collision = new Collision(yHitTime,
-               Collision.HitType.HORIZONTAL, -1, -1);
-
-         return collision;
+      for (int idx = 0; idx < yHitTimes.length; idx++) {
+         // Throw out negative times.
+         if (yHitTimes[idx] < 0.0)
+            continue;
+         
+         // Calculate x value at time of collision.
+         double xValue = equations.xPos.value(yHitTimes[idx]);
+         
+         if (GenUtil.inBounds(loX, xValue, hiX)) {
+            // We have a hit on the horizontal edge.
+            Collision collision = new Collision(yHitTimes[idx],
+                  Collision.HitType.HORIZONTAL, -1, -1);
+            
+            return collision;
+         }
       }
 
       return null;
@@ -373,11 +369,11 @@ public class BounceEvaluator implements Evaluator {
    private Collision getVerticalEdgeCollision(double loY, double hiY, double x,
          BounceEvent current) {
       // Get equations for event.
-      ballEquations equations = new ballEquations(current);
+      BallEquations equations = new BallEquations(current);
 
       // Get time when x value will be lined up with edge.
       double xHitTime = (x - current.posX) / current.velocityX;
-
+      
       // Throw out negative times.
       if (xHitTime < 0)
          return null;
@@ -388,7 +384,7 @@ public class BounceEvaluator implements Evaluator {
       if (GenUtil.inBounds(loY, yValue, hiY)) {
          Collision collision = new Collision(xHitTime,
                Collision.HitType.VERTICAL, -1, -1);
-
+         
          return collision;
       }
 
@@ -405,46 +401,29 @@ public class BounceEvaluator implements Evaluator {
       Complex[] solutions = new LaguerreSolver().solveAllComplex
         (cornerEquation.getCoefficients(), 0);
 
-      Double timeOfImpact = findUsefulSolution(current.time, solutions);
+      OptionalDouble timeOfImpact = findUsefulSolution(current.time, solutions);
 
       // We hit a corner
-      if (timeOfImpact != null) {
-         Collision collision = new Collision(timeOfImpact,
+      if (timeOfImpact.isPresent()) {
+         Collision collision = new Collision(timeOfImpact.getAsDouble(),
                Collision.HitType.CORNER, x, y);
-
+         
          return collision;
       }
 
       return null;
    }
 
-   // Return the first collision in |collisions|, ignoring nulls.
-   private Collision getFirstCollision(Collision[] collisions) {
-      Collision firstCollision = null;
-
-      for (int i = 0; i < collisions.length; i++)
-         if (collisions[i] != null)
-            if (firstCollision == null
-                  || firstCollision.time > collisions[i].time)
-               firstCollision = collisions[i];
-
-      return firstCollision;
-   }
 
    // Helper for the LaguerreSolver, returns the lowest time in |solutions|
-   // that is greater than currentTime and not a complex number, or return NULL
+   // that is greater than curTime and not a complex number, or return NULL
    // if none is found.
-   public Double findUsefulSolution(double currentTime, Complex[] solutions) {
-      Double lowestTime = null;
+   public OptionalDouble findUsefulSolution(double curTime,
+         Complex[] solutions) {
 
-      for (int i = 0; i < solutions.length; i++)
-         if (Math.abs(solutions[i].getImaginary()) < EPS)
-            if ((solutions[i].getReal() > currentTime
-                  && (lowestTime == null
-                        || lowestTime.doubleValue() > solutions[i].getReal())))
-               lowestTime = solutions[i].getReal();
-
-      return lowestTime;
+      return Arrays.stream(solutions).filter
+            (s -> Math.abs(s.getImaginary()) < EPS && s.getReal() > curTime)
+            .mapToDouble(s -> s.getReal()).min();
    }
 
    /* Return a PolynomialFunction whose real roots give the times at which the
@@ -523,26 +502,24 @@ public class BounceEvaluator implements Evaluator {
       return ballFunctions;
    }
 
-   // Return lowest positive real root, or Double.MAX_VALUE if no root
-   // qualifies.
-   public static double quadraticSolution(double a, double b, double c) {
+   // Return solutions to the quadratic equation as an array of doubles, in 
+   // ascending order, if no solutions exist returns null.
+   public static double[] quadraticSolution(double a, double b, double c) {
       double d = b * b - 4 * a * c;
       double root1;
       double root2;
+      double[] solution = null;
 
       if (d >= 0) {
          root1 = (-b + Math.sqrt(d)) / (2 * a);
          root2 = (-b - Math.sqrt(d)) / (2 * a);
-         if (root1 >= 0 || root2 >= 0)
-            if (root2 < 0)
-               return root1;
-            else if (root1 < 0)
-               return root2;
-            else
-               return Math.min(root1, root2);
+         
+         solution = new double[2];
+         solution[0] = Math.min(root1, root2);
+         solution[1] = Math.max(root1, root2);
       }
 
-      return Double.MAX_VALUE;
+      return solution;
    }
 
    // Tester main, used only to test functions
@@ -552,9 +529,9 @@ public class BounceEvaluator implements Evaluator {
       Obstacle plat = new Obstacle();
 
       plat.hiX = 60;
-      plat.loX = 50;
-      plat.hiY = 10;
-      plat.loY = 0;
+      plat.loX = 0;
+      plat.hiY = 25;
+      plat.loY = 20;
       plat.obstacleId = 0;
 
       obstacles.add(plat);
@@ -562,12 +539,12 @@ public class BounceEvaluator implements Evaluator {
       BounceEvent start = new BounceEvent(STARTING_HEIGHT, 10);
       start.posX = 10;
       start.posY = 10;
-      start.velocityX = 5;
-      start.velocityY = 50;
+      start.velocityX = 0;
+      start.velocityY = 0;
 
       BounceEvaluator eval = new BounceEvaluator();
 
-      Collision testCollision = eval.getobstacleCollision(plat, start);
+      Collision testCollision = eval.getObstacleCollision(plat, start);
 
       if (testCollision != null) {
          System.out.println(testCollision.hType);
