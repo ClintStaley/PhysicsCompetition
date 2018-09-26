@@ -1,6 +1,6 @@
 package com.softwareinventions.cmp.evaluator.landgrab;
 
-import com.softwareinventions.cmp.driver.App;
+import com.softwareinventions.cmp.driver.EVCThread;
 import com.softwareinventions.cmp.dto.Submit;
 import com.softwareinventions.cmp.evaluator.Evaluator;
 import com.softwareinventions.cmp.evaluator.Evl;
