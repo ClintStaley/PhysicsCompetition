@@ -1,20 +1,23 @@
 package com.softwareinventions.cmp.driver;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 import com.softwareinventions.cmp.dto.Competition;
+import com.softwareinventions.cmp.dto.CompetitionType;
 import com.softwareinventions.cmp.evaluator.Evaluator;
 import com.softwareinventions.cmp.evaluator.EvlPut;
 import com.softwareinventions.cmp.evaluator.bounce.BounceEvaluator;
 import com.softwareinventions.cmp.evaluator.landgrab.LandGrabEvaluator;
 
-public class App {
+public class EVCThread {
    final static String url = "http://localhost:3000";
-   String[] competitionTypes = { "Territory Grab", "Rocket Slalom" };
-   static Logger lgr = Logger.getLogger(App.class);
+   static Map<Integer, CompetitionType> compTypes;
+   static Logger lgr = Logger.getLogger(EVCThread.class);
 
    public static void main(String[] args) {
       String arg = "-";
@@ -23,10 +26,16 @@ public class App {
          LogManager.resetConfiguration();
       
       try {
-
          ClientHandler handler = new ClientHandler(url);
          EvlPut[] evaluations;
 
+         CompetitionType[] competitionTypes = handler.getAllCompetitionTypes();
+         compTypes = 
+               new HashMap<Integer, CompetitionType>(competitionTypes.length);
+         
+         for (int i = 0; i < competitionTypes.length; i++)
+            compTypes.put(competitionTypes[i].id, competitionTypes[i]);
+         
          while (true) {
             Competition[] cmps = handler.getCmps();
             lgr.info("Getting all compeitions");
@@ -41,9 +50,8 @@ public class App {
                for (int c = 0; c < evaluations.length; c++) 
                   handler.response(evaluations[c]);
                
-               
-               TimeUnit.SECONDS.sleep(1);
             }
+            TimeUnit.SECONDS.sleep(1);
          }
       } catch (Exception e) {
          System.out.println(e.getMessage());
@@ -52,15 +60,20 @@ public class App {
 
    }
 
-   private static Evaluator cmpEvaluator(Competition cmp) {
-      switch (cmp.ctpId) {
-      case 1:
-         return new LandGrabEvaluator(cmp.prms);
-      case 2:
-         return new BounceEvaluator(cmp.prms);
-      default:
-         return new LandGrabEvaluator(cmp.prms);
-      }
+   private static Evaluator cmpEvaluator(Competition cmp) throws Exception {
+      Evaluator evl = null;
+      String ctpName = compTypes.get(cmp.ctpId).codeName;
+      
+      if (ctpName.equals("LandGrab"))
+         evl = new LandGrabEvaluator();
+      else if (ctpName.equals("Bounce"))
+         evl = new BounceEvaluator();
+      else
+         throw new
+               Exception("Competition Type: " + ctpName + " does not exist");
+
+      evl.setPrms(cmp.prms);
+      return evl;
    }
 
 }

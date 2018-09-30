@@ -1,6 +1,6 @@
 package com.softwareinventions.cmp.evaluator.landgrab;
 
-import com.softwareinventions.cmp.driver.App;
+import com.softwareinventions.cmp.driver.EVCThread;
 import com.softwareinventions.cmp.dto.Submit;
 import com.softwareinventions.cmp.evaluator.Evaluator;
 import com.softwareinventions.cmp.evaluator.Evl;
@@ -46,7 +46,7 @@ public class LandGrabEvaluator implements Evaluator {
    int score;
    static Logger lgr = Logger.getLogger(LandGrabEvaluator.class);
 
-   public LandGrabEvaluator(String prms) {
+   public void setPrms(String prms) {
       try {
          this.prms = mapper.readValue(prms, Parameters.class);
       } catch (Exception e) {
