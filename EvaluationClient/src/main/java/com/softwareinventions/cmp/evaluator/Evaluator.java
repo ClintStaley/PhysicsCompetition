@@ -22,5 +22,7 @@ public interface Evaluator {
       return evaluations;
    }
    
+   public void setPrms(String prms);
+   
    public EvlPut evaluate(Submit sbm) throws Exception;
 }
