@@ -38,12 +38,12 @@ public class GraderClientManager extends Thread {
       int numThreads = Integer.parseInt(properties.getProperty("threads"));
 
       evcThreads = new EVCThread[numThreads];
-      ihsPath = properties.getProperty("IHS.path");
-      ihsUser = properties.getProperty("IHS.user");
-      ihsPass = properties.getProperty("IHS.pass");
+      ihsPath = properties.getProperty("EVC.path");
+      ihsUser = properties.getProperty("EVC.user");
+      ihsPass = properties.getProperty("EVC.pass");
       basename = properties.getProperty("name");
       relaxedHTTPS =
-       Boolean.parseBoolean(properties.getProperty("IHS.relaxedHTTPS"));
+       Boolean.parseBoolean(properties.getProperty("EVC.relaxedHTTPS"));
 
       for (int i = 0; i < numThreads; i++) {
          evcThreads[i] = createGdc(i);
@@ -152,7 +152,7 @@ public class GraderClientManager extends Thread {
       try {
          //what does this do?
          System.setProperty("log4j.configuration",
-         raderClientManager.class.getResource("log4j.properties").toString());
+         GraderClientManager.class.getResource("log4j.properties").toString());
          
          //This HAS to happen after loading log4j config for the logger to work
          lgr = Logger.getLogger(GraderClientManager.class);

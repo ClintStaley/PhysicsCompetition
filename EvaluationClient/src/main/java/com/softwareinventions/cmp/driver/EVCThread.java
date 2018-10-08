@@ -7,6 +7,7 @@ import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
 
+import java.net.URISyntaxException;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
@@ -23,15 +24,21 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.NotAuthorizedException;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Response;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.JerseyClientBuilder;
+import org.glassfish.jersey.client.proxy.WebResourceFactory;
 
 import com.softwareinventions.cmp.dto.Competition;
 import com.softwareinventions.cmp.dto.CompetitionType;
@@ -39,6 +46,9 @@ import com.softwareinventions.cmp.evaluator.Evaluator;
 import com.softwareinventions.cmp.evaluator.EvlPut;
 import com.softwareinventions.cmp.evaluator.bounce.BounceEvaluator;
 import com.softwareinventions.cmp.evaluator.landgrab.LandGrabEvaluator;
+import com.softwareinventions.cmp.util.EVCException;
+
+import RESTProxy.SessionResource;
 
 public class EVCThread extends Thread  {
    
@@ -53,16 +63,25 @@ public class EVCThread extends Thread  {
    private boolean proceed = true;
    private Date lastRan;
    
+   public final SessionManager ssnMgr;
+   private SessionResource ssnsProxy;
    
    final static String url = "http://localhost:3000";
    static Map<Integer, CompetitionType> compTypes;
    
-   public EVCThread(Client client, String ihsPath, String ihsUser,
-         String ihsPass, String name, String[] ptps) {
-     if (client == null)
-        client = ClientBuilder.newClient();
-     
-     WebTarget target = client.target(ihsPath);
+   public EVCThread(Client client, String evcPath, String evcUser,
+         String evcPass, String name) {
+      if (client == null)
+         client = ClientBuilder.newClient();
+      
+      System.out.println(evcPath);
+      WebTarget target = client.target(evcPath);
+      
+      //WebResource
+      ssnsProxy = 
+       WebResourceFactory.newResource(SessionResource.class, target);
+
+      ssnMgr = new SessionManager(evcUser, evcPass, name);
   }
 
    public void shutdown() {
@@ -71,6 +90,41 @@ public class EVCThread extends Thread  {
    
    //For debugging and watchdog purposes
    public Date getLastRan() {return lastRan;}
+   
+   //Session Manager
+   public class SessionManager {
+      // Information necessary to register with IHS.
+      private final String evcUser;
+      private final String evcPass;
+      private final String name;
+
+      // State for current session and registration with IHS.
+      private int gdcId;
+
+      public SessionManager(String evcUser, String evcPass, String name) {
+         this.evcUser = evcUser;
+         this.evcPass = evcPass;
+         this.name = name;
+      }
+
+      /**
+       * Log in to the IHS server.
+       */
+      public void login() throws URISyntaxException, EVCException {
+         check(ssnsProxy.login(new SessionResource.SsnPost(evcUser, evcPass)));
+         lgr.info("Logged in as " + evcUser);
+      }
+
+      public void logout() throws EVCException {
+         check(ssnsProxy.logoutUser(new SessionResource.SsnPost(evcUser, "")));
+         lgr.info("Logged out");
+      }
+
+      public int getGdcId() {
+         return gdcId;
+      }
+   }
+   //Session Manager
    
    public static Client createAllTrustingClient()
          throws GeneralSecurityException {
@@ -122,17 +176,71 @@ public class EVCThread extends Thread  {
        .property(ClientProperties.SUPPRESS_HTTP_COMPLIANCE_VALIDATION, true);
     
       // Use the damn clientConfig to (gasp, finally) return a trusting Client
-         return JerseyClientBuilder.newClient(clientConfig);
+         return ClientBuilder.newClient(clientConfig);
    }
 
 
-   public static void main(String[] args) {
+
+   
+   /**
+    * Check the status code, then close the response.
+    */
+   private static Response check(Response response) {
+      checkStatus(response);
+      response.close();
+      return response;
+   }
+   
+   private static Response checkStatus(Response response) {
+      String errMsgs = null;
+      
+      switch (Response.Status.fromStatusCode(response.getStatus())) {
+         case OK:
+            return response;
+         case UNAUTHORIZED:
+            response.close();
+            throw new NotAuthorizedException("");
+         case BAD_REQUEST:
+            if (response.getEntity() != null)
+               errMsgs = response.readEntity(String.class);
+            lgr.error(errMsgs);
+            
+            response.close();
+            throw new BadRequestException();
+         default:
+            response.close();
+            throw new WebApplicationException(response);
+      }
+   }
+   
+   @Override
+   public void run() {
+
+      while (proceed) {
+         try {
+            lastRan = new Date();
+            
+            ssnMgr.login();
+            
+            test();
+         }
+         catch (NotAuthorizedException e) {
+            lgr.error("Not Authorized Error\n", e);
+         }
+         catch (Exception e) {
+            lgr.error("General error\n", e);
+         }
+      }
+   }
+   
+   public void test() {
       String arg = "-";
       
       if (arg.equals("-s"))
          LogManager.resetConfiguration();
       
       try {
+         //just uses old client handler
          ClientHandler handler = new ClientHandler(url);
          EvlPut[] evaluations;
 
@@ -182,5 +290,4 @@ public class EVCThread extends Thread  {
       evl.setPrms(cmp.prms);
       return evl;
    }
-
 }

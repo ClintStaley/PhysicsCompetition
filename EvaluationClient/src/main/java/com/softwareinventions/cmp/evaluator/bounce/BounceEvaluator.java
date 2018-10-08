@@ -136,6 +136,7 @@ public class BounceEvaluator implements Evaluator {
    static Logger lgr = Logger.getLogger(BounceEvaluator.class);
    private Parameters prms;
 
+   @Override
    public void setPrms(String prms) {
       try {
          this.prms = mapper.readValue(prms, Parameters.class);
