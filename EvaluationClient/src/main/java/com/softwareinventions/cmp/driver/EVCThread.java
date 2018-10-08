@@ -37,7 +37,6 @@ import org.apache.log4j.Logger;
 import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
-import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.glassfish.jersey.client.proxy.WebResourceFactory;
 
 import com.softwareinventions.cmp.dto.Competition;
@@ -74,13 +73,18 @@ public class EVCThread extends Thread  {
       if (client == null)
          client = ClientBuilder.newClient();
       
-      System.out.println(evcPath);
       WebTarget target = client.target(evcPath);
       
       //WebResource
       ssnsProxy = 
        WebResourceFactory.newResource(SessionResource.class, target);
 
+      //get rid of these
+      System.out.println(evcPath);
+      System.out.println(evcUser);
+      System.out.println(evcPass);
+      System.out.println(name);
+      
       ssnMgr = new SessionManager(evcUser, evcPass, name);
   }
 
@@ -215,6 +219,7 @@ public class EVCThread extends Thread  {
    
    @Override
    public void run() {
+      System.out.println("Running");
 
       while (proceed) {
          try {
@@ -228,6 +233,7 @@ public class EVCThread extends Thread  {
             lgr.error("Not Authorized Error\n", e);
          }
          catch (Exception e) {
+            e.printStackTrace();
             lgr.error("General error\n", e);
          }
       }
@@ -290,4 +296,6 @@ public class EVCThread extends Thread  {
       evl.setPrms(cmp.prms);
       return evl;
    }
+   
+   
 }
