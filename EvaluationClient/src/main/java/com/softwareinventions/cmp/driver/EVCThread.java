@@ -50,14 +50,7 @@ import com.softwareinventions.cmp.util.EVCException;
 import RESTProxy.SessionResource;
 
 public class EVCThread extends Thread  {
-   
-   private static final int kNoWorkWait = 6000;
-   private static final int kErrorWait = 10000;
-   private static final int kMaxAttTries = 3;
-
    private static Logger lgr = Logger.getLogger(EVCThread.class);
-   
-   private static ReadWriteLock cacheLock = new ReentrantReadWriteLock();
    
    private boolean proceed = true;
    private Date lastRan;
@@ -65,7 +58,10 @@ public class EVCThread extends Thread  {
    public final SessionManager ssnMgr;
    private SessionResource ssnsProxy;
    
-   final static String url = "http://localhost:3000";
+   private String url;
+   private String user;
+   private String pass;
+   
    static Map<Integer, CompetitionType> compTypes;
    
    public EVCThread(Client client, String evcPath, String evcUser,
@@ -79,13 +75,11 @@ public class EVCThread extends Thread  {
       ssnsProxy = 
        WebResourceFactory.newResource(SessionResource.class, target);
 
-      //get rid of these
-      System.out.println(evcPath);
-      System.out.println(evcUser);
-      System.out.println(evcPass);
-      System.out.println(name);
+      url = evcPath;
+      user = evcUser;
+      pass = evcPass;
       
-      ssnMgr = new SessionManager(evcUser, evcPass, name);
+      ssnMgr = new SessionManager(evcUser, evcPass);
   }
 
    public void shutdown() {
@@ -100,15 +94,13 @@ public class EVCThread extends Thread  {
       // Information necessary to register with IHS.
       private final String evcUser;
       private final String evcPass;
-      private final String name;
 
       // State for current session and registration with IHS.
       private int gdcId;
 
-      public SessionManager(String evcUser, String evcPass, String name) {
+      public SessionManager(String evcUser, String evcPass) {
          this.evcUser = evcUser;
          this.evcPass = evcPass;
-         this.name = name;
       }
 
       /**
@@ -225,7 +217,7 @@ public class EVCThread extends Thread  {
          try {
             lastRan = new Date();
             
-            ssnMgr.login();
+            //ssnMgr.login();
             
             test();
          }
@@ -247,7 +239,7 @@ public class EVCThread extends Thread  {
       
       try {
          //just uses old client handler
-         ClientHandler handler = new ClientHandler(url);
+         ClientHandler handler = new ClientHandler(url, user, pass);
          EvlPut[] evaluations;
 
          CompetitionType[] competitionTypes = handler.getAllCompetitionTypes();
