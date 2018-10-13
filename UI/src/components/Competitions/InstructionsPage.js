@@ -2,9 +2,6 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 
 export default class CmpPage extends Component {
-   constructor(props) {
-      super(props);
-   }
 
    componentDidMount = () => {
       var props = this.props;

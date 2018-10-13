@@ -64,7 +64,6 @@ export default class CmpPage extends Component {
 
    orderTeamsByScore = (teams) => {
       //expect an array of team Ids
-      var orderedTeams = [];
       return teams.sort(this.compareTeamsByScore);
    }
 
@@ -96,7 +95,6 @@ export default class CmpPage extends Component {
       if (!props.cmps[cmpId])
          return (<h1>Error loading Competition</h1>)
 
-      var ctpId = props.cmps[cmpId].ctpId;
       var myCmpLink = this.props.myCmpLink;
 
       return (

@@ -33,7 +33,7 @@ export class LGSubmitModal extends Component {
       var cIdx, field, val;
 
       [field, cIdx] = ev.target.id.split(":");
-      cIdx = Number.parseInt(cIdx);
+      cIdx = Number.parseInt(cIdx, 10);
 
       // Require value be string representing positive float
       val = Number.parseFloat(ev.target.value);

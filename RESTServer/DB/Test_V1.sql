@@ -92,7 +92,7 @@ create table Membership (
 );
 
 insert into Person (firstName, lastName, email,       password,   whenRegistered, role)
-            VALUES ("Joe",     "Admin", "adm@11.com", "password", NOW(), 1);
+            VALUES ("Joe",     "Admin", "adm@11.com", "5f4dcc3b5aa765d61d8327deb882cf99", NOW(), 1);
 
 
 insert into CompetitionType (title, codeName, description, tutorial, prmSchema)

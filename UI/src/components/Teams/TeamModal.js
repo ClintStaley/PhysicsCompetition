@@ -24,7 +24,7 @@ export default class TeamModal extends Component {
          }
       });
 
-      this.state = {teamName: team && team.teamName || "", mmbs, leader};
+      this.state = {teamName: (team && team.teamName) || "", mmbs, leader};
 
       this.handleChangeSelect = this.handleChangeSelect.bind(this);
    }

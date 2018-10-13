@@ -16,8 +16,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -211,8 +209,6 @@ public class EVCThread extends Thread  {
    
    @Override
    public void run() {
-      System.out.println("Running");
-
       while (proceed) {
          try {
             lastRan = new Date();
