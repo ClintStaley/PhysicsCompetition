@@ -2,4 +2,5 @@
 **/connection.json
 .idea
 .metadata
+**/.classpath
 npm-debug.log

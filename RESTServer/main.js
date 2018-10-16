@@ -1,4 +1,6 @@
 var express = require('express');
+var http = require('http');
+var https = require('https');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
@@ -12,7 +14,7 @@ var app = express();
 // Manage CORS POS.
 app.use(function(req, res, next) {
    console.log("Handling " + req.path + '/' + req.method);
-   res.header("Access-Control-Allow-Origin", "http://localhost:3001");
+   res.header("Access-Control-Allow-Origin", "http://localhost:8080");
    res.header("Access-Control-Allow-Credentials", true);
    res.header("Access-Control-Allow-Headers", "Content-Type");
    res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
@@ -70,6 +72,7 @@ require('./Routes/Competition/Mmbs'));
 
 // Debugging tool. Clear all table contents, reset all auto_increment
 // keys to 1, and reinsert one admin user.
+if (process.argv.indexOf('-testing') !== -1)
 app.delete('/DB', function (req, res) {
    var resetTables = ["Person", "CompetitionType", "Competition",
     "Team", "Submit", "Membership"];
@@ -93,11 +96,15 @@ app.delete('/DB', function (req, res) {
       };
    }));
 
+   console.log(require("crypto").createHash('md5').update("-admPwd4Pc.").digest('hex'));
+   console.log(require("crypto").createHash('md5').update("password").digest('hex'));
    // Callback to reinsert admin user
    cbs.push(function (cb) {
       req.cnn.query('INSERT INTO Person (firstName, lastName, email,' +
          ' password, whenRegistered, role) VALUES ' +
-         '("Joe", "Admin", "adm@11.com","password", NOW(), 1);', cb);
+         '("Joe", "Admin", "adm@11.com","' +
+         require("crypto").createHash('md5').update("password").digest('hex') +
+         '", NOW(), 1);', cb);
    });
 
    // Callback to reinsert Bounce CompetitionType TEST
@@ -253,7 +260,8 @@ app.use(function (req, res) {
 
 // General error handler.  Send 500 and error body
 app.use(function (err, req, res, next) {
-   res.status(500).json(err);
+   console.log(err);
+   res.status(500).json(err.stack);
    req.cnn && req.cnn.release();
 });
 
@@ -268,6 +276,10 @@ var port = (function () {
    return p;
 })();
 
-app.listen(port, function () {
-   console.log('App Listening on port ' + port);
-});
+
+http.createServer(app).listen(8080, () => console.log("Listening on 8080"));
+https.createServer(app).listen(8443, () => console.log("Listening on 8443"));
+
+//app.listen(port, function () {
+//   console.log('App Listening on port ' + port);
+//})

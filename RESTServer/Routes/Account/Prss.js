@@ -2,6 +2,7 @@ var Express = require('express');
 var Tags = require('../Validator.js').Tags;
 var router = Express.Router({caseSensitive: true});
 var async = require('async');
+var crypto = require("crypto");
 
 router.baseURL = '/Prss';
 
@@ -46,6 +47,7 @@ router.post('/', (req, res) => {
    },
    (prs, fields, cb) => {  // If no duplicates, insert new Person
       if (vld.check(!prs.length, Tags.dupEmail, cb)) {
+         body.password = crypto.createHash('md5').update(body.password).digest('hex');
          body.termsAccepted = body.termsAccepted ? new Date() : null;
          cnn.chkQry('insert into Person set ?', body, cb);
       }
@@ -88,6 +90,14 @@ router.put('/:id', (req, res) => {
    var body = req.body;
    var admin = req.session.isAdmin();
    var cnn = req.cnn;
+
+   if (body.oldPassword)
+      body.oldPassword =
+       crypto.createHash('md5').update(body.oldPassword).digest('hex');
+
+   if (body.password)
+      body.password =
+       crypto.createHash('md5').update(body.password).digest('hex');
 
    async.waterfall([
    (cb) => {

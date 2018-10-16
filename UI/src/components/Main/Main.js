@@ -6,7 +6,10 @@ import { Navbar, Nav, NavItem, ListGroup, ListGroupItem } from 'react-bootstrap'
 import { LinkContainer } from 'react-router-bootstrap';
 import './Main.css';
 
-const Home = (<h1>Home Page</h1>); // TODO make real home component
+const Home = (
+   <div width="100%" height="100%">
+     <img  src="PhysicsCompetitionHomePicture.png" alt="PhysicsCompetition" width="100%" height="100%"/>
+  </div>); // TODO make real home component
 
 class Main extends Component {
    signedIn() {

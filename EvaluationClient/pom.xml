@@ -57,7 +57,25 @@
             <artifactId>commons-math3</artifactId>
             <version>3.6.1</version>
         </dependency>
+        
+        <dependency>
+		    <groupId>org.apache.httpcomponents</groupId>
+		    <artifactId>httpclient</artifactId>
+		    <version>4.5</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.glassfish.jersey.connectors</groupId>
+		    <artifactId>jersey-apache-connector</artifactId>
+		    <version>2.27</version>
+		</dependency>
     
+        <dependency>
+		    <groupId>org.glassfish.jersey.ext</groupId>
+		    <artifactId>jersey-proxy-client</artifactId>
+		    <version>2.27</version>
+		</dependency>
+
 	</dependencies>
 	
 	
@@ -84,6 +102,20 @@
                 </execution>
             </executions>
         </plugin>
+        
+        <plugin>
+    <artifactId>maven-assembly-plugin</artifactId>
+    <configuration>
+        <archive>
+            <manifest>
+                <mainClass>com.inventory.gui.InventoryApp</mainClass>
+            </manifest>
+        </archive>
+        <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+        </descriptorRefs>
+    </configuration>
+</plugin>
     </plugins>
         
     <pluginManagement>
@@ -99,6 +131,8 @@
             </plugin>
         </plugins>
     </pluginManagement>
+    
+    
     
 </build>
 

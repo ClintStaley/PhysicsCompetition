@@ -1,6 +1,5 @@
 package com.softwareinventions.cmp.evaluator.landgrab;
 
-import com.softwareinventions.cmp.driver.EVCThread;
 import com.softwareinventions.cmp.dto.Submit;
 import com.softwareinventions.cmp.evaluator.Evaluator;
 import com.softwareinventions.cmp.evaluator.Evl;
@@ -10,8 +9,6 @@ import com.softwareinventions.cmp.util.GenUtil;
 import java.util.LinkedList;
 
 import org.apache.log4j.Logger;
-import org.codehaus.jackson.map.ObjectMapper;
-
 import java.awt.geom.Point2D;
 
 public class LandGrabEvaluator implements Evaluator {
@@ -46,6 +43,7 @@ public class LandGrabEvaluator implements Evaluator {
    int score;
    static Logger lgr = Logger.getLogger(LandGrabEvaluator.class);
 
+   @Override
    public void setPrms(String prms) {
       try {
          this.prms = mapper.readValue(prms, Parameters.class);
@@ -74,7 +72,7 @@ public class LandGrabEvaluator implements Evaluator {
       
       EvlPut eval = new EvlPut(sbm.cmpId, sbm.teamId, sbm.id,
             new Evl(mapper.writeValueAsString(rspLG),
-            (double) Math.round(rspLG.areaCovered * 100.0 / prms.goalArea)));
+            Math.round(rspLG.areaCovered * 100.0 / prms.goalArea)));
       
       lgr.info("Graded Land Grab Submission# " + eval.sbmId);
       

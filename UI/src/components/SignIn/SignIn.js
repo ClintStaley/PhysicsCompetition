@@ -8,8 +8,8 @@ class SignIn extends Component {
       //makes loggin in east, temp
       //has admin loggin info already filled out upon load
       this.state = {
-         email: 'adm@11.com',
-         password: 'password'
+         email: '',
+         password: ''
       };
 
       // bind event handlers to the correct context

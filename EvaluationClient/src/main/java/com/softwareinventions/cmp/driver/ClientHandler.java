@@ -23,10 +23,14 @@ import org.apache.log4j.Logger;
 public class ClientHandler {
    private Client client;
    private String url;
+   private String user;
+   private String pass;
    static Logger lgr = Logger.getLogger(ClientHandler.class);
 
-   public ClientHandler(String url) {
+   public ClientHandler(String url, String user, String pass) {
       this.url = url;
+      this.user = user;
+      this.pass = pass;
 
       ClientConfig clientConfig = new DefaultClientConfig();
       clientConfig.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING,
@@ -63,8 +67,8 @@ public class ClientHandler {
    private void loginAdmin() {
       // Admin login info, Temp
       Person prs = new Person();
-      prs.email = "adm@11.com";
-      prs.password = "password";
+      prs.email = user;
+      prs.password = pass;
 
       lgr.info("Logging in " + prs.email);
       ClientResponse response = client.resource(url + "/Ssns")
