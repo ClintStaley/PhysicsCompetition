@@ -266,7 +266,12 @@ public class EVCThread extends Thread  {
          System.out.println(e.getMessage());
          e.printStackTrace();
       }
-
+      
+      try {
+         TimeUnit.SECONDS.sleep(3);
+      } catch (InterruptedException e) {
+         e.printStackTrace();
+      }
    }
 
    private static Evaluator cmpEvaluator(Competition cmp) throws Exception {
