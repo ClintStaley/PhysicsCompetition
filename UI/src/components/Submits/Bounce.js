@@ -181,7 +181,7 @@ export class Bounce extends Component {
    G = 9.80665;       //gravity constant
    fieldLength = 100; //the stage length in meters
    fieldHeight = 100; //the sage height in meters
-   graphLine = 5;     //how far apart the graph lines ar in meters
+   graphLine = 5;     //how far apart the graph lines are in meters
    //colors of balls
    colors = ["red", "green", "orange", "purple", "cyan"];
 

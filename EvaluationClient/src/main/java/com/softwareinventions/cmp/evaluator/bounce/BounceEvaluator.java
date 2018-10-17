@@ -200,7 +200,6 @@ public class BounceEvaluator implements Evaluator {
 
    private BounceEvent[] calculateOneBall(LinkedList<Obstacle> obstacles,
          BounceEvent StartingPoint) {
-      // Linked list used for undefined size.
       LinkedList<BounceEvent> ballEvents = new LinkedList<BounceEvent>();
       ballEvents.add(StartingPoint);
 

@@ -20,7 +20,7 @@ create table CompetitionType (
    codeName varchar(80) not null, 
    title varchar(80) not null unique,
    description varchar(500) not null,
-   tutorial varchar(10000) not null,
+   tutorial text not null,
    prmSchema varchar(20000) not null
 );
 
