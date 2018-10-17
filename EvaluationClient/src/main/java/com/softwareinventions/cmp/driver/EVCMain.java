@@ -147,7 +147,6 @@ public class EVCMain extends Thread {
       }
       
       try {
-         //what does this do?
          System.setProperty("log4j.configuration",
          EVCMain.class.getResource("log4j.properties").toString());
          
