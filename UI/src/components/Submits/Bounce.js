@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
 import {FormGroup, FormControl, ControlLabel, Button, Modal }
   from 'react-bootstrap';
-import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 import './Bounce.css'
 
 export class BSubmitModal extends Component {
    constructor(props) {
       super(props);
 
-      var idx, balls = [];
+      var balls = [];
 
       //set default value for entry box
       balls.push({speed: 0})
@@ -19,7 +18,7 @@ export class BSubmitModal extends Component {
    }
 
    handleChange(ev) {
-      var bIdx, field, val, newBalls;
+      var bIdx, field, newBalls;
 
       [field, bIdx] = ev.target.id.split(":");
       newBalls = this.state.balls.splice(0);
@@ -31,7 +30,7 @@ export class BSubmitModal extends Component {
    //valid iff all balls are valid
    getValidationState = () => {
       for (var idx = 0; idx < this.state.balls.length; idx++) {
-         if (this.getSingleValidationState(idx) != "success")
+         if (this.getSingleValidationState(idx) !== "success")
             return "error";
       }
       return "success";
@@ -182,7 +181,7 @@ export class Bounce extends Component {
    G = 9.80665;       //gravity constant
    fieldLength = 100; //the stage length in meters
    fieldHeight = 100; //the sage height in meters
-   graphLine = 5;     //how far apart the graph lines ar in meters
+   graphLine = 5;     //how far apart the graph lines are in meters
    //colors of balls
    colors = ["red", "green", "orange", "purple", "cyan"];
 
@@ -220,7 +219,6 @@ export class Bounce extends Component {
 
    playBall = (totalTime) => {
       var frame = this.state.frame;
-      var events = this.props.sbm.testResult.events;
       var newState = {};
 
       if (++frame / this.frameRate > totalTime)
@@ -242,7 +240,7 @@ export class Bounce extends Component {
       events.forEach((eventArr) => {
          eventArr.forEach((event) => {
             //checks if time is greater than collision time on obstacles
-            if (event.obstacleIdx != -1
+            if (event.obstacleIdx !== -1
              && obstacleState[event.obstacleIdx]
              && time > event.time + elapsedTime)
                obstacleState[event.obstacleIdx] = false;
@@ -319,8 +317,7 @@ export class Bounce extends Component {
       var prms = this.props.prms;
       var sbm = this.props.sbm;
       var hashClass, offs, rect, grid, obstacles;
-      var tr, timeStr, dateStr, circle, sbmTime, summary = null;
-      var ballPath;
+      var summary = null;
       var dimensions =
        {fieldLength: this.fieldLength, fieldHeight: this.fieldHeight};
 
@@ -409,10 +406,6 @@ export class Bounce extends Component {
 
 //keeps track of the ball, draws the ball with the correct color
 class BallManager extends Component {
-   constructor(props) {
-      super(props);
-   }
-
    render() {
       var props = this.props;
       var ballNum = -1;
@@ -455,10 +448,6 @@ class BallManager extends Component {
 
 //is all the tracks the balls take in thier lives
 class TrackManager extends Component {
-   constructor(props) {
-      super(props);
-   }
-
    render() {
       var props = this.props;
       var ballTracks = [];
@@ -476,8 +465,8 @@ class TrackManager extends Component {
             events = {this.props.events[trackNum]}
             dimensions = {this.props.dimensions}/>);
 
-         elapsedTime += this.props.events[trackNum]
-          [this.props.events[trackNum].length - 1].time;
+         elapsedTime += this.props
+          .events[trackNum][this.props.events[trackNum].length - 1].time;
       }
       return (<g> {ballTracks} </g>);
    }
@@ -485,9 +474,6 @@ class TrackManager extends Component {
 
 //is the path one ball takes along its life
 class BallTrack extends Component {
-   constructor(props) {
-      super(props);
-   }
 
    shouldComponentUpdate(nextProps, nextState) {
       var props = this.props;
@@ -527,9 +513,6 @@ class BallTrack extends Component {
 
 //one arc of a balls path
 class BallArc extends Component {
-   constructor(props) {
-      super(props);
-   }
 
    shouldComponentUpdate(nextProps, nextState) {
       var props = this.props;
@@ -559,7 +542,7 @@ class BallArc extends Component {
          color += " invisible";
 
       //push the initial collision, not first event
-      if (event.time != 0.0)
+      if (event.time !== 0.0)
          ballArc.push(<circle key={"ballArc" + event.time}
           cx={equations.xPos(0)}
           cy={fieldHeight - equations.yPos(0)}

@@ -194,14 +194,12 @@ public class BounceEvaluator implements Evaluator {
             mapper.writeValueAsString(rspB), score));
 
       lgr.info("Graded Bounce Sbm# " + eval.sbmId);
-      System.out.println("Graded Bounce Sbm# " + eval.sbmId);
 
       return eval;
    }
 
    private BounceEvent[] calculateOneBall(LinkedList<Obstacle> obstacles,
          BounceEvent StartingPoint) {
-      // Linked list used for undefined size.
       LinkedList<BounceEvent> ballEvents = new LinkedList<BounceEvent>();
       ballEvents.add(StartingPoint);
 
@@ -322,7 +320,7 @@ public class BounceEvaluator implements Evaluator {
       
       if (rtn.isPresent()) {
          rtn.get().obstacleIdx = obs.obstacleId;
-         System.out.println("Best Time is: " + rtn.get().time);
+         lgr.info("Best Time is: " + rtn.get().time);
          return rtn.get();
       }
       

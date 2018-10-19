@@ -2,6 +2,7 @@ var Express = require('express');
 var Tags = require('../Validator.js').Tags;
 var ssnUtil = require('../Session.js');
 var router = Express.Router({caseSensitive: true});
+var crypto = require("crypto");
 
 router.baseURL = '/Ssns';
 
@@ -21,13 +22,18 @@ router.get('/', (req, res) => {
 router.post('/', (req, res) => {
    var cookie;
    var cnn = req.cnn;
+   var body = req.body;
 
-   cnn.chkQry('select * from Person where email = ?', [req.body.email],
+   if (body.password)
+      body.password =
+       crypto.createHash('md5').update(body.password).digest('hex');
+
+   cnn.chkQry('select * from Person where email = ?', [body.email],
       (err, result) => {
          if (req.validator.check(result.length && result[0].password ===
-          req.body.password, Tags.badLogin)) {
+          body.password, Tags.badLogin)) {
             cookie = ssnUtil.makeSession(result[0], res);
-            console.log("Logging in " + req.body.email);
+            console.log("Logging in " + body.email);
             res.location(router.baseURL + '/' + cookie).status(200).end();
          }
          cnn.release();

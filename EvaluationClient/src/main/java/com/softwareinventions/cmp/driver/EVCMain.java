@@ -13,7 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
 
-public class GraderClientManager extends Thread {
+public class EVCMain extends Thread {
    private static final long myWait = 10000;
    private static Logger lgr; //ONLY GET THE LOGGER AFTER LOADING THE PROPERTIES
    
@@ -25,16 +25,13 @@ public class GraderClientManager extends Thread {
    private static final DateFormat dateFormat =
     new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
 
-   // Base name for test execution user.
-   private static final String kTestUser = "student";
-
    private final String basename;
    private final String ihsPath, ihsUser, ihsPass;
    private final boolean relaxedHTTPS;
 
    private EVCThread[] evcThreads;
 
-   public GraderClientManager(Properties properties) {
+   public EVCMain(Properties properties) {
       int numThreads = Integer.parseInt(properties.getProperty("threads"));
 
       evcThreads = new EVCThread[numThreads];
@@ -150,15 +147,14 @@ public class GraderClientManager extends Thread {
       }
       
       try {
-         //what does this do?
          System.setProperty("log4j.configuration",
-         GraderClientManager.class.getResource("log4j.properties").toString());
+         EVCMain.class.getResource("log4j.properties").toString());
          
          //This HAS to happen after loading log4j config for the logger to work
-         lgr = Logger.getLogger(GraderClientManager.class);
+         lgr = Logger.getLogger(EVCMain.class);
          properties.load(new FileInputStream(args[0]));
          
-         new GraderClientManager(properties).start();
+         new EVCMain(properties).start();
          lgr.info("GraderClientManager started");
       }
       catch (Exception e) {

@@ -73,6 +73,7 @@ require('./Routes/Competition/Mmbs'));
 
 // Debugging tool. Clear all table contents, reset all auto_increment
 // keys to 1, and reinsert one admin user.
+if (process.argv.indexOf('-testing') !== -1)
 app.delete('/DB', function (req, res) {
    var resetTables = ["Person", "CompetitionType", "Competition",
     "Team", "Submit", "Membership"];
@@ -96,11 +97,15 @@ app.delete('/DB', function (req, res) {
       };
    }));
 
+   console.log(require("crypto").createHash('md5').update("-admPwd4Pc.").digest('hex'));
+   console.log(require("crypto").createHash('md5').update("password").digest('hex'));
    // Callback to reinsert admin user
    cbs.push(function (cb) {
       req.cnn.query('INSERT INTO Person (firstName, lastName, email,' +
          ' password, whenRegistered, role) VALUES ' +
-         '("Joe", "Admin", "adm@11.com","password", NOW(), 1);', cb);
+         '("Joe", "Admin", "adm@11.com","' +
+         require("crypto").createHash('md5').update("password").digest('hex') +
+         '", NOW(), 1);', cb);
    });
 
    // Callback to reinsert Bounce CompetitionType TEST
@@ -256,7 +261,8 @@ app.use(function (req, res) {
 
 // General error handler.  Send 500 and error body
 app.use(function (err, req, res, next) {
-   res.status(500).json(err);
+   console.log(err);
+   res.status(500).json(err.stack);
    req.cnn && req.cnn.release();
 });
 
@@ -270,6 +276,7 @@ var port = (function () {
 
    return p;
 })();
+
 
 http.createServer(app).listen(8080, () => console.log("Listening on 8080"));
 

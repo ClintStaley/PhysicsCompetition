@@ -31,10 +31,6 @@ public class ClientHandler {
       this.url = url;
       this.user = user;
       this.pass = pass;
-      
-      System.out.println(url);
-      System.out.println(user);
-      System.out.println(pass);
 
       ClientConfig clientConfig = new DefaultClientConfig();
       clientConfig.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING,

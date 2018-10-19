@@ -36,8 +36,10 @@ CnnPool.router = function(req, res, next) {
          cnn.chkQry = function(qry, prms, cb) {
             // Run real qry, checking for error
             this.query(qry, prms, function(err, rsp, fields) {
-               if (err)
+               if (err){
+                  console.log("Failed ");
                   res.status(500).json('Failed query ' + qry);
+               }
                cb(err, rsp, fields);
             });
          };

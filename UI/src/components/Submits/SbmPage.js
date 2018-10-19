@@ -63,7 +63,7 @@ console.log("Constructing SbmPage with ", props);
    }
 
    render() {
-      var sbm, sbmTime, dateStr, timeStr, sbmFunction, sbmDialog;
+      var sbm, sbmTime, dateStr, timeStr,  sbmDialog;
       var cmp = this.props.cmp, ctpName;
       var sbmStatus = null;
       var prbDiagram = null;

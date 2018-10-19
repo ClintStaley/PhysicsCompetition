@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import {
-   FormGroup, ControlLabel, FormControl, HelpBlock, Button, Alert, Modal
+   FormGroup, ControlLabel, FormControl, HelpBlock, Button, Modal
 } from 'react-bootstrap';
 
 
