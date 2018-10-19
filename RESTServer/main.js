@@ -2,6 +2,7 @@ var express = require('express');
 var http = require('http');
 var https = require('https');
 var path = require('path');
+var fs = require('fs');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var Session = require('./Routes/Session');
@@ -280,6 +281,9 @@ var port = (function () {
 http.createServer(app).listen(8080, () => console.log("Listening on 8080"));
 //https.createServer(app).listen(8443, () => console.log("Listening on 8443"));
 
-//app.listen(port, function () {
-//   console.log('App Listening on port ' + port);
-//})
+var certOptions = {
+   ca: fs.readFileSync('www_softwareinventions_com.ca-bundle'),
+   cert: fs.readFileSync('www_softwareinventions_com.crt'),
+   key: fs.readFileSync('key.pem')
+};
+https.createServer(certOptions, app).listen(8443, () => console.log("Listening on 8443"));
