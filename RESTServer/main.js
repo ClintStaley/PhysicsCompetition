@@ -281,9 +281,9 @@ var port = (function () {
 http.createServer(app).listen(8080, () => console.log("Listening on 8080"));
 //https.createServer(app).listen(8443, () => console.log("Listening on 8443"));
 
-var certOptions = {
-   ca: fs.readFileSync('www_softwareinventions_com.ca-bundle'),
-   cert: fs.readFileSync('www_softwareinventions_com.crt'),
-   key: fs.readFileSync('key.pem')
-};
+//var certOptions = {
+//   ca: fs.readFileSync('www_softwareinventions_com.ca-bundle'),
+//   cert: fs.readFileSync('www_softwareinventions_com.crt'),
+//   key: fs.readFileSync('key.pem')
+//};
 //https.createServer(certOptions, app).listen(8443, () => console.log("Listening on 8443"));
