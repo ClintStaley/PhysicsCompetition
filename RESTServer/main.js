@@ -286,4 +286,4 @@ var certOptions = {
    cert: fs.readFileSync('www_softwareinventions_com.crt'),
    key: fs.readFileSync('key.pem')
 };
-https.createServer(certOptions, app).listen(8443, () => console.log("Listening on 8443"));
+//https.createServer(certOptions, app).listen(8443, () => console.log("Listening on 8443"));
