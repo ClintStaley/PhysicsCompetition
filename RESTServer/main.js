@@ -278,7 +278,7 @@ var port = (function () {
 
 
 http.createServer(app).listen(8080, () => console.log("Listening on 8080"));
-https.createServer(app).listen(8443, () => console.log("Listening on 8443"));
+//https.createServer(app).listen(8443, () => console.log("Listening on 8443"));
 
 //app.listen(port, function () {
 //   console.log('App Listening on port ' + port);
