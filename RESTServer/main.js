@@ -279,9 +279,17 @@ var port = (function () {
 
 
 http.createServer(app).listen(8080, () => console.log("Listening on 8080"));
+<<<<<<< HEAD
+=======
+//https.createServer(app).listen(8443, () => console.log("Listening on 8443"));
+
+>>>>>>> 0515cf5324993980f0c2df3fbed2ac9c460329e3
 var certOptions = {
    ca: fs.readFileSync('certs/www_softwareinventions_com.ca-bundle'),
    cert: fs.readFileSync('certs/www_softwareinventions_com.crt'),
    key: fs.readFileSync('certs/key.pem')
 };
+<<<<<<< HEAD
 https.createServer(certOptions, app).listen(8443, () => console.log("Listening on 8443"));
+=======
+//https.createServer(certOptions, app).listen(8443, () => console.log("Listening on 8443"));>>>>>>> 0515cf5324993980f0c2df3fbed2ac9c460329e3
