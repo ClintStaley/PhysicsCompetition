@@ -97,8 +97,6 @@ app.delete('/DB', function (req, res) {
       };
    }));
 
-   console.log(require("crypto").createHash('md5').update("-admPwd4Pc.").digest('hex'));
-   console.log(require("crypto").createHash('md5').update("password").digest('hex'));
    // Callback to reinsert admin user
    cbs.push(function (cb) {
       req.cnn.query('INSERT INTO Person (firstName, lastName, email,' +
