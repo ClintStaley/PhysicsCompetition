@@ -110,6 +110,13 @@ console.log("Constructing SbmPage with ", props);
 //reset = {prbDiagram.setState({frame: 0})}/>);
       }
 
+      console.log(this.props);
+      console.log(this.props.sbms.current);
+      console.log(ctpName);
+      console.log(sbmStatus);
+      console.log(prbDiagram);
+      console.log(sbmDialog);
+
       return (<div className="container">
         <h1>{cmp.title}</h1>
         <br/>
