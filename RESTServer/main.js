@@ -278,10 +278,10 @@ var port = (function () {
 
 http.createServer(app).listen(8080, () => console.log("Listening on 8080"));
 
-var certOptions = {
+/*var certOptions = {
    ca: fs.readFileSync('certs/www_softwareinventions_com.ca-bundle'),
    cert: fs.readFileSync('certs/www_softwareinventions_com.crt'),
    key: fs.readFileSync('certs/www_softwareinventions_com.pem')
 };
 
-https.createServer(certOptions, app).listen(8443, () => console.log("Listening on 8443"));
+https.createServer(certOptions, app).listen(8443, () => console.log("Listening on 8443"));*/

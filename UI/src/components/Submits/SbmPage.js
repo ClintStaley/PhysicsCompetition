@@ -63,6 +63,7 @@ console.log("Constructing SbmPage with ", props);
    }
 
    render() {
+      console.log('Render Submission');
       var sbm, sbmTime, dateStr, timeStr,  sbmDialog;
       var cmp = this.props.cmp, ctpName;
       var sbmStatus = null;
