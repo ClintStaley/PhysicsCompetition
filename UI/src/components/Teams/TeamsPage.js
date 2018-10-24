@@ -25,6 +25,9 @@ class TeamsPage extends Component {
 
       if (!(props.updateTimes && props.updateTimes.myTeams))
          this.props.getTeamsByPrs(this.props.prs.id);
+
+      if (!(props.updateTimes && props.updateTimes.cmps))
+         this.props.getAllCmps();
     }
 
    openDelConfirm = (teamId) => {
@@ -102,6 +105,7 @@ class TeamsPage extends Component {
 
    render() {
       var props = this.props;
+      console.log(props);
 
       console.log("Team Render");
       return (
@@ -150,6 +154,7 @@ class TeamsPage extends Component {
               teamId = {team.id}
               leaderId = {team.leaderId}
               teamName = {team.teamName}
+              cmpName = {this.props.cmps[team.cmpId].title}
               expanded = {this.state.expanded[teamId]}
               toggle = {() => this.toggleView(teamId)}
               addMmb = {() => this.openAddMmb(teamId)}
@@ -179,6 +184,8 @@ const TeamLine = function(props) {
        :
        <Button onClick={props.toggle}>{props.teamName}</Button>
      }
+       {' -- ' + props.cmpName}
+
      {isLeader ?
        <div className="pull-right">
          <OverlayTrigger trigger={["focus", "hover"]}
@@ -252,7 +259,9 @@ const MmbItem = function (props) {
 function mapStateToProps(state) {
    return {
       prs: state.prs,
-      teams: state.teams
+      teams: state.teams,
+      cmps: state.cmps,
+      updateTimes: state.updateTimes
    }
 }
 
