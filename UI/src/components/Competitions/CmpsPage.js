@@ -71,7 +71,7 @@ class CmpsPage extends Component {
         {props.showAll ?
            <ListGroup>
               {cmps && cmps.map((cmpId, i) => {
-                var cmp = props.cmps[cmpId];
+                var cmp = Object.assign({}, props.cmps[cmpId]);
 
                 cmp.link = '/JoinCmpPage/' + cmp.id;
                 cmp.joiningCmp = props.showAll;
@@ -86,7 +86,7 @@ class CmpsPage extends Component {
           cmps && cmps.length ?
           <ListGroup>
            {cmps.map((cmpId, i) => {
-             var cmp = props.cmps[cmpId];
+             var cmp = Object.assign({}, props.cmps[cmpId]);
 
              cmp.link = '/MyCmpPage/' + cmp.id;
              cmp.joiningCmp = props.showAll;

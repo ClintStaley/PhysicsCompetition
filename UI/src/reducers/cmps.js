@@ -21,7 +21,7 @@ export default function cmps(state = {}, action) {
           Object.assign({}, state[cmpId], {cmpTeams: cmpArrId})});
       case 'ADD_TEAM':
          teamId = action.newTeamData.id;
-         cmpId = action.newTeamData.cmpId
+         cmpId = action.newTeamData.cmpId;
          cmpArrId = state[cmpId].cmpTeams;
          newTeamArr = cmpArrId.concat(teamId.toString());
 

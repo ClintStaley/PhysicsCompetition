@@ -68,10 +68,10 @@ console.log("Constructing SbmPage with ", props);
       var cmp = this.props.cmp, ctpName;
       var sbmStatus = null;
       var prbDiagram = null;
+      ctpName = this.props.sbms.ctpName;
 
       if (this.props.sbms.current) {
          sbm = this.props.sbms.current;
-         ctpName = this.props.sbms.ctpName;
          sbmTime = new Date(sbm.sbmTime);
          dateStr = sbmTime.toLocaleDateString('en-US',
           {month:"short", day:"numeric"});
@@ -85,15 +85,16 @@ console.log("Constructing SbmPage with ", props);
                <h4>{sbm.score != null ? `Score: ${sbm.score}` :
                 this.state.refreshNote}</h4>
              </div>
-             <div className="col-sm-3">
-               <Button disabled={!this.props.team.canSubmit}
-                onClick={() => this.setState({sbmFunction: this.doSubmit})}>
-                  Submit Attempt
-               </Button>
-             </div>
            </div>
          </div>);
       }
+
+      var sbmButton = (<div className="col-sm-3">
+        <Button disabled={!this.props.team.canSubmit}
+         onClick={() => this.setState({sbmFunction: this.doSubmit})}>
+           Submit Attempt
+        </Button>
+      </div>);
 
       if (ctpName === "LandGrab") {
          prbDiagram = (<LandGrab className="clearfix"
@@ -110,9 +111,17 @@ console.log("Constructing SbmPage with ", props);
 //reset = {prbDiagram.setState({frame: 0})}/>);
       }
 
+      console.log(this.props);
+      console.log(this.props.sbms.current);
+      console.log(ctpName);
+      console.log(sbmStatus);
+      console.log(prbDiagram);
+      console.log(sbmDialog);
+
       return (<div className="container">
         <h1>{cmp.title}</h1>
         <br/>
+        {sbmButton}
         {sbmStatus}
         {prbDiagram}
         {sbmDialog}
