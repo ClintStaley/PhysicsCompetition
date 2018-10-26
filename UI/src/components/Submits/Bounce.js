@@ -362,16 +362,18 @@ export class Bounce extends Component {
           className="rhsText">{"(" + rect.hiX + "," + rect.loY + ")"}</text>);
       });
 
-      if (sbm.testResult)
+      if (sbm && sbm.testResult)
          summary = this.getSummary(sbm.testResult);
+
+      var readyRun = !sbm || !sbm.testResult;
 
       return (<section className="container">
         <h2>Problem Diagram</h2>
-        <Button className="pull-right" disabled = {!sbm.testResult}
+        <Button className="pull-right" disabled = {readyRun}
          onClick={() => this.replay()}>Replay</Button>
-        <Button className="pull-right" disabled = {!sbm.testResult}
+        <Button className="pull-right" disabled = {readyRun}
          onClick={() => clearInterval(this.intervalID)}>Pause</Button>
-        <Button className="pull-right" disabled = {!sbm.testResult}
+        <Button className="pull-right" disabled = {readyRun}
          onClick={() => this.startMovie(sbm.testResult.events)}>Play</Button>
         <svg viewBox={"-1 -1 " + (fieldLength + 1) + " " + (fieldHeight + 1)}
          width="100%" className="panel">
@@ -380,7 +382,7 @@ export class Bounce extends Component {
           {grid}
           {obstacles}
 
-          {sbm.testResult ?
+          {sbm && sbm.testResult ?
           <g>
             <BallManager frameRate = {this.frameRate}
              frame = {this.state.frame}

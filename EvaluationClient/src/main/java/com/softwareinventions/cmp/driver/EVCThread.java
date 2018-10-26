@@ -246,6 +246,7 @@ public class EVCThread extends Thread  {
             compTypes.put(competitionTypes[i].id, competitionTypes[i]);
          
          while (true) {
+            
             Competition[] cmps = handler.getCmps();
             lgr.info("Getting all compeitions");
 

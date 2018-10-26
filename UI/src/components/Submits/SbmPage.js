@@ -56,8 +56,8 @@ console.log("Constructing SbmPage with ", props);
             this.stopTimer();
          else {
             this.setState({refreshNote: "Checking for results..."});
-            this.props.refreshSbms(() => setTimeout(() =>
-             this.setState({refreshNote: "No results yet.."}), this.cNoteDelay)
+            this.props.refreshSbms(() =>
+             this.setState({refreshNote: "No results yet.."})
             );
          }
    }
@@ -89,8 +89,10 @@ console.log("Constructing SbmPage with ", props);
          </div>);
       }
 
+      console.log(this.props.sbms);
+
       var sbmButton = (<div className="col-sm-3">
-        <Button disabled={!this.props.team.canSubmit}
+        <Button disabled={(!this.props.team.canSubmit) || !(this.props.sbms.current && this.props.sbms.current.testResult)}
          onClick={() => this.setState({sbmFunction: this.doSubmit})}>
            Submit Attempt
         </Button>
@@ -110,13 +112,6 @@ console.log("Constructing SbmPage with ", props);
              submitFn={this.state.sbmFunction}/>);
 //reset = {prbDiagram.setState({frame: 0})}/>);
       }
-
-      console.log(this.props);
-      console.log(this.props.sbms.current);
-      console.log(ctpName);
-      console.log(sbmStatus);
-      console.log(prbDiagram);
-      console.log(sbmDialog);
 
       return (<div className="container">
         <h1>{cmp.title}</h1>
