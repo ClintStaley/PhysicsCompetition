@@ -6,7 +6,11 @@
 
 2. Configure MySQL.
 	1. Install if needed
-	
+	2. Log in as root; create cmp user/pass
+	3. Run Deploy.sql to inject initial DB contents (or load backup of other site DB)
+	4. Helpful commands: `set password for 'cmp'@'localhost' = 'clearpass'`
+3. Configure RESTServer
+	1. Use exampleConnection.json in Routes to create connection.json
 
 3. Create an executable maven jar file. To do this using eclipse with maven installed run as a maven build, and under goals input assembly:single.
 	1. update the EVC.properties with the correct values

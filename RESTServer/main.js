@@ -265,24 +265,30 @@ app.use(function (err, req, res, next) {
    req.cnn && req.cnn.release();
 });
 
-var port = (function () {
-   var p = 3000;
-   var idx = process.argv.indexOf('-p') + 1;
+(function(argv) { // Main program to start server
+   var httpPort = 80;
+   var httpsPort = 443;
+   var portFlag = argv.indexOf('-p');
 
-   if (idx > 0 && idx < process.argv.length) {
-      p = parseInt(process.argv[idx]) || p;
+   // If port flag exists with sufficient args after it
+   if (portFlag !== -1 && portFlag + 1 < argv.length) 
+      httpPort = parseInt(argv[portFlag + 1]);
+
+   http.createServer(app)
+    .listen(httpPort, () => console.log(`Http listening on ${httpPort}`));
+
+   // If not HttpOnly
+   if (argv.indexOf('-h') === -1) {
+      let certOptions = {
+         ca: fs.readFileSync('certs/www_softwareinventions_com.ca-bundle'),
+         cert: fs.readFileSync('certs/www_softwareinventions_com.crt'),
+         key: fs.readFileSync('certs/www_softwareinventions_com.pem')
+      };
+
+      if (portFlag !== -1 && portFlag + 2 < argv.length) 
+         httpsPort = parseInt(argv[portFlag + 2]);
+
+      https.createServer(certOptions, app)
+       .listen(httpsPort, () => console.log(`Https listening on ${httpsPort}`));
    }
-
-   return p;
-})();
-
-
-http.createServer(app).listen(8080, () => console.log("Listening on 8080"));
-
-/*var certOptions = {
-   ca: fs.readFileSync('certs/www_softwareinventions_com.ca-bundle'),
-   cert: fs.readFileSync('certs/www_softwareinventions_com.crt'),
-   key: fs.readFileSync('certs/www_softwareinventions_com.pem')
-};
-
-https.createServer(certOptions, app).listen(8443, () => console.log("Listening on 8443"));*/
+})(process.argv);

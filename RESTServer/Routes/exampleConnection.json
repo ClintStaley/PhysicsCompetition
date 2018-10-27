@@ -1,6 +1,6 @@
 {
     "host": "localhost",
-    "user": "Your mysql username",
-    "password": "your mysql password",
+    "user": "cmp",
+    "password": "-pw4CmpDB.",
     "database": "CmpDB"
 }
