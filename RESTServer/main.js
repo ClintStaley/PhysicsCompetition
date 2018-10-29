@@ -271,7 +271,7 @@ app.use(function (err, req, res, next) {
    var portFlag = argv.indexOf('-p');
 
    // If port flag exists with sufficient args after it
-   if (portFlag !== -1 && portFlag + 1 < argv.length) 
+   if (portFlag !== -1 && portFlag + 1 < argv.length)
       httpPort = parseInt(argv[portFlag + 1]);
 
    http.createServer(app)
@@ -285,7 +285,7 @@ app.use(function (err, req, res, next) {
          key: fs.readFileSync('certs/www_softwareinventions_com.pem')
       };
 
-      if (portFlag !== -1 && portFlag + 2 < argv.length) 
+      if (portFlag !== -1 && portFlag + 2 < argv.length)
          httpsPort = parseInt(argv[portFlag + 2]);
 
       https.createServer(certOptions, app)
