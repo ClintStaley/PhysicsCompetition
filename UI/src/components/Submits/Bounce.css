@@ -1,22 +1,22 @@
-.graph5 {
+.graph5B {
    stroke: #E0E0E0;
-   stroke-width:.1;
+   stroke-width:0.01;
 }
 
-.graph10 {
+.graph10B {
    stroke:#C8C8C8;
-   stroke-width:.1;
+   stroke-width:0.01;
 }
 
 .graphBkg {
    fill:#F0F0FF;
    stroke:"gray";
-   stroke-width:.1;
+
 }
 
 .platform {
    stroke: black;
-   stroke-width:.1;
+   stroke-width:.01;
    fill:#A0A0FF;
 }
 
@@ -26,13 +26,13 @@
 
 .hitPlatform {
   stroke: #00000040;
-  stroke-width:.1;
+  stroke-width:.01;
   fill:#A0A0FF10;
 }
 
 .ball {
    stroke: black;
-   stroke-width:.1;
+   stroke-width:.01;
 }
 
 .red {
@@ -69,7 +69,7 @@
 }
 
 .text, .rhsText {
-   font-size:1.8px;
+   font-size:.13px;
 }
 
 .rhsText {
@@ -77,7 +77,7 @@
 }
 
 .controlButton {
-  padding: 5px;
+  padding: .5px;
 }
 
 table {

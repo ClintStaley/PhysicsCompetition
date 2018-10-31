@@ -20,10 +20,10 @@ import com.softwareinventions.cmp.util.GenUtil;
 
 public class BounceEvaluator implements Evaluator {
    // Constants
-   public static final double WORLD_LENGTH = 100.0;
-   public static final double STARTING_HEIGHT = 100.0;
+   public static final double WORLD_LENGTH = 10.0;
+   public static final double STARTING_HEIGHT = 10.0;
    public static final double GRAVITY = -9.80665;
-   public static final double RADIUS = 1;
+   public static final double RADIUS = .1;
    public static final double EPS = 0.00000001;
 
    // Represent one Collision, including its type, its time, the location of
@@ -294,10 +294,13 @@ public class BounceEvaluator implements Evaluator {
       Optional<Collision> rtn =
             obstacles.stream().map(o -> getObstacleCollision(o, evt))
             .filter(c -> c != null)
-            .min((c1, c2) -> Double.compare(c1.time, c2.time));
+            .min((c2, c1) -> Double.compare(c2.time, c1.time));
       
-      if (rtn.isPresent())
+     
+      
+      if (rtn.isPresent()) 
          obstacles.removeIf(o -> o.obstacleId == rtn.get().obstacleIdx);
+      
       
       return rtn;
    }
@@ -306,6 +309,7 @@ public class BounceEvaluator implements Evaluator {
    // or null if there is no collision.
    private Collision getObstacleCollision(Obstacle obs,
          BounceEvent evt) {
+      
       Optional<Collision> rtn = Stream.of(
          getHorizontalEdgeCollision(obs.loX, obs.hiX, obs.hiY + RADIUS, evt),
          getHorizontalEdgeCollision(obs.loX, obs.hiX, obs.loY - RADIUS, evt),
@@ -419,9 +423,9 @@ public class BounceEvaluator implements Evaluator {
    // if none is found.
    public OptionalDouble findUsefulSolution(double curTime,
          Complex[] solutions) {
-
+      
       return Arrays.stream(solutions).filter
-            (s -> Math.abs(s.getImaginary()) < EPS && s.getReal() > curTime)
+            (s -> Math.abs(s.getImaginary()) < EPS && s.getReal() > 0)
             .mapToDouble(s -> s.getReal()).min();
    }
 

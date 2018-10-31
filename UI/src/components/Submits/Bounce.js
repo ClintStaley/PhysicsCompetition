@@ -179,9 +179,9 @@ export class Bounce extends Component {
    intervalID;        // Timer ID of interval timer
    frameRate = 24;    // Frames per second to display
    G = 9.80665;       //gravity constant
-   fieldLength = 100; //the stage length in meters
-   fieldHeight = 100; //the sage height in meters
-   graphLine = 5;     //how far apart the graph lines are in meters
+   fieldLength = 10; //the stage length in meters
+   fieldHeight = 10; //the sage height in meters
+   graphLine = .5;     //how far apart the graph lines are in meters
    //colors of balls
    colors = ["red", "green", "orange", "purple", "cyan"];
 
@@ -204,7 +204,7 @@ export class Bounce extends Component {
       var totalTime = 0;
 
       //saftey so that two seperate intevals are running
-      if (this.intervalID)
+      if (this.intervalID)0
          clearInterval(this.intervalID);
 
       for (var idx = 0; idx < events.length; idx++) {
@@ -330,13 +330,15 @@ export class Bounce extends Component {
       grid = [];
       for (offs = graphOffset; offs < longerSide; offs += graphOffset) {
          hashClass = offs % (graphOffset * 2) ===
-          graphOffset ? "graph5" : "graph10";
+          graphOffset ? "graph5B" : "graph10B";
          grid.push(
           <line key={"XL" + offs} x1={offs} y1="0" x2={offs} y2={fieldHeight}
           className={hashClass}/>);
          grid.push(
           <line key={"YL" + offs} x1="0" y1={offs} x2={fieldLength} y2={offs}
           className={hashClass}/>);
+
+          console.log(hashClass);
       }
 
       // Obstacle rectangles
@@ -349,16 +351,16 @@ export class Bounce extends Component {
           "hitPlatform"}/>);
 
          obstacles.push(
-          <text key={"UL"+idx} x={rect.loX} y={fieldHeight-rect.hiY+2}
+          <text key={"UL"+idx} x={rect.loX} y={fieldHeight-rect.hiY+.1}
           className="text">{"(" + rect.loX + "," + rect.hiY + ")"}</text>);
          obstacles.push(
-          <text key={"UR"+idx} x={rect.hiX} y={fieldHeight-rect.hiY+2}
+          <text key={"UR"+idx} x={rect.hiX} y={fieldHeight-rect.hiY+.1}
           className="rhsText">{"(" + rect.hiX + "," + rect.hiY + ")"}</text>);
          obstacles.push(
-          <text key={"LL"+idx} x={rect.loX} y={fieldHeight-rect.loY}
+          <text key={"LL"+idx} x={rect.loX} y={fieldHeight-rect.loY-.05}
           className="text">{"(" + rect.loX + "," + rect.loY + ")"}</text>);
          obstacles.push(
-          <text key={"LR"+idx} x={rect.hiX} y={fieldHeight-rect.loY}
+          <text key={"LR"+idx} x={rect.hiX} y={fieldHeight-rect.loY-.05}
           className="rhsText">{"(" + rect.hiX + "," + rect.loY + ")"}</text>);
       });
 
@@ -375,7 +377,7 @@ export class Bounce extends Component {
          onClick={() => clearInterval(this.intervalID)}>Pause</Button>
         <Button className="pull-right" disabled = {readyRun}
          onClick={() => this.startMovie(sbm.testResult.events)}>Play</Button>
-        <svg viewBox={"-1 -1 " + (fieldLength + 1) + " " + (fieldHeight + 1)}
+        <svg viewBox={"-.1 -.1 " + (fieldLength + .1) + " " + (fieldHeight + .1)}
          width="100%" className="panel">
           <rect x="0" y="0" width={fieldLength} height={fieldHeight}
            className="graphBkg"/>
@@ -443,7 +445,7 @@ class BallManager extends Component {
       return (  <circle key={"crc"}
        cx={equations.xPos(currentTime - timeElapsed - event.time)}
        cy={fieldHeight - equations.yPos(currentTime - timeElapsed - event.time)}
-       r = {1}
+       r = {.1}
        className={'ball ' + props.colors[ballNum % 5]}/>);
    }
 }
@@ -548,7 +550,7 @@ class BallArc extends Component {
          ballArc.push(<circle key={"ballArc" + event.time}
           cx={equations.xPos(0)}
           cy={fieldHeight - equations.yPos(0)}
-          r = {1}
+          r = {.1}
           className={"ball faded " + color}/>);
 
       var startTime =
@@ -564,7 +566,7 @@ class BallArc extends Component {
          ballArc.push(<circle key={"ballPoint" + (timer + props.startTime)}
           cx={equations.xPos(timer)}
           cy={fieldHeight - equations.yPos(timer)}
-          r = {.2}
+          r = {.02}
           className={color}/>);
       }
 
