@@ -16,7 +16,7 @@ var app = express();
 //change this back later
 app.use(function(req, res, next) {
    console.log("Handling " + req.path + '/' + req.method);
-   res.header("Access-Control-Allow-Origin", "http://localhost:8080");
+   res.header("Access-Control-Allow-Origin", "http://www.softwareinventions.com:8080");//"http://localhost:8080");
    res.header("Access-Control-Allow-Credentials", true);
    res.header("Access-Control-Allow-Headers", "Content-Type");
    res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
