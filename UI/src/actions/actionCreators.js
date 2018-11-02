@@ -17,6 +17,13 @@ export function signIn(credentials, cb) {
    }
 }
 
+export function register(user, cb){
+   return (dispatch, getState) => {
+      addStdHandlers(dispatch, cb,
+       api.registerUser(user));
+   }
+}
+
 export function getCtp(ctpId, cb){
    return ((dispatch, getState) => {
       addStdHandlers(dispatch, cb,

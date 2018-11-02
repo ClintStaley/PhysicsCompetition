@@ -337,8 +337,6 @@ export class Bounce extends Component {
          grid.push(
           <line key={"YL" + offs} x1="0" y1={offs} x2={fieldLength} y2={offs}
           className={hashClass}/>);
-
-          console.log(hashClass);
       }
 
       // Obstacle rectangles
@@ -350,18 +348,21 @@ export class Bounce extends Component {
           className= {this.state.obstacleStatus[idx] ? "platform" :
           "hitPlatform"}/>);
 
+          var classLeft = (rect.hiX - rect.loX) > .6 ? "text" : "rhsText";
+          var classRight = (rect.hiX - rect.loX) > .6 ? "rhsText" : "text";
+
          obstacles.push(
-          <text key={"UL"+idx} x={rect.loX} y={fieldHeight-rect.hiY+.1}
-          className="text">{"(" + rect.loX + "," + rect.hiY + ")"}</text>);
+          <text key={"UL"+idx} x={rect.loX} y={fieldHeight-rect.hiY+.13}
+          className={classLeft}>{"(" + rect.loX + "," + rect.hiY + ")"}</text>);
          obstacles.push(
-          <text key={"UR"+idx} x={rect.hiX} y={fieldHeight-rect.hiY+.1}
-          className="rhsText">{"(" + rect.hiX + "," + rect.hiY + ")"}</text>);
+          <text key={"UR"+idx} x={rect.hiX} y={fieldHeight-rect.hiY+.13}
+          className={classRight}>{"(" + rect.hiX + "," + rect.hiY + ")"}</text>);
          obstacles.push(
           <text key={"LL"+idx} x={rect.loX} y={fieldHeight-rect.loY-.05}
-          className="text">{"(" + rect.loX + "," + rect.loY + ")"}</text>);
+          className={classLeft}>{"(" + rect.loX + "," + rect.loY + ")"}</text>);
          obstacles.push(
           <text key={"LR"+idx} x={rect.hiX} y={fieldHeight-rect.loY-.05}
-          className="rhsText">{"(" + rect.hiX + "," + rect.loY + ")"}</text>);
+          className={classRight}>{"(" + rect.hiX + "," + rect.loY + ")"}</text>);
       });
 
       if (sbm && sbm.testResult)
