@@ -3,6 +3,7 @@ var http = require('http');
 var https = require('https');
 var path = require('path');
 var fs = require('fs');
+var restAPI = require('./Routes/api.js')
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var Session = require('./Routes/Session');
@@ -269,26 +270,33 @@ app.use(function (err, req, res, next) {
    var httpPort = 80;
    var httpsPort = 443;
    var portFlag = argv.indexOf('-p');
-
+   var corsFlag = argv.indexOf('-c');
+  
    // If port flag exists with sufficient args after it
    if (portFlag !== -1 && portFlag + 1 < argv.length) 
-      httpPort = parseInt(argv[portFlag + 1]);
+   httpPort = parseInt(argv[portFlag + 1]);
+   
+   // If special CORS port is indicated, use it, else standard HTTP port
+   if (corsFlag !== -1 && corsFlag + 1 < argv.length)
+      restAPI.setCors(parseInt(argv[corsFlag + 1]));
+   else
+      restAPI.setCors(httpPort);
 
    http.createServer(app)
     .listen(httpPort, () => console.log(`Http listening on ${httpPort}`));
 
    // If not HttpOnly
    if (argv.indexOf('-h') === -1) {
-      let certOptions = {
-         ca: fs.readFileSync('certs/www_softwareinventions_com.ca-bundle'),
-         cert: fs.readFileSync('certs/www_softwareinventions_com.crt'),
-         key: fs.readFileSync('certs/www_softwareinventions_com.pem')
+     let certOptions = {
+       ca: fs.readFileSync('certs/www_softwareinventions_com.ca-bundle'),
+       cert: fs.readFileSync('certs/www_softwareinventions_com.crt'),
+       key: fs.readFileSync('certs/www_softwareinventions_com.pem')
       };
-
+      
       if (portFlag !== -1 && portFlag + 2 < argv.length) 
-         httpsPort = parseInt(argv[portFlag + 2]);
-
+      httpsPort = parseInt(argv[portFlag + 2]);
+      
       https.createServer(certOptions, app)
-       .listen(httpsPort, () => console.log(`Https listening on ${httpsPort}`));
+      .listen(httpsPort, () => console.log(`Https listening on ${httpsPort}`));
    }
 })(process.argv);
