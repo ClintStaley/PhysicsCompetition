@@ -27,10 +27,13 @@ console.log("Constructing SbmPage with ", props);
    }
 
    componentWillUnmount = () => {
-      this.stopTimer();
+      if (this.timerId)
+         this.stopTimer();
    }
 
    startTimer = () => {
+      if (this.timerId)
+         this.stopTimer();
       this.timerId = setInterval(() => this.refreshSbm(), this.cRefreshDelay);
       console.log("Started " + this.timerId);
    }
@@ -92,7 +95,8 @@ console.log("Constructing SbmPage with ", props);
       console.log(this.props.sbms);
 
       var sbmButton = (<div className="col-sm-3">
-        <Button disabled={(!this.props.team.canSubmit) || !(this.props.sbms.current && this.props.sbms.current.testResult)}
+        <Button disabled={(!this.props.team.canSubmit) ||
+            (this.props.sbms.current && !this.props.sbms.current.testResult)}
          onClick={() => this.setState({sbmFunction: this.doSubmit})}>
            Submit Attempt
         </Button>

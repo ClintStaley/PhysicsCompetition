@@ -17,7 +17,9 @@ var app = express();
 //change this back later
 app.use(function(req, res, next) {
    console.log("Handling " + req.path + '/' + req.method);
-   res.header("Access-Control-Allow-Origin", "http://localhost:8080");
+   //"http://localhost:8080");
+   //"http://www.softwareinventions.com:8080");
+   res.header("Access-Control-Allow-Origin", "http://localhost:3001");
    res.header("Access-Control-Allow-Credentials", true);
    res.header("Access-Control-Allow-Headers", "Content-Type");
    res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
@@ -273,6 +275,7 @@ app.use(function (err, req, res, next) {
    var corsFlag = argv.indexOf('-c');
   
    // If port flag exists with sufficient args after it
+<<<<<<< HEAD
    if (portFlag !== -1 && portFlag + 1 < argv.length) 
    httpPort = parseInt(argv[portFlag + 1]);
    
@@ -281,6 +284,10 @@ app.use(function (err, req, res, next) {
       restAPI.setCors(parseInt(argv[corsFlag + 1]));
    else
       restAPI.setCors(httpPort);
+=======
+   if (portFlag !== -1 && portFlag + 1 < argv.length)
+      httpPort = parseInt(argv[portFlag + 1]);
+>>>>>>> c64a375a26dbcc282cef75100446fb15d62c8e3d
 
    http.createServer(app)
     .listen(httpPort, () => console.log(`Http listening on ${httpPort}`));
@@ -292,10 +299,17 @@ app.use(function (err, req, res, next) {
        cert: fs.readFileSync('certs/www_softwareinventions_com.crt'),
        key: fs.readFileSync('certs/www_softwareinventions_com.pem')
       };
+<<<<<<< HEAD
       
       if (portFlag !== -1 && portFlag + 2 < argv.length) 
       httpsPort = parseInt(argv[portFlag + 2]);
       
+=======
+
+      if (portFlag !== -1 && portFlag + 2 < argv.length)
+         httpsPort = parseInt(argv[portFlag + 2]);
+
+>>>>>>> c64a375a26dbcc282cef75100446fb15d62c8e3d
       https.createServer(certOptions, app)
       .listen(httpsPort, () => console.log(`Https listening on ${httpsPort}`));
    }

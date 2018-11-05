@@ -55,19 +55,7 @@ class Register extends Component {
       };
 
       //send user data to action creator
-      registerUser(user)
-         .then((res) => {
-            if (res.ok)
-               return // TODO show log in dialog
-            return res.json() //error detected
-         })
-         .then((err) => {
-            if (err) {
-               this.setState({ registerStatus: "error", err })
-            } else {
-               this.setState({ registerStatus: "success", err: undefined });
-            }
-         })
+      this.props.register(user);
    }
 
    handleChange(ev) {
