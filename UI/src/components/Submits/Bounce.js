@@ -144,6 +144,8 @@ export class Bounce extends Component {
       var obstacleStatus = [];
       props.prms.obstacles.forEach(() => obstacleStatus.push(true));
 
+      this.props.prms.blockedRectangles.forEach(() => obstacleStatus.push(true));
+
       this.state = {
          obstacleStatus: obstacleStatus,
          frame: 0
@@ -154,6 +156,7 @@ export class Bounce extends Component {
    reset = () => {
       var obstacleStatus = [];
       this.props.prms.obstacles.forEach(() => obstacleStatus.push(true));
+      this.props.prms.blockedRectangles.forEach(() => obstacleStatus.push(true));
 
       this.setState({ frame : 0, obstacleStatus : obstacleStatus });
    }
@@ -308,6 +311,8 @@ export class Bounce extends Component {
       var obstacleStatus = [];
       this.props.prms.obstacles.forEach(() => obstacleStatus.push(true));
 
+      this.props.prms.blockedRectangles.forEach(() => obstacleStatus.push(true));
+
       this.setState({ frame : 0, obstacleStatus : obstacleStatus });
 
       this.startMovie(this.props.sbm.testResult.events);
@@ -320,11 +325,14 @@ export class Bounce extends Component {
       var summary = null;
       var dimensions =
        {fieldLength: this.fieldLength, fieldHeight: this.fieldHeight};
+      var numObstacles = prms.obstacles.length;
 
       var fieldHeight = this.fieldHeight;
       var fieldLength = this.fieldLength;
       var graphOffset = this.graphLine;
       var longerSide = fieldLength > fieldHeight ? fieldLength : fieldHeight;
+
+      console.log(prms);
 
       // Heavy cross hatches every 10 meters, with light cross hatches between
       grid = [];
@@ -339,8 +347,34 @@ export class Bounce extends Component {
           className={hashClass}/>);
       }
 
+
       // Obstacle rectangles
       obstacles = [];
+
+      prms.blockedRectangles && prms.blockedRectangles.forEach((rect, idx) => {
+         obstacles.push(
+          <rect key={"BR"+(idx)} x={rect.loX} y={fieldHeight-rect.hiY}
+          width={rect.hiX - rect.loX} height={rect.hiY - rect.loY}
+          className= {this.state.obstacleStatus[idx + numObstacles] ? "bPlatform" :
+          "hitBPlatform"}/>);
+
+          var classLeft = (rect.hiX - rect.loX) > .6 ? "text" : "rhsText";
+          var classRight = (rect.hiX - rect.loX) > .6 ? "rhsText" : "text";
+
+         obstacles.push(
+          <text key={"BUL"+idx} x={rect.loX} y={fieldHeight-rect.hiY+.13}
+          className={classLeft}>{"(" + rect.loX + "," + rect.hiY + ")"}</text>);
+         obstacles.push(
+          <text key={"BUR"+idx} x={rect.hiX} y={fieldHeight-rect.hiY+.13}
+          className={classRight}>{"(" + rect.hiX + "," + rect.hiY + ")"}</text>);
+         obstacles.push(
+          <text key={"BLL"+idx} x={rect.loX} y={fieldHeight-rect.loY-.05}
+          className={classLeft}>{"(" + rect.loX + "," + rect.loY + ")"}</text>);
+         obstacles.push(
+          <text key={"BLR"+idx} x={rect.hiX} y={fieldHeight-rect.loY-.05}
+          className={classRight}>{"(" + rect.hiX + "," + rect.loY + ")"}</text>);
+      });
+
       prms.obstacles.forEach((rect, idx) => {
          obstacles.push(
           <rect key={"R"+idx} x={rect.loX} y={fieldHeight-rect.hiY}
@@ -364,6 +398,8 @@ export class Bounce extends Component {
           <text key={"LR"+idx} x={rect.hiX} y={fieldHeight-rect.loY-.05}
           className={classRight}>{"(" + rect.hiX + "," + rect.loY + ")"}</text>);
       });
+
+
 
       if (sbm && sbm.testResult)
          summary = this.getSummary(sbm.testResult);

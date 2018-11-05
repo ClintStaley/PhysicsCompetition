@@ -156,58 +156,97 @@ insert into CompetitionType (title, codeName, description, tutorial, prmSchema)
  }');
 
 insert into CompetitionType (title, codeName, description, tutorial, prmSchema)
-            VALUES ("Bounce", "Bounce","Bounce a ball across platforms", "Bounce a ball across platforms by inputing a speed", '{\
-     "$schema": "http://json-schema.org/draft-07/schema#",\
-     \
-     "title": "Bounce",\
-     "type": "object", \
-       \
-     "properties": {\
-        "targetTime": {\
-           "title": "time to get all platforms that will get 100",\
-           "type": "number"\
-        },\
-        "obstacles": {\
-           "title": "platforms to bounce off of",\
-           "type": "array",\
-           "items": {\
-              "title": "Blocked rectangle",\
-              "type": "object",\
-              "properties": {\
-                 "loX": {\
-                    "title": "Left edge",\
-                    "type": "number",\
-                    "minimum": 0.0,\
-                    "maximum": 100.0\
-                 },\
-                 "hiX": {\
-                    "title": "Right edge",\
-                    "type": "number",\
-                    "minimum": 0.0,\
-                    "maximum": 100.0\
-                 },\
-                 "loY": {\
-                    "title": "top edge",\
-                    "type": "number",\
-                    "minimum": 0.0,\
-                    "maximum": 100.0\
-                 },\
-                 "hiY": {\
-                    "title": "bottom edge",\
-                    "type": "number",\
-                    "minimum": 0.0,\
-                    "maximum": 100.0\
-                 }\
-              },\
-   	     "additionalProperties": false,\
- 	     "minProperties": 4  \
-                \
-           }  \
-        } \
-    },\
-    "additionalProperties": false,\
-    "minProperties": 1   \
- }');
+            VALUES ("Bounce", "Bounce","Bounce a ball across platforms", "Bounce a ball across platforms by inputing a speed", '
+{
+      "$schema": "http://json-schema.org/draft-07/schema#",
+
+      "title": "Bounce",
+      "type": "object",
+
+      "properties": {
+          "targetTime": {
+            "title": "time to get all platforms that will get 100",
+            "type": "number"
+          },
+          "obstacles": {
+            "title": "platforms to bounce off of",
+            "type": "array",
+            "items": {
+                "title": "Blocked rectangle",
+                "type": "object",
+                "properties": {
+                  "loX": {
+                      "title": "Left edge",
+                      "type": "number",
+                      "minimum": 0.0,
+                      "maximum": 100.0
+                  },
+                  "hiX": {
+                      "title": "Right edge",
+                      "type": "number",
+                      "minimum": 0.0,
+                      "maximum": 100.0
+                  },
+                  "loY": {
+                      "title": "top edge",
+                      "type": "number",
+                      "minimum": 0.0,
+                      "maximum": 100.0
+                  },
+                  "hiY": {
+                      "title": "bottom edge",
+                      "type": "number",
+                      "minimum": 0.0,
+                      "maximum": 100.0
+                  }
+                },
+            
+          "additionalProperties": false,
+        "minProperties": 4
+
+            }
+         },
+          
+          "blockedRectangles": {
+          "title": "platforms to bounce off of",
+          "type": "array",
+          "items": {
+             "title": "Blocked rectangle",
+             "type": "object",
+             "properties": {
+                "loX": {
+                    "title": "Left edge",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "maximum": 100.0
+                },
+                "hiX": {
+                    "title": "Right edge",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "maximum": 100.0
+                },
+                "loY": {
+                    "title": "top edge",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "maximum": 100.0
+                },
+                "hiY": {
+                    "title": "bottom edge",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "maximum": 100.0
+                }
+             },
+                "additionalProperties": false,
+                "minProperties": 4
+             }
+          }
+      },
+      "additionalProperties": false,
+      "minProperties": 3
+  }');
 
 select * from Person;
 select * from CompetitionType;

@@ -20,6 +20,13 @@
    fill:#A0A0FF;
 }
 
+.bPlatform {
+   stroke: black;
+   stroke-width:.01;
+   fill:#FF6060;
+}
+
+
 .startingPosition {
    fill:black;
 }
@@ -28,6 +35,12 @@
   stroke: #00000040;
   stroke-width:.01;
   fill:#A0A0FF10;
+}
+
+.hitBPlatform {
+  stroke: #00000040;
+  stroke-width:.01;
+  fill:#FF606010;
 }
 
 .ball {

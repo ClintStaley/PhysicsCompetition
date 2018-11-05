@@ -56,12 +56,15 @@ public class BounceEvaluator implements Evaluator {
       public double hiY;
       public double loY;
       public int obstacleId;
+      public boolean Block = false;
+      public boolean hit = false;
    }
 
    // Competition parameters
    private static class Parameters {
       public double targetTime; // 100% credit for this total time in s.
       public Obstacle[] obstacles; // Obstacles to hit
+      public Obstacle[] blockedRectangles; //blocks to avoid
    }
    
    private static class BallEquations {
@@ -154,15 +157,27 @@ public class BounceEvaluator implements Evaluator {
       LaunchSpec[] sbmData = mapper.readValue(sbm.content, LaunchSpec[].class);
       int numBalls = sbmData.length;
       int obstacleCount = prms.obstacles.length;
+      int blockCount = prms.blockedRectangles.length;
       double score;
+      int idx;
 
       // Assign all obstacles ID numbers based on their index.
-      for (int idx = 0; idx < obstacleCount; idx++)
+      for (idx = 0; idx < obstacleCount; idx++)
          prms.obstacles[idx].obstacleId = idx;
+      
 
       // Linked list so that we can delete obstacles as they are hit.
       LinkedList<Obstacle> obstacles = new LinkedList<Obstacle>(
             Arrays.asList(prms.obstacles));
+      
+      // Assign all obstacles ID numbers based on their index.
+      for (idx = 0; idx < blockCount; idx++) {
+         prms.blockedRectangles[idx].obstacleId = idx + obstacleCount;
+         prms.blockedRectangles[idx].Block = true;
+         
+         obstacles.add(prms.blockedRectangles[idx]);
+      }
+
 
       BounceTR rspB = new BounceTR();
 
@@ -184,7 +199,7 @@ public class BounceEvaluator implements Evaluator {
 
       rspB.obstaclesHit = obstacleCount - obstacles.size();
 
-      if (obstacles.size() == 0)
+      if (checkAnswer(obstacles, prms))
          score = Math.round(prms.targetTime * 10000.0
                / (totalTime + 10.0 * (numBalls - 1.0))) / 100.0;
       else
@@ -196,6 +211,17 @@ public class BounceEvaluator implements Evaluator {
       lgr.info("Graded Bounce Sbm# " + eval.sbmId);
 
       return eval;
+   }
+   
+   private boolean checkAnswer(LinkedList<Obstacle> obs, Parameters prm) {
+      if (obs.size() != prm.blockedRectangles.length)
+         return false;
+      else
+         for (Obstacle temp : obs) 
+            if (temp.Block != true)
+               return false;
+      return true;
+
    }
 
    private BounceEvent[] calculateOneBall(LinkedList<Obstacle> obstacles,

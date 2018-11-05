@@ -17,7 +17,7 @@ var configApp = (port, corsDomain, testFlag) => {
   //change this back later
   app.use(function(req, res, next) {
     console.log("Handling " + req.path + '/' + req.method);
-    res.header("Access-Control-Allow-Origin", `http://${corsDomain}:${port}`);
+    res.header("Access-Control-Allow-Origin", `http://${corsDomain}`);
     res.header("Access-Control-Allow-Credentials", true);
     res.header("Access-Control-Allow-Headers", "Content-Type");
     res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
@@ -231,14 +231,52 @@ var addDebugRoutes = app => {
                       "maximum": 100.0
                   }
                 },
+
           "additionalProperties": false,
         "minProperties": 4
 
             }
+         },
+
+          "blockedRectangles": {
+          "title": "platforms to bounce off of",
+          "type": "array",
+          "items": {
+             "title": "Blocked rectangle",
+             "type": "object",
+             "properties": {
+                "loX": {
+                    "title": "Left edge",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "maximum": 100.0
+                },
+                "hiX": {
+                    "title": "Right edge",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "maximum": 100.0
+                },
+                "loY": {
+                    "title": "top edge",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "maximum": 100.0
+                },
+                "hiY": {
+                    "title": "bottom edge",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "maximum": 100.0
+                }
+             },
+                "additionalProperties": false,
+                "minProperties": 4
+             }
           }
       },
       "additionalProperties": false,
-      "minProperties": 1
+      "minProperties": 3
   }');`
     , cb);
   });
@@ -281,23 +319,25 @@ var addDebugRoutes = app => {
 // -p httpPort [httpsPort]  Set http and optionally https ports.  Default to 80 and 443
 // -c corsDomain -- Enable CORS on https://corsDomain:httpPort.  Defaults to localhost
 
-(function(argv) { 
+(function(argv) {
    var httpPort = 80;
    var httpsPort = 443;
-   var corsDomain = "localhost";
+   var corsDomain;
    var portFlag = argv.indexOf('-p');
    var corsFlag = argv.indexOf('-c');
-  
+
    // If port flag exists with sufficient args after it
-   if (portFlag !== -1 && portFlag + 1 < argv.length) 
+   if (portFlag !== -1 && portFlag + 1 < argv.length)
       httpPort = parseInt(argv[portFlag + 1]);
-   
+
    // If special CORS domain is indicated, use it, else stick w/ localhost
    if (corsFlag !== -1 && corsFlag + 1 < argv.length)
       corsDomain = argv[corsFlag + 1];
-
+   else {
+      corsDomain = `localhost:${httpPort}`;
+   }
    app = configApp(httpPort, corsDomain, process.argv.indexOf('-test') !== -1);
-   
+
    http.createServer(app)
     .listen(httpPort, () => console.log(`Http listening on ${httpPort}`));
 
@@ -311,6 +351,7 @@ var addDebugRoutes = app => {
 
       if (portFlag !== -1 && portFlag + 2 < argv.length)
          httpsPort = parseInt(argv[portFlag + 2]);
+
 
       https.createServer(certOptions, app)
        .listen(httpsPort, () => console.log(`Https listening on ${httpsPort}`));
