@@ -17,11 +17,8 @@ public class EVCMain extends Thread {
    private static final long myWait = 10000;
    private static Logger lgr; //ONLY GET THE LOGGER AFTER LOADING THE PROPERTIES
    
-   // Wait one hour (in mSecs) before killing a GDC.  This is 6x the timeout
-   // for stalled Attempts, and so might permit one bad Attempt to kill 6
-   // threads before a restart.  TODO: Use Problem.gdcTimeout instead, pulling
-   // that info when checking a stalled thread.
-   private static final long gdcTimeout = 3600000;
+   // Wait one hour (in mSecs) before killing an EVC thread. 
+   private static final long evcTimeout = 3600000;
    private static final DateFormat dateFormat =
     new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
 
@@ -43,15 +40,15 @@ public class EVCMain extends Thread {
        Boolean.parseBoolean(properties.getProperty("EVC.relaxedHTTPS"));
 
       for (int i = 0; i < numThreads; i++) {
-         evcThreads[i] = createGdc(i);
+         evcThreads[i] = createEVCThread(i);
       }
    }
 
-   private EVCThread createGdc(int ndx) {
+   private EVCThread createEVCThread(int ndx) {
       String name = String.format("%s (%s #%d)", basename,
        dateFormat.format(new Date()), ndx);
       File tempDir = new File(System.getProperty("java.io.tmpdir")
-       + "/GDC/WorkingDir" + ndx);
+       + "/EVC/WorkingDir" + ndx);
       Client client = null;
       
       lgr.info("Working dir is: " + tempDir.getAbsolutePath());
@@ -66,7 +63,7 @@ public class EVCMain extends Thread {
       return new EVCThread(client, ihsPath, ihsUser, ihsPass, name);
    }
    
-   private void stopGdcs() {
+   private void stopEVCThreads() {
       // TODO panic stop?
       for (EVCThread thread : evcThreads) {
          thread.shutdown();
@@ -77,50 +74,49 @@ public class EVCMain extends Thread {
       }
    }
 
-   private void clearBlockedGdcs(boolean b) {
+   private void clearBlockedEVCThreads(boolean b) {
       
       long now = new Date().getTime();
       
       for (int i = 0; i < evcThreads.length; i++) {
          if (evcThreads[i].getState() == State.TERMINATED) {
-            evcThreads[i] = createGdc(i);
+            evcThreads[i] = createEVCThread(i);
             evcThreads[i].start();
          }
 
-         /* This branch handles the severe error of a stalled GDC thread.
-          * This is usually due to an infinitely looping grader,
+         /* This branch handles the severe error of a stalled EVC thread.
+          * This is usually due to an infinitely looping evaluation,
           * and indicates a major issue in the code that should be
           * addressed immediately. Stalled threads are detected
-          * based on the difference between the last time the GDCDriver
+          * based on the difference between the last time the EVC driver
           * entered the main loop in its run() function and now. */
          else if (evcThreads[i].getLastRan() == null || 
-          now - evcThreads[i].getLastRan().getTime() > gdcTimeout) {
+          now - evcThreads[i].getLastRan().getTime() > evcTimeout) {
             //Fetch the thread's current stack trace, do some light formatting.
-            lgr.error(String.format("Killing GDC thread %d w/ stack trace:%s\n",
+            lgr.error(String.format("Killing EVC thread %d w/ stack trace:%s\n",
               i, StringUtils.join(evcThreads[i].getStackTrace(), "\n   ")));
             
             // TODO: find a replacement for this? May not be possible, but
             // this method is overdue to be removed from Thread, and may go in
             // Java 9
             evcThreads[i].stop();
-            evcThreads[i] = createGdc(i);
+            evcThreads[i] = createEVCThread(i);
             evcThreads[i].start();
             
-            lgr.error("Restarted GDC Driver on thread " + i);
+            lgr.error("Restarted EVC thread " + i);
          }
       }
    }
 
-   // For use of GraderClientManager via subthread instead of full application
    @Override
    public void run() {
-      // Attempt to cleanly shutdown and unregister the GDCs when stopping
+      // Attempt to cleanly shutdown and unregister the EVCs when stopping
       // the JVM. This seems to work in response to SIGTERM on Linux,
       // though Commons Daemon might offer a better solution.
       Runtime.getRuntime().addShutdownHook(new Thread() {
          @Override
          public void run() {
-            stopGdcs();
+            stopEVCThreads();
          }
       });
 
@@ -130,7 +126,7 @@ public class EVCMain extends Thread {
 
       while (true) {
          try {Thread.sleep(myWait);} catch (InterruptedException err) {}
-         clearBlockedGdcs(true);
+         clearBlockedEVCThreads(true);
       }
    }
 
@@ -139,11 +135,11 @@ public class EVCMain extends Thread {
 
 
       if (args.length < 1) {
-         System.err.println("Usage: GraderClientManager config.properties");
+         System.err.println("Usage: EvaluationClient <config.properties>");
          System.exit(1);
       }
       if (System.getProperty("EVC.log") == null) {
-         System.setProperty("EVC.log", "GraderClient.log");
+         System.setProperty("EVC.log", "EVC.log");
       }
       
       try {
@@ -155,15 +151,14 @@ public class EVCMain extends Thread {
          properties.load(new FileInputStream(args[0]));
          
          new EVCMain(properties).start();
-         lgr.info("GraderClientManager started");
+         lgr.info("EVC started");
       }
       catch (Exception e) {
          if (lgr == null)
-            System.out.println("Error during GraderClientManager log4j setup");
+            System.out.println("Error during EVC log4j setup");
          else
             //changed from ExceptionUtils.getStackTrace(e)
-            lgr.error("Error in starting GraderClientManager: "
-             + e.getStackTrace());
+            lgr.error("Error in starting EVC: " + e.getStackTrace());
          
          e.printStackTrace();
       }
