@@ -89,6 +89,9 @@ public class BounceEvaluator implements Evaluator {
 
    public static class LaunchSpec {
       public double speed;
+      public double guessX;
+      public double guessY;
+      public double guessTime;
    }
 
    /*

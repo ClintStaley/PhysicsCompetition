@@ -10,7 +10,7 @@ export class BSubmitModal extends Component {
       var balls = [];
 
       //set default value for entry box
-      balls.push({speed: 0})
+      balls.push({speed: 0, guessX: 0, guessY: 0, guessTime: 0})
 
       this.state = {balls};
 
@@ -22,7 +22,7 @@ export class BSubmitModal extends Component {
 
       [field, bIdx] = ev.target.id.split(":");
       newBalls = this.state.balls.splice(0);
-      newBalls[bIdx].speed = ev.target.value;
+      newBalls[bIdx][field] = ev.target.value;
 
       this.setState({balls: newBalls});
    }
@@ -39,9 +39,13 @@ export class BSubmitModal extends Component {
    //valid iff speed is a number, and greater than 0
    getSingleValidationState = (idx) => {
       var ball = this.state.balls[idx];
-      var val = Number.parseFloat(ball.speed);
+      var valS = Number.parseFloat(ball.speed);
+      var valX = Number.parseFloat(ball.posX);
+      var valY = Number.parseFloat(ball.posY);
+      var valT = Number.parseFloat(ball.time);
 
-      if (isNaN(ball.speed) || val < 0)
+      if ((isNaN(ball.speed) || valS < 0) || (isNaN(ball.posX) || valX < 0) ||
+       (isNaN(ball.posY) || valY < 0) || (isNaN(ball.time) || valT < 0))
          return "error";
 
       return "success";
@@ -80,20 +84,21 @@ export class BSubmitModal extends Component {
 
    render() {
       var idS, idx, lines = [];
-
-      console.log(this.state.balls);
+      var idX, idY, idT;
 
       for (idx = 0; idx < this.state.balls.length; idx++) {
          idS = `speed:${idx}`;
+         idX = `Xpos:${idx}`;
+         idY = `Ypos:${idx}`;
+         idT = `time:${idx}`;
 
          lines.push(<div className="container" key={idx}>
            <div className="row">
              <div className="col-sm-2"><h5>Ball {idx}</h5></div>
 
-             <div className="col-sm-4">
-               <FormGroup controlId={idS}
-                validationState={this.getSingleValidationState(idx)}>
-                 <ControlLabel>Speed</ControlLabel>
+             <div className="col-sm-2">
+               <FormGroup controlId={idS}>
+                 <ControlLabel>Launch Speed</ControlLabel>
                  <FormControl
                   type="text"
                   id={idS}
@@ -103,6 +108,49 @@ export class BSubmitModal extends Component {
                  <FormControl.Feedback/>
                </FormGroup>
              </div>
+
+             <div className="col-sm-2">
+              <FormGroup controlId={idX}>
+                <ControlLabel>X</ControlLabel>
+                <FormControl
+                 type="text"
+                 id={idX}
+                 value={this.state.balls[idx].guessX}
+                 required={true}
+                 onChange={this.handleChange}
+                />
+                <FormControl.Feedback/>
+              </FormGroup>
+           </div>
+
+           <div className="col-sm-2">
+              <FormGroup controlId={idY}>
+                <ControlLabel>Y</ControlLabel>
+                <FormControl
+                 type="text"
+                 id={idY}
+                 value={this.state.balls[idx].guessY}
+                 required={true}
+                 onChange={this.handleChange}
+                />
+                <FormControl.Feedback/>
+              </FormGroup>
+           </div>
+
+           <div className="col-sm-2">
+              <FormGroup controlId={idT}>
+                <ControlLabel>Time</ControlLabel>
+                <FormControl
+                 type="text"
+                 id={idT}
+                 value={this.state.balls[idx].guessTime}
+                 required={true}
+                 onChange={this.handleChange}
+                />
+                <FormControl.Feedback/>
+              </FormGroup>
+           </div>
+
            </div>
          </div>)
       }
@@ -144,7 +192,8 @@ export class Bounce extends Component {
       var obstacleStatus = [];
       props.prms.obstacles.forEach(() => obstacleStatus.push(true));
 
-      this.props.prms.blockedRectangles.forEach(() => obstacleStatus.push(true));
+      this.props.prms.blockedRectangles && this.props.prms.blockedRectangles.
+       forEach(() => obstacleStatus.push(true));
 
       this.state = {
          obstacleStatus: obstacleStatus,
@@ -256,47 +305,49 @@ export class Bounce extends Component {
 
    //builds table on bottom of page, only shows detailed info about a hit,
    //after that his is shown on the animation.
-   getSummary = (testResult) => {
+   getSummary = (testResult, score) => {
       var hits = [];
       var ballEvents = [];
       var eventNum = 1, ballNum = 1;
       var colors = this.colors;
       var numColors = colors.length;
 
-      testResult.events.forEach((ballArray) => {
-         hits.push(<h4 key={"Ball #" + ballNum}
-         className={colors[(ballNum - 1) % numColors]}>Ball # {ballNum}</h4>)
+      if (score) {
+         testResult.events.forEach((ballArray) => {
+            hits.push(<h4 key={"Ball #" + ballNum}
+            className={colors[(ballNum - 1) % numColors]}>Ball # {ballNum}</h4>)
 
-         //creates rows onb table, 4 sig figs on values
-         ballArray.forEach((event) => {
-            if (event.obstacleIdx !== -1 &&
-             !this.state.obstacleStatus[event.obstacleIdx])
-               ballEvents.push(
-               <tr key={"tableSummary" + eventNum++}>
-                 <th>{parseFloat(event.time.toFixed(4))}</th>
-                 <th>{parseFloat(event.posX.toFixed(4))}</th>
-                 <th>{parseFloat(event.posY.toFixed(4))}</th>
-                 <th>{parseFloat(event.velocityX.toFixed(4))}</th>
-                 <th>{parseFloat(event.velocityY.toFixed(4))}</th>
-               </tr>);
+            //creates rows onb table, 4 sig figs on values
+            ballArray.forEach((event) => {
+               if (event.obstacleIdx !== -1 &&
+                !this.state.obstacleStatus[event.obstacleIdx])
+                  ballEvents.push(
+                  <tr key={"tableSummary" + eventNum++}>
+                    <th>{parseFloat(event.time.toFixed(4))}</th>
+                    <th>{parseFloat(event.posX.toFixed(4))}</th>
+                    <th>{parseFloat(event.posY.toFixed(4))}</th>
+                    <th>{parseFloat(event.velocityX.toFixed(4))}</th>
+                    <th>{parseFloat(event.velocityY.toFixed(4))}</th>
+                  </tr>);
+            });
+
+            hits.push(
+            <table key={"Summary" + ballNum++}>
+              <tbody>
+                <tr>
+                  <th>Time</th>
+                  <th>X Position</th>
+                  <th>Y Position</th>
+                  <th>X Velocity</th>
+                  <th>Y Velocity</th>
+                </tr>
+                {ballEvents}
+              </tbody>
+            </table>);
+
+            ballEvents = [];
          });
-
-         hits.push(
-         <table key={"Summary" + ballNum++}>
-           <tbody>
-             <tr>
-               <th>Time</th>
-               <th>X Position</th>
-               <th>Y Position</th>
-               <th>X Velocity</th>
-               <th>Y Velocity</th>
-             </tr>
-             {ballEvents}
-           </tbody>
-         </table>);
-
-         ballEvents = [];
-      });
+      }
 
       return (
       <div>
@@ -332,8 +383,6 @@ export class Bounce extends Component {
       var graphOffset = this.graphLine;
       var longerSide = fieldLength > fieldHeight ? fieldLength : fieldHeight;
 
-      console.log(prms);
-
       // Heavy cross hatches every 10 meters, with light cross hatches between
       grid = [];
       for (offs = graphOffset; offs < longerSide; offs += graphOffset) {
@@ -358,8 +407,8 @@ export class Bounce extends Component {
           className= {this.state.obstacleStatus[idx + numObstacles] ? "bPlatform" :
           "hitBPlatform"}/>);
 
-          var classLeft = (rect.hiX - rect.loX) > .6 ? "text" : "rhsText";
-          var classRight = (rect.hiX - rect.loX) > .6 ? "rhsText" : "text";
+          var classLeft = (rect.hiX - rect.loX) > .8 ? "text" : "rhsText";
+          var classRight = (rect.hiX - rect.loX) > .8 ? "rhsText" : "text";
 
          obstacles.push(
           <text key={"BUL"+idx} x={rect.loX} y={fieldHeight-rect.hiY+.13}
@@ -382,27 +431,30 @@ export class Bounce extends Component {
           className= {this.state.obstacleStatus[idx] ? "platform" :
           "hitPlatform"}/>);
 
-          var classLeft = (rect.hiX - rect.loX) > .6 ? "text" : "rhsText";
-          var classRight = (rect.hiX - rect.loX) > .6 ? "rhsText" : "text";
+         var classLeft = (rect.hiX - rect.loX) > .8 ? "text" : "rhsText";
+         var classRight = (rect.hiX - rect.loX) > .8 ? "rhsText" : "text";
+
+         var highY = rect.hiY - rect.loY > .3 ? rect.hiY :
+           ((0.3 - (rect.hiY - rect.loY))/2) + rect.hiY;
+         var lowY = rect.hiY - rect.loY > .3 ? rect.loY :
+           rect.loY - ((0.3 - (rect.hiY - rect.loY))/2);
 
          obstacles.push(
-          <text key={"UL"+idx} x={rect.loX} y={fieldHeight-rect.hiY+.13}
+          <text key={"UL"+idx} x={rect.loX} y={fieldHeight-highY+.13}
           className={classLeft}>{"(" + rect.loX + "," + rect.hiY + ")"}</text>);
          obstacles.push(
-          <text key={"UR"+idx} x={rect.hiX} y={fieldHeight-rect.hiY+.13}
+          <text key={"UR"+idx} x={rect.hiX} y={fieldHeight-highY+.13}
           className={classRight}>{"(" + rect.hiX + "," + rect.hiY + ")"}</text>);
          obstacles.push(
-          <text key={"LL"+idx} x={rect.loX} y={fieldHeight-rect.loY-.05}
+          <text key={"LL"+idx} x={rect.loX} y={fieldHeight-lowY-.05}
           className={classLeft}>{"(" + rect.loX + "," + rect.loY + ")"}</text>);
          obstacles.push(
-          <text key={"LR"+idx} x={rect.hiX} y={fieldHeight-rect.loY-.05}
+          <text key={"LR"+idx} x={rect.hiX} y={fieldHeight-lowY-.05}
           className={classRight}>{"(" + rect.hiX + "," + rect.loY + ")"}</text>);
       });
 
-
-
-      if (sbm && sbm.testResult)
-         summary = this.getSummary(sbm.testResult);
+      if (sbm && sbm.testResult && sbm.score)
+         summary = this.getSummary(sbm.testResult, sbm.score);
 
       var readyRun = !sbm || !sbm.testResult;
 
