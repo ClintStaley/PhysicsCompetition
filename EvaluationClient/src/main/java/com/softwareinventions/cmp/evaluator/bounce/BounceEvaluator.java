@@ -56,15 +56,15 @@ public class BounceEvaluator implements Evaluator {
       public double hiY;
       public double loY;
       public int obstacleId;
-      public boolean Block = false;
-      public boolean hit = false;
+      public boolean barrier = false;  // Is this a barrier?
+      public boolean hit = false;    // Has it been hit?
    }
 
    // Competition parameters
    private static class Parameters {
-      public double targetTime; // 100% credit for this total time in s.
-      public Obstacle[] obstacles; // Obstacles to hit
-      public Obstacle[] blockedRectangles; //blocks to avoid
+      public double targetTime;       // Total time (in s) that earns 100% credit
+      public Obstacle[] targets;      // Obstacles to hit
+      public Obstacle[] barriers;     // Obstacles to avoid
    }
    
    private static class BallEquations {
@@ -73,16 +73,14 @@ public class BounceEvaluator implements Evaluator {
       public UnivariateFunction xVelocity;
       public UnivariateFunction yVelocity;
       
+      // Equations for computation of parameters given a starting point expressed
+      // as a BounceEvent.
       public BallEquations(BounceEvent current) {
-         
-         // X position function
          xPos = t -> (t ) * current.velocityX + current.posX;
-         // X velocity function
          xVelocity = t  -> current.velocityX;
-         // Y position function
+
          yPos = t -> GRAVITY / 2.0 * GenUtil.sqr((t )) + 
                current.velocityY * (t ) + current.posY;
-         // Y velocity function
          yVelocity = t -> GRAVITY * (t ) + current.velocityY;
       }
    }
@@ -94,12 +92,12 @@ public class BounceEvaluator implements Evaluator {
       public double guessTime;
    }
 
-   /*
-    * BounceEvent describes a bounce off of a platform, the starting point of
-    * the ball, or the ball going out of bounds. in the case of a bounce, the
-    * velocityX and velocityY of the ball are the velocities after the bounce,
-    * the obstacleIdx describes the obstacle that was hit, or -1 if the event is
-    * a starting event or an out of bounds event.
+   /* BounceEvent describes the initial launch of a ball, or the ball's bounce off of 
+    * an obstacle, or the ball going out of bounds. 
+    * 
+    * For a bounce, velocityX and velocityY are the ball velocities after the bounce, and
+    * obstacleIdx describes the obstacle that was hit.  For a starting point or
+    * out-of-bounds event, obstacleNdx is -1.
     */
    public static class BounceEvent {
       public double time;
@@ -109,7 +107,7 @@ public class BounceEvaluator implements Evaluator {
       public double posY;
       public int obstacleIdx;
 
-      // Creates an starting bounce event.
+      // Create a starting bounce event.
       public BounceEvent(double startingHeight, double speed) {
          obstacleIdx = -1;
          posX = 0;
@@ -119,8 +117,8 @@ public class BounceEvaluator implements Evaluator {
          time = 0.0;
       }
 
-      // Creates a copy of the bounce event sent in with updated position and
-      // velocity.
+      // Create new BounceEvent representing the situation that exists |time| 
+      // seconds after |current|.  
       public BounceEvent(BounceEvent current, double time) {
          // Get all equations.
          BallEquations ballFunctions = new BallEquations(current);
@@ -159,28 +157,25 @@ public class BounceEvaluator implements Evaluator {
    public EvlPut evaluate(Submit sbm) throws Exception {
       LaunchSpec[] sbmData = mapper.readValue(sbm.content, LaunchSpec[].class);
       int numBalls = sbmData.length;
-      int obstacleCount = prms.obstacles.length;
-      int blockCount = prms.blockedRectangles.length;
+      int targetCount = prms.targets.length;
+      int barrierCount = prms.barriers.length;
       double score;
       int idx;
 
-      // Assign all obstacles ID numbers based on their index.
-      for (idx = 0; idx < obstacleCount; idx++)
-         prms.obstacles[idx].obstacleId = idx;
-      
-
-      // Linked list so that we can delete obstacles as they are hit.
-      LinkedList<Obstacle> obstacles = new LinkedList<Obstacle>(
-            Arrays.asList(prms.obstacles));
+      // Assign all targets ID numbers based on their index.
+      for (idx = 0; idx < targetCount; idx++)
+         prms.targets[idx].obstacleId = idx;
       
       // Assign all obstacles ID numbers based on their index.
-      for (idx = 0; idx < blockCount; idx++) {
-         prms.blockedRectangles[idx].obstacleId = idx + obstacleCount;
-         prms.blockedRectangles[idx].Block = true;
-         
-         obstacles.add(prms.blockedRectangles[idx]);
+      for (idx = 0; idx < barrierCount; idx++) {
+         prms.barriers[idx].obstacleId = idx + targetCount;
+         prms.barriers[idx].barrier = true;
       }
-
+      
+      // LinkedList so that we can delete obstacles as they are hit.
+      LinkedList<Obstacle> obstacles = new LinkedList<Obstacle>
+            (Arrays.asList(prms.targets));
+      obstacles.addAll(Arrays.asList(prms.barriers));
 
       BounceTR rspB = new BounceTR();
 
@@ -190,7 +185,6 @@ public class BounceEvaluator implements Evaluator {
       double totalTime = 0.0;
 
       for (int i = 0; i < numBalls; i++) {
-         // Set up starting ball event.
          BounceEvent startEvent = new BounceEvent(STARTING_HEIGHT,
                sbmData[i].speed);
 
@@ -200,9 +194,9 @@ public class BounceEvaluator implements Evaluator {
          totalTime += rspB.events[i][rspB.events[i].length - 1].time;
       }
 
-      rspB.obstaclesHit = obstacleCount - obstacles.size();
+      rspB.obstaclesHit = targetCount - obstacles.size();
 
-      if (checkAnswer(obstacles, prms))
+      if (isGoodAnswer(obstacles, prms))
          score = Math.round(prms.targetTime * 10000.0
                / (totalTime + 10.0 * (numBalls - 1.0))) / 100.0;
       else
@@ -216,17 +210,27 @@ public class BounceEvaluator implements Evaluator {
       return eval;
    }
    
-   private boolean checkAnswer(LinkedList<Obstacle> obs, Parameters prm) {
-      if (obs.size() != prm.blockedRectangles.length)
-         return false;
-      else
-         for (Obstacle temp : obs) 
-            if (temp.Block != true)
-               return false;
-      return true;
+   // Check that all remaining obstacles are barriers and that all barriers
+   // remain in the list.
+   private boolean isGoodAnswer(LinkedList<Obstacle> obs, Parameters prm) {
+      for (Obstacle temp : obs) 
+         if (!temp.barrier)
+            return false;
 
+      return obs.size() == prm.barriers.length;
    }
 
+/* CAS Comments:  I stopped here, and would invite you to do a review of the rest, paying attentiion to:
+ 1. Careful naming.  You had "obstacle" meaning both a general rectangle, and a target to hit, while "block"
+    meant an obstacle to avoid.  I renamed this to "targets" and "barriers", leaving obstacle to describe the
+    general case.  I considered keeping "block" for barrier, but the rectangles are all "blocks" geometrically
+    so that seemed a bit ambiguous.
+ 2. Careful wording of comments for clarity
+ 3. *Not* commenting the obvious
+ 4. Consistent patterns of code, and in some cases, code conciseness.
+ 5. Naming according to the rules. (No caps for members, for instance.)
+*/
+   
    private BounceEvent[] calculateOneBall(LinkedList<Obstacle> obstacles,
          BounceEvent StartingPoint) {
       LinkedList<BounceEvent> ballEvents = new LinkedList<BounceEvent>();
