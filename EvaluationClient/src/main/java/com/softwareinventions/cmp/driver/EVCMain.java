@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.security.GeneralSecurityException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -153,13 +154,14 @@ public class EVCMain extends Thread {
          new EVCMain(properties).start();
          lgr.info("EVC started");
       }
+      catch (FileNotFoundException e) {
+         System.out.printf("EVC startup error: %s\n", e.getMessage());
+      }
       catch (Exception e) {
          if (lgr == null)
-            System.out.println("Error during EVC log4j setup");
+            System.out.println("EVC startup error during log4j setup");
          else
-            lgr.error("Error in starting EVC: " + e.getStackTrace());
-         
-         e.printStackTrace();
+            lgr.error("General EVC startup error: " + e.getStackTrace());
       }
    }
 }
