@@ -156,7 +156,7 @@ insert into CompetitionType (title, codeName, description, tutorial, prmSchema)
  }');
 
 insert into CompetitionType (title, codeName, description, tutorial, prmSchema)
-            VALUES ("Bounce", "Bounce","Bounce a ball across platforms", "Bounce a ball across platforms by inputing a speed", '
+            VALUES ("Bounce", "Bounce","Bounce balls through an obstacle field", "Bounce balls through obstacles by setting lanuch speeds", '
 {
       "$schema": "http://json-schema.org/draft-07/schema#",
 
@@ -165,11 +165,11 @@ insert into CompetitionType (title, codeName, description, tutorial, prmSchema)
 
       "properties": {
           "targetTime": {
-            "title": "time to get all platforms that will get 100",
+            "title": "Expected time to hit all targets for 100 score",
             "type": "number"
           },
           "targets": {
-            "title": "platforms to bounce off of",
+            "title": "Obstacles to hit",
             "type": "array",
             "items": {
                 "title": "Goal rectangle",
@@ -208,7 +208,7 @@ insert into CompetitionType (title, codeName, description, tutorial, prmSchema)
          },
           
           "barriers": {
-          "title": "platforms to avoid",
+          "title": "Obstacles to avoid",
           "type": "array",
           "items": {
              "title": "Blocked rectangle",
