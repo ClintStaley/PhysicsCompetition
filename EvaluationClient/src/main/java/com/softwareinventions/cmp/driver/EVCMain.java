@@ -13,9 +13,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
 
+// EVC main class for configuration and then monitoring of threads
 public class EVCMain extends Thread {
    private static final long myWait = 10000;
-   private static Logger lgr; //ONLY GET THE LOGGER AFTER LOADING THE PROPERTIES
+   private static Logger lgr; // ONLY GET THE LOGGER AFTER LOADING THE PROPERTIES
    
    // Wait one hour (in mSecs) before killing an EVC thread. 
    private static final long evcTimeout = 3600000;
@@ -133,7 +134,6 @@ public class EVCMain extends Thread {
    public static void main(String[] args) {
       Properties properties = new Properties();
 
-
       if (args.length < 1) {
          System.err.println("Usage: EvaluationClient <config.properties>");
          System.exit(1);
@@ -143,13 +143,13 @@ public class EVCMain extends Thread {
       }
       
       try {
+         // Initialize logger config and **then** get our first logger
          System.setProperty("log4j.configuration",
-         EVCMain.class.getResource("log4j.properties").toString());
-         
-         //This HAS to happen after loading log4j config for the logger to work
+          EVCMain.class.getResource("log4j.properties").toString());
          lgr = Logger.getLogger(EVCMain.class);
-         properties.load(new FileInputStream(args[0]));
          
+         // Load EVC properties and start the EVC main to set up threads
+         properties.load(new FileInputStream(args[0]));
          new EVCMain(properties).start();
          lgr.info("EVC started");
       }
@@ -157,7 +157,6 @@ public class EVCMain extends Thread {
          if (lgr == null)
             System.out.println("Error during EVC log4j setup");
          else
-            //changed from ExceptionUtils.getStackTrace(e)
             lgr.error("Error in starting EVC: " + e.getStackTrace());
          
          e.printStackTrace();
