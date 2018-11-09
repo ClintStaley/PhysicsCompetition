@@ -1,15 +1,17 @@
-# IHS server URL and authentication
-# Dev setups may need a port #, e.g. example.com:8443/IHS/REST
-# Vagrant setups use https://10.0.2.2:8443/IHS/REST/
+# Cmp server URL and authentication
+# Dev setups may need a port #, e.g. example.com:8443
+# Example: http://www.softwareinventions.com:8080
+# Example: http://localhost:8080
+EVC.path=<URL>
+
 # Accept any supplied cert.
-EVC.path=http://localhost:8080
 EVC.relaxedHTTPS=true
 
-# Grader account name and login, plus
-# base name for IHS GraderClient registration
-EVC.user=adm@11.com
-EVC.pass=password
+# EVC account name and login
+# Example: admin@softwareinventions.com
+EVC.user=<adminLogin>
+EVC.pass=<adminPass>
 
-# Number of GraderClientDriver threads to maintain (be sure there is a studentX user per thread)
+# Number of EVC evaluation threads to maintain. 
 threads=1
 
