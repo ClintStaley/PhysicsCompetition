@@ -23,7 +23,7 @@ public class EVCMain extends Thread {
     new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
 
    private final String basename;
-   private final String ihsPath, ihsUser, ihsPass;
+   private final String cmpPath, cmpUser, cmpPass;
    private final boolean relaxedHTTPS;
 
    private EVCThread[] evcThreads;
@@ -32,9 +32,9 @@ public class EVCMain extends Thread {
       int numThreads = Integer.parseInt(properties.getProperty("threads"));
 
       evcThreads = new EVCThread[numThreads];
-      ihsPath = properties.getProperty("EVC.path");
-      ihsUser = properties.getProperty("EVC.user");
-      ihsPass = properties.getProperty("EVC.pass");
+      cmpPath = properties.getProperty("EVC.path");
+      cmpUser = properties.getProperty("EVC.user");
+      cmpPass = properties.getProperty("EVC.pass");
       basename = properties.getProperty("name");
       relaxedHTTPS =
        Boolean.parseBoolean(properties.getProperty("EVC.relaxedHTTPS"));
@@ -60,7 +60,7 @@ public class EVCMain extends Thread {
             e.printStackTrace();
          }
       }
-      return new EVCThread(client, ihsPath, ihsUser, ihsPass, name);
+      return new EVCThread(client, cmpPath, cmpUser, cmpPass, name);
    }
    
    private void stopEVCThreads() {
