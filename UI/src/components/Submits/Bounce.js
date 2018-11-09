@@ -10,7 +10,7 @@ export class BSubmitModal extends Component {
       var balls = [];
 
       //set default value for entry box
-      balls.push({speed: 0, guessX: 0, guessY: 0, guessTime: 0})
+      balls.push({speed: 0, ansX: 0, ansY: 0, ansTime: 0})
 
       this.state = {balls};
 
@@ -40,12 +40,12 @@ export class BSubmitModal extends Component {
    getSingleValidationState = (idx) => {
       var ball = this.state.balls[idx];
       var valS = Number.parseFloat(ball.speed);
-      var valX = Number.parseFloat(ball.posX);
-      var valY = Number.parseFloat(ball.posY);
-      var valT = Number.parseFloat(ball.time);
+      var valX = Number.parseFloat(ball.ansX);
+      var valY = Number.parseFloat(ball.ansY);
+      var valT = Number.parseFloat(ball.ansTime);
 
-      if ((isNaN(ball.speed) || valS < 0) || (isNaN(ball.posX) || valX < 0) ||
-       (isNaN(ball.posY) || valY < 0) || (isNaN(ball.time) || valT < 0))
+      if ((isNaN(ball.speed) || valS < 0) || (isNaN(ball.ansX) || valX < 0) ||
+       (isNaN(ball.ansY) || valY < 0) || (isNaN(ball.ansTime) || valT < 0))
          return "error";
 
       return "success";
@@ -115,7 +115,7 @@ export class BSubmitModal extends Component {
                 <FormControl
                  type="text"
                  id={idX}
-                 value={this.state.balls[idx].guessX}
+                 value={this.state.balls[idx].ansX}
                  required={true}
                  onChange={this.handleChange}
                 />
@@ -129,7 +129,7 @@ export class BSubmitModal extends Component {
                 <FormControl
                  type="text"
                  id={idY}
-                 value={this.state.balls[idx].guessY}
+                 value={this.state.balls[idx].ansY}
                  required={true}
                  onChange={this.handleChange}
                 />
@@ -143,7 +143,7 @@ export class BSubmitModal extends Component {
                 <FormControl
                  type="text"
                  id={idT}
-                 value={this.state.balls[idx].guessTime}
+                 value={this.state.balls[idx].ansTime}
                  required={true}
                  onChange={this.handleChange}
                 />
@@ -190,9 +190,9 @@ export class Bounce extends Component {
 
       //boolean array, matched up with obstacle array, determines if hit
       var obstacleStatus = [];
-      props.prms.obstacles.forEach(() => obstacleStatus.push(true));
+      props.prms.targets.forEach(() => obstacleStatus.push(true));
 
-      this.props.prms.blockedRectangles && this.props.prms.blockedRectangles.
+      this.props.prms.barriers && this.props.prms.barriers.
        forEach(() => obstacleStatus.push(true));
 
       this.state = {
@@ -204,8 +204,8 @@ export class Bounce extends Component {
    //sets frame to zero
    reset = () => {
       var obstacleStatus = [];
-      this.props.prms.obstacles.forEach(() => obstacleStatus.push(true));
-      this.props.prms.blockedRectangles.forEach(() => obstacleStatus.push(true));
+      this.props.prms.targets.forEach(() => obstacleStatus.push(true));
+      this.props.prms.barriers.forEach(() => obstacleStatus.push(true));
 
       this.setState({ frame : 0, obstacleStatus : obstacleStatus });
    }
@@ -360,9 +360,9 @@ export class Bounce extends Component {
    //starts movie over, resets state
    replay = () => {
       var obstacleStatus = [];
-      this.props.prms.obstacles.forEach(() => obstacleStatus.push(true));
+      this.props.prms.targets.forEach(() => obstacleStatus.push(true));
 
-      this.props.prms.blockedRectangles.forEach(() => obstacleStatus.push(true));
+      this.props.prms.barriers.forEach(() => obstacleStatus.push(true));
 
       this.setState({ frame : 0, obstacleStatus : obstacleStatus });
 
@@ -376,7 +376,7 @@ export class Bounce extends Component {
       var summary = null;
       var dimensions =
        {fieldLength: this.fieldLength, fieldHeight: this.fieldHeight};
-      var numObstacles = prms.obstacles.length;
+      var numObstacles = prms.targets.length;
 
       var fieldHeight = this.fieldHeight;
       var fieldLength = this.fieldLength;
@@ -400,7 +400,7 @@ export class Bounce extends Component {
       // Obstacle rectangles
       obstacles = [];
 
-      prms.blockedRectangles && prms.blockedRectangles.forEach((rect, idx) => {
+      prms.barriers && prms.barriers.forEach((rect, idx) => {
          obstacles.push(
           <rect key={"BR"+(idx)} x={rect.loX} y={fieldHeight-rect.hiY}
           width={rect.hiX - rect.loX} height={rect.hiY - rect.loY}
@@ -424,7 +424,7 @@ export class Bounce extends Component {
           className={classRight}>{"(" + rect.hiX + "," + rect.loY + ")"}</text>);
       });
 
-      prms.obstacles.forEach((rect, idx) => {
+      prms.targets.forEach((rect, idx) => {
          obstacles.push(
           <rect key={"R"+idx} x={rect.loX} y={fieldHeight-rect.hiY}
           width={rect.hiX - rect.loX} height={rect.hiY - rect.loY}
