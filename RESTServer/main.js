@@ -199,11 +199,11 @@ var addDebugRoutes = app => {
             "title": "time to get all platforms that will get 100",
             "type": "number"
           },
-          "obstacles": {
+          "targets": {
             "title": "platforms to bounce off of",
             "type": "array",
             "items": {
-                "title": "Blocked rectangle",
+                "title": "Goal rectangle",
                 "type": "object",
                 "properties": {
                   "loX": {
@@ -238,8 +238,8 @@ var addDebugRoutes = app => {
             }
          },
 
-          "blockedRectangles": {
-          "title": "platforms to bounce off of",
+          "barriers": {
+          "title": "platforms to avoid",
           "type": "array",
           "items": {
              "title": "Blocked rectangle",

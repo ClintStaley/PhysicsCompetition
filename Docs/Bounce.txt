@@ -12,11 +12,11 @@ Parameter Schema
             "title": "time to get all platforms that will get 100",
             "type": "number"
           },
-          "obstacles": {
+          "targets": {
             "title": "platforms to bounce off of",
             "type": "array",
             "items": {
-                "title": "Blocked rectangle",
+                "title": "Goal rectangle",
                 "type": "object",
                 "properties": {
                   "loX": {
@@ -51,8 +51,8 @@ Parameter Schema
             }
          },
           
-          "blockedRectangles": {
-          "title": "platforms to bounce off of",
+          "barriers": {
+          "title": "platforms to avoid",
           "type": "array",
           "items": {
              "title": "Blocked rectangle",
@@ -96,7 +96,7 @@ Example Parameter
 
 {
    "targetTime" : 10.0,
-   "obstacles": [
+   "targets": [
      {
        "loX": 0,
        "hiX": 40.2,
@@ -116,14 +116,8 @@ Example Parameter
        "loY": 50
      }
    ] ,
-     "blockedRectangles": [{
-       "loX": 10,
-       "hiX": 50.2,
-       "hiY": 50,
-       "loY": 40
-     }]
+     "barriers": []
 }
-
 Submission Schema:
 
 
