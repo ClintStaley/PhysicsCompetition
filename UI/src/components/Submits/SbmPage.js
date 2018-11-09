@@ -22,6 +22,7 @@ console.log("Constructing SbmPage with ", props);
    }
 
    componentDidMount = () => {
+      console.log("mount");
       this.props.getSbms(this.props.cmp, this.props.team.id,
        () => this.startTimer());
    }
@@ -71,7 +72,10 @@ console.log("Constructing SbmPage with ", props);
       var cmp = this.props.cmp, ctpName;
       var sbmStatus = null;
       var prbDiagram = null;
-      ctpName = this.props.sbms.ctpName;
+
+      //quickest fix, asycrony wiht react components
+      if ((this.props.sbms.current && this.props.sbms.current.cmpId) === this.props.cmp.id)
+         ctpName = this.props.sbms.ctpName;
 
       if (this.props.sbms.current) {
          sbm = this.props.sbms.current;

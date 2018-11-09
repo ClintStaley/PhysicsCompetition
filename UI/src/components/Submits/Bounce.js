@@ -7,29 +7,36 @@ export class BSubmitModal extends Component {
    constructor(props) {
       super(props);
 
-      var balls = [];
+      var launchSpec = [];
 
       //set default value for entry box
-      balls.push({speed: 0, ansX: 0, ansY: 0, ansTime: 0})
+      launchSpec.push({speed: 0, finalX: 0, finalY: 0, finalTime: 0})
 
-      this.state = {balls};
+      this.state = {launchSpec};
 
       this.handleChange = this.handleChange.bind(this);
    }
 
    handleChange(ev) {
-      var bIdx, field, newBalls;
+      var bIdx, field, newSpec;
 
       [field, bIdx] = ev.target.id.split(":");
-      newBalls = this.state.balls.splice(0);
-      newBalls[bIdx][field] = ev.target.value;
+      bIdx = Number.parseInt(bIdx, 10);
 
-      this.setState({balls: newBalls});
+      // Require value be string representing positive float
+      newSpec = Number.parseFloat(ev.target.value);
+      newSpec = newSpec > 0.0 ? "" + newSpec : "";
+
+      console.log(field);
+
+      this.setState({"launchSpec": this.state.launchSpec.map((spec, i) => {
+         return i === bIdx ? Object.assign({}, spec, {[field]: newSpec}) : spec;
+      })});
    }
 
    //valid iff all balls are valid
    getValidationState = () => {
-      for (var idx = 0; idx < this.state.balls.length; idx++) {
+      for (var idx = 0; idx < this.state.launchSpec.length; idx++) {
          if (this.getSingleValidationState(idx) !== "success")
             return "error";
       }
@@ -38,14 +45,14 @@ export class BSubmitModal extends Component {
 
    //valid iff speed is a number, and greater than 0
    getSingleValidationState = (idx) => {
-      var ball = this.state.balls[idx];
+      var ball = this.state.launchSpec[idx];
       var valS = Number.parseFloat(ball.speed);
-      var valX = Number.parseFloat(ball.ansX);
-      var valY = Number.parseFloat(ball.ansY);
-      var valT = Number.parseFloat(ball.ansTime);
+      var valX = Number.parseFloat(ball.finalX);
+      var valY = Number.parseFloat(ball.finalY);
+      var valT = Number.parseFloat(ball.finalTime);
 
-      if ((isNaN(ball.speed) || valS < 0) || (isNaN(ball.ansX) || valX < 0) ||
-       (isNaN(ball.ansY) || valY < 0) || (isNaN(ball.ansTime) || valT < 0))
+      if ((isNaN(ball.speed) || valS < 0) || (isNaN(ball.finalX) || valX < 0) ||
+       (isNaN(ball.finalY) || valY < 0) || (isNaN(ball.finalTime) || valT < 0))
          return "error";
 
       return "success";
@@ -53,20 +60,20 @@ export class BSubmitModal extends Component {
 
    //add an additional text box to enter another speed
    addBall = () => {
-      var newBalls = this.state.balls.splice(0);
+      var newSpec = this.state.launchSpec.splice(0);
 
-      newBalls.push({speed: 0});  // CAS use concat?
+      newSpec.push({speed: 0, finalX: 0, finalY: 0, finalTime: 0});  // CAS use concat?
 
-      this.setState({balls: newBalls});
+      this.setState({launchSpec: newSpec});
    }
 
    //remove one text box
    removeBall = () => {
-      var newBalls = this.state.balls.splice(0);
+      var newSpec = this.state.launchSpec.splice(0);
 
-      newBalls.pop();
+      newSpec.pop();
 
-      this.setState({balls: newBalls});
+      this.setState({launchSpec: newSpec});
    }
 
    //close, submist iff status is OK, closes modal no matter what
@@ -74,7 +81,7 @@ export class BSubmitModal extends Component {
       if (status === 'OK') {
          //this.props.reset();
 
-         this.props.submitFn(this.state.balls.map(ball => ({
+         this.props.submitFn(this.state.launchSpec.map(ball => ({
             speed: Number.parseFloat(ball.speed)
          })));
       }
@@ -86,15 +93,15 @@ export class BSubmitModal extends Component {
       var idS, idx, lines = [];
       var idX, idY, idT;
 
-      for (idx = 0; idx < this.state.balls.length; idx++) {
+      for (idx = 0; idx < this.state.launchSpec.length; idx++) {
          idS = `speed:${idx}`;
-         idX = `Xpos:${idx}`;
-         idY = `Ypos:${idx}`;
-         idT = `time:${idx}`;
+         idX = `finalX:${idx}`;
+         idY = `finalY:${idx}`;
+         idT = `finalTime:${idx}`;
 
          lines.push(<div className="container" key={idx}>
            <div className="row">
-             <div className="col-sm-2"><h5>Ball {idx}</h5></div>
+             <div className="col-sm-1"><h5>Ball {idx}</h5></div>
 
              <div className="col-sm-2">
                <FormGroup controlId={idS}>
@@ -102,7 +109,7 @@ export class BSubmitModal extends Component {
                  <FormControl
                   type="text"
                   id={idS}
-                  value={this.state.balls[idx].speed}
+                  value={this.state.launchSpec[idx].speed}
                   required={true}
                   onChange={this.handleChange}/>
                  <FormControl.Feedback/>
@@ -115,7 +122,7 @@ export class BSubmitModal extends Component {
                 <FormControl
                  type="text"
                  id={idX}
-                 value={this.state.balls[idx].ansX}
+                 value={this.state.launchSpec[idx].finalX}
                  required={true}
                  onChange={this.handleChange}
                 />
@@ -129,7 +136,7 @@ export class BSubmitModal extends Component {
                 <FormControl
                  type="text"
                  id={idY}
-                 value={this.state.balls[idx].ansY}
+                 value={this.state.launchSpec[idx].finalY}
                  required={true}
                  onChange={this.handleChange}
                 />
@@ -143,7 +150,7 @@ export class BSubmitModal extends Component {
                 <FormControl
                  type="text"
                  id={idT}
-                 value={this.state.balls[idx].ansTime}
+                 value={this.state.launchSpec[idx].finalTime}
                  required={true}
                  onChange={this.handleChange}
                 />
@@ -167,7 +174,7 @@ export class BSubmitModal extends Component {
         <Modal.Footer>
           <Button key={0} onClick={() => {this.addBall()}}>Add Ball</Button>
           {/*Must be at least one ball in modal, cannot have less than 1*/}
-          <Button key={1} disabled = {this.state.balls.length === 1}
+          <Button key={1} disabled = {this.state.launchSpec.length === 1}
            onClick={() => {this.removeBall()}}>Remove Ball</Button>
 
           <Button key={2}  disabled = {this.getValidationState() !== "success"}

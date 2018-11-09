@@ -25,6 +25,7 @@ public class BounceEvaluator implements Evaluator {
    public static final double GRAVITY = -9.80665;
    public static final double RADIUS = .1;
    public static final double EPS = 0.00000001;
+   public static final double MARGIN_ERROR = 0.01;
 
    // Represent one Collision, including its type, its time, the location of
    // circle center as of the collision, and the index of the struck obstacle.
@@ -57,7 +58,6 @@ public class BounceEvaluator implements Evaluator {
       public double loY;
       public int obstacleId;
       public boolean barrier = false;  // Is this a barrier?
-      public boolean hit = false;    // Has it been hit?
    }
 
    // Competition parameters
@@ -87,9 +87,9 @@ public class BounceEvaluator implements Evaluator {
 
    public static class LaunchSpec {
       public double speed;
-      public double guessX;
-      public double guessY;
-      public double guessTime;
+      public double finalX;
+      public double finalY;
+      public double finalTime;
    }
 
    /* BounceEvent describes the initial launch of a ball, or the ball's bounce off of 
@@ -132,7 +132,7 @@ public class BounceEvaluator implements Evaluator {
       }
    }
 
-   public class BounceTR {
+   public class bounceResults {
       public int obstaclesHit;
       public BounceEvaluator.BounceEvent[][] events;
    }
@@ -177,7 +177,7 @@ public class BounceEvaluator implements Evaluator {
             (Arrays.asList(prms.targets));
       obstacles.addAll(Arrays.asList(prms.barriers));
 
-      BounceTR rspB = new BounceTR();
+      bounceResults rspB = new bounceResults();
 
       // Double array of events, one array per ball
       rspB.events = new BounceEvent[numBalls][];
@@ -196,7 +196,7 @@ public class BounceEvaluator implements Evaluator {
 
       rspB.obstaclesHit = targetCount - obstacles.size();
 
-      if (isGoodAnswer(obstacles, prms))
+      if (isGoodAnswer(obstacles, prms, rspB.events, sbmData))
          score = Math.round(prms.targetTime * 10000.0
                / (totalTime + 10.0 * (numBalls - 1.0))) / 100.0;
       else
@@ -212,7 +212,33 @@ public class BounceEvaluator implements Evaluator {
    
    // Check that all remaining obstacles are barriers and that all barriers
    // remain in the list.
-   private boolean isGoodAnswer(LinkedList<Obstacle> obs, Parameters prm) {
+   private boolean isGoodAnswer(LinkedList<Obstacle> obs, Parameters prm,
+         BounceEvent[][] res, LaunchSpec[] sbm) {
+      BounceEvent testEvent;
+      LaunchSpec testSpec;
+      BounceEvent[] ball;
+      
+      //checks all balls for the correct predictions
+      for (int i = 0; i < res.length; i++){//(BounceEvent[] ball : res) {
+         ball = res[i];
+         
+         if (ball.length < 2)
+            return false;
+         
+         testEvent = ball[ball.length - 2];
+         testSpec = sbm[i];
+         
+         if (!(GenUtil.inBounds(testEvent.time - MARGIN_ERROR, testSpec.finalTime, 
+               testEvent.time + MARGIN_ERROR) && 
+               GenUtil.inBounds(testEvent.posX - MARGIN_ERROR, testSpec.finalX, 
+               testEvent.posX + MARGIN_ERROR) && 
+               GenUtil.inBounds(testEvent.posY - MARGIN_ERROR, testSpec.finalY, 
+               testEvent.posY + MARGIN_ERROR)))
+            return false;
+         
+      }
+         
+      
       for (Obstacle temp : obs) 
          if (!temp.barrier)
             return false;
