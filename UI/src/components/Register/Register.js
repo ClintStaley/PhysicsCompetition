@@ -3,7 +3,7 @@ import {
   FormGroup, ControlLabel, FormControl, HelpBlock,
   Checkbox, Button, Alert
 } from 'react-bootstrap';
-import { registerUser, errorTranslate } from '../../api';
+import {errorTranslate } from '../../api';
 //import './Register.css';
 
 //FieldGroup item, will hold a field to be entered

@@ -20,7 +20,6 @@ create table CompetitionType (
    codeName varchar(80) not null, 
    title varchar(80) not null unique,
    description varchar(500) not null,
-   tutorial varchar(10000) not null,
    prmSchema varchar(20000) not null
 );
 
@@ -95,8 +94,8 @@ insert into Person (firstName, lastName, email,       password,   whenRegistered
             VALUES ("Jake", "Williams", "admin@softwareinventions.com", "5562ab22969938d20d529b7220da15af", NOW(), 1);
 
 
-insert into CompetitionType (title, codeName, description, tutorial, prmSchema)
-            VALUES ("Land Grab", "LandGrab", "Claim territory by placing circles in a field of obstacles", "Claim territory by placing circles in a field of obstacles...", '{\
+insert into CompetitionType (title, codeName, description, prmSchema)
+            VALUES ("Land Grab", "LandGrab", "Claim territory by placing circles in a field of obstacles", '{\
      "$schema": "http://json-schema.org/draft-07/schema#",\
      \
      "title": "Land Grab",\
@@ -155,8 +154,8 @@ insert into CompetitionType (title, codeName, description, tutorial, prmSchema)
     "minProperties": 3   \
  }');
 
-insert into CompetitionType (title, codeName, description, tutorial, prmSchema)
-            VALUES ("Bounce", "Bounce","Bounce balls through an obstacle field", "Bounce balls through obstacles by setting lanuch speeds", '
+insert into CompetitionType (title, codeName, description, prmSchema)
+            VALUES ("Bounce", "Bounce","Bounce balls through an obstacle field", '
 {
       "$schema": "http://json-schema.org/draft-07/schema#",
 

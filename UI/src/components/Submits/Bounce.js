@@ -199,8 +199,9 @@ export class Bounce extends Component {
       var obstacleStatus = [];
       props.prms.targets.forEach(() => obstacleStatus.push(true));
 
-      this.props.prms.barriers && this.props.prms.barriers.
-       forEach(() => obstacleStatus.push(true));
+      this.props.prms.barriers && this.props.prms.barriers.forEach(
+         () => obstacleStatus.push(true)
+      );
 
       this.state = {
          obstacleStatus: obstacleStatus,
@@ -263,7 +264,7 @@ export class Bounce extends Component {
       var totalTime = 0;
 
       //saftey so that two seperate intevals are running
-      if (this.intervalID)0
+      if (this.intervalID)
          clearInterval(this.intervalID);
 
       for (var idx = 0; idx < events.length; idx++) {

@@ -17,10 +17,6 @@ router.get('/', (req, res) => {
       console.log(clause, email);
       fillers.push(email + ('%'));
    }
-   if (!ssn.isAdmin()) {
-      clause += (clause ? ' and' : ' where') + ' id = ?';
-      fillers.push(ssn.id);
-   }
    req.cnn.chkQry('select id, email from Person' + clause, fillers,
    (err, result) => {
       res.json(result);
@@ -47,7 +43,8 @@ router.post('/', (req, res) => {
    },
    (prs, fields, cb) => {  // If no duplicates, insert new Person
       if (vld.check(!prs.length, Tags.dupEmail, cb)) {
-         body.password = crypto.createHash('md5').update(body.password).digest('hex');
+         body.password = crypto.createHash('md5')
+          .update(body.password).digest('hex');
          body.termsAccepted = body.termsAccepted ? new Date() : null;
          cnn.chkQry('insert into Person set ?', body, cb);
       }
@@ -64,25 +61,21 @@ router.post('/', (req, res) => {
 router.get('/:id', (req, res) => {
    var vld = req.validator;
 
-   if (vld.checkPrsOK(req.params.id)) {
-      req.cnn.query('select * from Person where id = ?', [req.params.id],
-      (err, prsArr) => {
-         if (vld.check(prsArr.length, Tags.notFound)) {
-             var prs = prsArr[0];
-             prs.termsAccepted = prs.termsAccepted
-              && prs.termsAccepted.getTime();
-             prs.whenRegistered = prs.whenRegistered
-              && prs.whenRegistered.getTime();
+   
+   req.cnn.query('select * from Person where id = ?', [req.params.id],
+   (err, prsArr) => {
+      if (vld.check(prsArr.length, Tags.notFound)) {
+          var prs = prsArr[0];
+          prs.termsAccepted = prs.termsAccepted
+           && prs.termsAccepted.getTime();
+          prs.whenRegistered = prs.whenRegistered
+           && prs.whenRegistered.getTime();
 
-             delete prs.password;
-             res.json(prs);
-         }
-         req.cnn.release();
-      });
-   }
-   else {
+          delete prs.password;
+          res.json(prs);
+      }
       req.cnn.release();
-   }
+   });
 });
 
 router.put('/:id', (req, res) => {

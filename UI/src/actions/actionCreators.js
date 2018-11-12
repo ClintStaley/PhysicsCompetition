@@ -88,7 +88,6 @@ export function postTeam(cmpId, newTeamData, cb) {
    }
 }
 
-
 export function putTeam(cmpId, teamId, newTeamData, cb) {
    return (dispatch, getState) => {
       api.putTeam(cmpId, teamId, newTeamData)
@@ -122,15 +121,13 @@ export function getTeamsByCmp(cmpId, cb) {
       api.getTeamsByCmp(cmpId)
       .then((teams) => {
          Object.keys(teams).forEach((key) => {
-            teams[key] = Object.assign(teams[key],
-             {mmbs : {}, toggled: false});
-         })
+            teams[key].mmbs = {};
+            teams[key].toggled = false;
+         });
          dispatch({type: 'GET_CMP_TEAMS', teams, cmpId})
-
       })
       .then(() => {if (cb) cb()})}
 }
-
 
 export function delTeam(cmpId, teamId, cb) {
    return (dispatch, getState) => {
@@ -145,7 +142,7 @@ export function addMmb(mmbEmail, cmpId, teamId, cb) {
       api.getPrssByEmail(mmbEmail)
       .then(prss => api.getPrs(prss[0].id))
       .then(prs => api.postMmb(prs.id, cmpId, teamId)
-      .then(() => prs))//whats this for?
+       .then(() => prs)) // Subpromise returns prs for full info in dispatch
       .then(prs => dispatch({type: 'ADD_MMB', teamId, prs}))
       .catch(err => dispatch({type: 'SHOW_ERR',
         details: `Can't add member: ${err}`}))

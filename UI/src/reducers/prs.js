@@ -11,15 +11,16 @@ export default function prs(state = {}, action) {
       case 'GET_PRS_CMPS':
          return Object.assign({}, state, {myCmps: Object.keys(action.cmps)});
       case 'ADD_TEAM':
-         var teamId = action.newTeamData.id;
-         var myTeams = state.myTeams;
-         var myNewTeams = myTeams.concat([teamId.toString()]);
+         // Add the newly created team to my teams
+         var teamId = action.newTeamData.id.toString();
+         var newTeams = state.myTeams.concat([teamId]);
 
+         // Add the relevant cmp only if I'm not already in it via another team
          var cmpId = action.newTeamData.cmpId.toString();
          var myCmps = state.myCmps;
-         var myNewCmps = myCmps.includes(cmpId) ? myCmps : myCmps.concat([cmpId]);
+         var newCmps = myCmps.includes(cmpId) ? myCmps : myCmps.concat([cmpId]);
 
-         return Object.assign({}, state, {myTeams: myNewTeams, myCmps: myNewCmps});
+         return Object.assign({}, state, {myTeams: newTeams, myCmps: newCmps});
       case 'GET_TEAM_MMBS':
          if (Object.keys(action.teamData.mmbs).includes(state.id.toString()))
             if (!state.myTeams.includes(action.teamData.teamId))
@@ -27,8 +28,7 @@ export default function prs(state = {}, action) {
                 state.myTeams.concat(action.teamData.teamId)});
          return state;
       case 'DEL_MMB':
-         return
-          Number(action.prsId) !== state.id ? state :
+         return Number(action.prsId) !== state.id ? state :
           Object.assign({}, state, {myTeams:
           state.myTeams.filter(teamId => teamId !== action.teamId)});
       default:

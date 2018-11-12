@@ -37,7 +37,7 @@ CnnPool.router = function(req, res, next) {
             // Run real qry, checking for error
             this.query(qry, prms, function(err, rsp, fields) {
                if (err){
-                  console.log("Failed ");
+                  console.log("Query Failed");
                   res.status(500).json('Failed query ' + qry);
                }
                cb(err, rsp, fields);
