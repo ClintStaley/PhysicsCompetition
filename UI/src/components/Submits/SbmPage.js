@@ -17,19 +17,27 @@ console.log("Constructing SbmPage with ", props);
 
       this.state = {
          sbmFunction: null,   // Function to support modal submit dialog
-         refreshNote: "No results yet..." // Refresh state
+         refreshNote: "No results yet...", // Refresh state
+         ctpName: null     //the type of page to load
       }
    }
 
    componentDidMount = () => {
       console.log("mount");
       this.props.getSbms(this.props.cmp, this.props.team.id,
-       () => this.startTimer());
+       () => {
+          this.setCtpType();
+          this.startTimer();
+       });
    }
 
    componentWillUnmount = () => {
       if (this.timerId)
          this.stopTimer();
+   }
+
+   setCtpType = () => {
+      this.setState({ctpName : this.props.sbms.ctpName});
    }
 
    startTimer = () => {
@@ -73,9 +81,7 @@ console.log("Constructing SbmPage with ", props);
       var sbmStatus = null;
       var prbDiagram = null;
 
-      //quickest fix, asycrony wiht react components
-      if ((this.props.sbms.current && this.props.sbms.current.cmpId) === this.props.cmp.id)
-         ctpName = this.props.sbms.ctpName;
+      ctpName = this.state.ctpName;
 
       if (this.props.sbms.current) {
          sbm = this.props.sbms.current;

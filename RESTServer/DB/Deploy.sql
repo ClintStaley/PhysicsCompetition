@@ -49,6 +49,7 @@ create table Team (
    lastSubmit datetime default null,
    canSubmit boolean default true,
    nextTeam int,
+   numSubmits int not null default 0,
 
    constraint FKTeam_cmpId foreign key (cmpId) references
     Competition(id) on delete cascade on update cascade,

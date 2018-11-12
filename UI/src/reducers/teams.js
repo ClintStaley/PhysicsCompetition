@@ -22,9 +22,14 @@ export default function teams(state = {}, action) {
          return Object.assign({}, state, {[teamId]: action.newTeamData});
       case 'DEL_TEAM':
          return update(state, {$unset: [action.teamId]});
+      //ADD_MMB, only adds members to teams whose member data already is present
       case 'ADD_MMB':
          prs = action.prs;
          team = Object.assign({}, state[action.teamId]);
+
+         //if there are no members in store, do not add new mwmber to store
+         if (!team.mmbs.length)
+            return state;
 
          team.mmbs = Object.assign({}, team.mmbs, {[prs.id]: {email: prs.email, firstName: prs.firstName, lastName: prs.lastName}});
          return Object.assign({}, state, {[action.teamId]: team});

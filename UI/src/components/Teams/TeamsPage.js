@@ -239,7 +239,7 @@ const MmbItem = function (props) {
 
    return (
    <ListGroupItem className="clearfix">
-     <Link to="#">{props.name}</Link>
+     {props.name}
      {props.isLeader ? ` -- lead (${props.contact})` : ''}
      {props.del ?
         <div className="pull-right">

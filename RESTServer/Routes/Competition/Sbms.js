@@ -36,14 +36,21 @@ router.post('/', (req, res) => {
            }
         }
      },
-     (team, fields, cb) => {
+     (team, err, cb) => {
+        var teamBody = {};
         if (vld.check(team && team.length, Tags.notFound, cb)) {
-           body.cmpId = req.params.cmpId;
-           body.teamId = req.params.teamId;
-           body.sbmTime = new Date();
-           console.log(JSON.stringify(body));
-           cnn.chkQry('insert into Submit set ?', body, cb);
+           teamBody.lastSubmit = new Date();
+           teamBody.numSubmits = 1 + team[0].numSubmits
+          cnn.chkQry("update Team set ? where id = ?",
+           [ teamBody, req.params.teamId ], cb);
         }
+     },
+     (team, fields, cb) => {
+        body.cmpId = req.params.cmpId;
+        body.teamId = req.params.teamId;
+        body.sbmTime = new Date();
+        console.log(JSON.stringify(body));
+        cnn.chkQry('insert into Submit set ?', body, cb);
      },
      (result, fields, cb) => {
         // Return location of inserted Submissions
