@@ -5,7 +5,10 @@ import * as api from '../api';
 // value of the promise.
 function addStdHandlers(dsp, cb, promise) {
    promise
-   .catch((errList) => dsp({type: 'SHOW_ERR', details: errList}))
+   .catch((errList) => {
+       dsp({type: 'SHOW_ERR', details: errList}); 
+       return Promise.reject();  // Skip downstream "thens".
+    })
    .then((val) => {if (cb) cb(); return val;});
 }
 
