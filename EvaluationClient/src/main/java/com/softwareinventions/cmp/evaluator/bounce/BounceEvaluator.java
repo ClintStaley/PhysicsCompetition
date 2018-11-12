@@ -355,11 +355,8 @@ public class BounceEvaluator implements Evaluator {
             .filter(c -> c != null)
             .min((c2, c1) -> Double.compare(c2.time, c1.time));
       
-     
-      
       if (rtn.isPresent()) 
          obstacles.removeIf(o -> o.obstacleId == rtn.get().obstacleIdx);
-      
       
       return rtn;
    }
@@ -540,28 +537,6 @@ public class BounceEvaluator implements Evaluator {
       coef[4] = GenUtil.sqr(GRAVITY / 2.0);
 
       return new PolynomialFunction(coef);
-   }
-
-   // Return an array with [xPosFunction, xVelocityFunction, yPositionFunction,
-   // and yVelocityFunction].
-   //
-   // CAS FIX: This is a clever use of lambdas, and I'm good with it after
-   // seeing what you need to do. But, how about returning a class with named
-   // fields instead of an array with blind meanings for 0, 1, 2, and 3.
-   public static UnivariateFunction[] getAllFunctions(BounceEvent current) {
-      UnivariateFunction[] ballFunctions = new UnivariateFunction[4];
-
-      // X position function
-      ballFunctions[0] = t -> t * current.velocityX + current.posX;
-      // X velocity function
-      ballFunctions[1] = t -> current.velocityX;
-      // Y position function
-      ballFunctions[2] = t -> GRAVITY / 2.0 * GenUtil.sqr(t)
-            + current.velocityY * t + current.posY;
-      // Y velocity function
-      ballFunctions[3] = t -> 2 * GRAVITY / 2.0 * t + current.velocityY;
-
-      return ballFunctions;
    }
 
    // Return solutions to the quadratic equation as an array of doubles, in 

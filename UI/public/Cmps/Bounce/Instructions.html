@@ -1,10 +1,130 @@
+<!DOCTYPE HTML>
 <html>
-   <head>
-
-   </head>
-   <body>
-     <center><h2>Bounce Instructions</h2></center>
-
-     <div>instructions html page</div>
-   </body>
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Made with Remarkable!
+  </title>
+  <link href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.1/styles/github.min.css" rel="stylesheet"/>
+  <style type="text/css">
+   body,table tr{background-color:#fff}table tr td,table tr th{border:1px solid #ccc;text-align:left;padding:6px 13px;margin:0}pre code,table,table tr{padding:0}hr,pre code{background:0 0}body{font:16px Helvetica,Arial,sans-serif;line-height:1.4;color:#333;word-wrap:break-word;padding:10px 15px}strong,table tr th{font-weight:700}h1{font-size:2em;margin:.67em 0;text-align:center}h2{font-size:1.75em}h3{font-size:1.5em}h4{font-size:1.25em}h1,h2,h3,h4,h5,h6{font-weight:700;position:relative;margin-top:15px;margin-bottom:15px;line-height:1.1}h1,h2{border-bottom:1px solid #eee}hr{height:0;margin:15px 0;overflow:hidden;border:0;border-bottom:1px solid #ddd}a{color:#4183C4}a.absent{color:#c00}ol,ul{padding-left:15px;margin-left:5px}ol{list-style-type:lower-roman}table tr{border-top:1px solid #ccc;margin:0}table tr:nth-child(2n){background-color:#aaa}table tr td :first-child,table tr th :first-child{margin-top:0}table tr td:last-child,table tr th :last-child{margin-bottom:0}img{max-width:100%}blockquote{padding:0 15px;border-left:4px solid #ccc}code,tt{margin:0 2px;padding:0 5px;white-space:nowrap;border:1px solid #eaeaea;background-color:#f8f8f8;border-radius:3px}pre code{margin:0;white-space:pre;border:none}.highlight pre,pre{background-color:#f8f8f8;border:1px solid #ccc;font-size:13px;line-height:19px;overflow:auto;padding:6px 10px;border-radius:3px}
+  </style>
+ </head>
+ <body>
+  <h1>
+   Instructions for Bounce Competition
+  </h1>
+  <h2>
+   Overview
+  </h2>
+  <p>
+   In this competition, you'll launch balls to hit rectangular targets, while avoiding rectangular barriers.  You'll compete to hit all the targets, while avoiding the barriers, in as little time as possible.
+  </p>
+  <h2>
+   The Details
+  </h2>
+  <p>
+   The diagram below shows a typical Bounce competition.  The playing area is a square 10m high and 10m wide, filled with rectangles, some green and some red  The green rectangles are
+   <strong>
+    targets
+   </strong>
+   , and the red ones are
+   <strong>
+    barriers
+   </strong>
+   .  You have to hit all the targets, while avoiding the barriers.
+  </p>
+  <p>
+   To do this, you launch balls from the upper left edge of the playing area, at any left-to-right horizontal speed you like.  Each ball you launch falls toward the bottom of the playing area at a gravitational acceleration of 9.8066 m/s^2.  Given the 10m height of the area, this means it'll hit the bottom in just over 1.4s.  Or, if you launch it fast enough, it'll hit the far right edge in less time than that.
+  </p>
+  <p>
+   But, if the ball hits any target or barrier, then it bounces off, perfectly elastically, and the target or barrier vanishes.  This means you can keep the ball going for quite a while by launching relatively slowly, and arranging for it to hit targets, bouncing back up off of each one.  The job, then, is to figure out a horizontal speed that makes the ball hit as many targets as possible before leaving the playing area, without hitting any barriers.
+  </p>
+  <p>
+   In some cases, you'll be able to hit all the targets with a single ball, but you're allowed as many balls as you need.  You specify a launch speed for each ball, and they get launched one after another, each one launched as soon as the prior one leaves the playing area.  For each ball you must also enter the location of its center, and the time, of the final target collision the ball makes before leaving the playing area.  (It's assumed you won't launch a ball without expecting to hit at least one target.)  This precludes solving the problem by iterative guessing; you have to do the math.
+  </p>
+  <p>
+   For each proposed solution you submit, you'll get a movie of the result.
+   <br/>
+   If you hit all the targets without hitting any barriers, and if you get the right final impact time and location for each ball, then you have a
+   <strong>
+    valid solution
+   </strong>
+   .  Any valid solution gets a score based on how quickly all the targets were hit.  Valid solutions also get a table below the movie, showing exact data on each collision, so you can confirm your computations.
+  </p>
+  <p>
+   Any invalid solution is left unscored.  There's no penalty, and you can retry as much as you want.  Invalid solutions still get the movie, so you can see where you went wrong.  But they don't get a numerical table of collision data; you still have to fix the math yourself.
+  </p>
+  <h3>
+   Some numerical details
+  </h3>
+  <ul>
+   <li>
+    The diagram shows the corners of each target or barrier, in meters, measured from the bottom and left side of the playing area.
+   </li>
+   <li>
+    The ball has a radius of .1 m, which you need to take into account when calculating impact times and locations.
+   </li>
+   <li>
+    The simulated gravity is exactly 9.8066 m/s^2.
+   </li>
+   <li>
+    Each ball launches after the prior one has
+    <em>
+     entirely
+    </em>
+    left the playing area, not just when the prior ball's centerpoint leaves the playing area.
+   </li>
+  </ul>
+  <h2>
+   Suggested Playing Strategy
+  </h2>
+  <h3>
+   First Just try it out a bit
+  </h3>
+  <p>
+   Since invalid solutions aren't penalized, start by just launching a ball or two, retrying until you manage to hit a target or two.  Follow the diagram and see if you can calculate the impact times and locations you get from this.
+  </p>
+  <h3>
+   Use one ball per target
+  </h3>
+  <p>
+   Once you've tried it out, calculate a solution that uses one ball per target if possible.  This is the easiest kind of solution to do.  Calculate the time the ball will take to fall to the level of the target, and calcualte the speed necessary for the ball to hit the target at that time.
+  </p>
+  <h3>
+   Now see if you can kill multiple targets per ball
+  </h3>
+  <p>
+   Doing this requires calculating the timing of the ball as it rises and falls, computing the length of time for each rise and fall, and trying to get a horizontal speed that will hit all the desired targets at the right times.  Or, you can be more creative (some competitions require this) and bounce off the sides or even the bottom of targets)
+  </p>
+  <h3>
+   Speeding up the solution
+  </h3>
+  <p>
+   The faster you hit all the targets, the better the score.  Thus, using fewer balls is generally a good idea, though a couple of fast balls may sometimes get the job done more quickly than one slow ball.  And for a given ball, using the fastest speed that will still hit all the targets is helpful.
+  </p>
+  <h2>
+   A Bit of Physics Help
+  </h2>
+  <h3>
+   "Elastic" bounces
+  </h3>
+  <p>
+   As you may know, "perfectly elastically" means the ball bounces away with the same velocity it hit, but with the velocity component in the direction of the target or barrier negated or reversed.  In the diagram below, the ball hits the rectangle with a downward velocity of 2 m/s and a horizontal velocity of 3 m/s.  After the collision, it has an
+   <em>
+    upward
+   </em>
+   velocity of 2 m/s, and the horizontal velocity is unchanged.  It's important to think of the ball's velocity in two components -- vertical and horizontal.
+  </p>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.1/highlight.min.js">
+  </script>
+  <script>
+   hljs.initHighlightingOnLoad();
+  </script>
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript">
+  </script>
+  <script type="text/javascript">
+   MathJax.Hub.Config({"showProcessingMessages" : false,"messageStyle" : "none","tex2jax": { inlineMath: [ [ "$", "$" ] ] }});
+  </script>
+ </body>
 </html>
