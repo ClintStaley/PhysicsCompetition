@@ -6,7 +6,7 @@ import * as api from '../api';
 function addStdHandlers(dsp, cb, promise) {
    promise
    .catch((errList) => {
-       dsp({type: 'SHOW_ERR', details: errList}); 
+       dsp({type: 'SHOW_ERR', details: errList});
        return Promise.reject();  // Skip downstream "thens".
     })
    .then((val) => {if (cb) cb(); return val;});
@@ -176,7 +176,10 @@ export function postSbm(cmpId, teamId, submit, cb) {
    return (dispatch, getState) => {
       addStdHandlers(dispatch, cb,
        api.postSbm(cmpId, teamId, submit)
-       .then(() => api.getSbms(cmpId, teamId, 1))
+       .then(() => {
+
+          api.getSbms(cmpId, teamId, 1);
+       })
        .then(sbms => dispatch({type: "POST_SBM", sbm: sbms[0]}))
     )};
 }
