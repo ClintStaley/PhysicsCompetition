@@ -1,3 +1,6 @@
+/* sbms maintains submission information for only one team, and new
+GET_SBMS actions are expected as we display submission information
+for each different team.*/
 export default function sbms(state = {}, action) {
    switch (action.type) {
       case 'GET_SBMS':

@@ -10,7 +10,7 @@ export default class SbmPage extends Component {
    constructor(props) {
       super(props);
 
-console.log("Constructing SbmPage with ", props);
+      console.log("Constructing SbmPage with ", props);
 
       this.cRefreshDelay = 4000; // Every 4 s
       this.cNoteDelay = 333;     // Show notice for 1/3 s
@@ -22,6 +22,8 @@ console.log("Constructing SbmPage with ", props);
       }
    }
 
+   // Whenever the component mounts, we need to start the timer, and retrieve
+   // the appropriate set of submissions for the current properties
    componentDidMount = () => {
       console.log("mount");
       this.props.getSbms(this.props.cmp, this.props.team.id,
@@ -31,6 +33,8 @@ console.log("Constructing SbmPage with ", props);
        });
    }
 
+   // Stop the timer on unmount, to stop repeated polling when page is not 
+   // displayed.
    componentWillUnmount = () => {
       if (this.timerId)
          this.stopTimer();
