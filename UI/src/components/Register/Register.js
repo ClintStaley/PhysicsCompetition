@@ -3,8 +3,7 @@ import {
   FormGroup, ControlLabel, FormControl, HelpBlock,
   Checkbox, Button, Alert
 } from 'react-bootstrap';
-import {errorTranslate } from '../../api';
-//import './Register.css';
+import {ConfDialog} from '../concentrator'
 
 //FieldGroup item, will hold a field to be entered
 function FieldGroup({ id, label, help, ...props }) {
@@ -54,13 +53,18 @@ class Register extends Component {
          role
       };
 
-      //send user data to action creator
-      this.props.register(user);
+      this.props.register(user, () => this.setState({offerSignin: true}));
+   }
+
+   handleSignin(ans) {
+      if (ans === 'Yes')
+         this.props.signIn({email: this.state.email, password: this.state.password}, ()=>this.props.history.push("/"));
+      this.setState({offerSigin: false});
    }
 
    handleChange(ev) {
       let newState = {};
-      //if checkbok modify checked, else modify value
+
       switch (ev.target.type) {
          case 'checkbox':
             newState[ev.target.id] = ev.target.checked;
@@ -69,47 +73,27 @@ class Register extends Component {
             newState[ev.target.id] = ev.target.value;
       }
 
-      //update changes made
       this.setState(newState);
    }
 
    //just checks that all the fields are filled, and passwords match
-   formValid() {
+   isFormValid() {
       let s = this.state;
+      
       return s.email && s.lastName && s.password && s.password === s.passwordTwo &&
          s.termsAccepted;
    }
 
-   // Display a box for sucess or failure, otherwise do nothing
-   registerResult(status = "") {
-    if (status === "error")
-      return (
-        <Alert bsStyle="danger">
-          <h2>Oh no!</h2>
-          <strong>Registration had the following warnings:</strong>
-          {this.state.err.map((err, i) => <p key={i}>{errorTranslate(err.tag)}</p>)}
-        </Alert>
-      )
-    else if (status === "success")
-      return (
-        <Alert bsStyle="success">
-          <h2>Registration successfull!</h2>
-          <p>Do you want to sign in straight away?</p>
-          <Button onClick={() =>
-            this.props.signIn({ email: this.state.email, password: this.state.password },
-              () => this.props.history.push("/"))
-          }>
-            Sign in
-      </Button>
-        </Alert>
-      )
-  }
-
   //renders all of the fields
-  render() {
+  render() { 
     return (
       <div className="container">
-        {this.registerResult(this.state.registerStatus)}
+        <ConfDialog
+          show={this.state.offerSignin}
+          title="Successful registration"
+          body="Do you want to log in right now?"
+          buttons={['Yes', 'No']}
+          onClose={(ans) => this.handleSignin(ans)}/>
         <form>
           <FieldGroup
             id="email"
@@ -169,7 +153,7 @@ class Register extends Component {
         <Button
           bsStyle="primary"
           onClick={() => this.submit()}
-          disabled={!this.formValid()}
+          disabled={!this.isFormValid()}
         >
           Submit
         </Button>

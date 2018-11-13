@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ListGroup, ListGroupItem, Button, Glyphicon, Popover, OverlayTrigger } from 'react-bootstrap';
@@ -239,7 +238,7 @@ const MmbItem = function (props) {
 
    return (
    <ListGroupItem className="clearfix">
-     <Link to="#">{props.name}</Link>
+     {props.name}
      {props.isLeader ? ` -- lead (${props.contact})` : ''}
      {props.del ?
         <div className="pull-right">

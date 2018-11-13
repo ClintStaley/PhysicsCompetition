@@ -36,14 +36,22 @@ router.post('/', (req, res) => {
            }
         }
      },
-     (team, fields, cb) => {
+     (team, err, cb) => {
+        var teamBody = {};
         if (vld.check(team && team.length, Tags.notFound, cb)) {
-           body.cmpId = req.params.cmpId;
-           body.teamId = req.params.teamId;
-           body.sbmTime = new Date();
-           console.log(JSON.stringify(body));
-           cnn.chkQry('insert into Submit set ?', body, cb);
+           teamBody.lastSubmit = new Date();
+           teamBody.numSubmits = 1 + team[0].numSubmits;
+           teamBody.canSubmit = false;
+          cnn.chkQry("update Team set ? where id = ?",
+           [ teamBody, req.params.teamId ], cb);
         }
+     },
+     (team, fields, cb) => {
+        body.cmpId = req.params.cmpId;
+        body.teamId = req.params.teamId;
+        body.sbmTime = new Date();
+        console.log(JSON.stringify(body));
+        cnn.chkQry('insert into Submit set ?', body, cb);
      },
      (result, fields, cb) => {
         // Return location of inserted Submissions
@@ -79,7 +87,8 @@ router.put('/:id', (req, res) => {
 
    async.waterfall([
    (cb) => {
-      if (vld.hasOnlyFields(body, ["testResult", "errorResult", "score"], cb)) {
+      if (vld.hasOnlyFields(body,
+       ["testResult", "errorResult", "score", "canSubmit"], cb)) {
          if (vld.checkAdmin(cb)) {
             cnn.chkQry('select * from Team where id = ? && cmpId = ?',
              [ teamId, cmpId ], cb);
@@ -91,6 +100,8 @@ router.put('/:id', (req, res) => {
       if (vld.check(team && team.length, Tags.notFound, cb)) {
         if (team[0].bestScore < body.score) {
            teamBody.bestScore = body.score;
+           if (body.canSubmit)
+              teamBody.canSubmit = body.canSubmit;
            cnn.chkQry("update Team set ? where id = ?",
             [ teamBody, teamId ], cb);
         }
@@ -99,6 +110,7 @@ router.put('/:id', (req, res) => {
       }
    },
    (result, err, cb) => {
+      delete body.canSubmit;
       body.cmpId = cmpId;
       body.teamId = teamId;
       cnn.chkQry('select * from Submit where id = ? && cmpId = ? && ' +
