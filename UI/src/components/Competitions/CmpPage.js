@@ -189,8 +189,7 @@ const TeamLine = function (props) {
          Last Score:{props.bestScore !== -1 ? props.bestScore : "N/A"}
        </label>
        {props.isMember ?
-       <Button onClick = {props.doSubmit}
-       disabled = {!props.canSubmit}>
+       <Button onClick = {props.doSubmit}>
          Submit/Check</Button>  : ''}
        </div>
      :

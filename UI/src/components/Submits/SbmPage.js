@@ -33,7 +33,7 @@ export default class SbmPage extends Component {
        });
    }
 
-   // Stop the timer on unmount, to stop repeated polling when page is not 
+   // Stop the timer on unmount, to stop repeated polling when page is not
    // displayed.
    componentWillUnmount = () => {
       if (this.timerId)
@@ -66,8 +66,10 @@ export default class SbmPage extends Component {
       var current = this.props.sbms && this.props.sbms.current;
 
       if (current)
-         if (current.testResult && this.timerId)
+         if (current.testResult && this.timerId){
             this.stopTimer();
+            this.props.getTeamsById(current.cmpId, current.teamId);
+         }
          else {
             this.setState({refreshNote: "Checking for results..."});
             this.props.refreshSbms(() =>

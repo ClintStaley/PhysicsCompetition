@@ -102,16 +102,13 @@ export function putTeam(cmpId, teamId, newTeamData, cb) {
    }
 }
 
-export function getTeamsById(teamId, cb) {
+export function getTeamsById(cmpId, teamId, cb) {
    return (dispatch, getState) => {
-      api.getTeamsByPrs(teamId)
-      .then((teams) => {
-         Object.keys(teams).forEach((key) => {
-            teams[key] = Object.assign(teams[key],
-             {mmbs : {}, toggled: false});
-         })
-         dispatch({type: 'GET_PRS_TEAMS', teams})
-
+      api.getTeamsById(cmpId, teamId)
+      .then((team) => {
+         team.mmbs = {};
+         team.toggled = false;
+         dispatch({type: 'ADD_TEAM',  newTeamData: team});
       })
       .then(() => {if (cb) cb()})}
 }
@@ -186,12 +183,25 @@ export function getMmbs(cmpId, teamId, cb) {
    }
 }
 
+       //.then(sbms => dispatch({type: "POST_SBM", sbm: sbms[0]}))
 export function postSbm(cmpId, teamId, submit, cb) {
+   var sbms;
+
    return (dispatch, getState) => {
       addStdHandlers(dispatch, cb,
        api.postSbm(cmpId, teamId, submit)
-       .then(() => {api.getSbms(cmpId, teamId, 1);})
-       .then(sbms => dispatch({type: "POST_SBM", sbm: sbms[0]}))
+       .then(() => {
+          api.getSbms(cmpId, teamId, 1)
+          .then((sbms) => {
+             api.getTeamsById(cmpId, teamId, cb)
+             .then((team) => {
+                team.mmbs = {};
+                team.toggled = false;
+                dispatch({type: "POST_SBM", sbm: sbms[0], newTeamData: team});
+             })
+             .then(() => {if (cb) cb()})
+          })
+       })
     )};
 }
 
