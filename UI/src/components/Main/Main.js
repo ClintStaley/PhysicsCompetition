@@ -41,7 +41,7 @@ class Main extends Component {
 
    render() {
      var reRoute = this.reRoute;
-
+     console.log("Main renders with ", this.props);
     return (
       <div>
         <div>

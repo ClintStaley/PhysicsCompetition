@@ -28,6 +28,8 @@ class CmpsPage extends Component {
             this.props.getMyCmps(this.props.prs.id);
    }
 
+   // CAS FIX: Why are these two functions exact duplicates?
+   // componentDidUpdate = this.componentDidMount
    componentDidUpdate = () => {
       var props = this.props;
 

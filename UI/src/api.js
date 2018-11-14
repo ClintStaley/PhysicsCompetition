@@ -236,7 +236,7 @@ export function getPrssByEmail(email) {
 
 export function postMmb(prsId, cmpId, teamId) {
    return post(`Cmps/${cmpId}/Teams/${teamId}/Mmbs`, {prsId})
-   .then(rsp => rsp.headers["Location"])
+   .then(rsp => rsp.headers["Location"]);
 }
 
 /** Return id -> member map rather than simple array of members, which the

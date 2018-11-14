@@ -22,14 +22,14 @@ export default class SbmPage extends Component {
       }
    }
 
-   // Whenever the component mounts, we need to start the timer, and retrieve
-   // the appropriate set of submissions for the current properties
+   // Whenever the component mounts, start the timer, and retrieve
+   // the appropriate set of submissions for the current cmp/team
    componentDidMount = () => {
       console.log("mount");
       this.props.getSbms(this.props.cmp, this.props.team.id,
        () => {
           this.setCtpType();
-          this.startTimer();
+          this.startTimer(); // Shouldn't this happen only if there is a pending submit?
        });
    }
 
@@ -48,11 +48,9 @@ export default class SbmPage extends Component {
       if (this.timerId)
          this.stopTimer();
       this.timerId = setInterval(() => this.refreshSbm(), this.cRefreshDelay);
-      console.log("Started " + this.timerId);
    }
 
    stopTimer = () => {
-      console.log("Clearing " + this.timerId);
       this.timerId && clearInterval(this.timerId);
       this.timerId = null;
    }

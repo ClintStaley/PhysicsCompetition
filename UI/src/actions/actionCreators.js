@@ -176,10 +176,7 @@ export function postSbm(cmpId, teamId, submit, cb) {
    return (dispatch, getState) => {
       addStdHandlers(dispatch, cb,
        api.postSbm(cmpId, teamId, submit)
-       .then(() => {
-
-          api.getSbms(cmpId, teamId, 1);
-       })
+       .then(() => {api.getSbms(cmpId, teamId, 1);})
        .then(sbms => dispatch({type: "POST_SBM", sbm: sbms[0]}))
     )};
 }
