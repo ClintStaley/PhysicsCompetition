@@ -45,7 +45,7 @@ class Main extends Component {
    render() {
      var ProtectedRoute = this.ProtectedRoute;
      var reRoute = this.reRoute;
-
+     console.log("Main renders with ", this.props);
     return (
       <div>
         <div>
