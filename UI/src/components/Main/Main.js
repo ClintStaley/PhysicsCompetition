@@ -45,7 +45,7 @@ class Main extends Component {
    render() {
      var ProtectedRoute = this.ProtectedRoute;
      var reRoute = this.reRoute;
-     console.log("Main renders with ", this.props);
+
     return (
       <div>
         <div>
@@ -100,8 +100,8 @@ class Main extends Component {
            <ProtectedRoute path='/AllCmpsPage'
            component = {CmpsPage} showAll = {true}/>
           <ProtectedRoute path='/TeamsPage' component = {TeamsPage}/>
-          <ProtectedRoute path='/signin' component ={SignIn} {...this.props}/>
-          <ProtectedRoute path='/register' component ={Register} {...this.props}/>
+          <Route path='/signin' render={() => <SignIn {...this.props} />}/>
+          <Route path='/register' render = {() => <Register {...this.props}/>}/>
 
           <Route path='/MyCmpPage/:cmpId/'
               render={(pathProps) => {
