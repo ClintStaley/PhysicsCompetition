@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Register, SignIn, CmpsPage, TeamsPage, CmpPage, SbmPage, ConfDialog,
    InstructionsPage } from '../concentrator'
-import { Route, Switch } from 'react-router-dom';
+import { Route, Redirect, Switch } from 'react-router-dom';
 import { Navbar, Nav, NavItem, ListGroup, ListGroupItem } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import './Main.css';
@@ -10,6 +10,8 @@ const Home = (
    <div width="100%" height="100%">
      <img  src="PhysicsCompetitionHomePicture.png" alt="PhysicsCompetition" width="100%" height="100%"/>
   </div>); // TODO make real home component
+
+
 
 class Main extends Component {
    signedIn() {
@@ -25,14 +27,15 @@ class Main extends Component {
       }
    }
 
-   reRouteV2 = (paramaters, renderFunc) => {
-      if (this.signedIn())
-         return renderFunc(paramaters);
-      else {
-         this.props.history.push("/");
-         return Home;
-      }
-   }
+
+   ProtectedRoute = ({component: Cmp, path, ...rest }) => {
+         return (<Route path={path} render={(props) => {
+             return this.signedIn() ?
+              <Cmp {...rest}/> : <Redirect to='/signin'/>;
+          }
+       }/>);
+    }
+
 
    signOut(event) {
       this.props.history.push("/");
@@ -40,6 +43,7 @@ class Main extends Component {
    }
 
    render() {
+     var ProtectedRoute = this.ProtectedRoute;
      var reRoute = this.reRoute;
 
     return (
@@ -91,13 +95,13 @@ class Main extends Component {
         </div>
         <Switch>
           <Route exact path='/' children={Home} />
-          <Route path='/MyCmpsPage'
-           render={() => reRoute(<CmpsPage showAll = {false}/>)} />} />
-           <Route path='/AllCmpsPage'
-           render={() => reRoute(<CmpsPage showAll = {true}/>)} />} />
-          <Route path='/TeamsPage' component = {TeamsPage}/>
-          <Route path='/signin' render = {() => <SignIn {...this.props} />} />
-          <Route path='/register' render = {() => <Register {...this.props} />}/>
+          <ProtectedRoute path='/MyCmpsPage'
+           component = {CmpsPage} showAll = {false}/>
+           <ProtectedRoute path='/AllCmpsPage'
+           component = {CmpsPage} showAll = {true}/>
+          <ProtectedRoute path='/TeamsPage' component = {TeamsPage}/>
+          <ProtectedRoute path='/signin' component ={SignIn} {...this.props}/>
+          <ProtectedRoute path='/register' component ={Register} {...this.props}/>
 
           <Route path='/MyCmpPage/:cmpId/'
               render={(pathProps) => {

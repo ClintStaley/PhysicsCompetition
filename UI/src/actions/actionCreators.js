@@ -102,6 +102,20 @@ export function putTeam(cmpId, teamId, newTeamData, cb) {
    }
 }
 
+export function getTeamsById(teamId, cb) {
+   return (dispatch, getState) => {
+      api.getTeamsByPrs(teamId)
+      .then((teams) => {
+         Object.keys(teams).forEach((key) => {
+            teams[key] = Object.assign(teams[key],
+             {mmbs : {}, toggled: false});
+         })
+         dispatch({type: 'GET_PRS_TEAMS', teams})
+
+      })
+      .then(() => {if (cb) cb()})}
+}
+
 // Get basic team info for all teams of which the specified prsId is a member.
 // Leave members empty and toggled false.  (Later actions may populate members.)
 // Dispatch an update for the teams property of app state.
