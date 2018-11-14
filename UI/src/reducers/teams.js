@@ -18,6 +18,7 @@ export default function teams(state = {}, action) {
          return Object.assign({}, state, {[data.id]:
           Object.assign({}, state[data.id], data)});
       case 'ADD_TEAM':
+      case 'POST_SBM':
          var teamId = action.newTeamData.id;
          return Object.assign({}, state, {[teamId]: action.newTeamData});
       case 'DEL_TEAM':

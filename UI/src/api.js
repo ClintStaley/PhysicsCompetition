@@ -184,15 +184,15 @@ export function postCmp(body) {
    .then(rsp => rsp.headers["Location"])
 }
 
-export function getTeamsById(teamId) {
-   return get(`Prss/${teamId}/Teams`)
+export function getTeamsById(cmpId, teamId) {
+   console.log('GET TEAMS BY ID');
+   return get(`Cmps/${cmpId}/Teams/${teamId}`)
    .then((teamData) => teamData.json())
    .then((teamData) => {
-      var teams = {};
-      for (var i = 0; i < teamData.length; i++)
-         teams[teamData[i].id] = teamData[i];
-
-      return teams;
+      var team = {};
+      console.log(teamData);
+      team[teamData.id] = teamData;
+      return team;
    });
 }
 
