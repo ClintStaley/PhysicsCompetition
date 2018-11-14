@@ -103,11 +103,14 @@ class Main extends Component {
           <Route path='/signin' render={() => <SignIn {...this.props} />}/>
           <Route path='/register' render = {() => <Register {...this.props}/>}/>
 
-          <Route path='/MyCmpPage/:cmpId/'
-              render={(pathProps) => {
-              return reRoute(<CmpPage cmpId = {pathProps.match.params.cmpId}
-              myCmpLink = {true}
-              {...this.props} />)}} />
+          <Route path='/MyCmpPage/:cmpId/' render={pathProps => 
+            <ProtectedRoute path='/MyCmpPage/:cmpId' cmpIdcomponent={CmpPage}
+            cmpId = {pathProps.match.params.cmpId} myCmpLink = {true}/>
+          }/>
+              // render={(pathProps) => {
+              // return reRoute(<CmpPage cmpId = {pathProps.match.params.cmpId}
+              // myCmpLink = {true}
+              // {...this.props} />)}} />
 
           <Route path='/JoinCmpPage/:cmpId/'
               render={(pathProps) => {
