@@ -6,6 +6,7 @@ import * as api from '../api';
 function addStdHandlers(dsp, cb, promise) {
    promise
    .catch((errList) => {
+      console.log(errList);
        dsp({type: 'SHOW_ERR', details: errList});
        return Promise.reject();  // Skip downstream "thens".
     })
@@ -190,17 +191,14 @@ export function postSbm(cmpId, teamId, submit, cb) {
    return (dispatch, getState) => {
       addStdHandlers(dispatch, cb,
        api.postSbm(cmpId, teamId, submit)
-       .then(() => {
-          api.getSbms(cmpId, teamId, 1)
-          .then((sbms) => {
-             api.getTeamsById(cmpId, teamId, cb)
-             .then((team) => {
-                team.mmbs = {};
-                team.toggled = false;
-                dispatch({type: "POST_SBM", sbm: sbms[0], newTeamData: team});
-             })
-             .then(() => {if (cb) cb()})
-          })
+       .then(() =>  api.getSbms(cmpId, teamId, 1))
+       .then((sbms) => dispatch({type: "POST_SBM", sbm: sbms[0]}))
+       .then(() => api.getTeamsById(cmpId, teamId, cb))
+       .then((team) => {
+          console.log(team);
+          team.mmbs = {};
+          team.toggled = false;
+          dispatch({type: "ADD_TEAM", newTeamData: team});
        })
     )};
 }

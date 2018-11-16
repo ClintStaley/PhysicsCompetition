@@ -282,7 +282,7 @@ export function getSbms(cmpId, teamId, numSbms) {
          });
          return sbms;
       }
-      catch (err) {
+      catch (err) { //reformat to comply with error list standards
          return Promise.reject(["Unexpected error in submission parse."]);
       }
    });
