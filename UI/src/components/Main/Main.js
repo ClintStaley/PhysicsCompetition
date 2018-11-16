@@ -115,17 +115,18 @@ class Main extends Component {
             cmpId = {pathProps.match.params.cmpId}/>
           }/>          
 
-          <Route path='/JoinCmpPage/:cmpId/' render={(pathProps) => {
-             return reRoute(<CmpPage cmpId = {pathProps.match.params.cmpId}
-              myCmpLink = {false} {...this.props} />)
-          }}/>
+          <Route path='/JoinCmpPage/:cmpId/' render={pathProps =>
+             <ProtectedRoute path='/JoinCmpPage/:cmpId/' {...this.props}
+              component = {CmpPage}   myCmpLink = {false}
+              cmpId = {pathProps.match.params.cmpId}/>
+          }/>
 
-          <Route path='/Instructions/:cmpId' render = {(pathProps) =>
-              reRoute(<InstructionsPage cmpId = {pathProps.match.params.cmpId}
-              {...this.props} />)} />
+          <Route path='/Instructions/:cmpId' render = {pathProps =>
+             <ProtectedRoute path='/Instructions/:cmpId' {...this.props}
+              component = {InstructionsPage} cmpId = {pathProps.match.params.cmpId}/>
+          }/>
 
-          <Route path='/SbmPage/:teamId'
-              render={(pathProps) => {
+          <Route path='/SbmPage/:teamId' render={pathProps => {
                  var team = this.props.teams[pathProps.match.params.teamId];
                  if (team) //easiest fix to reload on submit page
                     var cmp = this.props.cmps[team.cmpId];
