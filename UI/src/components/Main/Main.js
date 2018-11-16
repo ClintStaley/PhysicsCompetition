@@ -18,15 +18,6 @@ class Main extends Component {
       return this.props.prs && this.props.prs.id;
    }
 
-   reRoute = (destinationComponent) => {
-      if (this.signedIn())
-         return destinationComponent;
-      else {
-         this.props.history.push("/");
-         return Home;
-      }
-   }
-
    ProtectedRoute = ({component: Cmp, path, ...rest }) => {
       return (<Route path={path} render={(props) => {
          return this.signedIn() ?
@@ -126,14 +117,10 @@ class Main extends Component {
               component = {InstructionsPage} cmpId = {pathProps.match.params.cmpId}/>
           }/>
 
-          <Route path='/SbmPage/:teamId' render={pathProps => {
-                 var team = this.props.teams[pathProps.match.params.teamId];
-                 if (team) //easiest fix to reload on submit page
-                    var cmp = this.props.cmps[team.cmpId];
-
-                 return reRoute(<SbmPage team={team} cmp={cmp}
-                  {...this.props}/>);
-              }}/>
+          <Route path='/SbmPage/:teamId' render={pathProps => 
+             <ProtectedRoute path='/SbmPage/:teamId' {...this.props}
+              component={SbmPage} team={this.props.teams[pathProps.match.params.teamId]}/>
+          }/>
 
         </Switch>
 

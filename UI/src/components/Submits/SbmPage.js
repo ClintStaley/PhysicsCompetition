@@ -11,14 +11,15 @@ export default class SbmPage extends Component {
       super(props);
 
       console.log("Constructing SbmPage with ", props);
-
+            
       this.cRefreshDelay = 4000; // Every 4 s
       this.cNoteDelay = 333;     // Show notice for 1/3 s
 
       this.state = {
-         sbmFunction: null,   // Function to support modal submit dialog
+         sbmFunction: null,                // Function to support submit dialog
          refreshNote: "No results yet...", // Refresh state
-         ctpName: null     //the type of page to load
+         ctpName: null,                    // Type of page to load
+         cmp: this.props.team && this.props.cmps[this.props.team.cmpId]
       }
    }
 
@@ -26,7 +27,7 @@ export default class SbmPage extends Component {
    // the appropriate set of submissions for the current cmp/team
    componentDidMount = () => {
       console.log("mount");
-      this.props.getSbms(this.props.cmp, this.props.team.id,
+      this.props.getSbms(this.state.cmp, this.props.team.id,
        () => {
           this.setCtpType();
           this.startTimer(); // Shouldn't this happen only if there is a pending submit?
@@ -81,7 +82,7 @@ export default class SbmPage extends Component {
    render() {
       console.log('Render Submission');
       var sbm, sbmTime, dateStr, timeStr,  sbmDialog;
-      var cmp = this.props.cmp, ctpName;
+      var cmp = this.state.cmp, ctpName;
       var sbmStatus = null;
       var prbDiagram = null;
 
