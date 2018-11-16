@@ -37,7 +37,6 @@ class Main extends Component {
    
    render() {
      var ProtectedRoute = this.ProtectedRoute;
-     var reRoute = this.reRoute;
 
     return (
       <div>
@@ -46,7 +45,7 @@ class Main extends Component {
             <Navbar.Toggle />
             {this.signedIn() ?
                 <Navbar.Text key={1}>
-                    {`Signed in as: ${this.props.prs.firstName} ${this.props.prs.lastName}`}
+                  {`Signed in as: ${this.props.prs.firstName} ${this.props.prs.lastName}`}
                 </Navbar.Text>
               : ''
             }
