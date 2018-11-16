@@ -25,13 +25,11 @@ export class BSubmitModal extends Component {
 
       // Require value be string representing positive float
       newSpec = Number.parseFloat(ev.target.value);
-      newSpec = newSpec > 0.0 ? "" + newSpec : "";
 
-      console.log(field);
-
-      this.setState({"launchSpec": this.state.launchSpec.map((spec, i) => {
-         return i === bIdx ? Object.assign({}, spec, {[field]: newSpec}) : spec;
-      })});
+      if (!isNaN(ev.target.value) && newSpec > 0.0)
+         this.setState({"launchSpec": this.state.launchSpec.map((spec, i) => {
+            return i === bIdx ? Object.assign({}, spec, {[field]: ev.target.value}) : spec;
+         })});
    }
 
    //valid iff all balls are valid
@@ -80,9 +78,11 @@ export class BSubmitModal extends Component {
    close = (status) => {
       if (status === 'OK') {
          //this.props.reset();
-
          this.props.submitFn(this.state.launchSpec.map(ball => ({
-            speed: Number.parseFloat(ball.speed)
+            speed: Number.parseFloat(ball.speed),
+            finalX: Number.parseFloat(ball.finalX),
+            finalY: Number.parseFloat(ball.finalY),
+            finalTime: Number.parseFloat(ball.finalTime)
          })));
       }
       else

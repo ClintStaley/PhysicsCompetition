@@ -25,7 +25,7 @@ public class BounceEvaluator implements Evaluator {
    public static final double GRAVITY = -9.80665;
    public static final double RADIUS = .1;
    public static final double EPS = 0.00000001;
-   public static final double MARGIN_ERROR = 0.01;
+   public static final double ERROR_FACTOR = 0.99;
 
    // Represent one Collision, including its type, its time, the location of
    // circle center as of the collision, and the index of the struck obstacle.
@@ -228,12 +228,21 @@ public class BounceEvaluator implements Evaluator {
          testEvent = ball[ball.length - 2];
          testSpec = sbm[i];
          
-         if (!(GenUtil.inBounds(testEvent.time - MARGIN_ERROR, testSpec.finalTime, 
-               testEvent.time + MARGIN_ERROR) && 
-               GenUtil.inBounds(testEvent.posX - MARGIN_ERROR, testSpec.finalX, 
-               testEvent.posX + MARGIN_ERROR) && 
-               GenUtil.inBounds(testEvent.posY - MARGIN_ERROR, testSpec.finalY, 
-               testEvent.posY + MARGIN_ERROR)))
+         System.out.println("Actual Time: " + testEvent.time);
+         System.out.println("Guessed Time: " + testSpec.finalTime);
+         
+         System.out.println("Actual Xpos: " + testEvent.posX);
+         System.out.println("Guessed Xpos: " + testSpec.finalX);
+         
+         System.out.println("Actual Ypos: " + testEvent.posY);
+         System.out.println("Guessed Ypos: " + testSpec.finalY);
+         
+         if (!(GenUtil.inBounds(testEvent.time * ERROR_FACTOR, testSpec.finalTime, 
+               testEvent.time * (1/ERROR_FACTOR)) && 
+               GenUtil.inBounds(testEvent.posX * ERROR_FACTOR, testSpec.finalX, 
+               testEvent.posX * (1/ERROR_FACTOR)) && 
+               GenUtil.inBounds(testEvent.posY * ERROR_FACTOR, testSpec.finalY, 
+               testEvent.posY * (1/ERROR_FACTOR))))
             return false;
          
       }

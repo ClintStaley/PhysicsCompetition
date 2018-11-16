@@ -37,11 +37,11 @@ export class LGSubmitModal extends Component {
 
       // Require value be string representing positive float
       val = Number.parseFloat(ev.target.value);
-      val = val > 0.0 ? "" + val : "";
 
-      this.setState({"circles": this.state.circles.map((crc, i) => {
-         return i === cIdx ? Object.assign({}, crc, {[field]: val}) : crc;
-      })});
+      if (!isNaN(ev.target.value) && val > 0.0)
+         this.setState({"circles": this.state.circles.map((crc, i) => {
+            return i === cIdx ? Object.assign({}, crc, {[field]: ev.target.value}) : crc;
+         })});
    }
 
    getValidationState = () => {

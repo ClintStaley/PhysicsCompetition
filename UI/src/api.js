@@ -188,12 +188,11 @@ export function getTeamsById(cmpId, teamId) {
    console.log('GET TEAMS BY ID');
    return get(`Cmps/${cmpId}/Teams/${teamId}`)
    .then((teamData) => teamData.json())
-   .then((teamData) => {
+   /*.then((teamData) => {
       var team = {};
-      console.log(teamData);
       team[teamData.id] = teamData;
       return team;
-   });
+   });*/
 }
 
 export function getTeamsByPrs(prsId) {

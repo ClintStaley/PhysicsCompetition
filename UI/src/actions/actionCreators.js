@@ -109,7 +109,7 @@ export function getTeamsById(cmpId, teamId, cb) {
       .then((team) => {
          team.mmbs = {};
          team.toggled = false;
-         dispatch({type: 'ADD_TEAM',  newTeamData: team});
+         dispatch({type: 'GET_ONE_TEAM',  newTeamData: team});
       })
       .then(() => {if (cb) cb()})}
 }
@@ -195,7 +195,7 @@ export function postSbm(cmpId, teamId, submit, cb) {
           console.log(team);
           team.mmbs = {};
           team.toggled = false;
-          dispatch({type: "ADD_TEAM", newTeamData: team});
+          dispatch({type: "GET_ONE_TEAM", newTeamData: team});
        })
     )};
 }

@@ -98,13 +98,13 @@ router.put('/:id', (req, res) => {
    (team, err, cb) => {
       var teamBody = {};
       if (vld.check(team && team.length, Tags.notFound, cb)) {
-        if (team[0].bestScore < body.score) {
+        if (team[0].bestScore < body.score)
            teamBody.bestScore = body.score;
-           if (body.canSubmit)
-              teamBody.canSubmit = body.canSubmit;
+        if (body.canSubmit)
+           teamBody.canSubmit = body.canSubmit;
+        if (teamBody)
            cnn.chkQry("update Team set ? where id = ?",
             [ teamBody, teamId ], cb);
-        }
         else
            cb(null, null, cb);
       }

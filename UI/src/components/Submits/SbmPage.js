@@ -11,7 +11,7 @@ export default class SbmPage extends Component {
       super(props);
 
       console.log("Constructing SbmPage with ", props);
-            
+
       this.cRefreshDelay = 4000; // Every 4 s
       this.cNoteDelay = 333;     // Show notice for 1/3 s
 
@@ -58,7 +58,7 @@ export default class SbmPage extends Component {
 
    doSubmit = (submit) => {
       if (submit)
-         this.props.postSbm(this.props.cmp.id, this.props.team.id, submit,
+         this.props.postSbm(this.state.cmp.id, this.props.team.id, submit,
           () => this.startTimer());
       this.setState({sbmFunction : null});
    }
@@ -69,18 +69,20 @@ export default class SbmPage extends Component {
       if (current)
          if (current.testResult && this.timerId){
             this.stopTimer();
-            this.props.getTeamsById(current.cmpId, current.teamId);
          }
          else {
             this.setState({refreshNote: "Checking for results..."});
-            this.props.refreshSbms(() =>
-             this.setState({refreshNote: "No results yet.."})
+            this.props.refreshSbms(() => {
+            if (current)
+               this.props.getTeamsById(current.cmpId, current.teamId);
+            else
+               this.setState({refreshNote: "No results yet.."});
+          }
             );
          }
    }
 
    render() {
-      console.log('Render Submission');
       var sbm, sbmTime, dateStr, timeStr,  sbmDialog;
       var cmp = this.state.cmp, ctpName;
       var sbmStatus = null;
@@ -106,8 +108,6 @@ export default class SbmPage extends Component {
            </div>
          </div>);
       }
-
-      console.log(this.props.sbms);
 
       var sbmButton = (<div className="col-sm-3">
         <Button disabled={(!this.props.team.canSubmit) ||

@@ -34,8 +34,10 @@ class Main extends Component {
    // return reRoute(<CmpPage cmpId = {pathProps.match.params.cmpId}
    // myCmpLink = {true}
    // {...this.props} />)}} />
-   
+
    render() {
+     console.log(this.props);
+
      var ProtectedRoute = this.ProtectedRoute;
 
     return (
@@ -87,23 +89,23 @@ class Main extends Component {
         </div>
         <Switch>
           <Route exact path='/' children={Home} />
-          
+
           <ProtectedRoute path='/MyCmpsPage' {...this.props}
            component = {CmpsPage} showAll = {false}/>
-          
+
           <ProtectedRoute path='/AllCmpsPage' {...this.props}
            component = {CmpsPage} showAll = {true}/>
-          
+
           <ProtectedRoute path='/TeamsPage' {...this.props} component = {TeamsPage}/>
-          
+
           <Route path='/signin' render={() => <SignIn {...this.props} />}/>
           <Route path='/register' render = {() => <Register {...this.props}/>}/>
 
-          <Route path='/MyCmpPage/:cmpId/' render={pathProps => 
-            <ProtectedRoute path='/MyCmpPage/:cmpId' {...this.props} 
+          <Route path='/MyCmpPage/:cmpId/' render={pathProps =>
+            <ProtectedRoute path='/MyCmpPage/:cmpId' {...this.props}
             component={CmpPage} myCmpLink = {true}
             cmpId = {pathProps.match.params.cmpId}/>
-          }/>          
+          }/>
 
           <Route path='/JoinCmpPage/:cmpId/' render={pathProps =>
              <ProtectedRoute path='/JoinCmpPage/:cmpId/' {...this.props}
@@ -116,7 +118,7 @@ class Main extends Component {
               component = {InstructionsPage} cmpId = {pathProps.match.params.cmpId}/>
           }/>
 
-          <Route path='/SbmPage/:teamId' render={pathProps => 
+          <Route path='/SbmPage/:teamId' render={pathProps =>
              <ProtectedRoute path='/SbmPage/:teamId' {...this.props}
               component={SbmPage} team={this.props.teams[pathProps.match.params.teamId]}/>
           }/>
