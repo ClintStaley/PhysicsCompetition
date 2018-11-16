@@ -27,21 +27,23 @@ class Main extends Component {
       }
    }
 
-
    ProtectedRoute = ({component: Cmp, path, ...rest }) => {
-         return (<Route path={path} render={(props) => {
-             return this.signedIn() ?
-              <Cmp {...rest}/> : <Redirect to='/signin'/>;
-          }
-       }/>);
-    }
-
+      return (<Route path={path} render={(props) => {
+         return this.signedIn() ?
+           <Cmp {...rest}/> : <Redirect to='/signin'/>;
+      }}/>);
+   }
 
    signOut(event) {
       this.props.history.push("/");
       this.props.signOut();
    }
 
+   // render={(pathProps) => {
+   // return reRoute(<CmpPage cmpId = {pathProps.match.params.cmpId}
+   // myCmpLink = {true}
+   // {...this.props} />)}} />
+   
    render() {
      var ProtectedRoute = this.ProtectedRoute;
      var reRoute = this.reRoute;
@@ -95,28 +97,28 @@ class Main extends Component {
         </div>
         <Switch>
           <Route exact path='/' children={Home} />
-          <ProtectedRoute path='/MyCmpsPage'
+          
+          <ProtectedRoute path='/MyCmpsPage' {...this.props}
            component = {CmpsPage} showAll = {false}/>
-           <ProtectedRoute path='/AllCmpsPage'
+          
+          <ProtectedRoute path='/AllCmpsPage' {...this.props}
            component = {CmpsPage} showAll = {true}/>
-          <ProtectedRoute path='/TeamsPage' component = {TeamsPage}/>
+          
+          <ProtectedRoute path='/TeamsPage' {...this.props} component = {TeamsPage}/>
+          
           <Route path='/signin' render={() => <SignIn {...this.props} />}/>
           <Route path='/register' render = {() => <Register {...this.props}/>}/>
 
           <Route path='/MyCmpPage/:cmpId/' render={pathProps => 
-            <ProtectedRoute path='/MyCmpPage/:cmpId' cmpIdcomponent={CmpPage}
-            cmpId = {pathProps.match.params.cmpId} myCmpLink = {true}/>
-          }/>
-              // render={(pathProps) => {
-              // return reRoute(<CmpPage cmpId = {pathProps.match.params.cmpId}
-              // myCmpLink = {true}
-              // {...this.props} />)}} />
+            <ProtectedRoute path='/MyCmpPage/:cmpId' {...this.props} 
+            component={CmpPage} myCmpLink = {true}
+            cmpId = {pathProps.match.params.cmpId}/>
+          }/>          
 
-          <Route path='/JoinCmpPage/:cmpId/'
-              render={(pathProps) => {
-                 return reRoute(<CmpPage cmpId = {pathProps.match.params.cmpId}
-              myCmpLink = {false}
-              {...this.props} />)}}/>
+          <Route path='/JoinCmpPage/:cmpId/' render={(pathProps) => {
+             return reRoute(<CmpPage cmpId = {pathProps.match.params.cmpId}
+              myCmpLink = {false} {...this.props} />)
+          }}/>
 
           <Route path='/Instructions/:cmpId' render = {(pathProps) =>
               reRoute(<InstructionsPage cmpId = {pathProps.match.params.cmpId}
