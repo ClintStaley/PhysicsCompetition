@@ -19,7 +19,7 @@ class TeamsPage extends Component {
       }
    }
 
-    componentDidMount = () => {
+   componentDidMount = () => {
       var props = this.props;
 
       if (!(props.updateTimes && props.updateTimes.myTeams))
@@ -27,7 +27,7 @@ class TeamsPage extends Component {
 
       if (!(props.updateTimes && props.updateTimes.cmps))
          this.props.getAllCmps();
-    }
+   }
 
    openDelConfirm = (teamId) => {
       this.setState({delConfirmTeamId: teamId,
@@ -77,8 +77,8 @@ class TeamsPage extends Component {
    openAddMmb = (teamId) => {
       var props = this.props;
 
-      this.setState({addMmbFunc: (mmbEmail) => props.addMmb(mmbEmail,
-       props.teams[teamId].cmpId, teamId)});
+      this.setState({addMmbFunc: (mmbEmail) => 
+       props.addMmb(mmbEmail, props.teams[teamId].cmpId, teamId)});
    }
 
    closeAddMmb = (result) => {
@@ -104,9 +104,6 @@ class TeamsPage extends Component {
 
    render() {
       var props = this.props;
-      console.log(props);
-
-      console.log("Team Render");
       return (
       <section className="container">
 

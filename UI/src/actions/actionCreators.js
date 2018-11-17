@@ -160,7 +160,7 @@ export function addMmb(mmbEmail, cmpId, teamId, cb) {
        .then(() => prs)) // Subpromise returns prs for full info in dispatch
       .then(prs => dispatch({type: 'ADD_MMB', teamId, prs}))
       .catch(err => dispatch({type: 'SHOW_ERR',
-        details: `Can't add member: ${err}`}))
+        details: [`Can't add member: ${err}`]}))
       .then(() => {if (cb) cb()})
    }
 }
@@ -204,13 +204,12 @@ export function getSbms(cmp, teamId, cb) {
    return (dispatch) => {
       addStdHandlers(dispatch, cb,
        api.getSbms(cmp.id, teamId, 1)
-       .then(sbm =>
-          api.getCtpById(cmp.ctpId)
+       .then(sbm => api.getCtpById(cmp.ctpId) // Subpromise intentional
           .then(ctp => dispatch({
              type: "GET_SBMS",
              sbms: {ctpName: ctp.codeName, current: sbm[0], history: []}
           }))
-        ));
+       ));
    };
 }
 

@@ -93,7 +93,6 @@ export function del(endpoint) {
   @param {{user: string, password: string}} cred
 */
 export function signIn(cred) {
-   console.log(cred);
    return post("Ssns", cred)
       .then((response) => {
          var location = response.headers.get("Location").split('/');

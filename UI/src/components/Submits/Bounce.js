@@ -17,18 +17,17 @@ export class BSubmitModal extends Component {
       this.handleChange = this.handleChange.bind(this);
    }
 
+   // Parse a change event from field with id field:bIdx where field is speed,
+   // finalX, finalY or finalTime and bIDx is 0-based ball number
    handleChange(ev) {
-      var bIdx, field, newSpec;
+      var bIdx, field;
 
       [field, bIdx] = ev.target.id.split(":");
-      bIdx = Number.parseInt(bIdx, 10);
 
-      // Require value be string representing positive float
-      newSpec = Number.parseFloat(ev.target.value);
-
-      if (!isNaN(ev.target.value) && newSpec > 0.0)
+      // Either empty, or a nonnegative number
+      if (!ev.target.value || parseFloat(ev.target.value) >= 0.0)
          this.setState({"launchSpec": this.state.launchSpec.map((spec, i) => {
-            return i === bIdx ? Object.assign({}, spec, {[field]: ev.target.value}) : spec;
+            return ""+i === bIdx ? Object.assign({}, spec, {[field]: ev.target.value}) : spec;
          })});
    }
 
@@ -239,9 +238,9 @@ export class Bounce extends Component {
    intervalID;        // Timer ID of interval timer
    frameRate = 24;    // Frames per second to display
    G = 9.80665;       //gravity constant
-   fieldLength = 10; //the stage length in meters
-   fieldHeight = 10; //the sage height in meters
-   graphLine = .5;     //how far apart the graph lines are in meters
+   fieldLength = 10;  //the stage length in meters
+   fieldHeight = 10;  //the sage height in meters
+   graphLine = .5;    //how far apart the graph lines are in meters
    //colors of balls
    colors = ["red", "green", "orange", "purple", "cyan"];
 

@@ -30,8 +30,8 @@ export default function teams(state = {}, action) {
          prs = action.prs;
          team = Object.assign({}, state[action.teamId]);
 
-         //if there are no members in store, do not add new mwmber to store
-         if (!team.mmbs.length)
+         //if there are no members in store, do not add new member to store
+         if (!Object.keys(team.mmbs).length)
             return state;
 
          team.mmbs = Object.assign({}, team.mmbs, {[prs.id]: {email: prs.email, firstName: prs.firstName, lastName: prs.lastName}});
