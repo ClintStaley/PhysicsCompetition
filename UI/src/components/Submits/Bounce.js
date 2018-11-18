@@ -7,7 +7,7 @@ export class BSubmitModal extends Component {
    constructor(props) {
       super(props);
 
-      var launchSpec = [];
+      var launchSpec = [];  // Array of ball launch specifications
 
       //set default value for entry box
       launchSpec.push({speed: 0, finalX: 0, finalY: 0, finalTime: 0})
@@ -17,7 +17,7 @@ export class BSubmitModal extends Component {
       this.handleChange = this.handleChange.bind(this);
    }
 
-   // Parse a change event from field with id field:bIdx where field is speed,
+   // Handle a change event from field with id field:bIdx where field is speed,
    // finalX, finalY or finalTime and bIDx is 0-based ball number
    handleChange(ev) {
       var bIdx, field;
@@ -31,57 +31,39 @@ export class BSubmitModal extends Component {
          })});
    }
 
-   //valid iff all balls are valid
+   // Valid iff all balls are valid
    getValidationState = () => {
-      for (var idx = 0; idx < this.state.launchSpec.length; idx++) {
-         if (this.getSingleValidationState(idx) !== "success")
+      this.state.launchSpec.forEach(ball => {
+         if (! (Number.parseFloat(ball.speed) >= 0
+          && Number.parseFloat(ball.finalTime) >= 0
+          && Number.parseFloat(ball.finalX) >= 0
+          && Number.parseFloat(ball.finalY) >= 0))
             return "error";
-      }
+      });
       return "success";
    }
 
-   //valid iff speed is a number, and greater than 0
-   getSingleValidationState = (idx) => {
-      var ball = this.state.launchSpec[idx];
-      var valS = Number.parseFloat(ball.speed);
-      var valX = Number.parseFloat(ball.finalX);
-      var valY = Number.parseFloat(ball.finalY);
-      var valT = Number.parseFloat(ball.finalTime);
-
-      if ((isNaN(ball.speed) || valS < 0) || (isNaN(ball.finalX) || valX < 0) ||
-       (isNaN(ball.finalY) || valY < 0) || (isNaN(ball.finalTime) || valT < 0))
-         return "error";
-
-      return "success";
-   }
-
-   //add an additional text box to enter another speed
+   // Add an additional text box to enter another speed
    addBall = () => {
-      var newSpec = this.state.launchSpec.splice(0);
-
-      newSpec.push({speed: 0, finalX: 0, finalY: 0, finalTime: 0});  // CAS use concat?
+      var newSpec = this.state.launchSpec.concat(
+       [{speed: 0, finalX: 0, finalY: 0, finalTime: 0}]);
 
       this.setState({launchSpec: newSpec});
    }
 
-   //remove one text box
+   // Remove one text box
    removeBall = () => {
-      var newSpec = this.state.launchSpec.splice(0);
-
-      newSpec.pop();
-
-      this.setState({launchSpec: newSpec});
+      this.setState({launchSpec: this.state.launchSpec.slice(0, -1)});
    }
 
-   //close, submist iff status is OK, closes modal no matter what
+   // Close, and also submit iff status is OK.
    close = (status) => {
       if (status === 'OK') {
-         //this.props.reset();
          this.props.submitFn(this.state.launchSpec.map(ball => ({
             speed: Number.parseFloat(ball.speed),
+            finalTime: Number.parseFloat(ball.finalTime),
             finalX: Number.parseFloat(ball.finalX),
-            finalY: Number.parseFloat(ball.finalY),
-            finalTime: Number.parseFloat(ball.finalTime)
+            finalY: Number.parseFloat(ball.finalY)
          })));
       }
       else
@@ -94,13 +76,27 @@ export class BSubmitModal extends Component {
 
       for (idx = 0; idx < this.state.launchSpec.length; idx++) {
          idS = `speed:${idx}`;
+         idT = `finalTime:${idx}`;
          idX = `finalX:${idx}`;
          idY = `finalY:${idx}`;
-         idT = `finalTime:${idx}`;
 
          lines.push(<div className="container" key={idx}>
            <div className="row">
              <div className="col-sm-1"><h5>Ball {idx}</h5></div>
+
+             <div className="col-sm-2">
+                <FormGroup controlId={idT}>
+                   <ControlLabel>Time</ControlLabel>
+                   <FormControl
+                    type="text"
+                    id={idT}
+                    value={this.state.launchSpec[idx].finalTime}
+                    required={true}
+                    onChange={this.handleChange}
+                   />
+                   <FormControl.Feedback/>
+                </FormGroup>
+             </div>
 
              <div className="col-sm-2">
                <FormGroup controlId={idS}>
@@ -136,20 +132,6 @@ export class BSubmitModal extends Component {
                  type="text"
                  id={idY}
                  value={this.state.launchSpec[idx].finalY}
-                 required={true}
-                 onChange={this.handleChange}
-                />
-                <FormControl.Feedback/>
-              </FormGroup>
-           </div>
-
-           <div className="col-sm-2">
-              <FormGroup controlId={idT}>
-                <ControlLabel>Time</ControlLabel>
-                <FormControl
-                 type="text"
-                 id={idT}
-                 value={this.state.launchSpec[idx].finalTime}
                  required={true}
                  onChange={this.handleChange}
                 />
