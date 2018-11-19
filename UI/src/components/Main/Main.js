@@ -30,6 +30,12 @@ class Main extends Component {
       this.props.signOut();
    }
 
+   openHelp() {
+      var link = '/Docs/Instructions.html';
+
+      window.open(link, "_blank");
+   }
+
    // render={(pathProps) => {
    // return reRoute(<CmpPage cmpId = {pathProps.match.params.cmpId}
    // myCmpLink = {true}
@@ -77,13 +83,16 @@ class Main extends Component {
                   ]
                 }
               </Nav>
-              {this.signedIn() ?
               <Nav pullRight>
+              <NavItem eventKey={3} onClick = {() => this.openHelp()}>
+                Help
+              </NavItem>
+              {this.signedIn() ?
                 <NavItem eventKey={2} onClick = {() => this.signOut()}>
                   Sign out
                 </NavItem>
-              </Nav> : ''
-              }
+               : ''}
+              </Nav>
             </Navbar.Collapse>
           </Navbar>
         </div>

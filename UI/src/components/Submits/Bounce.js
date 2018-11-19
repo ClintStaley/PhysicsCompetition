@@ -182,7 +182,7 @@ export class Bounce extends Component {
       // Boolean array indicating if obstacles and/or targets are unhit
       // First portion represents targets; latter represents obstacles
       var obstacleStatus = [];
-      
+
       this.props.prms.targets.forEach(() => obstacleStatus.push(true));
       this.props.prms.barriers.forEach(() => obstacleStatus.push(true));
 

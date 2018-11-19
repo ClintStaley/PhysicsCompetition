@@ -58,8 +58,10 @@ class Register extends Component {
 
    handleSignin(ans) {
       if (ans === 'Yes')
-         this.props.signIn({email: this.state.email, password: this.state.password}, ()=>this.props.history.push("/"));
-      this.setState({offerSigin: false});
+         this.props.signIn(
+          {email: this.state.email, password: this.state.password},
+          ()=>this.props.history.push("/"));
+      this.setState({offerSignin: false});
    }
 
    handleChange(ev) {
@@ -79,13 +81,13 @@ class Register extends Component {
    //just checks that all the fields are filled, and passwords match
    isFormValid() {
       let s = this.state;
-      
-      return s.email && s.lastName && s.password && s.password === s.passwordTwo &&
-         s.termsAccepted;
+
+      return s.email && s.lastName && s.password && s.password === s.passwordTwo
+       && s.termsAccepted;
    }
 
   //renders all of the fields
-  render() { 
+  render() {
     return (
       <div className="container">
         <ConfDialog

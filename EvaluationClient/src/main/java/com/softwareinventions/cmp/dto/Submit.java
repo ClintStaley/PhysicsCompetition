@@ -12,4 +12,9 @@ public class Submit {
    public Date sbmTime;
    public boolean practiceRun;
    public String errorResult;
+   
+   //teamProperties
+   public int numSubmits;
+   public Date lastSubmit;
+   public int bestScore;
 }
