@@ -11,4 +11,5 @@ public class Team {
    public Date lastSubmit;
    public boolean canSubmit;
    public int nextTeam;
+   public int numSubmits;
 }

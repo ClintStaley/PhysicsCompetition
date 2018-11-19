@@ -82,7 +82,7 @@ export default class CmpPage extends Component {
 
    openInstrictions = () => {
      var props = this.props;
-     var link = '/Cmps/';
+     var link = '/Docs/Cmps/';
      var ctpId = props.cmps[props.cmpId].ctpId;
      var ctpType = props.ctps[ctpId].codeName;
 

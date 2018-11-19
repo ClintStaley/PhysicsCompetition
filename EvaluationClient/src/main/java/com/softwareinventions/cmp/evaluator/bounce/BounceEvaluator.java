@@ -26,6 +26,9 @@ public class BounceEvaluator implements Evaluator {
    public static final double RADIUS = .1;
    public static final double EPS = 0.00000001;
    public static final double ERROR_FACTOR = 0.99;
+   public static final double SBM_ATTEMPT = 3;  
+   public static final double SCORE_DIVIDE = 2;
+   
 
    // Represent one Collision, including its type, its time, the location of
    // circle center as of the collision, and the index of the struck obstacle.
@@ -196,9 +199,12 @@ public class BounceEvaluator implements Evaluator {
 
       rspB.obstaclesHit = targetCount - obstacles.size();
 
-      if (isGoodAnswer(obstacles, prms, rspB.events, sbmData))
+      if (isGoodAnswer(obstacles, prms, rspB.events, sbmData)) {
          score = Math.round(prms.targetTime * 10000.0
                / (totalTime + 10.0 * (numBalls - 1.0))) / 100.0;
+         if (SBM_ATTEMPT <= sbm.numSubmits)
+            score = score / Math.pow(SCORE_DIVIDE, sbm.numSubmits - SBM_ATTEMPT);
+      }
       else
          score = 0.0;
       
@@ -227,15 +233,6 @@ public class BounceEvaluator implements Evaluator {
          
          testEvent = ball[ball.length - 2];
          testSpec = sbm[i];
-         
-         System.out.println("Actual Time: " + testEvent.time);
-         System.out.println("Guessed Time: " + testSpec.finalTime);
-         
-         System.out.println("Actual Xpos: " + testEvent.posX);
-         System.out.println("Guessed Xpos: " + testSpec.finalX);
-         
-         System.out.println("Actual Ypos: " + testEvent.posY);
-         System.out.println("Guessed Ypos: " + testSpec.finalY);
          
          if (!(GenUtil.inBounds(testEvent.time * ERROR_FACTOR, testSpec.finalTime, 
                testEvent.time * (1/ERROR_FACTOR)) && 
