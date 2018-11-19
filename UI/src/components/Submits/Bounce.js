@@ -257,7 +257,6 @@ export class Bounce extends Component {
    }
 
    stopMovie = () => {
-      console.log("Stopping " + this.intervalID);
       clearInterval(this.intervalID);
    }
 
@@ -580,9 +579,11 @@ class BallTrack extends Component {
 //one arc of a balls path
 class BallArc extends Component {
 
+
    shouldComponentUpdate(nextProps, nextState) {
       var props = this.props;
 
+      console.log("Rerender arc ", props);
       //need to re-render, the ball has been reset
       if (nextProps.currentTime < props.currentTime &&
        props.startTime + props.event.time > props.currentTime)
@@ -609,7 +610,7 @@ class BallArc extends Component {
 
       //push the initial collision, not first event
       if (event.time !== 0.0)
-         ballArc.push(<circle key={"ballArc" + event.time}
+         ballArc.push(<circle key={"ArcStart" + event.time}
           cx={equations.xPos(0)}
           cy={fieldHeight - equations.yPos(0)}
           r = {.1}
@@ -625,7 +626,7 @@ class BallArc extends Component {
          if (props.startTime + startTime + timer >= props.currentTime)
             color += " invisible";
 
-         ballArc.push(<circle key={"ballPoint" + (timer + props.startTime)}
+         ballArc.push(<circle key={"ArcPoint" + (timer + props.startTime)}
           cx={equations.xPos(timer)}
           cy={fieldHeight - equations.yPos(timer)}
           r = {.02}
