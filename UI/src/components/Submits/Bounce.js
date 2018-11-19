@@ -38,9 +38,9 @@ export class BSubmitModal extends Component {
           && Number.parseFloat(ball.finalTime) >= 0
           && Number.parseFloat(ball.finalX) >= 0
           && Number.parseFloat(ball.finalY) >= 0))
-            return "error";
+            return false;
       });
-      return "success";
+      return true;
    }
 
    // Add an additional text box to enter another speed
@@ -84,19 +84,6 @@ export class BSubmitModal extends Component {
            <div className="row">
              <div className="col-sm-1"><h5>Ball {idx}</h5></div>
 
-             <div className="col-sm-2">
-                <FormGroup controlId={idT}>
-                   <ControlLabel>Time</ControlLabel>
-                   <FormControl
-                    type="text"
-                    id={idT}
-                    value={this.state.launchSpec[idx].finalTime}
-                    required={true}
-                    onChange={this.handleChange}
-                   />
-                   <FormControl.Feedback/>
-                </FormGroup>
-             </div>
 
              <div className="col-sm-2">
                <FormGroup controlId={idS}>
@@ -109,6 +96,20 @@ export class BSubmitModal extends Component {
                   onChange={this.handleChange}/>
                  <FormControl.Feedback/>
                </FormGroup>
+             </div>
+
+             <div className="col-sm-2">
+                <FormGroup controlId={idT}>
+                   <ControlLabel>Time</ControlLabel>
+                   <FormControl
+                    type="text"
+                    id={idT}
+                    value={this.state.launchSpec[idx].finalTime}
+                    required={true}
+                    onChange={this.handleChange}
+                   />
+                   <FormControl.Feedback/>
+                </FormGroup>
              </div>
 
              <div className="col-sm-2">
@@ -158,7 +159,7 @@ export class BSubmitModal extends Component {
           <Button key={1} disabled = {this.state.launchSpec.length === 1}
            onClick={() => {this.removeBall()}}>Remove Ball</Button>
 
-          <Button key={2}  disabled = {this.getValidationState() !== "success"}
+          <Button key={2}  disabled = {!this.getValidationState()}
            onClick={() => this.close('OK')}>OK</Button>
           <Button key={3} onClick={() => this.close('Cancel')}>Cancel</Button>
         </Modal.Footer>
@@ -166,56 +167,48 @@ export class BSubmitModal extends Component {
    }
 }
 
-// Expected props are:
+// Expected props are, exactly and only:
 //  prms -- the parameters for the displayed competition
 //  sbm -- the submission to display
 export class Bounce extends Component {
    constructor(props) {
       super(props);
 
-      //debug, BUGS KNOWN: Frame does not reset on submit
-      console.log(props);
-
-      //boolean array, matched up with obstacle array, determines if hit
-      var obstacleStatus = [];
-      props.prms.targets.forEach(() => obstacleStatus.push(true));
-
-      this.props.prms.barriers && this.props.prms.barriers.forEach(
-         () => obstacleStatus.push(true)
-      );
-
-      this.state = {
-         obstacleStatus: obstacleStatus,
-         frame: 0
-      }
+      this.state = this.getInitialState();
    }
 
-   //sets frame to zero
-   reset = () => {
+   // Get initial state for construction or reset
+   getInitialState = () => {
+      // Boolean array indicating if obstacles and/or targets are unhit
+      // First portion represents targets; latter represents obstacles
       var obstacleStatus = [];
+      
       this.props.prms.targets.forEach(() => obstacleStatus.push(true));
       this.props.prms.barriers.forEach(() => obstacleStatus.push(true));
 
-      this.setState({ frame : 0, obstacleStatus : obstacleStatus });
+      return {frame : 0, obstacleStatus};
    }
 
-   //hack
+   // Any time props are updated (due to new sbm or even updated prms),
+   // refresh state accordingly.  Otherwise proceed if state or props are
+   // changed.
    shouldComponentUpdate(nextProps, nextState) {
       var props = this.props;
 
-      if (props !== nextProps)
-         this.reset();
+      if (props !== nextProps) {
+         this.setState(this.getInitialState());
+         if (!nextProps.sbm || !nextProps.sbm.testResult)
+            this.stopMovie();
+      }
 
-
-      return true;
+      return props !== nextProps || this.state !== nextState;
    }
 
-   //clear interval when component closes,
-   //avioids tryting to read paramaters that no longer exist
+   // Stop timer when component closes, to avoid accessing parameters
+   // that no longer exist
    componentWillUnmount = () => {
-      clearInterval(this.intervalID);
+      this.stopMovie();
    }
-
 
    intervalID;        // Timer ID of interval timer
    frameRate = 24;    // Frames per second to display
@@ -228,15 +221,11 @@ export class Bounce extends Component {
 
    // x position is equations[0] and y position is equations[1]
    positionEquations = (event) => {
-      var equations = {};
-
-      equations.xPos = ((time) =>
-         (time * event.velocityX) + event.posX);
-
-      equations.yPos = ((time) =>
-         (time * time * -this.G / 2) + (time * event.velocityY) + event.posY
-      );
-      return equations;
+      return {
+         xPos: (time) => (time * event.velocityX) + event.posX,
+         yPos: (time) => (time * time * -this.G / 2)
+          + (time * event.velocityY) + event.posY
+      };
    }
 
    startMovie = (events) => {
@@ -244,7 +233,7 @@ export class Bounce extends Component {
       var secondsToMiliseconds = 1000;
       var totalTime = 0;
 
-      //saftey so that two seperate intevals are running
+      // Safety so that two separate intervals are running
       if (this.intervalID)
          clearInterval(this.intervalID);
 
@@ -252,23 +241,24 @@ export class Bounce extends Component {
          totalTime += events[idx][events[idx].length - 1].time;
       }
 
-      //runs playBall() at every frame
+      // Run advanceFrame() at every frame
       this.intervalID = setInterval( () => {
-         this.playBall(totalTime);
+         this.advanceFrame(totalTime);
       }, secondsToMiliseconds/frameRate);
    }
 
-   playBall = (totalTime) => {
+   advanceFrame = (totalTime) => {
       var frame = this.state.frame;
-      var newState = {};
 
       if (++frame / this.frameRate > totalTime)
-         clearInterval(this.intervalID);
+         this.stopMovie();
 
-      newState.frame = frame;
-      newState.obstacleStatus = this.calculateObstacles(frame);
+      this.setState({frame, obstacleStatus: this.calculateObstacles(frame)});
+   }
 
-      this.setState(newState);
+   stopMovie = () => {
+      console.log("Stopping " + this.intervalID);
+      clearInterval(this.intervalID);
    }
 
    calculateObstacles = (frame) => {
@@ -292,8 +282,8 @@ export class Bounce extends Component {
       return obstacleState;
    }
 
-   //builds table on bottom of page, only shows detailed info about a hit,
-   //after that his is shown on the animation.
+   // Build table on bottom of page showing detailed info about each hit,
+   // after that hit is shown on the animation.
    getSummary = (testResult, score) => {
       var hits = [];
       var ballEvents = [];
@@ -346,15 +336,9 @@ export class Bounce extends Component {
       )
    }
 
-   //starts movie over, resets state
+   // Retart movie.
    replay = () => {
-      var obstacleStatus = [];
-      this.props.prms.targets.forEach(() => obstacleStatus.push(true));
-
-      this.props.prms.barriers.forEach(() => obstacleStatus.push(true));
-
-      this.setState({ frame : 0, obstacleStatus : obstacleStatus });
-
+      this.setState(this.getInitialState());
       this.startMovie(this.props.sbm.testResult.events);
    }
 
@@ -452,7 +436,7 @@ export class Bounce extends Component {
         <Button className="pull-right" disabled = {readyRun}
          onClick={() => this.replay()}>Replay</Button>
         <Button className="pull-right" disabled = {readyRun}
-         onClick={() => clearInterval(this.intervalID)}>Pause</Button>
+         onClick={() => this.stopMovie()}>Pause</Button>
         <Button className="pull-right" disabled = {readyRun}
          onClick={() => this.startMovie(sbm.testResult.events)}>Play</Button>
         <svg viewBox={"-.1 -.1 " + (fieldLength + .1) + " " + (fieldHeight + .1)}
@@ -486,7 +470,7 @@ export class Bounce extends Component {
    }
 }
 
-//keeps track of the ball, draws the ball with the correct color
+// Keep track of the ball; draw the ball with the correct color
 class BallManager extends Component {
    render() {
       var props = this.props;
@@ -513,7 +497,7 @@ class BallManager extends Component {
          if (nextEvent.time + timeElapsed > currentTime ) {
             break;
          }
-         //makes sure ther is another ball
+         //makes sure there is another ball
          if (events[idxA + 1])
             timeElapsed += nextEvent.time;
       }
@@ -528,14 +512,14 @@ class BallManager extends Component {
    }
 }
 
-//is all the tracks the balls take in thier lives
+// Show all tracks taken by all balls thus far
 class TrackManager extends Component {
    render() {
       var props = this.props;
       var ballTracks = [];
       var elapsedTime = 0;
 
-      //push all arcs
+      // Push all arcs
       for ( var trackNum = 0; trackNum < props.events.length; trackNum++ ) {
          ballTracks.push(
            <BallTrack key={"BallTrack" + trackNum}
@@ -554,7 +538,7 @@ class TrackManager extends Component {
    }
 }
 
-//is the path one ball takes along its life
+// Show path one ball takes along its life
 class BallTrack extends Component {
 
    shouldComponentUpdate(nextProps, nextState) {
