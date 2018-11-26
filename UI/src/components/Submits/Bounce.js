@@ -182,7 +182,7 @@ export class Bounce extends Component {
       // Boolean array indicating if obstacles and/or targets are unhit
       // First portion represents targets; latter represents obstacles
       var obstacleStatus = [];
-
+      
       this.props.prms.targets.forEach(() => obstacleStatus.push(true));
       this.props.prms.barriers.forEach(() => obstacleStatus.push(true));
 
@@ -257,7 +257,6 @@ export class Bounce extends Component {
    }
 
    stopMovie = () => {
-      console.log("Stopping " + this.intervalID);
       clearInterval(this.intervalID);
    }
 
@@ -579,7 +578,6 @@ class BallTrack extends Component {
 
 //one arc of a balls path
 class BallArc extends Component {
-
    shouldComponentUpdate(nextProps, nextState) {
       var props = this.props;
 
@@ -609,7 +607,7 @@ class BallArc extends Component {
 
       //push the initial collision, not first event
       if (event.time !== 0.0)
-         ballArc.push(<circle key={"ballArc" + event.time}
+         ballArc.push(<circle key={"ArcStart" + event.time}
           cx={equations.xPos(0)}
           cy={fieldHeight - equations.yPos(0)}
           r = {.1}
@@ -625,7 +623,7 @@ class BallArc extends Component {
          if (props.startTime + startTime + timer >= props.currentTime)
             color += " invisible";
 
-         ballArc.push(<circle key={"ballPoint" + (timer + props.startTime)}
+         ballArc.push(<circle key={"ArcPoint" + (timer + props.startTime)}
           cx={equations.xPos(timer)}
           cy={fieldHeight - equations.yPos(timer)}
           r = {.02}

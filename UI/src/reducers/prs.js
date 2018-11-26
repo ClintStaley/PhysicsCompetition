@@ -15,7 +15,7 @@ var delTeamFromState = (st, teamId, cmpId, teamInfo) => {
    var newTeams = st.myTeams.filter(id => id !== teamId);
    var cmpOk = false;
 
-   st.myTeams.forEach(id =>
+   newTeams.forEach(id =>
       cmpOk = cmpOk || (teamInfo[id].cmpId.toString() === cmpId));
 
    return Object.assign({}, st, {myTeams: newTeams, myCmps: cmpOk ? 
@@ -53,8 +53,7 @@ export default function prs(state = {}, action) {
          return state;
       case 'DEL_MMB':
          return Number(action.prsId) !== state.id ? state :
-          Object.assign({}, state, {myTeams:
-          state.myTeams.filter(teamId => teamId !== action.teamId)});
+          delTeamFromState(state, action.teamId, action.cmpId, action.teamInfo)
       default:
          return state;
    }

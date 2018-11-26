@@ -131,7 +131,6 @@ export default class SbmPage extends Component {
              prms={cmp.prms} sbm={sbm}/>);
          sbmDialog = (<BSubmitModal prms={cmp.prms}
              submitFn={this.state.sbmFunction}/>);
-//reset = {prbDiagram.setState({frame: 0})}/>);
       }
 
       return (<div className="container">
