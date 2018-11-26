@@ -15,7 +15,7 @@ var delTeamFromState = (st, teamId, cmpId, teamInfo) => {
    var newTeams = st.myTeams.filter(id => id !== teamId);
    var cmpOk = false;
 
-   st.myTeams.forEach(id =>
+   newTeams.forEach(id =>
       cmpOk = cmpOk || (teamInfo[id].cmpId.toString() === cmpId));
 
    return Object.assign({}, st, {myTeams: newTeams, myCmps: cmpOk ? 
