@@ -25,7 +25,7 @@ class CmpsPage extends Component {
       }
       else
          if (!props.updateTimes.myCmps)
-            this.props.getMyCmps(this.props.prs.id);
+            this.props.getCmpsByPrs(this.props.prs.id);
    }
 
    // CAS FIX: Why are these two functions exact duplicates?
@@ -39,7 +39,7 @@ class CmpsPage extends Component {
       }
       else
          if (!props.updateTimes.myCmps)
-            this.props.getMyCmps(this.props.prs.id);
+            this.props.getCmpsByPrs(this.props.prs.id);
    }
 
    // Thus far the only confirmation is for a delete.

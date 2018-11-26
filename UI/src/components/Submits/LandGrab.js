@@ -38,7 +38,7 @@ export class LGSubmitModal extends Component {
       // Require value be string representing positive float
       val = Number.parseFloat(ev.target.value);
 
-      if (!isNaN(ev.target.value) && val > 0.0)
+      if (!ev.target.value || val >= 0.0)
          this.setState({"circles": this.state.circles.map((crc, i) => {
             return i === cIdx ? Object.assign({}, crc, {[field]: ev.target.value}) : crc;
          })});
@@ -48,7 +48,9 @@ export class LGSubmitModal extends Component {
       var goodCircles = 0;
 
       this.state.circles.forEach(crc => {
-         if (crc.centerX > 0.0 && crc.centerY > 0.0 && crc.radius > 0.0)
+         if (Number.parseFloat(crc.centerX) >= 0.0 
+          && Number.parseFloat(crc.centerY) >= 0.0
+          && Number.parseFloat(crc.radius) >= 0.0)
             goodCircles++;
       })
 

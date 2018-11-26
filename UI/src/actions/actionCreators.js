@@ -17,7 +17,7 @@ export function signIn(credentials, cb) {
    return (dispatch, getState) => {
       addStdHandlers(dispatch, cb,
        api.signIn(credentials)
-      .then((userInfo) => dispatch({ user: userInfo, type: "SIGN_IN" })));
+      .then((userInfo) => dispatch({type: "SIGN_IN", user: userInfo})));
    }
 }
 
@@ -43,22 +43,36 @@ export function getAllCmps( cb) {
    return (dispatch, getState) => {
       api.getCmps()
       .then((cmps) => {
-         Object.keys(cmps).forEach((key) => {
-            cmps[key] = Object.assign(cmps[key], {cmpTeams : []});
-         })
+         Object.keys(cmps).forEach(key => {cmps[key].cmpTeams = []});
          dispatch({ type: 'GET_CMPS', cmps });
       })
       .then(() => {if (cb) cb()})
    }
 }
 
-export function getMyCmps(id, cb) {
+// Get basic team info for all teams of which the specified prsId is a member.
+// Leave members empty and toggled false.  (Later actions may populate members.)
+// Dispatch an update for the teams property of app state.
+export function getTeamsByPrs(prsId, cb) {
+   return (dispatch, getState) => {
+      api.getTeamsByPrs(prsId)
+      .then((teams) => {
+         Object.keys(teams).forEach((key) => {
+            teams[key] = Object.assign(teams[key],
+             {mmbs : {}, toggled: false});
+         })
+         dispatch({type: 'GET_PRS_TEAMS', teams})
+
+      })
+      .then(() => {if (cb) cb()})}
+}
+
+export function getCmpsByPrs(id, cb) {
    return ((dispatch, getState) => {
       api.getCmpsByPerson(id)
       .then((cmps) => {
-         Object.keys(cmps).forEach((key) => {
-            cmps[key].cmpTeams = []});
-         dispatch({ type: 'GET_PRS_CMPS', cmps });
+         Object.keys(cmps).forEach(key => {cmps[key].cmpTeams = []});
+         dispatch({type: 'GET_PRS_CMPS', cmps});
       })
       .then(() => {if (cb) cb()});
    })
@@ -109,27 +123,11 @@ export function getTeamsById(cmpId, teamId, cb) {
       .then((team) => {
          team.mmbs = {};
          team.toggled = false;
-         dispatch({type: 'GET_ONE_TEAM',  newTeamData: team});
+         dispatch({type: 'GET_TEAM',  newTeamData: team});
       })
       .then(() => {if (cb) cb()})}
 }
 
-// Get basic team info for all teams of which the specified prsId is a member.
-// Leave members empty and toggled false.  (Later actions may populate members.)
-// Dispatch an update for the teams property of app state.
-export function getTeamsByPrs(prsId, cb) {
-   return (dispatch, getState) => {
-      api.getTeamsByPrs(prsId)
-      .then((teams) => {
-         Object.keys(teams).forEach((key) => {
-            teams[key] = Object.assign(teams[key],
-             {mmbs : {}, toggled: false});
-         })
-         dispatch({type: 'GET_PRS_TEAMS', teams})
-
-      })
-      .then(() => {if (cb) cb()})}
-}
 
 export function getTeamsByCmp(cmpId, cb) {
    return (dispatch, getState) => {
@@ -146,8 +144,9 @@ export function getTeamsByCmp(cmpId, cb) {
 
 export function delTeam(cmpId, teamId, cb) {
    return (dispatch, getState) => {
-      api.delTeam(cmpId , teamId).then(() =>
-       dispatch({type: 'DEL_TEAM', teamId}))
+      api.delTeam(cmpId, teamId).then(() =>
+       dispatch({type: 'DEL_TEAM', teamId: teamId.toString(),
+        cmpId: cmpId.toString(), teamInfo: getState().teams}))
       .then(() => {if (cb) cb()})
    }
 }
@@ -170,13 +169,13 @@ export function delMmb(cmpId, teamId, prsId, cb) {
 
    return (dispatch, getState) => {
       addStdHandlers(dispatch, cb, api.delMmb(cmpId, teamId, prsId)
-      .then(()=>dispatch({type: 'DEL_MMB', teamId, prsId})));
+      .then(()=>dispatch({type: 'DEL_MMB', teamId, prsId, cmpId})));
    }
 }
 
-export function getMmbs(cmpId, teamId, cb) {
+export function getTeamMmbs(cmpId, teamId, cb) {
    return (dispatch, getState) => {
-      api.getMmbs(cmpId, teamId)
+      api.getTeamMmbs(cmpId, teamId)
       .then((mmbs) => {
          return dispatch({type: 'GET_TEAM_MMBS', teamData: {teamId, mmbs}});
       })
@@ -184,6 +183,8 @@ export function getMmbs(cmpId, teamId, cb) {
    }
 }
 
+// Post a submission, and refresh relevant team information to 
+// reflect e.g. canSubmit, number of attempts, etc.
 export function postSbm(cmpId, teamId, submit, cb) {
    return (dispatch, getState) => {
       addStdHandlers(dispatch, cb,
@@ -192,10 +193,9 @@ export function postSbm(cmpId, teamId, submit, cb) {
        .then((sbms) => dispatch({type: "POST_SBM", sbm: sbms[0]}))
        .then(() => api.getTeamsById(cmpId, teamId, cb))
        .then((team) => {
-          console.log(team);
-          team.mmbs = {};
+          team.mmbs = {};      // CAS FIX: Why do we clear these?
           team.toggled = false;
-          dispatch({type: "GET_ONE_TEAM", newTeamData: team});
+          dispatch({type: "GET_TEAM", newTeamData: team});
        })
     )};
 }
@@ -231,7 +231,7 @@ export function signOut(cb) {
       .then(() => {if (cb) cb()})
       .catch((err) => {
          console.log("Sign out error!");
-         dispatch({type: "ACCOUNT_ERR", err});
+         dispatch({type: "SHOW_ERR", err});
       })
    }
 }

@@ -18,9 +18,7 @@ export default function teams(state = {}, action) {
          return Object.assign({}, state, {[data.id]:
           Object.assign({}, state[data.id], data)});
       case 'ADD_TEAM':
-      case 'GET_ONE_TEAM':
-      console.log('Reducer');
-      console.log(action.newTeamData);
+      case 'GET_TEAM':
          var teamId = action.newTeamData.id;
          return Object.assign({}, state, {[teamId]: action.newTeamData});
       case 'DEL_TEAM':

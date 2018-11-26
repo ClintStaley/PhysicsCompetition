@@ -36,7 +36,7 @@ export default class CmpPage extends Component {
       props.cmps[props.cmpId].cmpTeams.forEach((teamId, i) => {
          if (this.props.teams[teamId] && this.props.teams[teamId].mmbs &&
           Object.keys(this.props.teams[teamId].mmbs).length  === 0)
-            props.getMmbs(props.cmpId, teamId);
+            props.getTeamMmbs(props.cmpId, teamId);
       })
    }
 
@@ -58,7 +58,7 @@ export default class CmpPage extends Component {
       //check for membership data, only update when no membership data is available
       if (this.props.teams[teamId].mmbs &&
        Object.keys(this.props.teams[teamId].mmbs).length  === 0){
-         this.props.getMmbs(this.props.cmpId ,teamId);
+         this.props.getTeamMmbs(this.props.cmpId ,teamId);
       }
       //toggle team toggles the member list on the screen
       this.setState({toggledTeams: Object.assign(this.state.toggledTeams,
@@ -112,21 +112,14 @@ export default class CmpPage extends Component {
         <div className = "cmpHeader">{props.cmps[cmpId].title}</div>
 
         <div className = "cmpDescription">
-          <div className = "cmpDescription-header">
-          Competition Description </div>
-
-          {myCmpLink ?
           <div className = "instructionLink">
-           <a onClick = {this.openInstrictions}>
-            Full Instructions
-           </a>
+            <a onClick = {this.openInstrictions}>
+              Full Instructions
+            </a>
           </div>
-          : '' }
 
-          <div className = "cmpDescription-body">
-          {props.cmps[cmpId].description}</div>
-
-          </div>
+          <div className="cmpDescription-body">{props.cmps[cmpId].description}</div>
+        </div>
 
           {myCmpLink ?
           ''

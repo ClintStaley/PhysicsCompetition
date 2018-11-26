@@ -44,7 +44,7 @@ class TeamsPage extends Component {
 
    openEdit = (teamId) => {
       if (Object.keys(this.props.teams[teamId].mmbs).length === 0) {
-         this.props.getMmbs(this.props.teams[teamId].cmpId, teamId,
+         this.props.getTeamMmbs(this.props.teams[teamId].cmpId, teamId,
           () => this.setState({editTeamId: teamId}));
       }
       else {
@@ -67,7 +67,7 @@ class TeamsPage extends Component {
       //check for membership data, only update when no membership data is available
       console.log("Toggling " + JSON.stringify(this.props.teams[teamId]));
       if (Object.keys(this.props.teams[teamId].mmbs).length === 0) {
-         this.props.getMmbs(this.props.teams[teamId].cmpId, teamId,
+         this.props.getTeamMmbs(this.props.teams[teamId].cmpId, teamId,
           () => this.setState(expanded));
       }
       else

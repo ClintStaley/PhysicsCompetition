@@ -252,7 +252,7 @@ export function postMmb(prsId, cmpId, teamId) {
 /** Return id -> member map rather than simple array of members, which the
 API oughta do, really.*/
 
-export function getMmbs(cmpId, teamId) {
+export function getTeamMmbs(cmpId, teamId) {
    return get(`Cmps/${cmpId}/Teams/${teamId}/mmbs`)
    .then((mmbData) => mmbData.json())
    .then((mmbData) => {
@@ -304,15 +304,13 @@ const errMap = {
       forbiddenRole: 'Role specified is not permitted.',
       noOldPwd: 'Change of password requires an old password',
       oldPwdMismatch: 'Old password that was provided is incorrect.',
-      dupTitle: 'title duplicates an existing one',
+      dupTitle: 'Title duplicates an existing one',
       dupEnrollment: 'Duplicate enrollment',
       forbiddenField: 'Field in body not allowed.',
-
-      cantRemoveLeader: 'Team leader cannot quit team, either delete team or change team leader: ',
+      cantRemoveLeader: 'Team leader cannot quit team; either delete team or change team leader: ',
       noCompType: 'Competition type does not exist: ',
       invalidPrms: 'Parameters specified do not follow competition type rules: ',
       badTeamLead: 'Team leader given is not on the team: ',
-
       queryFailed: 'Query failed (server problem).'
    },
    es: {
@@ -353,5 +351,5 @@ const errMap = {
   @param {string} lang
 */
 export function errorTranslate(errTag, lang = 'en') {
-   return errMap[lang][errTag] || 'Unknown Error!';
+   return errMap[lang][errTag] || 'Unknown Error';
 }
