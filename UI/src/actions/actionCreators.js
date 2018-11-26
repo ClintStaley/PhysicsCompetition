@@ -164,12 +164,14 @@ export function addMmb(mmbEmail, cmpId, teamId, cb) {
    }
 }
 
+// Assume teamId is string
 export function delMmb(cmpId, teamId, prsId, cb) {
    console.log(`Deleting ${cmpId}/${teamId}/${prsId}`);
 
    return (dispatch, getState) => {
       addStdHandlers(dispatch, cb, api.delMmb(cmpId, teamId, prsId)
-      .then(()=>dispatch({type: 'DEL_MMB', teamId, prsId, cmpId})));
+      .then(()=>dispatch({type: 'DEL_MMB', prsId, teamId, cmpId: cmpId.toString(),
+      teamInfo: getState().teams})));
    }
 }
 

@@ -16,8 +16,10 @@ export default class TeamModal extends Component {
       Object.keys(team.mmbs).forEach((key) => {
          var option = {
           label: `${team.mmbs[key].email} (${team.mmbs[key].firstName})`,
-          value: team.mmbs[key].id
+          value: team.mmbs[key].id,
+          temp: key
          }
+         console.log("Adding option " + JSON.stringify(option));
          mmbs.push(option);
          if (team.leaderId === team.mmbs[key].id) {
             leader = option;
@@ -44,7 +46,7 @@ export default class TeamModal extends Component {
       this.setState({teamName: e.target.value});
    }
 
-   // Only possible select is a new choice of first name for team lead
+   // Only possible select is a new choice of team lead
    handleChangeSelect(event) {
       console.log("New leader " + JSON.stringify(event));
       this.setState({leader : event});

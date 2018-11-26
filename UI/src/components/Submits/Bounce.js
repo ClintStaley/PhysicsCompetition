@@ -182,7 +182,7 @@ export class Bounce extends Component {
       // Boolean array indicating if obstacles and/or targets are unhit
       // First portion represents targets; latter represents obstacles
       var obstacleStatus = [];
-
+      
       this.props.prms.targets.forEach(() => obstacleStatus.push(true));
       this.props.prms.barriers.forEach(() => obstacleStatus.push(true));
 
@@ -578,12 +578,9 @@ class BallTrack extends Component {
 
 //one arc of a balls path
 class BallArc extends Component {
-
-
    shouldComponentUpdate(nextProps, nextState) {
       var props = this.props;
 
-      console.log("Rerender arc ", props);
       //need to re-render, the ball has been reset
       if (nextProps.currentTime < props.currentTime &&
        props.startTime + props.event.time > props.currentTime)

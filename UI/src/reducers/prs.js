@@ -53,8 +53,7 @@ export default function prs(state = {}, action) {
          return state;
       case 'DEL_MMB':
          return Number(action.prsId) !== state.id ? state :
-          Object.assign({}, state, {myTeams:
-          state.myTeams.filter(teamId => teamId !== action.teamId)});
+          delTeamFromState(state, action.teamId, action.cmpId, action.teamInfo)
       default:
          return state;
    }
