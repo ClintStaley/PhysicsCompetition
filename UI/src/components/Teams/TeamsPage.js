@@ -77,7 +77,7 @@ class TeamsPage extends Component {
    openAddMmb = (teamId) => {
       var props = this.props;
 
-      this.setState({addMmbFunc: (mmbEmail) => 
+      this.setState({addMmbFunc: (mmbEmail) =>
        props.addMmb(mmbEmail, props.teams[teamId].cmpId, teamId)});
    }
 

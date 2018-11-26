@@ -16,10 +16,8 @@ export default class TeamModal extends Component {
       Object.keys(team.mmbs).forEach((key) => {
          var option = {
           label: `${team.mmbs[key].email} (${team.mmbs[key].firstName})`,
-          value: team.mmbs[key].id,
-          temp: key
+          value: team.mmbs[key].id
          }
-         console.log("Adding option " + JSON.stringify(option));
          mmbs.push(option);
          if (team.leaderId === team.mmbs[key].id) {
             leader = option;
@@ -31,6 +29,14 @@ export default class TeamModal extends Component {
       this.handleChangeSelect = this.handleChangeSelect.bind(this);
    }
 
+   //all for enter key
+   componentDidMount(){
+      document.addEventListener("keydown", this.handleKeyPress, false);
+   }
+   componentWillUnmount(){
+      document.removeEventListener("keydown", this.handleKeyPress, false);
+   }
+
    close = (result) => {this.props.onDismiss({
       status: result,
       updatedTeam : {teamName: this.state.teamName,
@@ -38,7 +44,7 @@ export default class TeamModal extends Component {
    }
 
    getValidationState = () => {
-      return this.state.teamName ? null : "error";
+      return this.state.teamName && this.state.leader ? null : "error";
    }
 
    // Only possible change is a new team name value
@@ -46,15 +52,23 @@ export default class TeamModal extends Component {
       this.setState({teamName: e.target.value});
    }
 
-   // Only possible select is a new choice of team lead
+   // Only possible select is a new choice of first name for team lead
    handleChangeSelect(event) {
       console.log("New leader " + JSON.stringify(event));
       this.setState({leader : event});
    }
 
+   //enter still has problems, will automatically reopen window, different key works fine
+   handleKeyPress = (target) => {
+      target.preventDefault();
+      if(target.keyCode === 13){//76
+         this.close("OK");
+      }
+   }
+
    render() {
       return (
-       <Modal show={this.props.showModal != null} keyboard = {false} onHide={() => this.close("Cancel")}>
+       <Modal show={this.props.showModal != null} onHide={() => this.close("Cancel")}>
          <Modal.Header closeButton>
            <Modal.Title>{this.props.title}</Modal.Title>
          </Modal.Header>
