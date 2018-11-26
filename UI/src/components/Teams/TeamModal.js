@@ -52,13 +52,13 @@ export default class TeamModal extends Component {
 
    render() {
       return (
-       <Modal show={this.props.showModal != null} onHide={() => this.close("Cancel")}>
+       <Modal show={this.props.showModal != null} keyboard = {false} onHide={() => this.close("Cancel")}>
          <Modal.Header closeButton>
            <Modal.Title>{this.props.title}</Modal.Title>
          </Modal.Header>
          <Modal.Body>
            <form onSubmit={(e) =>
-           e.preventDefault() || this.state.teamName.length ?
+           this.state.teamName.length ?
            this.close("OK") : this.close("Cancel")}>
              <FormGroup
              controlId="formBasicText"
@@ -85,7 +85,7 @@ export default class TeamModal extends Component {
            </form>
          </Modal.Body>
          <Modal.Footer>
-           <Button onClick={() => this.close("OK")}>Ok</Button>
+           <Button type="submit" onClick={() => this.close("OK")}>Ok</Button>
            <Button onClick={() => this.close("Cancel")}>Cancel</Button>
          </Modal.Footer>
        </Modal>)
