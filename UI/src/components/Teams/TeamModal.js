@@ -16,7 +16,7 @@ export default class TeamModal extends Component {
       Object.keys(team.mmbs).forEach((key) => {
          var option = {
           label: `${team.mmbs[key].email} (${team.mmbs[key].firstName})`,
-          value: team.mmbs[key].id
+          value: key
          }
          mmbs.push(option);
          if (team.leaderId === team.mmbs[key].id) {
