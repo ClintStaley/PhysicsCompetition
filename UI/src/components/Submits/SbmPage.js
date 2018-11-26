@@ -102,7 +102,7 @@ export default class SbmPage extends Component {
            <div className="row">
              <div className="col-sm-9">
                <h4>Submission received at {timeStr} on {dateStr}</h4>
-               <h4>{this.props.team.bestScore != -1 ? `Best score: ${this.props.team.bestScore}` :
+               <h4>{this.props.team.bestScore !== -1 ? `Best score: ${this.props.team.bestScore}` :
                 'Best score: NA'}</h4>
                <h4>{sbm.score != null ? `This score: ${sbm.score}` :
                 this.state.refreshNote}</h4>

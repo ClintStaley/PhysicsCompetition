@@ -68,7 +68,7 @@ router.get('/:id', (req, res) => {
    var vld = req.validator;
 
    req.cnn.query('select * from Submit where id = ? && cmpId = ? && teamId = ?',
-    [req.params.id,req.params.cmpId,req.params.teamId],
+    [req.params.id, req.params.cmpId, req.params.teamId],
    (submission, submissionGet) => {
       if (vld.check(submissionGet.length, Tags.notFound)) {
          res.json(submissionGet[0]);
