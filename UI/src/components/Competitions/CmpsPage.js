@@ -19,19 +19,8 @@ class CmpsPage extends Component {
    componentDidMount = () => {
       var props = this.props;
 
-      if (props.showAll) {
-         if (!props.updateTimes.cmps)
-            this.props.getAllCmps();
-      }
-      else
-         if (!props.updateTimes.myCmps)
-            this.props.getCmpsByPrs(this.props.prs.id);
-   }
-
-   // CAS FIX: Why are these two functions exact duplicates?
-   // componentDidUpdate = this.componentDidMount
-   componentDidUpdate = () => {
-      var props = this.props;
+      if (!(props.updateTimes && props.updateTimes.myTeams))
+         this.props.getTeamsByPrs(this.props.prs.id);
 
       if (props.showAll) {
          if (!props.updateTimes.cmps)
@@ -41,6 +30,8 @@ class CmpsPage extends Component {
          if (!props.updateTimes.myCmps)
             this.props.getCmpsByPrs(this.props.prs.id);
    }
+
+   componentDidUpdate = this.componentDidMount;
 
    // Thus far the only confirmation is for a delete.
    closeConfirmation = (res, cmpId) => {
@@ -128,11 +119,6 @@ const CompetitionItem = function (props) {
 }
 
 //makes CmpsPage a container componet, rather than a presentational componet
-// CAS FIX: I am impressed at your effort to reduce what we might call
-// "props footprint", but let's take it to the full level.  For instance,
-// do changes to teams or ctps necessitate a rerender of this componeent?
-// And, do changes to all updateTimes require it, or just updateTimes.cmps
-// and updateTimes.mycmps?
 function mapStateToProps(state) {
    return {
       prs: state.prs,
