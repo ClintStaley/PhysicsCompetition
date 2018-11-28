@@ -32,7 +32,8 @@ export default function teams(state = {}, action) {
          if (!Object.keys(team.mmbs).length)
             return state;
 
-         team.mmbs = Object.assign({}, team.mmbs, {[prs.id]: {email: prs.email, firstName: prs.firstName, lastName: prs.lastName}});
+         team.mmbs = Object.assign({}, team.mmbs, {[prs.id]: {id: prs.id, email: prs.email,
+          firstName: prs.firstName, lastName: prs.lastName}});
          return Object.assign({}, state, {[action.teamId]: team});
       case 'DEL_MMB':
          team = Object.assign({}, state[action.teamId]);
