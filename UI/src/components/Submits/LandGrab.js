@@ -29,6 +29,22 @@ export class LGSubmitModal extends Component {
       this.handleChange = this.handleChange.bind(this);
    }
 
+   // Allows for enter key to submit
+   componentDidMount() {
+      document.addEventListener("keydown", this.handleKeyPress, false);
+   }
+   componentWillUnmount() {
+      document.removeEventListener("keydown", this.handleKeyPress, false);
+   }
+
+   handleKeyPress = (target) => {
+
+      if (target.keyCode === "\r".charCodeAt(0) && !this.getValidationState()) {
+         target.preventDefault();
+         this.close("OK");
+      }
+   }
+
    handleChange(ev) {
       var cIdx, field, val;
 
@@ -48,7 +64,7 @@ export class LGSubmitModal extends Component {
       var goodCircles = 0;
 
       this.state.circles.forEach(crc => {
-         if (Number.parseFloat(crc.centerX) >= 0.0 
+         if (Number.parseFloat(crc.centerX) >= 0.0
           && Number.parseFloat(crc.centerY) >= 0.0
           && Number.parseFloat(crc.radius) >= 0.0)
             goodCircles++;

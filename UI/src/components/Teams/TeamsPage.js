@@ -140,7 +140,8 @@ class TeamsPage extends Component {
 
         <h1>Team Overview</h1>
         <ListGroup>
-          {props.prs.myTeams && props.prs.myTeams.map((teamId, i) => {
+          {props.prs.myTeams && props.prs.myTeams.length ?
+           props.prs.myTeams.map((teamId, i) => {
             var team = props.teams[teamId];
 
             return <TeamLine
@@ -157,7 +158,10 @@ class TeamsPage extends Component {
               edit = {() => this.openEdit(teamId)}
               del = {() => this.openDelConfirm(teamId)}
               delMmb = {(prsId) => this.openDelMmbConfirm(teamId, prsId)}/>
-          })}
+          })
+          :
+           <h4>You do not have any teams, see Join Competitions to create one</h4>
+          }
         </ListGroup>
       </section>
       )

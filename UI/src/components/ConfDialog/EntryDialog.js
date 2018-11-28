@@ -21,6 +21,21 @@ export default class EntryDialog extends PureComponent {
       this.handleChange = this.handleChange.bind(this);
    }
 
+   // Allows for enter key to submit
+   componentDidMount() {
+      document.addEventListener("keydown", this.handleKeyPress, false);
+   }
+   componentWillUnmount() {
+      document.removeEventListener("keydown", this.handleKeyPress, false);
+   }
+
+   handleKeyPress = (target) => {
+      if (target.keyCode === "\r".charCodeAt(0) && this.props.show) {
+         target.preventDefault();
+         this.close("OK");
+      }
+   }
+
    close = (status) => {
       this.props.onClose({status, entry: this.state.value});
    }

@@ -17,6 +17,21 @@ export class BSubmitModal extends Component {
       this.handleChange = this.handleChange.bind(this);
    }
 
+   // Allows for enter key to submit
+   componentDidMount() {
+      document.addEventListener("keydown", this.handleKeyPress, false);
+   }
+   componentWillUnmount() {
+      document.removeEventListener("keydown", this.handleKeyPress, false);
+   }
+
+   handleKeyPress = (target) => {
+      if (target.keyCode === "\r".charCodeAt(0) && !this.getValidationState()) {
+         target.preventDefault();
+         this.close("OK");
+      }
+   }
+
    // Handle a change event from field with id field:bIdx where field is speed,
    // finalX, finalY or finalTime and bIDx is 0-based ball number
    handleChange(ev) {
@@ -27,7 +42,8 @@ export class BSubmitModal extends Component {
       // Either empty, or a nonnegative number
       if (!ev.target.value || parseFloat(ev.target.value) >= 0.0)
          this.setState({"launchSpec": this.state.launchSpec.map((spec, i) => {
-            return ""+i === bIdx ? Object.assign({}, spec, {[field]: ev.target.value}) : spec;
+            return ""+i === bIdx ?
+            Object.assign({}, spec, {[field]: ev.target.value}) : spec;
          })});
    }
 
@@ -182,7 +198,7 @@ export class Bounce extends Component {
       // Boolean array indicating if obstacles and/or targets are unhit
       // First portion represents targets; latter represents obstacles
       var obstacleStatus = [];
-      
+
       this.props.prms.targets.forEach(() => obstacleStatus.push(true));
       this.props.prms.barriers.forEach(() => obstacleStatus.push(true));
 

@@ -89,7 +89,7 @@ class CmpsPage extends Component {
            })}
            </ListGroup>
            :
-           <h4>You are not in any competitions</h4>
+           <h4>You are not in any competitions, see Join Competitions to join one</h4>
 
        }
       </section>

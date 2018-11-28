@@ -9,6 +9,22 @@ import { Modal, Button } from 'react-bootstrap';
  * buttons: Array<string>
  */
 export default class ConfDialog extends PureComponent {
+
+   // Allows for enter key to submit
+   componentDidMount() {
+      document.addEventListener("keydown", this.handleKeyPress, false);
+   }
+   componentWillUnmount() {
+      document.removeEventListener("keydown", this.handleKeyPress, false);
+   }
+
+   handleKeyPress = (target) => {
+      if (target.keyCode === "\r".charCodeAt(0) && this.props.show) {
+         target.preventDefault();
+         this.close("Yes");
+      }
+   }
+
    close = (result) => {
       this.props.onClose(result)
    }

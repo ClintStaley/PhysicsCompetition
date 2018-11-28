@@ -29,12 +29,19 @@ export default class TeamModal extends Component {
       this.handleChangeSelect = this.handleChangeSelect.bind(this);
    }
 
-   //all for enter key
-   componentDidMount(){
+   // Allows for enter key to submit
+   componentDidMount() {
       document.addEventListener("keydown", this.handleKeyPress, false);
    }
-   componentWillUnmount(){
+   componentWillUnmount() {
       document.removeEventListener("keydown", this.handleKeyPress, false);
+   }
+
+   handleKeyPress = (target) => {
+      target.preventDefault();
+      if (target.keyCode === "\r".charCodeAt(0)) {
+         this.close("OK");
+      }
    }
 
    close = (result) => {this.props.onDismiss({
@@ -56,14 +63,6 @@ export default class TeamModal extends Component {
    handleChangeSelect(event) {
       console.log("New leader " + JSON.stringify(event));
       this.setState({leader : event});
-   }
-
-   //enter still has problems, will automatically reopen window, different key works fine
-   handleKeyPress = (target) => {
-      target.preventDefault();
-      if(target.keyCode === 13){//76
-         this.close("OK");
-      }
    }
 
    render() {
