@@ -170,8 +170,8 @@ export function delMmb(cmpId, teamId, prsId, cb) {
 
    return (dispatch, getState) => {
       addStdHandlers(dispatch, cb, api.delMmb(cmpId, teamId, prsId)
-      .then(()=>dispatch({type: 'DEL_MMB', prsId, teamId, cmpId: cmpId.toString(),
-      teamInfo: getState().teams})));
+       .then(()=>dispatch({type: 'DEL_MMB', prsId, teamId,
+       cmpId: cmpId.toString(), teamInfo: getState().teams})));
    }
 }
 
