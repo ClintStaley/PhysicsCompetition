@@ -145,8 +145,8 @@ export function getTeamsByCmp(cmpId, cb) {
 export function delTeam(cmpId, teamId, cb) {
    return (dispatch, getState) => {
       api.delTeam(cmpId, teamId).then(() =>
-       dispatch({type: 'DEL_TEAM', teamId: teamId.toString(),
-        cmpId: cmpId.toString(), teamInfo: getState().teams}))
+       dispatch({type: 'DEL_TEAM', teamId,
+        cmpId, teamInfo: getState().teams}))
       .then(() => {if (cb) cb()})
    }
 }
@@ -179,7 +179,8 @@ export function getTeamMmbs(cmpId, teamId, cb) {
    return (dispatch, getState) => {
       api.getTeamMmbs(cmpId, teamId)
       .then((mmbs) => {
-         return dispatch({type: 'GET_TEAM_MMBS', teamData: {teamId, mmbs}});
+         return dispatch({type: 'GET_TEAM_MMBS',
+          teamData: {id: teamId, mmbs, cmpId: parseInt(cmpId)}});
       })
       .then(() => {if (cb) cb()})
    }

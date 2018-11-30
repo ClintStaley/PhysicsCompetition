@@ -38,8 +38,8 @@ export default class TeamModal extends Component {
    }
 
    handleKeyPress = (target) => {
-      target.preventDefault();
       if (target.keyCode === "\r".charCodeAt(0)) {
+         target.preventDefault();
          this.close("OK");
       }
    }

@@ -258,6 +258,8 @@ export function getTeamMmbs(cmpId, teamId) {
    .then((mmbData) => {
       var mmbs = {};
 
+console.log(mmbData);
+
       for (var i = 0; i < mmbData.length;i++)
          mmbs[mmbData[i].id] = mmbData[i];
 

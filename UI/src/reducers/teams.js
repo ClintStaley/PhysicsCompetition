@@ -4,14 +4,16 @@ export default function teams(state = {}, action) {
    var data, team, prs;
 
    switch (action.type) {
-      case 'GET_CMP_TEAMS':
       case 'GET_PRS_TEAMS': // Replace previous team
+      console.log(action.teams);
+         return action.teams;
+      case 'GET_CMP_TEAMS':
          return Object.assign({}, state, action.teams);
       case 'GET_TEAM_MMBS':
          // Add membership data to a team
          return Object.assign({}, state,
-          {[action.teamData.teamId]: Object.assign({},
-          state[action.teamData.teamId] , {mmbs: action.teamData.mmbs})});
+          {[action.teamData.id]: Object.assign({},
+          state[action.teamData.id] , {mmbs: action.teamData.mmbs})});
       case 'PUT_TEAM':
          data = action.newTeamData;
          // Overwrite only actually-changed elements in the team

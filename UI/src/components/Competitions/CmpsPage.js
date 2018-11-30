@@ -69,7 +69,7 @@ class CmpsPage extends Component {
                 cmp.link = '/JoinCmpPage/' + cmp.id;
                 cmp.joiningCmp = props.showAll;
                 cmp.joined = props.prs.myCmps &&
-                 props.prs.myCmps.includes(cmpId);
+                 props.prs.myCmps.includes(parseInt(cmpId));
 
                 return <CompetitionItem
                   key={i} {...cmp}/>
