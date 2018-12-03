@@ -5,7 +5,6 @@ export default function teams(state = {}, action) {
 
    switch (action.type) {
       case 'GET_PRS_TEAMS': // Replace previous team
-      console.log(action.teams);
          return action.teams;
       case 'GET_CMP_TEAMS':
          return Object.assign({}, state, action.teams);

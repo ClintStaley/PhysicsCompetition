@@ -10,8 +10,6 @@ export default class SbmPage extends Component {
    constructor(props) {
       super(props);
 
-      console.log("Constructing SbmPage with ", props);
-
       this.cRefreshDelay = 4000; // Every 4 s
       this.cNoteDelay = 333;     // Show notice for 1/3 s
 
@@ -26,7 +24,6 @@ export default class SbmPage extends Component {
    // Whenever the component mounts, start the timer, and retrieve
    // the appropriate set of submissions for the current cmp/team
    componentDidMount = () => {
-      console.log("mount");
       this.props.getSbms(this.state.cmp, this.props.team.id,
        () => {
           this.setCtpType();

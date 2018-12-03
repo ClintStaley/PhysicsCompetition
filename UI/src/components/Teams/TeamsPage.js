@@ -64,8 +64,7 @@ class TeamsPage extends Component {
       var expanded = this.state.expanded;
       expanded[teamId] = !expanded[teamId];
 
-      //check for membership data, only update when no membership data is available
-      console.log("Toggling " + JSON.stringify(this.props.teams[teamId]));
+      // Check membership data; update if no membership data is available
       if (Object.keys(this.props.teams[teamId].mmbs).length === 0) {
          this.props.getTeamMmbs(this.props.teams[teamId].cmpId, teamId,
           () => this.setState(expanded));

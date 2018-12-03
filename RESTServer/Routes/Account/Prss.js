@@ -14,7 +14,6 @@ router.get('/', (req, res) => {
 
    if (email) {
       clause = " where email like ?";
-      console.log(clause, email);
       fillers.push(email + ('%'));
    }
    req.cnn.chkQry('select id, email from Person' + clause, fillers,

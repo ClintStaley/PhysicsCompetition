@@ -43,7 +43,6 @@ exports.makeSession = function makeSession(user, res) {
 // Export a function to log out a user, given an authToken
 exports.deleteSession = (authToken) => {
    var rtn = authToken in sessions;
-   console.log("Delete");
    delete sessions[authToken];
    return rtn;
 };
@@ -53,7 +52,6 @@ exports.deleteSession = (authToken) => {
 // If |req| has an attached Session after this process, then down-chain routes will
 // treat |req| as logged-in.
 exports.router = function (req, res, next) {
-   console.log("Session Router!");
    // If we present a session cookie that corresponds with one in |sessions|...
    if (req.cookies[cookieName] && sessions[req.cookies[cookieName]]) {
       // If the session was last used more than |duration| mS ago..

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {FormGroup, FormControl, ControlLabel, Button, Modal }
+import {FormGroup, FormControl, HelpBlock, ControlLabel, Button, Modal }
   from 'react-bootstrap';
 import './Bounce.css'
 
@@ -49,14 +49,17 @@ export class BSubmitModal extends Component {
 
    // Valid iff all balls are valid
    getValidationState = () => {
+      let rtn = true;
+
       this.state.launchSpec.forEach(ball => {
          if (! (Number.parseFloat(ball.speed) >= 0
+          && Number.parseFloat(ball.speed) <= 20.0
           && Number.parseFloat(ball.finalTime) >= 0
           && Number.parseFloat(ball.finalX) >= 0
           && Number.parseFloat(ball.finalY) >= 0))
-            return false;
+            rtn = false;
       });
-      return true;
+      return rtn;
    }
 
    // Add an additional text box to enter another speed
@@ -99,8 +102,6 @@ export class BSubmitModal extends Component {
          lines.push(<div className="container" key={idx}>
            <div className="row">
              <div className="col-sm-1"><h5>Ball {idx}</h5></div>
-
-
              <div className="col-sm-2">
                <FormGroup controlId={idS}>
                  <ControlLabel>Launch Speed</ControlLabel>
@@ -110,6 +111,7 @@ export class BSubmitModal extends Component {
                   value={this.state.launchSpec[idx].speed}
                   required={true}
                   onChange={this.handleChange}/>
+                 <HelpBlock>At most 20 m/s</HelpBlock>
                  <FormControl.Feedback/>
                </FormGroup>
              </div>

@@ -61,7 +61,6 @@ export default class TeamModal extends Component {
 
    // Only possible select is a new choice of first name for team lead
    handleChangeSelect(event) {
-      console.log("New leader " + JSON.stringify(event));
       this.setState({leader : event});
    }
 

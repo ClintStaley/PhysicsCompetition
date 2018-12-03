@@ -50,7 +50,6 @@ router.post('/', (req, res) => {
         body.cmpId = req.params.cmpId;
         body.teamId = req.params.teamId;
         body.sbmTime = new Date();
-        console.log(JSON.stringify(body));
         cnn.chkQry('insert into Submit set ?', body, cb);
      },
      (result, fields, cb) => {

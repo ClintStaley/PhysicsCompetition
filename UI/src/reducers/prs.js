@@ -29,7 +29,6 @@ export default function prs(state = {}, action) {
       case 'SIGN_OUT':
          return {} // Clear user state
       case 'GET_PRS_TEAMS':
-      console.log(action.teams);
          var cmpMap = {};
 
          for (let id in action.teams)

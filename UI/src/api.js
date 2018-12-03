@@ -184,7 +184,6 @@ export function postCmp(body) {
 }
 
 export function getTeamsById(cmpId, teamId) {
-   console.log('GET TEAMS BY ID');
    return get(`Cmps/${cmpId}/Teams/${teamId}`)
    .then((teamData) => teamData.json())
    /*.then((teamData) => {
@@ -257,8 +256,6 @@ export function getTeamMmbs(cmpId, teamId) {
    .then((mmbData) => mmbData.json())
    .then((mmbData) => {
       var mmbs = {};
-
-console.log(mmbData);
 
       for (var i = 0; i < mmbData.length;i++)
          mmbs[mmbData[i].id] = mmbData[i];

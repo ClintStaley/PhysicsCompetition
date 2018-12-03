@@ -166,8 +166,6 @@ export function addMmb(mmbEmail, cmpId, teamId, cb) {
 
 // Assume teamId is string
 export function delMmb(cmpId, teamId, prsId, cb) {
-   console.log(`Deleting ${cmpId}/${teamId}/${prsId}`);
-
    return (dispatch, getState) => {
       addStdHandlers(dispatch, cb, api.delMmb(cmpId, teamId, prsId)
        .then(()=>dispatch({type: 'DEL_MMB', prsId, teamId,
@@ -218,7 +216,6 @@ export function getSbms(cmp, teamId, cb) {
 
 export function refreshSbms(cb) {
    return (dispatch, getState) => {
-      console.log("Binding refreshSbms with ", getState());
       var current = getState().sbms.current;
 
       addStdHandlers(dispatch, cb,
@@ -233,7 +230,6 @@ export function signOut(cb) {
       .then(() => dispatch({ type: 'SIGN_OUT' }))
       .then(() => {if (cb) cb()})
       .catch((err) => {
-         console.log("Sign out error!");
          dispatch({type: "SHOW_ERR", err});
       })
    }

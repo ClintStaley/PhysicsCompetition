@@ -32,7 +32,6 @@ router.post('/', (req, res) => {
          if (req.validator.check(result.length && result[0].password ===
           body.password, Tags.badLogin)) {
             cookie = ssnUtil.makeSession(result[0], res);
-            console.log("Logging in " + body.email);
             res.location(router.baseURL + '/' + cookie).status(200).end();
          }
          cnn.release();

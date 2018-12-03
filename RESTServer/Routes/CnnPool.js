@@ -27,7 +27,6 @@ CnnPool.prototype.getConnection = function(cb) {
 // Router function for use in auto-creating CnnPool for a request
 CnnPool.router = function(req, res, next) {
    console.log("Getting connection");
-   //console.log(poolCfg.user);
    CnnPool.singleton.getConnection(function(err, cnn) {
       if (err)
          res.status(500).json('Failed to get connection: ' + err);
@@ -37,7 +36,6 @@ CnnPool.router = function(req, res, next) {
             // Run real qry, checking for error
             this.query(qry, prms, function(err, rsp, fields) {
                if (err){
-                  console.log("Query Failed");
                   res.status(500).json('Failed query ' + qry);
                }
                cb(err, rsp, fields);
