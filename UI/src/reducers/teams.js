@@ -5,8 +5,11 @@ export default function teams(state = {}, action) {
 
    switch (action.type) {
       case 'GET_PRS_TEAMS': // Replace previous team
-         return action.teams;
       case 'GET_CMP_TEAMS':
+         for (let id in action.teams)
+            if (state[id] && Object.keys(state[id].mmbs).length)
+               action.teams[id].mmbs = Object.assign({}, state[id].mmbs);
+
          return Object.assign({}, state, action.teams);
       case 'GET_TEAM_MMBS':
          // Add membership data to a team

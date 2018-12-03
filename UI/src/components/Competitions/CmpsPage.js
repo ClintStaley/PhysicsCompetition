@@ -19,8 +19,8 @@ class CmpsPage extends Component {
    componentDidMount = () => {
       var props = this.props;
 
-      if (!(props.updateTimes && props.updateTimes.myTeams))
-         this.props.getTeamsByPrs(this.props.prs.id);
+      //if (!(props.updateTimes && props.updateTimes.myTeams))
+      //   this.props.getTeamsByPrs(this.props.prs.id);
 
       if (props.showAll) {
          if (!props.updateTimes.cmps)

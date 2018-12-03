@@ -30,6 +30,10 @@ class Main extends Component {
       this.props.signOut();
    }
 
+   refresh() {
+      this.props.getTeamsByPrs(this.props.prs.id);
+   }
+
    openHelp() {
       var link = '/Docs/Instructions.html';
 
@@ -42,6 +46,7 @@ class Main extends Component {
    // {...this.props} />)}} />
 
    render() {
+      console.log(this.props);
      var ProtectedRoute = this.ProtectedRoute;
 
     return (
@@ -82,13 +87,18 @@ class Main extends Component {
                 }
               </Nav>
               <Nav pullRight>
-              <NavItem eventKey={3} onClick = {() => this.openHelp()}>
+              <NavItem eventKey={5} onClick = {() => this.openHelp()}>
                 Help
               </NavItem>
               {this.signedIn() ?
-                <NavItem eventKey={2} onClick = {() => this.signOut()}>
+                 <Nav>
+                <NavItem eventKey={4} onClick = {() => this.refresh()}>
+                  Refresh
+                </NavItem>
+                <NavItem eventKey={3} onClick = {() => this.signOut()}>
                   Sign out
                 </NavItem>
+                 </Nav>
                : ''}
               </Nav>
             </Navbar.Collapse>

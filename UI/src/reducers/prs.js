@@ -3,6 +3,7 @@
 var addTeamToState = (st, team) => {
    var cmpId = team.cmpId;
 
+
    return Object.assign({}, st, {
       myTeams: st.myTeams.concat([team.id]),
       myCmps: st.myCmps.includes(cmpId) ? st.myCmps : st.myCmps.concat([cmpId])
@@ -29,16 +30,15 @@ export default function prs(state = {}, action) {
       case 'SIGN_OUT':
          return {} // Clear user state
       case 'GET_PRS_TEAMS':
-         var cmpMap = {};
+         var newState = state;
+         //clearing myTeams and myCmps in case they have been deleted
+         newState.myTeams = [];
+         newState.myCmps = [];
 
          for (let id in action.teams)
-            cmpMap[action.teams[id].cmpId] = true;
+            newState = addTeamToState(newState, action.teams[id]);
 
-         return Object.assign({}, state,
-          {myTeams: Object.keys(action.teams).map(
-           function (x) { return parseInt(x, 10)}),
-           myCmps: Object.keys(cmpMap).map(
-           function (x) { return parseInt(x)})});
+         return newState;
       case 'DEL_TEAM':
          if (state.myTeams.includes(action.teamId))
             return delTeamFromState(state, action.teamId, action.cmpId,
