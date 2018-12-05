@@ -334,7 +334,7 @@ var addDebugRoutes = app => {
    if (corsFlag !== -1 && corsFlag + 1 < argv.length)
       corsDomain = argv[corsFlag + 1];
    else {
-      corsDomain = `softwareinventions:${httpPort}`;//localhost:${httpPort}
+      corsDomain = `http://www.softwareinventions.com:${httpPort}`;//localhost:${httpPort}
    }
    app = configApp(httpPort, corsDomain, process.argv.indexOf('-test') !== -1);
 
