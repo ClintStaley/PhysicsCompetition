@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {FormGroup, FormControl, HelpBlock, ControlLabel, Button, Modal }
   from 'react-bootstrap';
+  import Draggable from 'react-draggable';
 import './Bounce.css'
 
 export class BSubmitModal extends Component {
@@ -163,6 +164,7 @@ export class BSubmitModal extends Component {
       }
 
       return (
+      <Draggable>
       <Modal show={this.props.submitFn !== null}
        onHide={()=>this.close("Cancel")} bsSize="lg">
         <Modal.Header closeButton>
@@ -181,7 +183,9 @@ export class BSubmitModal extends Component {
            onClick={() => this.close('OK')}>OK</Button>
           <Button key={3} onClick={() => this.close('Cancel')}>Cancel</Button>
         </Modal.Footer>
-      </Modal>);
+      </Modal>
+      </Draggable>
+   );
    }
 }
 

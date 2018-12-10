@@ -190,7 +190,7 @@ const TeamLine = function (props) {
        </div>
      :
       (props.mmbs && Object.keys(props.mmbs).length  ?
-       `TeamLeader: ${props.mmbs[props.leaderId].firstName}
+       `Team Leader: ${props.mmbs[props.leaderId].firstName}
        (${props.mmbs[props.leaderId].email})`
        : 'loading')
      }
@@ -214,7 +214,7 @@ const TeamLine = function (props) {
 const MemberItem = function (props) {
    return (
    <ListGroupItem className="clearfix">
-     <Link to="#">{props.firstName}</Link>
+     {props.firstName}
       {props.isLeader ? ` -- lead (${props.email})` : ''}
    </ListGroupItem>
    );

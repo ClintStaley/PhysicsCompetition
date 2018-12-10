@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import {
   FormGroup, ControlLabel, FormControl, HelpBlock,
   Checkbox, Button, Alert
@@ -86,6 +87,13 @@ class Register extends Component {
        && s.termsAccepted;
    }
 
+   openTerms(target) {
+      var link = '/Docs/Terms.html';
+
+      window.open(link, "_blank");
+      target.preventDefault();
+   }
+
   //renders all of the fields
   render() {
     return (
@@ -144,7 +152,8 @@ class Register extends Component {
             onChange={this.handleChange}
             id="termsAccepted"
           >
-            Do you accept the terms and conditions?
+            Do you accept the <a onClick = {this.openTerms}>terms </a>
+             and conditions?
           </Checkbox>
         </form>
         {this.state.password !== this.state.passwordTwo ?
