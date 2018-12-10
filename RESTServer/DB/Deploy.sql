@@ -248,6 +248,18 @@ insert into CompetitionType (title, codeName, description, prmSchema)
       "minProperties": 3
   }');
 
+  insert into CompetitionType (title, codeName, description, prmSchema)
+            VALUES ("Ricochet", "Bounce","Bounce balls through an obstacle field", '
+{
+      "$schema": "http://json-schema.org/draft-07/schema#",
+
+      "title": "Bounce",
+      "type": "object",
+
+      "properties": {
+         
+  }');
+
 select * from Person;
 select * from CompetitionType;
 select * from Competition;
