@@ -14,6 +14,7 @@ import java.awt.geom.Point2D;
 public class LandGrabEvaluator implements Evaluator {
 
    static final double cGridSize = 100.0;
+   public static final double EPS = 0.00000001;
    
    static class SbmCircle {
       public double centerX;
@@ -90,15 +91,15 @@ public class LandGrabEvaluator implements Evaluator {
       // Check for noncorner obstacle collision
       for (BlockedRectangle obs : prms.obstacles) {
          // Overlap with horizontal sides
-         if (GenUtil.inBounds(obs.loX, circle.centerX, obs.hiX)
-               && GenUtil.inBounds(obs.loY - circle.radius, circle.centerY,
-               obs.hiY + circle.radius))
+         if (GenUtil.inBounds(obs.loX + EPS, circle.centerX, obs.hiX - EPS)
+               && GenUtil.inBounds(obs.loY - circle.radius - EPS, circle.centerY,
+               obs.hiY + circle.radius + EPS))
             return false;
          
          // Overlap with vertical sides
-         if (GenUtil.inBounds(obs.loY, circle.centerY, obs.hiY)
-               && GenUtil.inBounds(obs.loX - circle.radius, circle.centerX,
-               obs.hiX + circle.radius))
+         if (GenUtil.inBounds(obs.loY + EPS, circle.centerY, obs.hiY - EPS)
+               && GenUtil.inBounds(obs.loX - circle.radius - EPS, circle.centerX,
+               obs.hiX + circle.radius - EPS))
             return false;
          
          if (cornerHit(circle, obs.hiX, obs.hiY)
@@ -111,21 +112,22 @@ public class LandGrabEvaluator implements Evaluator {
       // Check for circle collision
       for (SbmCircle temp : validCircles)
          if (Point2D.distance(circle.centerX, circle.centerY,
-               temp.centerX, temp.centerY) < circle.radius + temp.radius)
+               temp.centerX, temp.centerY) < circle.radius + temp.radius - EPS)
             return false;
       
       return true;
    }
 
    private boolean circleInBounds(SbmCircle crc) {
-      return GenUtil.inBounds(crc.radius, crc.centerX, cGridSize - crc.radius)
-            && GenUtil.inBounds(crc.radius, crc.centerY,
-                  cGridSize - crc.radius);
+      return GenUtil.inBounds
+            (crc.radius - EPS, crc.centerX, cGridSize - crc.radius + EPS)
+            && GenUtil.inBounds(crc.radius - EPS, crc.centerY,
+            cGridSize - crc.radius + EPS);
    }
 
    // Return true iff circle overlaps {x,y}
    private boolean cornerHit(SbmCircle circle, double x, double y) {
       return Point2D.distance(circle.centerX, circle.centerY, x, y)
-            < circle.radius;
+            < (circle.radius - EPS);
    }
 }

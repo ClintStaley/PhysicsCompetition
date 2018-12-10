@@ -194,8 +194,6 @@ export function postSbm(cmpId, teamId, submit, cb) {
        .then((sbms) => dispatch({type: "POST_SBM", sbm: sbms[0]}))
        .then(() => api.getTeamsById(cmpId, teamId, cb))
        .then((team) => {
-          //team.mmbs = {};      // CAS FIX: Why do we clear these?
-          //team.toggled = false;
           dispatch({type: "GET_TEAM", newTeamData: team});
        })
     )};
