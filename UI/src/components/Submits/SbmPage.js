@@ -112,7 +112,7 @@ export default class SbmPage extends Component {
         <Button disabled={(!this.props.team.canSubmit) ||
             (this.props.sbms.current && !this.props.sbms.current.testResult)}
          onClick={() => this.setState({sbmFunction: this.doSubmit})}>
-           Submit Attempt
+           Make Attempt
         </Button>
       </div>);
 

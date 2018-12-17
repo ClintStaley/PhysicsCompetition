@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {FormGroup, FormControl, ControlLabel, Button, Modal }
+import {FormGroup, FormControl, HelpBlock, ControlLabel, Button, Modal }
   from 'react-bootstrap';
 import './LandGrab.css'
 
@@ -65,8 +65,11 @@ export class LGSubmitModal extends Component {
 
       this.state.circles.forEach(crc => {
          if (Number.parseFloat(crc.centerX) >= 0.0
+          && Number.parseFloat(crc.centerX) <= 100.0
           && Number.parseFloat(crc.centerY) >= 0.0
-          && Number.parseFloat(crc.radius) >= 0.0)
+          && Number.parseFloat(crc.centerY) <= 100.0
+          && Number.parseFloat(crc.radius) >= 0.0
+          && Number.parseFloat(crc.radius) <= 50.0)
             goodCircles++;
       })
 
@@ -109,6 +112,7 @@ export class LGSubmitModal extends Component {
                    onChange={this.handleChange}
                  />
                  <FormControl.Feedback/>
+                 <HelpBlock>At most 100</HelpBlock>
                </FormGroup>
              </div>
 
@@ -123,6 +127,7 @@ export class LGSubmitModal extends Component {
                    onChange={this.handleChange}
                  />
                  <FormControl.Feedback/>
+                 <HelpBlock>At most 100</HelpBlock>
                </FormGroup>
              </div>
 
@@ -137,6 +142,7 @@ export class LGSubmitModal extends Component {
                    onChange={this.handleChange}
                  />
                  <FormControl.Feedback/>
+                 <HelpBlock>At most 50</HelpBlock>
                </FormGroup>
              </div>
            </div>
@@ -195,13 +201,21 @@ export class LandGrab extends Component {
           width={rect.hiX - rect.loX} height={rect.hiY - rect.loY}
           className="obstacle"/>);
 
-         obstacles.push(<text key={"UL"+idx} x={rect.loX} y={100-rect.hiY}
+          var classLeft = (rect.hiX - rect.loX) > .8 ? "text" : "rhsText";
+          var classRight = (rect.hiX - rect.loX) > .8 ? "rhsText" : "text";
+
+          var highY = rect.hiY - rect.loY > .3 ? rect.hiY :
+            ((0.3 - (rect.hiY - rect.loY))/2) + rect.hiY;
+          var lowY = rect.hiY - rect.loY > .3 ? rect.loY :
+            rect.loY - ((0.3 - (rect.hiY - rect.loY))/2);
+
+         obstacles.push(<text key={"UL"+idx} x={rect.loX} y={100-highY+.13}
           className="ULText">{"(" + rect.loX + "," + rect.hiY + ")"}</text>);
-         obstacles.push(<text key={"UR"+idx} x={rect.hiX} y={100-rect.hiY}
+         obstacles.push(<text key={"UR"+idx} x={rect.hiX} y={100-highY+.13}
           className="URText">{"(" + rect.hiX + "," + rect.hiY + ")"}</text>);
-         obstacles.push(<text key={"LL"+idx} x={rect.loX} y={100-rect.loY}
+         obstacles.push(<text key={"LL"+idx} x={rect.loX} y={100-lowY-.5}
           className="LLText">{"(" + rect.loX + "," + rect.loY + ")"}</text>);
-         obstacles.push(<text key={"LR"+idx} x={rect.hiX} y={100-rect.loY}
+         obstacles.push(<text key={"LR"+idx} x={rect.hiX} y={100-lowY-.5}
           className="LRText">{"(" + rect.hiX + "," + rect.loY + ")"}</text>);
       });
 

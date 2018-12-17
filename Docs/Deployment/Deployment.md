@@ -16,7 +16,7 @@
 	1. update the EVC.properties with the correct values
 	2. The jar will automatically be named evc-0.0.1-SNAPSHOT-jar-with-dependencies.jar
 
-use: java -cp evc-0.0.1-SNAPSHOT-jar-with-dependencies.jar com.softwareinventions.cmp.driver.EVCMain 
+use: java -cp evc-0.0.1-SNAPSHOT-jar-with-dependencies.jar com.softwareinventions.cmp.driver.EVCMain EVC.properties 
 to run the jar	
 
 
