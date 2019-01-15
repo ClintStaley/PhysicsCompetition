@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 import { ListGroup, ListGroupItem, Button } from 'react-bootstrap';
 import { EntryDialog } from '../concentrator';
 import './cmp.css'

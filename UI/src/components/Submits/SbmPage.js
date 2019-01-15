@@ -122,11 +122,16 @@ export default class SbmPage extends Component {
          sbmDialog = (<LGSubmitModal prms={cmp.prms}
              submitFn={this.state.sbmFunction}/>);
       }
-
       else if (ctpName === "Bounce") {
          prbDiagram = (<Bounce className="clearfix"
              prms={cmp.prms} sbm={sbm}/>);
          sbmDialog = (<BSubmitModal prms={cmp.prms}
+             submitFn={this.state.sbmFunction}/>);
+      }
+      else if (ctpName === "Ricochet") {
+         prbDiagram = (<Ricochet className="clearfix"
+             prms={cmp.prms} sbm={sbm}/>);
+         sbmDialog = (<RSubmitModal prms={cmp.prms}
              submitFn={this.state.sbmFunction}/>);
       }
 
