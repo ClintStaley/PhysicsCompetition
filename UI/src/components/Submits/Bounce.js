@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import {FormGroup, FormControl, HelpBlock, ControlLabel, Button, Modal }
+import {FormGroup, FormControl, HelpBlock, ControlLabel, Button }
   from 'react-bootstrap';
-  import Draggable from 'react-draggable';
-import './Bounce.css'
+import DragModal from '../Util/DraggableModal.js';
 
+import './Bounce.css'
+ 
 export class BSubmitModal extends Component {
    constructor(props) {
       super(props);
@@ -162,30 +163,27 @@ export class BSubmitModal extends Component {
            </div>
          </div>)
       }
+ 
+      var buttons = [
+         <Button key={0} onClick={() => {this.addBall()}}>Add Ball</Button>,
 
-      return (
-      <Draggable>
-      <Modal show={this.props.submitFn !== null}
-       onHide={()=>this.close("Cancel")} bsSize="lg">
-        <Modal.Header closeButton>
-          <Modal.Title>Submit Bounce Solution</Modal.Title>
-        </Modal.Header>
+         <Button key={1} disabled = {this.state.launchSpec.length === 1}
+         onClick={() => {this.removeBall()}}>Remove Ball</Button>,
 
-        <Modal.Body><form>{lines}</form></Modal.Body>
+         <Button key={2}  disabled = {!this.getValidationState()}
+         onClick={() => this.close('OK')}>OK</Button>,
 
-        <Modal.Footer>
-          <Button key={0} onClick={() => {this.addBall()}}>Add Ball</Button>
-          {/*Must be at least one ball in modal, cannot have less than 1*/}
-          <Button key={1} disabled = {this.state.launchSpec.length === 1}
-           onClick={() => {this.removeBall()}}>Remove Ball</Button>
+         <Button key={3} onClick={() => this.close('Cancel')}>Cancel</Button>
+      ];
 
-          <Button key={2}  disabled = {!this.getValidationState()}
-           onClick={() => this.close('OK')}>OK</Button>
-          <Button key={3} onClick={() => this.close('Cancel')}>Cancel</Button>
-        </Modal.Footer>
-      </Modal>
-      </Draggable>
-   );
+      return (<DragModal 
+         show={this.props.submitFn !== null}  
+         onHide={()=>this.close("Cancel")} 
+         bsSize="lg"
+         title = "Submit Bounce Solution"
+         body = {<form>{lines}</form>}
+         footer = {buttons}
+         />);
    }
 }
 

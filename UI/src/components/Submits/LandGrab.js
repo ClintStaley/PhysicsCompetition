@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import {FormGroup, FormControl, HelpBlock, ControlLabel, Button, Modal }
+import {FormGroup, FormControl, HelpBlock, ControlLabel, Button }
   from 'react-bootstrap';
-import './LandGrab.css'
+import DragModal from '../Util/DraggableModal.js';
+import './LandGrab.css';
 
 /* Expected Properties
  * prms-- parameter of the LandGrab competition to which to submit
@@ -38,7 +39,6 @@ export class LGSubmitModal extends Component {
    }
 
    handleKeyPress = (target) => {
-
       if (target.keyCode === "\r".charCodeAt(0) && !this.getValidationState()) {
          target.preventDefault();
          this.close("OK");
@@ -90,7 +90,7 @@ export class LGSubmitModal extends Component {
    }
 
    render() {
-      var idX, idY, idR, idx, lines = [];
+      var idX, idY, idR, idx, lines = [], buttons = [];
 
       for (idx = 0; idx < this.props.prms.numCircles; idx++) {
          idX = `centerX:${idx}`;
@@ -148,22 +148,20 @@ export class LGSubmitModal extends Component {
            </div>
          </div>)
       }
+      buttons.push(
+         <Button key={0} disabled = {this.getValidationState() !== "success"}
+          onClick={() => this.close('OK')}>OK</Button>);
+      buttons.push(
+         <Button key={1} onClick={() => this.close('Cancel')}>Cancel</Button>);
 
-      return (
-      <Modal show={this.props.submitFn !== null}
-          onHide={()=>this.close("Cancel")} bsSize="lg">
-        <Modal.Header closeButton>
-          <Modal.Title>Submit LandGrab Solution</Modal.Title>
-        </Modal.Header>
-
-        <Modal.Body><form>{lines}</form></Modal.Body>
-
-        <Modal.Footer>
-          <Button key={0}  disabled = {this.getValidationState() !== "success"}
-              onClick={() => this.close('OK')}>OK</Button>
-          <Button key={1} onClick={() => this.close('Cancel')}>Cancel</Button>
-        </Modal.Footer>
-      </Modal>)
+      return (<DragModal 
+         show={this.props.submitFn !== null}  
+         onHide={()=>this.close("Cancel")} 
+         bsSize="lg"
+         title = "Submit LandGrab Solution"
+         body = {<form>{lines}</form>}
+         footer = {buttons}
+         />);
    }
 }
 // Expected props are:
@@ -200,9 +198,6 @@ export class LandGrab extends Component {
          obstacles.push(<rect key={"R"+idx} x={rect.loX} y={100-rect.hiY}
           width={rect.hiX - rect.loX} height={rect.hiY - rect.loY}
           className="obstacle"/>);
-
-          var classLeft = (rect.hiX - rect.loX) > .8 ? "text" : "rhsText";
-          var classRight = (rect.hiX - rect.loX) > .8 ? "rhsText" : "text";
 
           var highY = rect.hiY - rect.loY > .3 ? rect.hiY :
             ((0.3 - (rect.hiY - rect.loY))/2) + rect.hiY;

@@ -1,5 +1,5 @@
-const baseURL = "https://www.softwareinventions.com:8443/";
-//const baseURL = "http://localhost:8080/";
+//const baseURL = "https://www.softwareinventions.com:8443/";
+const baseURL = "http://localhost:8080/";
 const headers = new Headers();
 let cookie;
 

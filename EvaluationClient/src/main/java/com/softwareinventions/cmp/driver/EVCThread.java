@@ -43,6 +43,7 @@ import com.softwareinventions.cmp.evaluator.Evaluator;
 import com.softwareinventions.cmp.evaluator.EvlPut;
 import com.softwareinventions.cmp.evaluator.bounce.BounceEvaluator;
 import com.softwareinventions.cmp.evaluator.landgrab.LandGrabEvaluator;
+import com.softwareinventions.cmp.evaluator.ricochet.RicochetEvaluator;
 import com.softwareinventions.cmp.util.EVCException;
 
 import RESTProxy.SessionResource;
@@ -60,7 +61,7 @@ public class EVCThread extends Thread  {
    private String user;
    private String pass;
    
-   static Map<Integer, CompetitionType> compTypes;
+   static Map<Integer, CompetitionType> cmpTypes;
    
    public EVCThread(Client client, String evcPath, String evcUser,
          String evcPass, String name) {
@@ -172,9 +173,6 @@ public class EVCThread extends Thread  {
       // Use the damn clientConfig to (gasp, finally) return a trusting Client
          return ClientBuilder.newClient(clientConfig);
    }
-
-
-
    
    /**
     * Check the status code, then close the response.
@@ -239,14 +237,13 @@ public class EVCThread extends Thread  {
          EvlPut[] evaluations;
 
          CompetitionType[] competitionTypes = handler.getAllCompetitionTypes();
-         compTypes = 
-               new HashMap<Integer, CompetitionType>(competitionTypes.length);
+         cmpTypes = 
+          new HashMap<Integer, CompetitionType>(competitionTypes.length);
          
          for (int i = 0; i < competitionTypes.length; i++)
-            compTypes.put(competitionTypes[i].id, competitionTypes[i]);
+            cmpTypes.put(competitionTypes[i].id, competitionTypes[i]);
          
          while (true) {
-            
             Competition[] cmps = handler.getCmps();
             lgr.info("Getting all compeitions");
 
@@ -277,12 +274,14 @@ public class EVCThread extends Thread  {
 
    private static Evaluator cmpEvaluator(Competition cmp) throws Exception {
       Evaluator evl = null;
-      String ctpName = compTypes.get(cmp.ctpId).codeName;
+      String ctpName = cmpTypes.get(cmp.ctpId).codeName;
       
       if (ctpName.equals("LandGrab"))
          evl = new LandGrabEvaluator();
       else if (ctpName.equals("Bounce"))
          evl = new BounceEvaluator();
+      else if (ctpName.equals("Ricochet"))
+         evl = new RicochetEvaluator();
       else
          throw new
                Exception("Competition Type: " + ctpName + " does not exist");

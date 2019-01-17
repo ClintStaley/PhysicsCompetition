@@ -12,15 +12,13 @@
 3. Configure RESTServer
 	1. Use exampleConnection.json in Routes to create connection.json
 
-3. Create an executable maven jar file. To do this using eclipse with maven installed run as a maven build, and under goals input assembly:single.
+3. Create an executable jar file for the EVC.  To do this using Eclipse with maven installed run as a maven build, and under goals input assembly:single.
+
 	1. update the EVC.properties with the correct values
 	2. The jar will automatically be named evc-0.0.1-SNAPSHOT-jar-with-dependencies.jar
 
 use: java -cp evc-0.0.1-SNAPSHOT-jar-with-dependencies.jar com.softwareinventions.cmp.driver.EVCMain EVC.properties 
 to run the jar	
 
-
-
-
-
+## Emergency info for resetting root password on MySQL
 https://stackoverflow.com/questions/41984956/cant-reset-root-password-with-skip-grant-tables-on-ubuntu-16
