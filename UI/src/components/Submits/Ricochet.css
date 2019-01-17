@@ -1,0 +1,66 @@
+.graph5B {
+   stroke: #E0E0E0;
+   stroke-width:0.01;
+}
+
+.graph10B {
+   stroke:#C8C8C8;
+   stroke-width:0.01;
+}
+
+.graphBkg {
+   fill:#F0F0FF;
+   stroke:"gray";
+
+}
+
+.ball {
+   stroke: black;
+   stroke-width:.01;
+}
+
+.red {
+  fill:#F00;
+  color:#F00;
+}
+
+.green {
+   fill:#0F0;
+   color:#0F0;
+}
+
+.faded {
+  opacity:.20;
+}
+
+.invisible {
+  visibility: hidden;
+}
+
+.text, .rhsText {
+   font-size:.13px;
+}
+
+.rhsText {
+   text-anchor:end;
+}
+
+.controlButton {
+  padding: .5px;
+}
+
+table {
+  width: 50%;
+  margin-left: 10%;
+}
+
+table, th, tr  {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+th, td {
+    padding: 9px;
+}
+
+tr:nth-child(even) {background-color: #f2f2f2;}

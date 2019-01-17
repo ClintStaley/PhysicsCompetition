@@ -1,0 +1,48 @@
+Motivating Story
+
+Current competition revisions?
+
+What concepts does he want to teach?
+	Harder to understand/motivate?
+
+Comments on the general approach/method?
+
+Sample competitions
+
+1. Rocket slalom
+2. Solar car w/battery, one slope, etc.
+3. Land Grab
+
+PivotInteractives.com
+
+Predictive math is good, but
+demo first, let people play, then computation
+
+Simpler components, leading up to fuller competition, to lower barriers
+
+Lead-in demonstrations
+
+Roller coaster
+
+Slapt.com
+
+Bob Brazzle  Jefferson College
+Jen Meyer  Parkway Central HS
+
+Jim Moser for Math Ideas
+   Picture imitation by curve matching
+
+Mike McMullin might like Land Grab
+
+Support flipped work?
+
+
+Action Items:
+
+1. Late Jan delivery
+2. Ideas for momentum and collisions
+
+
+
+
+
