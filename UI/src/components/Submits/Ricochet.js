@@ -11,11 +11,7 @@ export class RSubmitModal extends Component {
    constructor(props) {
       super(props);
 
-      var startSpec = new Array(props.prms.balls.length);
-      startSpec.fill(null, 0);  // No specs for all
-
-      this.state = {startSpec};
-
+      this.state = {startSpec: new Array(props.prms.balls.length).fill(null, 0)};
       this.handleChange = this.handleChange.bind(this);
    }
 
@@ -154,16 +150,14 @@ export class Ricochet extends Component {
       this.state = this.getInitialState();
    }
 
-   // Get initial state for construction or reset
+   // Get initial state for construction or reset.  State is frame number and
+   // current location/speed of all balls, plus gate status.
    getInitialState = () => {
-      // Boolean array indicating if obstacles and/or targets are unhit
-      // First portion represents targets; latter represents obstacles
-      var obstacleStatus = [];
-
-      this.props.prms.targets.forEach(() => obstacleStatus.push(true));
-      this.props.prms.barriers.forEach(() => obstacleStatus.push(true));
-
-      return {frame : 0, obstacleStatus};
+      return {
+         frame: 0,
+         gateOpen; false,
+         ballState: prms.sbm.ballStarts
+      }
    }
 
    // Any time props are updated (due to new sbm or even updated prms),

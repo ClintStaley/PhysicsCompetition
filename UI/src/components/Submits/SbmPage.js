@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { Button } from 'react-bootstrap';
 import { Bounce, BSubmitModal } from './Bounce'
-import {LandGrab, LGSubmitModal} from './LandGrab'
+import { LandGrab, LGSubmitModal } from './LandGrab'
+import { Ricochet, RSubmitModal } from './Ricochet'
 
 // Expected props are:
 //   cmp -- competition object to be worked with
