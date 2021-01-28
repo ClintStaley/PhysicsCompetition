@@ -1,4 +1,4 @@
-Specifics for LandGrab Competition:
+Specifics for Bounce Competition:
 
 Parameter Schema
 {
