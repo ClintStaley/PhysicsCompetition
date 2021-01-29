@@ -19,7 +19,7 @@ create table CompetitionType (
    codeName varchar(80) not null, 
    title varchar(80) not null unique,
    description varchar(500) not null,
-   prmSchema varchar(20000) not null
+   prmSchema varchar(8192) not null
 );
 
 create table Competition (
@@ -27,7 +27,7 @@ create table Competition (
    ownerId int not null,
    ctpId int not null,
    title varchar(80) not null,
-   prms varchar(20000) not null,
+   prms varchar(8192) not null,
    description varchar(500) not null,
    rules int default 0,
    curTeamId int,
