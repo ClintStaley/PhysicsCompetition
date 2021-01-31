@@ -1,9 +1,14 @@
 import React, { Component } from 'react';
 import {
   FormGroup, ControlLabel, FormControl, HelpBlock,
-  Checkbox, Button, Alert
+  Checkbox, Button, Alert, Form
 } from 'react-bootstrap';
-import {ConfDialog} from '../concentrator'
+
+import './Register.css';
+
+import register_illustration from '../../images/register.svg';
+
+import { ConfDialog } from '../concentrator'
 
 //FieldGroup item, will hold a field to be entered
 function FieldGroup({ id, label, help, ...props }) {
@@ -96,7 +101,7 @@ class Register extends Component {
   //renders all of the fields
   render() {
     return (
-      <div className="container">
+      <div className="container register">
         <ConfDialog
           show={this.state.offerSignin}
           title="Successful registration"
@@ -104,31 +109,32 @@ class Register extends Component {
           buttons={['Yes', 'No']}
           onClose={(ans) => this.handleSignin(ans)}/>
         <form>
+          <h1 className='register-title'>Register</h1>
           <FieldGroup
             id="email"
             type="email"
             label="Email Address"
-            placeholder="Enter email"
             required={true}
             value={this.state.email}
             onChange={this.handleChange}
+            style={{ border: 'none' }}
           />
           <FieldGroup
             id="firstName"
             type="text"
             label="First Name"
-            placeholder="Enter first name"
             value={this.state.firstName}
             onChange={this.handleChange}
+            style={{ border: 'none' }}
           />
           <FieldGroup
             id="lastName"
             type="text"
             label="Last Name"
-            placeholder="Enter last name"
             required={true}
             onChange={this.handleChange}
             value={this.state.lastName}
+            style={{ border: 'none' }}
           />
           <FieldGroup
             id="password"
@@ -137,6 +143,7 @@ class Register extends Component {
             required={true}
             onChange={this.handleChange}
             value={this.state.password}
+            style={{ border: 'none' }}
           />
           <FieldGroup
             id="passwordTwo"
@@ -145,28 +152,43 @@ class Register extends Component {
             required={true}
             onChange={this.handleChange}
             value={this.state.passwordTwo}
+            style={{ border: 'none' }}
           />
           <Checkbox
             value={this.state.termsAccepted}
             onChange={this.handleChange}
             id="termsAccepted"
+            style={{color: 'white', marginBottom:'0', border: 'transparent'}}
           >
-            Do you accept the <a onClick = {this.openTerms}>terms </a>
+            Do you accept the <a onClick={this.openTerms}>terms </a>
              and conditions?
           </Checkbox>
-        </form>
-        {this.state.password !== this.state.passwordTwo ?
-          <Alert bsStyle="warning">
-            Passwords do not match.
-        </Alert> : ''}
-
-        <Button
+          {/* <Button
           bsStyle="primary"
           onClick={() => this.submit()}
           disabled={!this.isFormValid()}
         >
           Submit
-        </Button>
+        </Button> */}
+          <div className='centered'>
+            <div
+              type="submit"
+              onClick={() => this.submit()}
+              disabled={!this.isFormValid()}
+              className='submit'
+            >
+              Register
+                     </div>
+          </div>
+        </form>
+
+        <img src={register_illustration}></img>
+        {this.state.password !== this.state.passwordTwo ?
+          <Alert bsStyle="warning">
+            Passwords do not match.
+        </Alert> : ''}
+
+
       </div>
     )
   }

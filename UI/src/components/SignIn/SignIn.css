@@ -56,12 +56,11 @@
 
 @media (max-width: 1000px) {
     .row {
-        background-color: tomato;
         display: contents;
     }
 
     .form {
-        
+        margin: 10%;
     }
 
     img {
