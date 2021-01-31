@@ -147,6 +147,7 @@ export class Ricochet extends Component {
    constructor(props) {
       super(props);
 
+      this.prms = props.prms;
       this.state = this.getInitialState();
    }
 
@@ -155,8 +156,8 @@ export class Ricochet extends Component {
    getInitialState = () => {
       return {
          frame: 0,
-         gateOpen; false,
-         ballState: prms.sbm.ballStarts
+         gateOpen: false,
+         ballState: this.prms.sbm.ballStarts
       }
    }
 
