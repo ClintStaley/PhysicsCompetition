@@ -20,6 +20,12 @@ To install Physics Competition
 	3. Grant your new user general permissions for the CmpDB database with: GRANT ALL PRIVILEGES ON CmpDB.* TO 'newUser'@'localhost'; You may also find this gude useful: https://www.digitalocean.com/community/tutorials/how-to-create-a-new-user-and-grant-permissions-in-mysql
   1. For your new SQL user, create a CmpDB database by running V1.sql from RESTServer/DB.  MySQL command `source V1.sql` will do this if you log in to mysql from the DB directory.
   1. In RESTServer/routes create a connection.json file, using exampleConnection.json as a reference.
+
+## Port Setup for local testing
+
+  1. set the server port [line 323 of RESTServer/main.js] equal to the api port [line 2 of UI/api.js]
+  2. set the CORS port [line 20 pf RESTServer/main.js]
+  equal to the React Client Server port [probably 3000 or 3001 but check your browser]
 ## Test Run
   1. Run `node main.js` in RESTServer directory.  This should start correctly, accessing your new database.
   2. Start the clientside app via `npm start` in UI directory.  This should bring up a browser with the app.  If npm start throws a watch error enospc, then this command may fix the problem:
