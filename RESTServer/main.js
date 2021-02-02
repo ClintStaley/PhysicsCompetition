@@ -110,7 +110,7 @@ var addDebugRoutes = app => {
         req.cnn.query('INSERT INTO Person (firstName, lastName, email,' +
           ' password, whenRegistered, role) VALUES ' +
           '("Joe", "Admin", "adm@11.com","' +
-          require("crypto").createHash('md5').update("password").digest('hex') +
+          require("crypto").createHash('sha1').update("password").digest('hex') +
           '", NOW(), 1);', cb);
     });
 

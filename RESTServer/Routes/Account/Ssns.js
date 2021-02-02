@@ -26,7 +26,7 @@ router.post('/', (req, res) => {
 
    if (body.password)
       body.password =
-       crypto.createHash('md5').update(body.password).digest('hex');
+       crypto.createHash('sha1').update(body.password).digest('hex');
    cnn.chkQry('select * from Person where email = ?', [body.email],
       (err, result) => {
          if (req.validator.check(result.length && result[0].password ===

@@ -42,7 +42,7 @@ router.post('/', (req, res) => {
    },
    (prs, fields, cb) => {  // If no duplicates, insert new Person
       if (vld.check(!prs.length, Tags.dupEmail, cb)) {
-         body.password = crypto.createHash('md5')
+         body.password = crypto.createHash('sha1')
           .update(body.password).digest('hex');
          body.termsAccepted = body.termsAccepted ? new Date() : null;
          cnn.chkQry('insert into Person set ?', body, cb);
@@ -85,11 +85,11 @@ router.put('/:id', (req, res) => {
 
    if (body.oldPassword)
       body.oldPassword =
-       crypto.createHash('md5').update(body.oldPassword).digest('hex');
+       crypto.createHash('sha1').update(body.oldPassword).digest('hex');
 
    if (body.password)
       body.password =
-       crypto.createHash('md5').update(body.password).digest('hex');
+       crypto.createHash('sha1').update(body.password).digest('hex');
 
    async.waterfall([
    (cb) => {
