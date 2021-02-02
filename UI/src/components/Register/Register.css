@@ -1,0 +1,34 @@
+form {
+    background-color: #fa8c7d;
+    padding: 20px;
+    border-radius: 20px;
+}
+
+.register-title {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: white;
+    font-weight: bold;
+}
+
+.register {
+    display: flex;
+    justify-content: space-evenly;
+    background-color: #FFF7E1;
+    padding: 50px;
+}
+
+@media (max-width: 1000px) {
+    .register {
+        display: contents;
+    }
+    form {
+        width: 70%;
+        margin: 0 auto;
+
+    }
+    img {
+        width: 100%;
+        padding: 10%;
+    }
+}
