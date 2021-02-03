@@ -1,0 +1,171 @@
+{
+   "Bounce": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Bounce",
+      "type": "object",
+      "properties": {
+         "targetTime": {
+            "title": "time to get all platforms that will get 100",
+            "type": "number"
+         },
+         "targets": {
+            "title": "platforms to bounce off of",
+            "type": "array",
+            "items": {
+               "title": "Goal rectangle",
+               "type": "object",
+               "properties": {
+                  "loX": {
+                     "title": "Left edge",
+                     "type": "number",
+                     "minimum": 0.0,
+                     "maximum": 100.0
+                  },
+                  "hiX": {
+                     "title": "Right edge",
+                     "type": "number",
+                     "minimum": 0.0,
+                     "maximum": 100.0
+                  },
+                  "loY": {
+                     "title": "top edge",
+                     "type": "number",
+                     "minimum": 0.0,
+                     "maximum": 100.0
+                  },
+                  "hiY": {
+                     "title": "bottom edge",
+                     "type": "number",
+                     "minimum": 0.0,
+                     "maximum": 100.0
+                  }
+               },
+               "additionalProperties": false,
+               "minProperties": 4
+            }
+         },
+         "barriers": {
+            "title": "platforms to avoid",
+            "type": "array",
+            "items": {
+               "title": "Blocked rectangle",
+               "type": "object",
+               "properties": {
+                  "loX": {
+                     "title": "Left edge",
+                     "type": "number",
+                     "minimum": 0.0,
+                     "maximum": 100.0
+                  },
+                  "hiX": {
+                     "title": "Right edge",
+                     "type": "number",
+                     "minimum": 0.0,
+                     "maximum": 100.0
+                  },
+                  "loY": {
+                     "title": "top edge",
+                     "type": "number",
+                     "minimum": 0.0,
+                     "maximum": 100.0
+                  },
+                  "hiY": {
+                     "title": "bottom edge",
+                     "type": "number",
+                     "minimum": 0.0,
+                     "maximum": 100.0
+                  }
+               },
+               "additionalProperties": false,
+               "minProperties": 4
+            }
+         }
+      },
+      "additionalProperties": false,
+      "minProperties": 3
+   },
+   "LandGrab": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Land Grab",
+      "type": "object",
+      "properties": {
+         "numCircles": {
+            "title": "Number of circles allowed per team",
+            "type": "integer",
+            "minimum": 1
+         },
+         "goalArea": {
+            "title": "Area of coverage that gets 100%",
+            "type": "number",
+            "minimum": 0.0,
+            "maximum": 10000.0
+         },
+         "obstacles": {
+            "title": "Blocked areas in 100x100 square",
+            "type": "array",
+            "items": {
+               "title": "Blocked rectangle",
+               "type": "object",
+               "properties": {
+                  "loX": {
+                     "title": "Left edge",
+                     "type": "number",
+                     "minimum": 0.0,
+                     "maximum": 100.0
+                  },
+                  "hiX": {
+                     "title": "Right edge",
+                     "type": "number",
+                     "minimum": 0.0,
+                     "maximum": 100.0
+                  },
+                  "loY": {
+                     "title": "Bottom edge",
+                     "type": "number",
+                     "minimum": 0.0,
+                     "maximum": 100.0
+                  },
+                  "hiY": {
+                     "title": "Top edge",
+                     "type": "number",
+                     "minimum": 0.0,
+                     "maximum": 100.0
+                  }
+               },
+               "additionalProperties": false,
+               "minProperties": 4
+            }
+         }
+      },
+      "additionalProperties": false,
+      "minProperties": 3
+   },
+   "Ricochet": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Ricochet",
+      "type": "object",
+      "properties": {
+         "targetTime": {
+            "title": "Time resulting in 100% credit",
+            "type": "number"
+         },
+         "maxBalls": {
+            "title": "Maximum number of balls allowed in design",
+            "type": "integer",
+            "minimum": 2,
+            "maximum": 4
+         },
+         "balls": {
+            "title": "Balls from which to choose",
+            "type": "array",
+            "items": {
+               "title": "Ball weight",
+               "type": "number",
+               "minimum": 1.0,
+               "maximum": 100.0
+            }
+         }
+      },
+      "minProperties": 3
+   }
+}
