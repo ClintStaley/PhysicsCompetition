@@ -10,12 +10,21 @@ router.get('/', (req, res) => {
    var ssn = req.session;
    var clause = '';
    var fillers = [];
-   var email = req.query.email;
+   var emailPrefix = req.query.email;
 
-   if (email) {
-      clause = " where email like ?";
-      fillers.push(email + ('%'));
+   // Limit to information on AU if not admin.
+   if (!ssn.isAdmin()) {
+      clause += " where id = ?";
+      fillers.push(ssn.id);
    }
+
+   // Add email prefix qualifier if requested
+   if (emailPrefix) {
+      clause += clause ? " and " : " where ";
+      clause += "email like ?";
+      fillers.push(emailPrefix + ('%'));
+   }
+
    req.cnn.chkQry('select id, email from Person' + clause, fillers,
    (err, result) => {
       res.json(result);
