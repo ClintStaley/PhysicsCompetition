@@ -16,7 +16,7 @@ To install Physics Competition
 
 ## MySQL setup
   1. Log in to SQL server via mysql as SQL root user.  First use sudo -i to become root user, then mysql -uroot to log in
-	2. Create a nonroot user for yourself: CREATE USER 'newUser'@'localhost' IDENTIFIED BY 'userPassword';
+	2. Create a nonroot user for yourself: create user 'newuser'@'localhost' identified with mysql_native_password by 'newpassword';
 	3. Grant your new user general permissions for the CmpDB database with: GRANT ALL PRIVILEGES ON CmpDB.* TO 'newUser'@'localhost'; You may also find this gude useful: https://www.digitalocean.com/community/tutorials/how-to-create-a-new-user-and-grant-permissions-in-mysql
   1. For your new SQL user, create a CmpDB database by running V1.sql from RESTServer/DB.  MySQL command `source V1.sql` will do this if you log in to mysql from the DB directory.
   1. In RESTServer/routes create a connection.json file, using exampleConnection.json as a reference.
