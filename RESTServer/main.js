@@ -181,8 +181,8 @@ var addDebugRoutes = app => {
 // -p httpPort [httpsPort]  Set http and optionally https ports.  Default to 80 and 443
 // -c corsDomain -- Enable CORS on https://corsDomain:httpPort.  Defaults to localhost
 
-(function(argv) {
-   var httpPort = 80;
+(function (argv) {
+   var httpPort = 4005;
    var httpsPort = 443;
    var corsDomain;
    var portFlag = argv.indexOf('-p');
