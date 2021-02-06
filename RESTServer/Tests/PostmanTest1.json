@@ -37,7 +37,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"email\": \"adm@11.com\", \"password\": \"password\"}"
+							"raw": "{\"email\": \"admin@softwareinventions.com\", \"password\": \"password\"}"
 						},
 						"url": {
 							"raw": "{{url}}/Ssns",
@@ -710,7 +710,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"email\": \"adm@11.com\", \"password\": \"password\"}"
+							"raw": "{\"email\": \"admin@softwareinventions.com\", \"password\": \"password\"}"
 						},
 						"url": {
 							"raw": "{{url}}/Ssns",
@@ -1317,7 +1317,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"email\": \"adm@11.com\", \"password\": \"password\"}"
+							"raw": "{\"email\": \"admin@softwareinventions.com\", \"password\": \"password\"}"
 						},
 						"url": {
 							"raw": "{{url}}/Ssns",
@@ -1500,7 +1500,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"email\": \"adm@11.com\", \"password\": \"password\"}"
+							"raw": "{\"email\": \"admin@softwareinventions.com\", \"password\": \"password\"}"
 						},
 						"url": {
 							"raw": "{{url}}/Ssns",
@@ -2236,7 +2236,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"email\": \"adm@11.com\", \"password\": \"password\"}"
+							"raw": "{\"email\": \"admin@softwareinventions.com\", \"password\": \"password\"}"
 						},
 						"url": {
 							"raw": "{{url}}/Ssns",
@@ -2433,7 +2433,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{url}}/Cmps?email=adm@11.com",
+							"raw": "{{url}}/Cmps?email=admin@softwareinventions.com",
 							"host": [
 								"{{url}}"
 							],
@@ -2443,7 +2443,7 @@
 							"query": [
 								{
 									"key": "email",
-									"value": "adm@11.com"
+									"value": "admin@softwareinventions.com"
 								}
 							]
 						},
@@ -3133,7 +3133,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"email\": \"adm@11.com\", \"password\": \"password\"}"
+							"raw": "{\"email\": \"admin@softwareinventions.com\", \"password\": \"password\"}"
 						},
 						"url": {
 							"raw": "{{url}}/Ssns",
@@ -4055,7 +4055,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"email\": \"adm@11.com\", \"password\": \"password\"}"
+							"raw": "{\"email\": \"admin@softwareinventions.com\", \"password\": \"password\"}"
 						},
 						"url": {
 							"raw": "{{url}}/Ssns",
@@ -4254,7 +4254,7 @@
 									"if (jsonBody.length) {",
 									"   var Member = jsonBody[0];",
 									"   ",
-									"   tests[\"Expected Content\"] = Member.email === \"adm@11.com\";",
+									"   tests[\"Expected Content\"] = Member.email === \"admin@softwareinventions.com\";",
 									"}"
 								]
 							}
@@ -4466,7 +4466,7 @@
 									"if (jsonBody.length) {",
 									"   var Member = jsonBody[0];",
 									"   ",
-									"   tests[\"Expected Content\"] = Member.email === \"adm@11.com\";",
+									"   tests[\"Expected Content\"] = Member.email === \"admin@softwareinventions.com\";",
 									"}"
 								]
 							}
@@ -4816,7 +4816,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"email\": \"adm@11.com\", \"password\": \"password\"}"
+							"raw": "{\"email\": \"admin@softwareinventions.com\", \"password\": \"password\"}"
 						},
 						"url": {
 							"raw": "{{url}}/Ssns",
@@ -5527,7 +5527,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"email\": \"adm@11.com\", \"password\": \"password\"}"
+							"raw": "{\"email\": \"admin@softwareinventions.com\", \"password\": \"password\"}"
 						},
 						"url": {
 							"raw": "{{url}}/Ssns",
@@ -5893,7 +5893,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"email\": \"adm@11.com\", \"password\": \"password\"}"
+							"raw": "{\"email\": \"admin@softwareinventions.com\", \"password\": \"password\"}"
 						},
 						"url": {
 							"raw": "{{url}}/Ssns",
