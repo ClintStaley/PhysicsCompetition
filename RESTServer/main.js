@@ -15,7 +15,7 @@ var configApp = (port, corsDomain, testFlag) => {
    var app = express();
 
    // Manage CORS POS.
-   //change this back later
+   // change this back later
    app.use(function (req, res, next) {
       console.log("Handling " + req.path + '/' + req.method);
       res.header("Access-Control-Allow-Origin", `http://localhost:${3001}`);
