@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "d4ce2f33-3bcd-49c4-a7c0-21f0a77329db",
+		"_postman_id": "bab28ef8-5c1c-44a5-a003-d20d40985ff3",
 		"name": "PhysicsCompetitionREST Test",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -14,16 +14,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
-									"",
-									"tests[\"Cookie Returned\"] = postman.getResponseCookie(\"CHSAuth\")",
-									" !== null && postman.getResponseCookie(\"CHSAuth\").value !== undefined;",
-									"if (tests[\"Cookie Returned\"])",
-									"   postman.setEnvironmentVariable(\"curLogin\",",
-									"    postman.getResponseCookie(\"CHSAuth\").value)"
-								]
+									"checkLogin(pm);"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -60,7 +54,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -102,7 +96,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -138,24 +132,11 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
-									"",
-									"var locURL = postman.getResponseHeader(\"Location\");",
-									"locURL = locURL && locURL.split('/');",
-									"",
-									"var cookie = postman.getResponseCookie(\"CHSAuth\");",
-									"",
-									"tests[\"Cookie Returned\"] = cookie && cookie.value !== undefined;",
-									"",
-									"if (tests[\"Cookie Returned\"]) {",
-									"   postman.setEnvironmentVariable(\"curLogin\", cookie.value);",
-									"   postman.setEnvironmentVariable(\"stdALogin\", cookie.value);",
-									"   tests[\"Cookie matches session\"] = locURL && locURL[locURL.length - 1]",
-									"    === cookie.value;",
-									"}"
-								]
+									"checkStatus(pm, 200);",
+									"checkLogin(pm);"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -190,12 +171,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 400\"] = responseCode.code === 400;",
-									"",
-									"tests[\"Body matches string\"] = responseBody.has(\"dupEmail\");"
-								]
+									"checkSimpleError(pm, \"dupEmail\", null);"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -229,14 +208,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
-									"",
-									"tests[\"Status code is 400\"] = responseCode.code === 400;",
-									"tests[\"Body has noTerms\"] = responseBody.has(\"noTerms\")",
-									"tests[\"And only one error\"] = jsonBody.length === 1;"
-								]
+									"checkSimpleError(pm, \"noTerms\");"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -271,12 +246,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 403\"] = responseCode.code === 403;",
-									"",
-									"tests[\"Body matches string\"] = responseBody === \"\";"
-								]
+									"checkStatus(pm, 403);"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -311,12 +284,21 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 400\"] = responseCode.code === 400;",
+									"var body = pm.response.json();",
+									"var errors = [];",
 									"",
-									"tests[\"Body matches string\"] = responseBody.has(\"missingField\");"
-								]
+									"checkStatus(pm, 400);",
+									"",
+									"pm.test(\"Five Errors\", () => pm.expect(body.length).equals(5));",
+									"body.forEach((val, idx) => {",
+									"    pm.test(`Error ${idx} is missing field`, () => pm.expect(val.tag).equals(\"missingField\"));",
+									"    errors.push(val.params[0]);",
+									"});",
+									"",
+									"pm.test(\"Right fields\", () => pm.expect(errors).to.have.members([\"lastName\", \"firstName\", \"email\", \"password\", \"role\"]));"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -351,13 +333,11 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
-									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
-									"tests[\"No Answer\"] = jsonBody.length === 0;"
-								]
+									"checkStatus(pm, 200);",
+									"pm.test(\"No information given\", () => pm.expect(pm.response.json().length).equals(0));"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -394,14 +374,11 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
-									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
-									"tests[\"One Answer\"] = jsonBody.length === 1;",
-									""
-								]
+									"checkStatus(pm, 200);",
+									"pm.test(\"One result\", () => pm.expect(pm.response.json().length).equals(1));"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -442,7 +419,7 @@
 								"exec": [
 									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
 									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"checkStatus(pm, 200);",
 									"tests[\"Ssn Info Correct\"] = jsonBody.cookie == postman.getEnvironmentVariable(\"curLogin\") &&",
 									"                            jsonBody.prsId == 2 &&",
 									"                            jsonBody.loginTime > 0;",
@@ -689,7 +666,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"checkStatus(pm, 200);",
 									"",
 									"tests[\"Cookie Returned\"] = postman.getResponseCookie(\"CHSAuth\")",
 									" !== null && postman.getResponseCookie(\"CHSAuth\").value !== undefined;",
@@ -735,7 +712,7 @@
 								"exec": [
 									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
 									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"checkStatus(pm, 200);",
 									"tests[\"Two Sessions\"] = jsonBody.length === 2;"
 								]
 							}
@@ -764,7 +741,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -799,7 +776,7 @@
 								"exec": [
 									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
 									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"checkStatus(pm, 200);",
 									"tests[\"One Session\"] = jsonBody.length === 1;"
 								]
 							}
@@ -908,7 +885,7 @@
 								"exec": [
 									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
 									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"checkStatus(pm, 200);",
 									"",
 									"var prs = jsonBody;",
 									"   ",
@@ -952,7 +929,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -1070,7 +1047,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -1262,7 +1239,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -1296,7 +1273,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"checkStatus(pm, 200);",
 									"",
 									"tests[\"Cookie Returned\"] = postman.getResponseCookie(\"CHSAuth\")",
 									" !== null && postman.getResponseCookie(\"CHSAuth\").value !== undefined;",
@@ -1340,7 +1317,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"checkStatus(pm, 200);",
 									"",
 									"var jsonData = JSON.parse(responseBody);",
 									"tests[\"Correct Name\"] = jsonData.firstName === \"FirstAV1\";"
@@ -1372,7 +1349,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -1479,7 +1456,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"checkStatus(pm, 200);",
 									"",
 									"tests[\"Cookie Returned\"] = postman.getResponseCookie(\"CHSAuth\")",
 									" !== null && postman.getResponseCookie(\"CHSAuth\").value !== undefined;",
@@ -1523,7 +1500,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -1561,7 +1538,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -1599,7 +1576,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -1715,7 +1692,7 @@
 								"exec": [
 									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
 									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -1752,7 +1729,7 @@
 									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
 									" var cpt = jsonBody;",
 									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"checkStatus(pm, 200);",
 									"tests[\"Expected Content\"] = cpt.title === \"Land Grab\";",
 									""
 								]
@@ -1833,7 +1810,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -1871,7 +1848,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -1909,7 +1886,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -1977,7 +1954,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -2010,7 +1987,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"checkStatus(pm, 200);",
 									"",
 									"var locURL = postman.getResponseHeader(\"Location\");",
 									"locURL = locURL && locURL.split('/');",
@@ -2064,7 +2041,7 @@
 								"exec": [
 									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
 									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"checkStatus(pm, 200);",
 									"tests[\"Three Ctps\"] = jsonBody.length === 3;",
 									"",
 									"if (jsonBody.length) {",
@@ -2177,7 +2154,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -2215,7 +2192,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"checkStatus(pm, 200);",
 									"",
 									"tests[\"Cookie Returned\"] = postman.getResponseCookie(\"CHSAuth\")",
 									" !== null && postman.getResponseCookie(\"CHSAuth\").value !== undefined;",
@@ -2259,7 +2236,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -2297,7 +2274,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -2337,7 +2314,7 @@
 								"exec": [
 									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
 									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -2373,7 +2350,7 @@
 								"exec": [
 									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
 									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"checkStatus(pm, 200);",
 									"tests[\"Expected Content\"] = jsonBody.title === \"Land Grab A\";",
 									""
 								]
@@ -2412,7 +2389,7 @@
 								"exec": [
 									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
 									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"checkStatus(pm, 200);",
 									"tests[\"Two Cmps\"] = jsonBody.length === 2;",
 									"",
 									"if (jsonBody.length) {",
@@ -2461,7 +2438,7 @@
 								"exec": [
 									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
 									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"checkStatus(pm, 200);",
 									"tests[\"Two Cmps\"] = jsonBody.length === 2;",
 									"",
 									"if (jsonBody.length) {",
@@ -2508,7 +2485,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -2546,7 +2523,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -2584,7 +2561,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -2652,7 +2629,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -2690,7 +2667,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -2730,7 +2707,7 @@
 								"exec": [
 									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
 									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"checkStatus(pm, 200);",
 									"tests[\"Two Cmps\"] = jsonBody.length === 2;"
 								]
 							}
@@ -2765,7 +2742,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -2801,7 +2778,7 @@
 								"exec": [
 									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
 									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"checkStatus(pm, 200);",
 									"tests[\"One Cmp\"] = jsonBody.length === 1;"
 								]
 							}
@@ -2836,7 +2813,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -2869,7 +2846,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"checkStatus(pm, 200);",
 									"",
 									"var locURL = postman.getResponseHeader(\"Location\");",
 									"locURL = locURL && locURL.split('/');",
@@ -2923,7 +2900,7 @@
 								"exec": [
 									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
 									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"checkStatus(pm, 200);",
 									"tests[\"One Ctp\"] = jsonBody.length === 1;",
 									"",
 									"if (jsonBody.length) {",
@@ -3074,7 +3051,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -3112,7 +3089,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"checkStatus(pm, 200);",
 									"",
 									"tests[\"Cookie Returned\"] = postman.getResponseCookie(\"CHSAuth\")",
 									" !== null && postman.getResponseCookie(\"CHSAuth\").value !== undefined;",
@@ -3156,7 +3133,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -3196,7 +3173,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -3276,7 +3253,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -3314,7 +3291,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -3356,7 +3333,7 @@
 								"exec": [
 									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
 									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"checkStatus(pm, 200);",
 									"tests[\"Two Teams\"] = jsonBody.length === 2;",
 									"",
 									"if (jsonBody.length) {",
@@ -3399,7 +3376,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -3519,7 +3496,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -3557,7 +3534,7 @@
 								"exec": [
 									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
 									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"checkStatus(pm, 200);",
 									"tests[\"Expected Content\"] = jsonBody.title === \"Land Grab A\";",
 									""
 								]
@@ -3596,7 +3573,7 @@
 								"exec": [
 									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
 									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"checkStatus(pm, 200);",
 									"tests[\"two teams\"] = jsonBody.length === 2;"
 								]
 							}
@@ -3633,7 +3610,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -3666,7 +3643,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"checkStatus(pm, 200);",
 									"",
 									"var locURL = postman.getResponseHeader(\"Location\");",
 									"locURL = locURL && locURL.split('/');",
@@ -3718,7 +3695,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -3760,7 +3737,7 @@
 								"exec": [
 									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
 									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"checkStatus(pm, 200);",
 									"tests[\"Two Teams\"] = jsonBody.length === 2;",
 									"",
 									"if (jsonBody.length) {",
@@ -3803,7 +3780,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -3845,7 +3822,7 @@
 								"exec": [
 									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
 									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"checkStatus(pm, 200);",
 									"tests[\"Expected Content\"] = jsonBody.teamName === \"Team A\";",
 									""
 								]
@@ -3884,7 +3861,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -3956,7 +3933,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -3996,7 +3973,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -4034,7 +4011,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"checkStatus(pm, 200);",
 									"",
 									"tests[\"Cookie Returned\"] = postman.getResponseCookie(\"CHSAuth\")",
 									" !== null && postman.getResponseCookie(\"CHSAuth\").value !== undefined;",
@@ -4078,7 +4055,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -4162,7 +4139,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -4204,7 +4181,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -4248,7 +4225,7 @@
 								"exec": [
 									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
 									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"checkStatus(pm, 200);",
 									"tests[\"One Member\"] = jsonBody.length === 1;",
 									"",
 									"if (jsonBody.length) {",
@@ -4331,7 +4308,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -4364,7 +4341,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"checkStatus(pm, 200);",
 									"",
 									"var locURL = postman.getResponseHeader(\"Location\");",
 									"locURL = locURL && locURL.split('/');",
@@ -4416,7 +4393,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -4460,7 +4437,7 @@
 								"exec": [
 									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
 									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"checkStatus(pm, 200);",
 									"tests[\"Two Members\"] = jsonBody.length === 2;",
 									"",
 									"if (jsonBody.length) {",
@@ -4547,7 +4524,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -4589,7 +4566,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -4665,7 +4642,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -4705,7 +4682,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -4738,7 +4715,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"checkStatus(pm, 200);",
 									"",
 									"var locURL = postman.getResponseHeader(\"Location\");",
 									"locURL = locURL && locURL.split('/');",
@@ -4795,7 +4772,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"checkStatus(pm, 200);",
 									"",
 									"tests[\"Cookie Returned\"] = postman.getResponseCookie(\"CHSAuth\")",
 									" !== null && postman.getResponseCookie(\"CHSAuth\").value !== undefined;",
@@ -4839,7 +4816,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -4881,7 +4858,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -4965,7 +4942,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -5007,7 +4984,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -5051,7 +5028,7 @@
 								"exec": [
 									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
 									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"checkStatus(pm, 200);",
 									"tests[\"Two Submissions\"] = jsonBody.length === 2;"
 								]
 							}
@@ -5092,7 +5069,7 @@
 								"exec": [
 									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
 									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"checkStatus(pm, 200);",
 									"tests[\"Two Submissions\"] = jsonBody.length === 1;"
 								]
 							}
@@ -5133,7 +5110,7 @@
 								"exec": [
 									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
 									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"checkStatus(pm, 200);",
 									"tests[\"Three Submissions\"] = jsonBody.length === 3;"
 								]
 							}
@@ -5172,7 +5149,7 @@
 								"exec": [
 									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
 									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"checkStatus(pm, 200);",
 									"tests[\"Two Submissions\"] = jsonBody.length === 2;"
 								]
 							}
@@ -5217,7 +5194,7 @@
 								"exec": [
 									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
 									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"checkStatus(pm, 200);",
 									"tests[\"Expected Content\"] = jsonBody.content === \"[   {     \\\"centerX\\\": 50.0,     \\\"centerY\\\": 45.2,     \\\"radius\\\": 15.9   },   {     \\\"centerX\\\": 10.3,     \\\"centerY\\\": 42.0,     \\\"radius\\\": 11   },   {     \\\"centerX\\\": 23,     \\\"centerY\\\": 89,     \\\"radius\\\": 40   } ]\";",
 									""
 								]
@@ -5258,7 +5235,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -5300,7 +5277,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -5333,7 +5310,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"checkStatus(pm, 200);",
 									"",
 									"var locURL = postman.getResponseHeader(\"Location\");",
 									"locURL = locURL && locURL.split('/');",
@@ -5385,7 +5362,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -5429,7 +5406,7 @@
 								"exec": [
 									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
 									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"checkStatus(pm, 200);",
 									"tests[\"Three Submissions\"] = jsonBody.length === 3;"
 								]
 							}
@@ -5468,7 +5445,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -5506,7 +5483,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"checkStatus(pm, 200);",
 									"",
 									"tests[\"Cookie Returned\"] = postman.getResponseCookie(\"CHSAuth\")",
 									" !== null && postman.getResponseCookie(\"CHSAuth\").value !== undefined;",
@@ -5550,7 +5527,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -5588,7 +5565,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -5628,7 +5605,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -5670,7 +5647,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -5712,7 +5689,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -5756,7 +5733,7 @@
 								"exec": [
 									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
 									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"checkStatus(pm, 200);",
 									""
 								]
 							}
@@ -5795,7 +5772,7 @@
 								"exec": [
 									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
 									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"checkStatus(pm, 200);",
 									"tests[\"Three Submissions\"] = jsonBody.length === 3;"
 								]
 							}
@@ -5834,7 +5811,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -5872,7 +5849,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"checkStatus(pm, 200);",
 									"",
 									"tests[\"Cookie Returned\"] = postman.getResponseCookie(\"CHSAuth\")",
 									" !== null && postman.getResponseCookie(\"CHSAuth\").value !== undefined;",
@@ -5915,7 +5892,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								],
 								"type": "text/javascript"
 							}
@@ -5954,7 +5931,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -5994,7 +5971,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -6036,7 +6013,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -6078,7 +6055,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -6122,7 +6099,7 @@
 								"exec": [
 									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
 									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"checkStatus(pm, 200);",
 									""
 								]
 							}
@@ -6161,7 +6138,7 @@
 								"exec": [
 									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
 									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"checkStatus(pm, 200);",
 									"tests[\"Three Submissions\"] = jsonBody.length === 3;"
 								]
 							}
@@ -6200,7 +6177,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"checkStatus(pm, 200);"
 								]
 							}
 						}
@@ -6226,6 +6203,73 @@
 					"response": []
 				}
 			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"getLocationId = (pm) => {",
+					"    let locURL = pm.response.headers.get(\"Location\");",
+					"",
+					"    locURL = locURL && locURL.split('/');",
+					"    return locURL && locURL[locURL.length - 1]",
+					"}",
+					"",
+					"checkLogin = (pm) => {",
+					"    let locURL;",
+					"",
+					"    pm.test(\"Location returned\", () => pm.response.to.have.header(\"Location\"));",
+					"    pm.test(\"Cookie returned\", () => pm.response.to.have.header('Set-Cookie'));",
+					"    pm.test(\"Cookie is CMPAuth\", () => pm.expect(pm.response.headers.get('Set-Cookie').startsWith(\"CMPAuth\")).is.true);",
+					"",
+					"    locURL = pm.response.headers.get(\"Location\");",
+					"    locURL = locURL && locURL.split('/');",
+					"",
+					"    pm.collectionVariables.set(\"curLogin\", getLocationId(pm));",
+					"}",
+					"",
+					"checkStatus = (pm, code) =>",
+					"   pm.test(`Status ${code}`, () => pm.response.to.have.status(code));",
+					"",
+					"// Expect exactly one error, of the tag and params indicated.",
+					"checkSimpleError = (pm, tag, params) => {",
+					"   pm.test(\"Status 400\", () => pm.response.to.have.status(400));",
+					"   pm.test(`The one error is ${tag} w/params ${params}`, () => {",
+					"      let body = pm.response.json();",
+					"",
+					"      pm.expect(body.length).eq(1);",
+					"      pm.expect(body).to.deep.equal([{tag, params: params || null}]);",
+					"   });",
+					"}",
+					"",
+					"checkAndSavePost = (pm, varName) => {   ",
+					"    pm.test(\"Post Succeeded\", () => pm.response.to.have.status(200));",
+					"    pm.test(\"Location returned and saved\", () => {",
+					"        var location = pm.response.headers.get(\"Location\");",
+					"        pm.expect(location.to.exist);",
+					"        pm.collectionVariables.set(varName, location.split('/').pop());",
+					"    });",
+					"}"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "curLogin",
+			"value": ""
 		}
 	]
 }

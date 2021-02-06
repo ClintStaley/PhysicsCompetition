@@ -15,14 +15,14 @@ router.get('/', (req, res) => {
    // Limit to information on AU if not admin.
    if (!ssn.isAdmin()) {
       clause += " where id = ?";
-      fillers.push(ssn.id);
+      fillers.push(ssn.prsId);
    }
 
    // Add email prefix qualifier if requested
    if (emailPrefix) {
       clause += clause ? " and " : " where ";
       clause += "email like ?";
-      fillers.push(emailPrefix + ('%'));
+      fillers.push(emailPrefix + '%');
    }
 
    req.cnn.chkQry('select id, email from Person' + clause, fillers,

@@ -52,6 +52,8 @@ Validator.prototype.check = function (test, err, cb) {
       if (this.res) {
          if (this.errors[0].tag === Validator.Tags.noPermission)
             this.res.status(403).end();
+         else if (this.errors[0].tag === Validator.Tags.notFound)
+            this.res.status(404).end();
          else
             this.res.status(400).json(this.errors);
          this.res = null;   // Preclude repeated closings
@@ -66,7 +68,7 @@ Validator.prototype.check = function (test, err, cb) {
 // in a row, finalized by a check call.
 Validator.prototype.chain = function (test, tag, params) {
    if (!test)
-      this.errors.push({tag: tag, params: params});
+      this.errors.push({tag: tag, params: params || null});
    return this;
 };
 

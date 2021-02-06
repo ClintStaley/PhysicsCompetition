@@ -1,10 +1,6 @@
 // This middleware assumes cookieParser has been "used" before this
 var crypto = require('crypto');
 
-
-// All currently logged-in Sessions indexed by prsId,
-                        // with list values.
-
 var duration = 7200000;     // Two hours in milliseconds
 var cookieName = 'CMPAuth'; // Cookie key for authentication tokens
 
@@ -36,7 +32,6 @@ var Session = function(user, res) {
    this.email = user.email;
    this.role = user.role;
    this.loginTime = this.lastUsed = new Date().getTime();
-
 };
 
 Session.ssnsByCookie = {};  // All currently logged-in Sessions indexed by token
@@ -67,7 +62,7 @@ Session.router = function(req, res, next) {
    var cookie = req.cookies[cookieName];
    var session = cookie && Session.ssnsByCookie[cookie];
 
-   console.log('getting called');
+   console.log('Session.router');
    
    if (session) {
       // If the session was last used more than |duration| mS ago..
@@ -81,4 +76,4 @@ Session.router = function(req, res, next) {
    next();
 };
 
-module.exports = {Session};
+module.exports = Session;
