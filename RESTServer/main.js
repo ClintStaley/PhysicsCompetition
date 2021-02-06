@@ -5,7 +5,7 @@ var path = require('path');
 var fs = require('fs');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var Session = require('./Routes/Session');
+var Session = require('./Routes/Session').Session;
 var Validator = require('./Routes/Validator.js');
 var CnnPool = require('./Routes/CnnPool.js');
 var async = require('async');
@@ -57,8 +57,10 @@ var configApp = (port, corsDomain, testFlag) => {
          req.method === 'POST' && (req.path === '/Prss' || req.path === '/Ssns')) {
          req.validator = new Validator(req, res);
          next();
-      } else
+      } else{
+         console.log(`session: ${req.session}; method: ${req.method}; path: ${req.path}`);
          res.status(401).end();
+      }
    });
 
    // Add DB connection, with smart chkQry method, to |req|
