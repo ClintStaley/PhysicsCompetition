@@ -129,7 +129,7 @@ var addDebugRoutes = app => {
          req.cnn.query(`insert into CompetitionType (title, description, codeName,
           tutorial, prmSchema)  VALUES ("Land Grab", "Claim territory by
           placing circles in a field of obstacles", "LandGrab",
-          "Claim territory by placing circles in a field of obstacles...", "${schema}");`, cb);
+          "Claim territory by placing circles in a field of obstacles...", '${schema}');`, cb);
       });
 
       // Callback to reinsert Bounce CompetitionType
