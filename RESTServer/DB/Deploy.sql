@@ -18,9 +18,9 @@ create table CompetitionType (
    id int auto_increment primary key,
    codeName varchar(80) not null, 
    title varchar(80) not null unique,
-   tutorial varchar(8192),
+   tutorial varchar(4096),
    description varchar(500) not null,
-   prmSchema varchar(8192) not null
+   prmSchema varchar(4096) not null
 );
 
 create table Competition (
