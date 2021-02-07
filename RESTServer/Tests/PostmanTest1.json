@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "bab28ef8-5c1c-44a5-a003-d20d40985ff3",
+		"_postman_id": "7f61737b-6bd7-413e-9316-9d993b71a2b0",
 		"name": "PhysicsCompetitionREST Test",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -134,7 +134,13 @@
 							"script": {
 								"exec": [
 									"checkStatus(pm, 200);",
-									"checkLogin(pm);"
+									"checkLogin(pm);",
+									"",
+									"let locURL = pm.response.headers.get(\"Location\");",
+									"locURL = locURL && locURL.split('/');",
+									"pm.environment.set('stdALogin', locURL && locURL[locURL.length - 1]);",
+									"",
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -415,16 +421,17 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
 									"",
 									"checkStatus(pm, 200);",
-									"tests[\"Ssn Info Correct\"] = jsonBody.cookie == postman.getEnvironmentVariable(\"curLogin\") &&",
+									"",
+									"tests[\"Ssn Info Correct\"] = //jsonBody.cookie == postman.getEnvironmentVariable(\"curLogin\") &&",
 									"                            jsonBody.prsId == 2 &&",
 									"                            jsonBody.loginTime > 0;",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -437,13 +444,13 @@
 							}
 						],
 						"url": {
-							"raw": "{{url}}/Ssns/{{curLogin}}",
+							"raw": "{{url}}/Ssns/{{curLoginId}}",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Ssns",
-								"{{curLogin}}"
+								"{{curLoginId}}"
 							]
 						},
 						"description": "Get Info on me\n"
@@ -664,16 +671,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"checkStatus(pm, 200);",
-									"",
-									"tests[\"Cookie Returned\"] = postman.getResponseCookie(\"CHSAuth\")",
-									" !== null && postman.getResponseCookie(\"CHSAuth\").value !== undefined;",
-									"if (tests[\"Cookie Returned\"])",
-									"   postman.setEnvironmentVariable(\"curLogin\",",
-									"    postman.getResponseCookie(\"CHSAuth\").value)"
-								]
+									"checkLogin(pm);"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -927,10 +928,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"checkStatus(pm, 200);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -942,13 +943,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/Ssns/{{curLogin}}",
+							"raw": "{{url}}/Ssns/{{curLoginId}}",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Ssns",
-								"{{curLogin}}"
+								"{{curLoginId}}"
 							]
 						}
 					},
@@ -1002,16 +1003,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"tests[\"Code 200\"] = responseCode.code === 200;",
-									"",
-									"tests[\"Cookie Returned\"] = postman.getResponseCookie(\"CHSAuth\")",
-									" !== null && postman.getResponseCookie(\"CHSAuth\").value !== undefined;",
-									"if (tests[\"Cookie Returned\"])",
-									"   postman.setEnvironmentVariable(\"curLogin\",",
-									"    postman.getResponseCookie(\"CHSAuth\").value)"
-								]
+									"checkLogin(pm);"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -1237,10 +1232,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"checkStatus(pm, 200);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -1252,13 +1247,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/Ssns/{{curLogin}}",
+							"raw": "{{url}}/Ssns/{{curLoginId}}",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Ssns",
-								"{{curLogin}}"
+								"{{curLoginId}}"
 							]
 						},
 						"description": "\n"
@@ -1271,16 +1266,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"checkStatus(pm, 200);",
-									"",
-									"tests[\"Cookie Returned\"] = postman.getResponseCookie(\"CHSAuth\")",
-									" !== null && postman.getResponseCookie(\"CHSAuth\").value !== undefined;",
-									"if (tests[\"Cookie Returned\"])",
-									"   postman.setEnvironmentVariable(\"curLogin\",",
-									"    postman.getResponseCookie(\"CHSAuth\").value)"
-								]
+									"checkLogin(pm);"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -1381,12 +1370,12 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 400\"] = responseCode.code === 400;",
+									"tests[\"Status code is 400\"] = responseCode.code === 404;",
 									"",
-									"tests[\"Not Found\"] = responseBody.has(\"notFound\");"
-								]
+									"// tests[\"Not Found\"] = responseBody.has(\"notFound\");"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -1412,13 +1401,13 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
 									"",
-									"tests[\"Status code is 400 and notFound\"] = responseCode.code === 400",
-									" && jsonBody.length && jsonBody[0].tag === \"notFound\";"
-								]
+									"tests[\"Status code is 400 and notFound\"] = responseCode.code === 404",
+									" //&& jsonBody.length && jsonBody[0].tag === \"notFound\";"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -1454,16 +1443,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"checkStatus(pm, 200);",
-									"",
-									"tests[\"Cookie Returned\"] = postman.getResponseCookie(\"CHSAuth\")",
-									" !== null && postman.getResponseCookie(\"CHSAuth\").value !== undefined;",
-									"if (tests[\"Cookie Returned\"])",
-									"   postman.setEnvironmentVariable(\"curLogin\",",
-									"    postman.getResponseCookie(\"CHSAuth\").value)"
-								]
+									"checkLogin(pm);"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -1764,19 +1747,19 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
 									"",
-									"tests[\"Status code is 400\"] = responseCode.code === 400;",
-									"tests[\"One Error\"] = jsonBody.length === 1;",
+									"tests[\"Status code is 404\"] = responseCode.code === 404;",
+									"// tests[\"One Error\"] = jsonBody.length === 1;",
 									"",
-									"if (jsonBody.length) {",
-									"   var cpt = jsonBody[0];",
+									"// if (jsonBody.length) {",
+									"//    var cpt = jsonBody[0];",
 									"   ",
-									"   tests[\"Expected error\"] = cpt.tag === \"notFound\";",
-									"}"
-								]
+									"//    tests[\"Expected error\"] = cpt.tag === \"notFound\";",
+									"//}"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -1918,10 +1901,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 400\"] = responseCode.code === 400;"
-								]
+									"tests[\"Status code is 404\"] = responseCode.code === 404;"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -1952,10 +1935,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"checkStatus(pm, 200);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -1967,13 +1950,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/Ssns/{{curLogin}}",
+							"raw": "{{url}}/Ssns/{{curLoginId}}",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Ssns",
-								"{{curLogin}}"
+								"{{curLoginId}}"
 							]
 						}
 					},
@@ -1985,24 +1968,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"checkStatus(pm, 200);",
-									"",
-									"var locURL = postman.getResponseHeader(\"Location\");",
-									"locURL = locURL && locURL.split('/');",
-									"",
-									"var cookie = postman.getResponseCookie(\"CHSAuth\");",
-									"",
-									"tests[\"Cookie Returned\"] = cookie && cookie.value !== undefined;",
-									"",
-									"if (tests[\"Cookie Returned\"]) {",
-									"   postman.setEnvironmentVariable(\"curLogin\", cookie.value);",
-									"   postman.setEnvironmentVariable(\"stdALogin\", cookie.value);",
-									"   tests[\"Cookie matches session\"] = locURL && locURL[locURL.length - 1]",
-									"    === cookie.value;",
-									"}"
-								]
+									"checkLogin(pm);"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -2152,10 +2121,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"checkStatus(pm, 200);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -2167,13 +2136,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/Ssns/{{curLogin}}",
+							"raw": "{{url}}/Ssns/{{curLoginId}}",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Ssns",
-								"{{curLogin}}"
+								"{{curLoginId}}"
 							]
 						}
 					},
@@ -2190,16 +2159,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"checkStatus(pm, 200);",
-									"",
-									"tests[\"Cookie Returned\"] = postman.getResponseCookie(\"CHSAuth\")",
-									" !== null && postman.getResponseCookie(\"CHSAuth\").value !== undefined;",
-									"if (tests[\"Cookie Returned\"])",
-									"   postman.setEnvironmentVariable(\"curLogin\",",
-									"    postman.getResponseCookie(\"CHSAuth\").value)"
-								]
+									"checkLogin(pm);"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -2593,10 +2556,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 400\"] = responseCode.code === 400;"
-								]
+									"tests[\"Status code is 404\"] = responseCode.code === 404;"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -2811,10 +2774,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"checkStatus(pm, 200);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -2826,13 +2789,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/Ssns/{{curLogin}}",
+							"raw": "{{url}}/Ssns/{{curLoginId}}",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Ssns",
-								"{{curLogin}}"
+								"{{curLoginId}}"
 							]
 						}
 					},
@@ -2844,24 +2807,12 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"checkStatus(pm, 200);",
-									"",
-									"var locURL = postman.getResponseHeader(\"Location\");",
-									"locURL = locURL && locURL.split('/');",
-									"",
-									"var cookie = postman.getResponseCookie(\"CHSAuth\");",
-									"",
-									"tests[\"Cookie Returned\"] = cookie && cookie.value !== undefined;",
-									"",
-									"if (tests[\"Cookie Returned\"]) {",
-									"   postman.setEnvironmentVariable(\"curLogin\", cookie.value);",
-									"   postman.setEnvironmentVariable(\"stdALogin\", cookie.value);",
-									"   tests[\"Cookie matches session\"] = locURL && locURL[locURL.length - 1]",
-									"    === cookie.value;",
-									"}"
-								]
+									"checkLogin(pm);",
+									""
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -3049,10 +3000,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"checkStatus(pm, 200);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -3064,13 +3015,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/Ssns/{{curLogin}}",
+							"raw": "{{url}}/Ssns/{{curLoginId}}",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Ssns",
-								"{{curLogin}}"
+								"{{curLoginId}}"
 							]
 						}
 					},
@@ -3087,16 +3038,12 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"checkStatus(pm, 200);",
 									"",
-									"tests[\"Cookie Returned\"] = postman.getResponseCookie(\"CHSAuth\")",
-									" !== null && postman.getResponseCookie(\"CHSAuth\").value !== undefined;",
-									"if (tests[\"Cookie Returned\"])",
-									"   postman.setEnvironmentVariable(\"curLogin\",",
-									"    postman.getResponseCookie(\"CHSAuth\").value)"
-								]
+									"checkLogin(pm);"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -3414,10 +3361,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 400\"] = responseCode.code === 400;"
-								]
+									"tests[\"Status code is 404\"] = responseCode.code === 404;"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -3608,10 +3555,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"checkStatus(pm, 200);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -3623,13 +3570,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/Ssns/{{curLogin}}",
+							"raw": "{{url}}/Ssns/{{curLoginId}}",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Ssns",
-								"{{curLogin}}"
+								"{{curLoginId}}"
 							]
 						}
 					},
@@ -3641,24 +3588,12 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"checkStatus(pm, 200);",
 									"",
-									"var locURL = postman.getResponseHeader(\"Location\");",
-									"locURL = locURL && locURL.split('/');",
-									"",
-									"var cookie = postman.getResponseCookie(\"CHSAuth\");",
-									"",
-									"tests[\"Cookie Returned\"] = cookie && cookie.value !== undefined;",
-									"",
-									"if (tests[\"Cookie Returned\"]) {",
-									"   postman.setEnvironmentVariable(\"curLogin\", cookie.value);",
-									"   postman.setEnvironmentVariable(\"stdALogin\", cookie.value);",
-									"   tests[\"Cookie matches session\"] = locURL && locURL[locURL.length - 1]",
-									"    === cookie.value;",
-									"}"
-								]
+									"checkLogin(pm);"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -3971,10 +3906,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"checkStatus(pm, 200);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -3986,13 +3921,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/Ssns/{{curLogin}}",
+							"raw": "{{url}}/Ssns/{{curLoginId}}",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Ssns",
-								"{{curLogin}}"
+								"{{curLoginId}}"
 							]
 						}
 					},
@@ -4009,16 +3944,11 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"checkStatus(pm, 200);",
-									"",
-									"tests[\"Cookie Returned\"] = postman.getResponseCookie(\"CHSAuth\")",
-									" !== null && postman.getResponseCookie(\"CHSAuth\").value !== undefined;",
-									"if (tests[\"Cookie Returned\"])",
-									"   postman.setEnvironmentVariable(\"curLogin\",",
-									"    postman.getResponseCookie(\"CHSAuth\").value)"
-								]
+									"checkLogin(pm);"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -4306,10 +4236,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"checkStatus(pm, 200);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -4321,13 +4251,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/Ssns/{{curLogin}}",
+							"raw": "{{url}}/Ssns/{{curLoginId}}",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Ssns",
-								"{{curLogin}}"
+								"{{curLoginId}}"
 							]
 						}
 					},
@@ -4339,24 +4269,11 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"checkStatus(pm, 200);",
-									"",
-									"var locURL = postman.getResponseHeader(\"Location\");",
-									"locURL = locURL && locURL.split('/');",
-									"",
-									"var cookie = postman.getResponseCookie(\"CHSAuth\");",
-									"",
-									"tests[\"Cookie Returned\"] = cookie && cookie.value !== undefined;",
-									"",
-									"if (tests[\"Cookie Returned\"]) {",
-									"   postman.setEnvironmentVariable(\"curLogin\", cookie.value);",
-									"   postman.setEnvironmentVariable(\"stdALogin\", cookie.value);",
-									"   tests[\"Cookie matches session\"] = locURL && locURL[locURL.length - 1]",
-									"    === cookie.value;",
-									"}"
-								]
+									"checkLogin(pm);"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -4680,10 +4597,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"checkStatus(pm, 200);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -4695,13 +4612,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/Ssns/{{curLogin}}",
+							"raw": "{{url}}/Ssns/{{curLoginId}}",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Ssns",
-								"{{curLogin}}"
+								"{{curLoginId}}"
 							]
 						}
 					},
@@ -4713,24 +4630,11 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"checkStatus(pm, 200);",
-									"",
-									"var locURL = postman.getResponseHeader(\"Location\");",
-									"locURL = locURL && locURL.split('/');",
-									"",
-									"var cookie = postman.getResponseCookie(\"CHSAuth\");",
-									"",
-									"tests[\"Cookie Returned\"] = cookie && cookie.value !== undefined;",
-									"",
-									"if (tests[\"Cookie Returned\"]) {",
-									"   postman.setEnvironmentVariable(\"curLogin\", cookie.value);",
-									"   postman.setEnvironmentVariable(\"stdALogin\", cookie.value);",
-									"   tests[\"Cookie matches session\"] = locURL && locURL[locURL.length - 1]",
-									"    === cookie.value;",
-									"}"
-								]
+									"checkLogin(pm);"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -4770,16 +4674,11 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"checkStatus(pm, 200);",
-									"",
-									"tests[\"Cookie Returned\"] = postman.getResponseCookie(\"CHSAuth\")",
-									" !== null && postman.getResponseCookie(\"CHSAuth\").value !== undefined;",
-									"if (tests[\"Cookie Returned\"])",
-									"   postman.setEnvironmentVariable(\"curLogin\",",
-									"    postman.getResponseCookie(\"CHSAuth\").value)"
-								]
+									"checkLogin(pm);"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -4898,10 +4797,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 400\"] = responseCode.code === 400;"
-								]
+									"tests[\"Status code is 404\"] = responseCode.code === 404;"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -5275,10 +5174,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"checkStatus(pm, 200);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -5290,13 +5189,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/Ssns/{{curLogin}}",
+							"raw": "{{url}}/Ssns/{{curLoginId}}",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Ssns",
-								"{{curLogin}}"
+								"{{curLoginId}}"
 							]
 						}
 					},
@@ -5308,24 +5207,11 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"checkStatus(pm, 200);",
-									"",
-									"var locURL = postman.getResponseHeader(\"Location\");",
-									"locURL = locURL && locURL.split('/');",
-									"",
-									"var cookie = postman.getResponseCookie(\"CHSAuth\");",
-									"",
-									"tests[\"Cookie Returned\"] = cookie && cookie.value !== undefined;",
-									"",
-									"if (tests[\"Cookie Returned\"]) {",
-									"   postman.setEnvironmentVariable(\"curLogin\", cookie.value);",
-									"   postman.setEnvironmentVariable(\"stdALogin\", cookie.value);",
-									"   tests[\"Cookie matches session\"] = locURL && locURL[locURL.length - 1]",
-									"    === cookie.value;",
-									"}"
-								]
+									"checkLogin(pm);"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -5443,10 +5329,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"checkStatus(pm, 200);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -5458,13 +5344,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/Ssns/{{curLogin}}",
+							"raw": "{{url}}/Ssns/{{curLoginId}}",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Ssns",
-								"{{curLogin}}"
+								"{{curLoginId}}"
 							]
 						}
 					},
@@ -5481,16 +5367,11 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"checkStatus(pm, 200);",
-									"",
-									"tests[\"Cookie Returned\"] = postman.getResponseCookie(\"CHSAuth\")",
-									" !== null && postman.getResponseCookie(\"CHSAuth\").value !== undefined;",
-									"if (tests[\"Cookie Returned\"])",
-									"   postman.setEnvironmentVariable(\"curLogin\",",
-									"    postman.getResponseCookie(\"CHSAuth\").value)"
-								]
+									"checkLogin(pm);"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -5809,10 +5690,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"checkStatus(pm, 200);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -5824,13 +5705,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/Ssns/{{curLogin}}",
+							"raw": "{{url}}/Ssns/{{curLoginId}}",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Ssns",
-								"{{curLogin}}"
+								"{{curLoginId}}"
 							]
 						}
 					},
@@ -5847,16 +5728,12 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"checkStatus(pm, 200);",
 									"",
-									"tests[\"Cookie Returned\"] = postman.getResponseCookie(\"CHSAuth\")",
-									" !== null && postman.getResponseCookie(\"CHSAuth\").value !== undefined;",
-									"if (tests[\"Cookie Returned\"])",
-									"   postman.setEnvironmentVariable(\"curLogin\",",
-									"    postman.getResponseCookie(\"CHSAuth\").value)"
-								]
+									"checkLogin(pm);"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -6175,10 +6052,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"checkStatus(pm, 200);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -6190,13 +6067,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/Ssns/{{curLogin}}",
+							"raw": "{{url}}/Ssns/{{curLoginId}}",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Ssns",
-								"{{curLogin}}"
+								"{{curLoginId}}"
 							]
 						}
 					},
@@ -6222,22 +6099,18 @@
 				"exec": [
 					"getLocationId = (pm) => {",
 					"    let locURL = pm.response.headers.get(\"Location\");",
-					"",
 					"    locURL = locURL && locURL.split('/');",
 					"    return locURL && locURL[locURL.length - 1]",
 					"}",
 					"",
 					"checkLogin = (pm) => {",
 					"    let locURL;",
-					"",
 					"    pm.test(\"Location returned\", () => pm.response.to.have.header(\"Location\"));",
 					"    pm.test(\"Cookie returned\", () => pm.response.to.have.header('Set-Cookie'));",
 					"    pm.test(\"Cookie is CMPAuth\", () => pm.expect(pm.response.headers.get('Set-Cookie').startsWith(\"CMPAuth\")).is.true);",
-					"",
 					"    locURL = pm.response.headers.get(\"Location\");",
 					"    locURL = locURL && locURL.split('/');",
-					"",
-					"    pm.collectionVariables.set(\"curLogin\", getLocationId(pm));",
+					"    pm.environment.set(\"curLoginId\", getLocationId(pm));",
 					"}",
 					"",
 					"checkStatus = (pm, code) =>",
@@ -6268,7 +6141,15 @@
 	],
 	"variable": [
 		{
-			"key": "curLogin",
+			"key": "curLoginId",
+			"value": ""
+		},
+		{
+			"key": "curLoginCookie",
+			"value": ""
+		},
+		{
+			"key": "stdALogin",
 			"value": ""
 		}
 	]
