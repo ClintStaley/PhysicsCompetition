@@ -24,7 +24,6 @@ router.post('/', (req, res) => {
 
    async.waterfall([
    (cb) => {
-      //
       if (vld.hasFields(body, ["prsId"], cb)) {
          body.teamId = req.params.teamId;
          cnn.chkQry('select leaderId from Team where id = ?', body.teamId, cb);
@@ -33,8 +32,8 @@ router.post('/', (req, res) => {
    (leader, fields, cb) => {
       //check if post is from admin or team leader
       if (vld.check(ssn && (ssn.isAdmin() ||
-       (leader && leader.length && ssn.id == leader[0].leaderId)
-       || ssn.id == body.prsId), Tags.noPermission, cb))
+       (leader && leader.length && ssn.prsId == leader[0].leaderId)
+       || ssn.prsId == body.prsId), Tags.noPermission, cb))
          cnn.chkQry('select * from Membership where prsId = ? && teamId = ?',
           [body.prsId,body.teamId], cb);
    },
@@ -67,7 +66,7 @@ router.delete('/:id', (req, res) => {
    (leader, fields, cb) => {
       if (vld.check(leader && leader.length , Tags.notFound, cb))
          if (vld.chain(ssn && (ssn.isAdmin() ||
-          ssn.id == leader[0].leaderId || ssn.id == req.params.id),
+          ssn.prsId == leader[0].leaderId || ssn.prsId == req.params.id),
           Tags.noPermission,null).
           check(!(leader[0].leaderId == req.params.id),
           Tags.cantRemoveLeader, cb))

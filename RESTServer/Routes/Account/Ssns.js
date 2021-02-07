@@ -10,9 +10,10 @@ router.get('/', (req, res) => {
    var body = [], ssn;
 
    if (req.validator.checkAdmin()) {
-      for (var cookie in ssnUtil.sessions) {
-         ssn = Session.ssnsByCookie[cookie];
-         body.push({cookie: cookie, prsId: ssn.prsId, loginTime: ssn.loginTime});
+      for (var id of Session.getAllIds()) {
+         ssn = Session.ssnsById[id];
+         if(ssn)
+            body.push({prsId: ssn.prsId, loginTime: ssn.loginTime});
       }
       res.status(200).json(body);
    }
@@ -43,7 +44,7 @@ router.delete('/:ssnId', function(req, res) {
    var vld = req.validator;
    var trgSsn = Session.findById(req.params.ssnId);
 
-   if (vld.check(ssn, Tags.notFound) && vld.checkPrsOK(trgSsn.prsId))  {
+   if (vld.check(trgSsn, Tags.notFound) && vld.checkPrsOK(trgSsn.prsId))  {
       trgSsn.logOut();
       res.status(200).end();
    }

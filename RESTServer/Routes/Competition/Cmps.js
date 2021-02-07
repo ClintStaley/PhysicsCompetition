@@ -56,7 +56,7 @@ router.post('/', (req, res) => {
          //Get dupTitles if they exist
          if (vld.hasOnlyFields(body, ["title", "ctpId", "prms", "rules",
           "description"], cb)) {
-            body.ownerId = ssn.id;
+            body.ownerId = ssn.prsId;
             cnn.chkQry(
              'select * from Competition where title = ? and ownerId = ?',
              [body.title, body.ownerId], cb);

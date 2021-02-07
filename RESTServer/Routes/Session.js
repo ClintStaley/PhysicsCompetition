@@ -42,17 +42,18 @@ Session.prototype.isAdmin = function() {
    return this.role === 1;
 };
 
+
 // Log out a user by removing this Session
 Session.prototype.logOut = function() {
-   delete ssnsById[this.id];
-   delete ssnsByCookie[this.authToken];
-   ssnsByPrs[this.prsId] = ssnsByPrs[this.prsId].filter(ssn => ssn !== this);
+   delete Session.ssnsById[this.id];
+   delete Session.ssnsByCookie[this.authToken];
+   Session.ssnsByPrs[this.prsId] = Session.ssnsByPrs[this.prsId].filter(ssn => ssn !== this);
 };
 
-Session.getAllIds = () => Object.keys(ssnsById);
-Session.findById = id => ssnsById[id];
-Session.findByPrs = id => ssnsByPrs[id];
-Session.resetAll = () => {ssnsById = []; ssnsByCookie = {}; ssnsByPrs = {};}
+Session.getAllIds = () => Object.keys(Session.ssnsById);
+Session.findById = id => Session.ssnsById[id];
+Session.findByPrs = id => Session.ssnsByPrs[id];
+Session.resetAll = () => {Session.ssnsById = []; Session.ssnsByCookie = {}; Session.ssnsByPrs = {};}
 
 // Function router that will find any Session associated with |req|, based on
 // cookies, delete the Session if it has timed out, or attach the Session to

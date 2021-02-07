@@ -147,8 +147,7 @@ var addDebugRoutes = app => {
 
       // Callback to clear sessions, release connection and return result
       cbs.push(function (callback) {
-         for (var session in Session.sessions)
-            delete Session.sessions[session];
+         Session.resetAll();
          callback();
       });
 

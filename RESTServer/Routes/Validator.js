@@ -80,7 +80,7 @@ Validator.prototype.checkAdmin = function (cb) {
 // Validate that AU is the specified person or is an admin
 Validator.prototype.checkPrsOK = function (prsId, cb) {
    return this.check(this.session &&
-    (this.session.isAdmin() || this.session.id == prsId),
+    (this.session.isAdmin() || this.session.prsId == prsId),
     Validator.Tags.noPermission, cb);
 };
 
