@@ -178,7 +178,7 @@ export function getTeamMmbs(cmpId, teamId, cb) {
       api.getTeamMmbs(cmpId, teamId)
       .then((mmbs) => {
          return dispatch({type: 'GET_TEAM_MMBS',
-          teamData: {id: teamId, mmbs, cmpId: parseInt(cmpId)}});
+          teamData: {id: teamId, mmbs, cmpId: parseInt(cmpId, 10)}});
       })
       .then(() => {if (cb) cb()})
    }
