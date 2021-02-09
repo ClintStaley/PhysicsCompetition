@@ -97,11 +97,11 @@ export class LGSubmitModal extends Component {
          idY = `centerY:${idx}`;
          idR = `radius:${idx}`;
 
-         lines.push(<div className="container" key={idx}>
+         lines.push(<div className="modal-container" key={idx}>
            <div className="row">
-             <div className="col-sm-2"><h5>Circle {idx}</h5></div>
+             <div><h5 className='circle-title'>Circle {idx+1}</h5></div>
 
-             <div className="col-sm-2">
+             <div className='col-sm-2'>
                <FormGroup controlId={idX}>
                  <ControlLabel>X Coord</ControlLabel>
                  <FormControl
@@ -116,7 +116,7 @@ export class LGSubmitModal extends Component {
                </FormGroup>
              </div>
 
-             <div className="col-sm-2">
+             <div className='col-sm-2'>
                <FormGroup controlId={idY}>
                  <ControlLabel>Y Coord</ControlLabel>
                  <FormControl
@@ -131,7 +131,7 @@ export class LGSubmitModal extends Component {
                </FormGroup>
              </div>
 
-             <div className="col-sm-2">
+             <div className='col-sm-2'>
                <FormGroup controlId={idR}>
                  <ControlLabel>Radius</ControlLabel>
                  <FormControl

@@ -61,3 +61,21 @@
    alignment-baseline:ideographic;
    text-anchor:end;
 }
+
+.modal-container {
+   color: white;
+   width: fit-content;
+   padding: 0;
+}
+
+.circle-title {
+   padding-top: 30px;
+   font-size: 2rem;
+   font-weight: bold;
+}
+
+.row-test {
+   display: flex;
+   justify-content: space-evenly;
+   width: fit-content;
+}
