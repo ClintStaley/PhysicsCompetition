@@ -41,8 +41,8 @@ export class RSubmitModal extends Component {
       [field, bIdx] = ev.target.id.split(":");
 
       // Either empty, or number between -1.0 and 1.0
-      if (!ev.target.value || parseFloat(ev.target.value) >= -1.0
-       && parseFloat(ev.target.value) <= 1.0)
+      if (!ev.target.value || (parseFloat(ev.target.value) >= -1.0
+       && parseFloat(ev.target.value) <= 1.0))
          this.setState({"startSpec": this.state.startSpec.map((spec, i) => {
             return ""+i === bIdx ? 
             Object.assign({}, spec, {[field]: ev.target.value}) : spec;
@@ -81,7 +81,7 @@ export class RSubmitModal extends Component {
    // Todo: change to maintain state as numbers, translating back to text
    render() {
       var idS, idx, lines = [];
-      var idX, idY, idT;
+      var idX;
 
       for (idx = 0; idx < this.state.launchSpec.length; idx++) {
          idS = `speed:${idx}`;

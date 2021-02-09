@@ -14,7 +14,7 @@ export default function cmps(state = {}, action) {
           Object.assign({}, state[cmpId], cmpData)});
       case 'GET_CMP_TEAMS': // Update the cmpTeams link from a cmp
          var teamIds = Object.keys(action.teams).map(
-          function (x) { return parseInt(x)});
+          function (x) { return parseInt(x, 10)});
 
          return Object.assign({}, state, {[cmpId]:
           Object.assign({}, state[cmpId], {cmpTeams: teamIds})});

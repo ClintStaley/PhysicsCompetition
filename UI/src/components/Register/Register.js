@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import {
-  FormGroup, ControlLabel, FormControl, HelpBlock,
-  Checkbox, Button, Alert, Form
+  FormGroup, ControlLabel, FormControl, HelpBlock, Checkbox, Alert
 } from 'react-bootstrap';
 
 import './Register.css';
@@ -182,7 +181,7 @@ class Register extends Component {
           </div>
         </form>
 
-        <img src={register_illustration}></img>
+        <img src={register_illustration} alt="Register"></img>
         {this.state.password !== this.state.passwordTwo ?
           <Alert bsStyle="warning">
             Passwords do not match.

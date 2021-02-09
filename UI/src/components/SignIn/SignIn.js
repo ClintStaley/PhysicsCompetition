@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
 import {
-   Form, FormGroup, Col, FormControl,
-   Label, Button, ControlLabel, Row
+   Form, FormGroup, FormControl, ControlLabel, Row
 } from 'react-bootstrap';
 import './SignIn.css';
-import styles from './SignIn.css';
 
 import signin_illustration from '../../images/signin.png';
 
@@ -85,10 +83,8 @@ class SignIn extends Component {
                      </div>
                   </div>
                </Form>
-               <img src={signin_illustration}></img>
-
+               <img src={signin_illustration} alt="Sign In"></img>
             </Row>
-
          </section>
       )
    }
