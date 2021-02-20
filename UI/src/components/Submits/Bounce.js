@@ -285,7 +285,7 @@ export class Bounce extends Component {
    calculateObstacles = (frame) => {
       var events = this.props.sbm.testResult.events;
       var time = frame/this.frameRate;
-      var elapsedTime = 0;
+      var elapsedTime = 0;  // CAS FIX: Rename to baseTime
       var obstacleState = this.state.obstacleStatus.splice(0);
 
       //fill out the state array so that hit obstacles are greyed out
