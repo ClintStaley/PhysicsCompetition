@@ -1,9 +1,10 @@
 package com.softwareinventions.cmp.evaluator;
 
+// The results of one Evaluation.
 public class Evl {
-	public String testResult;
-	public double score;
-	public int canSubmit;
+	public String testResult;  // String description of the result of the test
+	public double score;       // Score 
+	public int canSubmit;      // Can the team do a submission?
 
 	public Evl(String testResult, double score, int canSubmit) {
 		this.testResult = testResult;

@@ -4,7 +4,7 @@ import {FormGroup, FormControl, HelpBlock, ControlLabel, Button }
 import DragModal from '../Util/DraggableModal.js';
 
 import './Bounce.css'
- 
+
 export class BSubmitModal extends Component {
    constructor(props) {
       super(props);
@@ -44,7 +44,7 @@ export class BSubmitModal extends Component {
       // Either empty, or a nonnegative number
       if (!ev.target.value || parseFloat(ev.target.value) >= 0.0)
          this.setState({"launchSpec": this.state.launchSpec.map((spec, i) => {
-            return ""+i === bIdx ?
+            return ""+i === bIdx ?  // CAS FIX reverse cases and use !== for clarity
             Object.assign({}, spec, {[field]: ev.target.value}) : spec;
          })});
    }
@@ -72,7 +72,7 @@ export class BSubmitModal extends Component {
       this.setState({launchSpec: newSpec});
    }
 
-   // Remove one text box
+   // Remove last text box row
    removeBall = () => {
       this.setState({launchSpec: this.state.launchSpec.slice(0, -1)});
    }
@@ -232,12 +232,12 @@ export class Bounce extends Component {
 
    intervalID;        // Timer ID of interval timer
    frameRate = 24;    // Frames per second to display
-   G = 9.80665;       //gravity constant
-   fieldLength = 10;  //the stage length in meters
-   fieldHeight = 10;  //the sage height in meters
-   graphLine = .5;    //how far apart the graph lines are in meters
-   //colors of balls
-   colors = ["red", "green", "orange", "purple", "cyan"];
+   G = 9.80665;       // Gravity constant
+   fieldLength = 10;  // Stage length in meters
+   fieldHeight = 10;  // Stage height in meters
+   graphLine = .5;    // Distance between graph lines in meters
+
+   colors = ["red", "green", "orange", "purple", "cyan"];   // ball colors
 
    // x position is equations[0] and y position is equations[1]
    positionEquations = (event) => {
@@ -253,10 +253,12 @@ export class Bounce extends Component {
       var secondsToMiliseconds = 1000;
       var totalTime = 0;
 
-      // Safety so that two separate intervals are running
+      // Safety to preclude simultaneously running interval timers
       if (this.intervalID)
          clearInterval(this.intervalID);
 
+      // CAS FIX would make a better forEach.  
+      // Sum the duration of all events (ball arcs) to get movie end time.
       for (var idx = 0; idx < events.length; idx++) {
          totalTime += events[idx][events[idx].length - 1].time;
       }
