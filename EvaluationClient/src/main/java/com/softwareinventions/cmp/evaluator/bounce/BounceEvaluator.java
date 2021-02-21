@@ -29,12 +29,11 @@ public class BounceEvaluator implements Evaluator {
    public static final double SBM_ATTEMPT = 3;  
    public static final double SCORE_DIVIDE = 2;
    
-
    // Represent one Collision, including its type, its time, the location of
    // circle center as of the collision, and the index of the struck obstacle.
    private static class Collision {
       public enum HitType {
-         CORNER, HORIZONTAL, VERTICAL
+         CORNER, HORIZONTAL, VERTICAL // Hit a corner, or top/bottom side, or left/right side
       };
 
       public HitType hType;
@@ -55,11 +54,11 @@ public class BounceEvaluator implements Evaluator {
 
    // Represent one rectangular obstacle.
    private static class Obstacle {
+      public int id;
       public double loX;
       public double hiX;
       public double hiY;
       public double loY;
-      public int obstacleId;
       public boolean barrier = false;  // Is this a barrier?
    }
 
@@ -71,6 +70,10 @@ public class BounceEvaluator implements Evaluator {
    }
    
    private static class BallEquations {
+      // CAS QUESTION: Why are we not using java.function.UnaryOperator? A quick
+      // test suggests it should work fine. E.g.
+      // public java.util.function.UnaryOperator<Double> xPos;
+      
       public UnivariateFunction xPos;
       public UnivariateFunction yPos;
       public UnivariateFunction xVelocity;
@@ -79,7 +82,7 @@ public class BounceEvaluator implements Evaluator {
       // Equations for computation of parameters given a starting point expressed
       // as a BounceEvent.
       public BallEquations(BounceEvent current) {
-         xPos = t -> (t ) * current.velocityX + current.posX;
+         xPos = t -> (t) * current.velocityX + current.posX;
          xVelocity = t  -> current.velocityX;
 
          yPos = t -> GRAVITY / 2.0 * GenUtil.sqr((t )) + 
@@ -95,12 +98,12 @@ public class BounceEvaluator implements Evaluator {
       public double finalTime;
    }
 
-   /* BounceEvent describes the initial launch of a ball, or the ball's bounce off of 
-    * an obstacle, or the ball going out of bounds. 
+   /* BounceEvent describes the initial launch of a ball, or the ball's bounce
+    * off of an obstacle, or the ball going out of bounds. 
     * 
-    * For a bounce, velocityX and velocityY are the ball velocities after the bounce, and
-    * obstacleIdx describes the obstacle that was hit.  For a starting point or
-    * out-of-bounds event, obstacleNdx is -1.
+    * For a bounce, velocityX and velocityY are the ball velocities after the
+    * bounce, and obstacleIdx describes the obstacle that was hit.  For a
+    * starting point or out-of-bounds event, obstacleNdx is -1.
     */
    public static class BounceEvent {
       public double time;
@@ -167,11 +170,11 @@ public class BounceEvaluator implements Evaluator {
 
       // Assign all targets ID numbers based on their index.
       for (idx = 0; idx < targetCount; idx++)
-         prms.targets[idx].obstacleId = idx;
+         prms.targets[idx].id = idx;
       
       // Assign all obstacles ID numbers based on their index.
       for (idx = 0; idx < barrierCount; idx++) {
-         prms.barriers[idx].obstacleId = idx + targetCount;
+         prms.barriers[idx].id = idx + targetCount;
          prms.barriers[idx].barrier = true;
       }
       
@@ -362,7 +365,7 @@ public class BounceEvaluator implements Evaluator {
             .min((c2, c1) -> Double.compare(c2.time, c1.time));
       
       if (rtn.isPresent()) 
-         obstacles.removeIf(o -> o.obstacleId == rtn.get().obstacleIdx);
+         obstacles.removeIf(o -> o.id == rtn.get().obstacleIdx);
       
       return rtn;
    }
@@ -385,7 +388,7 @@ public class BounceEvaluator implements Evaluator {
       .min((c1, c2) -> Double.compare(c1.time, c2.time));
       
       if (rtn.isPresent()) {
-         rtn.get().obstacleIdx = obs.obstacleId;
+         rtn.get().obstacleIdx = obs.id;
          lgr.info("Best Time is: " + rtn.get().time);
          return rtn.get();
       }
@@ -575,7 +578,7 @@ public class BounceEvaluator implements Evaluator {
       plat.loX = 0;
       plat.hiY = 25;
       plat.loY = 20;
-      plat.obstacleId = 0;
+      plat.id = 0;
 
       obstacles.add(plat);
 

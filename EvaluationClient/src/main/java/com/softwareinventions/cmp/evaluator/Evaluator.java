@@ -22,7 +22,10 @@ public interface Evaluator {
       return evaluations;
    }
    
+   // Set the competition parameters by which to evaluate the submissions.
    public void setPrms(String prms);
    
+   // Evaluate a particular submission and return a resultant EvlPut to 
+   // transmit back to the REST server.
    public EvlPut evaluate(Submit sbm) throws Exception;
 }
