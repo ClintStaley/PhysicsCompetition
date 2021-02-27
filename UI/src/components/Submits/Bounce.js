@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {FormGroup, FormControl, HelpBlock, ControlLabel, Button }
   from 'react-bootstrap';
 import DragModal from '../Util/DraggableModal.js';
+import {Bounce3D} from './Bounce3D';
 
 import './Bounce.css'
 
@@ -454,6 +455,7 @@ export class Bounce extends Component {
 
       return (<section className="container">
         <h2>Problem Diagram</h2>
+        <Bounce3D events={sbm.testResult.events}/>
         <Button className="pull-right" disabled = {readyRun}
          onClick={() => this.replay()}>Replay</Button>
         <Button className="pull-right" disabled = {readyRun}
