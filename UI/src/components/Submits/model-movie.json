@@ -1,0 +1,69 @@
+{
+    "background":{
+        "height": 200,
+        "width": 200,
+        "frameRate":3
+    },
+    "events": [
+        {
+            "type":1,
+            "time":0,
+            "loX":10,
+            "loY":10,
+            "hiX":20,
+            "hiY":20
+        },
+        {
+            "type":2,
+            "time":0,
+            "loX":30,
+            "loY":30,
+            "hiX":50,
+            "hiY":50,
+            "id":0
+        },
+        {
+            "time":0,
+            "type":0,
+            "x":5,
+            "y":10,
+            "ball-number":0
+        },
+        {
+            "time":1,
+            "type":0,
+            "x":5,
+            "y":11,
+            "ball-number":0
+        },
+        {
+            "time":2,
+            "type":0,
+            "x":5,
+            "y":12,
+            "ball-number":0
+        },
+        {
+            "time":10,
+            "type":0,
+            "x":5,
+            "y":20,
+            "ball-number":0
+        },
+        {
+            "time":20,
+            "type":0,
+            "x":5,
+            "y":30,
+            "ball-number":0
+        },
+        {
+            "time":20,
+            "type":3,
+            "x":5,
+            "y":30,
+            "ball-number":0,
+            "obstical-id": 0
+        }
+    ]
+}
