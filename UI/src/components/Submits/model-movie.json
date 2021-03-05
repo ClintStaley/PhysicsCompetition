@@ -63,7 +63,19 @@
             "x":5,
             "y":30,
             "ball-number":0,
-            "obstical-id": 0
+            "target-id": 0
         }
+
+        CAS FIX: Need a type 3 against the obstacle as well as the target.  And let's call type 3 a collision
+        with target, and type 4 a collision with obstacle.  They're coded differently in the movie players, so
+        may as well have different types.  Issue is edited accordingly.
+
+        You also need a type 5 and 6, so you can properly design the player for launches and ball exits.  Both
+        require scenegraph adjustments.
+
+        And, the collisions ought to put the ball in contact with the obstacle/target.  Yours doesn't.  Ball should 
+        be radius-distance away, I think we had the radii as 5 cm or .05 m. 
+
+        Finally, pls place this in Docs/CompetitionTypes/Bounce/JSONMovies/Movie1  
     ]
 }
