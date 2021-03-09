@@ -7,7 +7,7 @@
     "events": [
         {
             "type":2,
-            "time":0,
+            "time":-1,
             "loX":10,
             "loY":10,
             "hiX":15,
@@ -15,7 +15,7 @@
         },
         {
             "type":1,
-            "time":0,
+            "time":-1,
             "loX":10,
             "loY":0,
             "hiX":15,

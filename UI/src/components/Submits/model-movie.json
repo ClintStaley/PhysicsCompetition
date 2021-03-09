@@ -6,76 +6,85 @@
     },
     "events": [
         {
-            "type":1,
-            "time":0,
+            "type":2,
+            "time":-1,
             "loX":10,
             "loY":10,
-            "hiX":20,
+            "hiX":15,
             "hiY":20
         },
         {
-            "type":2,
+            "type":1,
+            "time":-1,
+            "loX":10,
+            "loY":0,
+            "hiX":15,
+            "hiY":2,
+            "obstical-id":0
+        },
+        {
+            "type":5,
             "time":0,
-            "loX":30,
-            "loY":30,
-            "hiX":50,
-            "hiY":50,
-            "id":0
+            "ball-number":0
         },
         {
             "time":0,
             "type":0,
-            "x":5,
-            "y":10,
+            "x":0,
+            "y":0,
             "ball-number":0
         },
         {
             "time":1,
             "type":0,
-            "x":5,
-            "y":11,
+            "x":2,
+            "y":0,
             "ball-number":0
         },
         {
             "time":2,
             "type":0,
-            "x":5,
-            "y":12,
+            "x":3,
+            "y":0,
+            "ball-number":0
+        },
+        {
+            "time":7,
+            "type":0,
+            "x":9.95,
+            "y":0,
+            "ball-number":0
+        },
+        {
+            "time":7,
+            "type":4,
+            "obstical-id":0,
+            "x":10,
+            "y":0,
             "ball-number":0
         },
         {
             "time":10,
             "type":0,
-            "x":5,
+            "x":9.95,
             "y":20,
             "ball-number":0
         },
         {
-            "time":20,
-            "type":0,
-            "x":5,
-            "y":30,
-            "ball-number":0
+            "time":10,
+            "type":3,
+            "x":10,
+            "y":20,
+            "ball-number":0,
+            "target-id": 0
         },
         {
             "time":20,
-            "type":3,
-            "x":5,
-            "y":30,
-            "ball-number":0,
-            "target-id": 0
+            "type":6,
+            "x":10,
+            "y":40,
+            "ball-number":0
         }
 
-        CAS FIX: Need a type 3 against the obstacle as well as the target.  And let's call type 3 a collision
-        with target, and type 4 a collision with obstacle.  They're coded differently in the movie players, so
-        may as well have different types.  Issue is edited accordingly.
-
-        You also need a type 5 and 6, so you can properly design the player for launches and ball exits.  Both
-        require scenegraph adjustments.
-
-        And, the collisions ought to put the ball in contact with the obstacle/target.  Yours doesn't.  Ball should 
-        be radius-distance away, I think we had the radii as 5 cm or .05 m. 
-
-        Finally, pls place this in Docs/CompetitionTypes/Bounce/JSONMovies/Movie1  
     ]
 }
