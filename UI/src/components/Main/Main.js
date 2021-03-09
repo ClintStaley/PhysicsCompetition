@@ -50,22 +50,16 @@ class Main extends Component {
      var ProtectedRoute = this.ProtectedRoute;
 
     return (
-      <div>
+      <div  className='flex'>
         <div>
-          <Navbar>
-            <Navbar.Toggle />
-            {this.signedIn() ?
-                <Navbar.Text key={1}>
-                  {`Signed in as: ${this.props.prs.firstName} ${this.props.prs.lastName}`}
-                </Navbar.Text>
-              : ''
-            }
-            <Navbar.Collapse>
-              <Nav>
+              <div className='navigation'>
                 {this.signedIn() ?
                   // User is signed in
                   [
-                    <LinkContainer key={0} to="/MyCmpsPage">
+                    <span key={3}>
+                  {`Signed in as: ${this.props.prs.firstName} ${this.props.prs.lastName}`}
+                </span>,
+                    <LinkContainer key={0} to="/MyCmpsPage" >
                       <NavItem>My Competitions</NavItem>
                     </LinkContainer>,
                     <LinkContainer key={1} to="/AllCmpsPage">
@@ -80,29 +74,29 @@ class Main extends Component {
                     <LinkContainer key={0} to="/signin">
                       <NavItem>Sign In</NavItem>
                     </LinkContainer>,
+                    <LinkContainer key={0} to="/signin">
+                      <NavItem>Sign In</NavItem>
+                    </LinkContainer>,
                     <LinkContainer key={1} to="/register">
                       <NavItem>Register</NavItem>
                     </LinkContainer>,
                   ]
                 }
-              </Nav>
-              <Nav pullRight>
               <NavItem eventKey={5} onClick = {() => this.openHelp()}>
                 Help
               </NavItem>
               {this.signedIn() ?
-                 <Nav>
-                <NavItem eventKey={4} onClick = {() => this.refresh()}>
+                <div>
+                 <NavItem eventKey={4} onClick = {() => this.refresh()}>
                   Refresh
                 </NavItem>
                 <NavItem eventKey={3} onClick = {() => this.signOut()}>
                   Sign out
-                </NavItem>
-                 </Nav>
+                </NavItem> 
+                  </div>
+                
                : ''}
-              </Nav>
-            </Navbar.Collapse>
-          </Navbar>
+              </div>
         </div>
         <Switch>
           <Route exact path='/' children={Home} />

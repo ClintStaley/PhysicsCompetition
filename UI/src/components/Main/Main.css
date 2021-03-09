@@ -2,6 +2,40 @@
   text-align: center;
 }
 
+:root {
+  --accent: rgb(88, 124, 158);
+}
+
+.flex {
+  display: flex;
+}
+
+.navigation {
+  background: var(--accent);
+  height: 100%;
+  list-style: none;
+  padding-top:20px;
+}
+
+li {
+  padding: 10px 20px;
+
+}
+
+li:hover {
+  background: rgb(89, 155, 216);
+}
+
+a{
+  color:white !important;
+}
+
+a:hover{  
+  text-decoration: none !important;
+  
+}
+
+
 .App-logo {
   animation: App-logo-spin infinite 20s linear;
   height: 80px;

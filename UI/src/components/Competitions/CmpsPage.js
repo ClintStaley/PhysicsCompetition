@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux';
 import * as actionCreators from '../../actions/actionCreators';
 import { ListGroup, ListGroupItem} from 'react-bootstrap';
 import { ConfDialog } from '../concentrator';
-
+import './cmp.css';
 
 class CmpsPage extends Component {
    constructor(props) {
@@ -62,7 +62,7 @@ class CmpsPage extends Component {
         <h1>{props.showAll ? 'Join Competition' :  'My Competitions' }</h1>
 
         {props.showAll ?
-           <ListGroup>
+           <div className='grid'>
               {cmps && cmps.map((cmpId, i) => {
                 var cmp = Object.assign({}, props.cmps[cmpId]);
 
@@ -74,11 +74,11 @@ class CmpsPage extends Component {
                 return <CompetitionItem
                   key={i} {...cmp}/>
               })}
-           </ListGroup>
+           </div>
           :
           cmps && cmps.length ?
-          <ListGroup>
-           {cmps.map((cmpId, i) => {
+          <div className='grid'>
+          {cmps.map((cmpId, i) => {
              var cmp = Object.assign({}, props.cmps[cmpId]);
 
              cmp.link = '/MyCmpPage/' + cmp.id;
@@ -87,7 +87,7 @@ class CmpsPage extends Component {
 
              return <CompetitionItem key={i} {...cmp}/>
            })}
-           </ListGroup>
+           </div>
            :
            <h4>You are not in any competitions, see Join Competitions to join one</h4>
 
@@ -100,7 +100,7 @@ class CmpsPage extends Component {
 const CompetitionItem = function (props) {
    return (
       <ListGroupItem className="clearfix">
-         <Link to = {props.link} >{props.title}</Link>
+         <Link className='comp-item'to = {props.link} >{props.title}</Link>
           {props.joined ? '(already joined)' : ''}
 
           {props.joiningCmp ?
