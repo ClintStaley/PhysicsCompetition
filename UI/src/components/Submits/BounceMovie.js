@@ -9,13 +9,10 @@ export class BounceMovie {
    
    // Construct with background as indicated, and events drawn from prms and sbm
    constructor(frameRate, height, width, prms, sbm) {
-      const cG = 9.80665;                  // Gravity in m/s^2
+      const cG = 9.8067;                   // Gravity in m/s^2
       let tracks = sbm.testResult.events;  // Should be named tracks...
 
-      this.background = {};
-      this.background.frameRate = frameRate;
-      this.background.height = height;
-      this.background.width = width;
+      this.background = {frameRate, height, width};
       this.evts = [];
 
       // Targets numbered from 0
@@ -27,12 +24,12 @@ export class BounceMovie {
        this.addMakeTargetEvt(-1, prm.targets.length+idx, brr.loX, brr.hiX,
        brr.loY, brr.hiY));
 
-      let time = 0;
-      tracks.forEach((trk, ballId) => {             // One track per ball
-         trk.forEach((arc, arcId) => {              // Several arcs per track
-            if (arcId == 0)                         // Launching arc
+      let time = 0;                               // Time offset wrt whole movie
+      tracks.forEach((trk, ballId) => {           // One track per ball
+         trk.forEach((arc, arcId) => {            // Several arcs per track
+            if (arcId == 0)                       // Launching arc
                this.addBallLaunchEvt(time, ballId);
-            else if (arc.obstacleIdx >= 0) {        // If bouncing off something
+            else if (arc.obstacleIdx >= 0) {      // If bouncing off something
                if (arc.obstacleIdx < prms.targets.length)
                   this.addHitTargetEvt(time, arc.posX, arc.posY, ballId,
                    arc.obstacleIdx)
@@ -40,7 +37,7 @@ export class BounceMovie {
                   this.addHitBarrierEvt(time, arc.posX, arc.posY, ballId,
                    arc.obstacleIdx)
             }
-            else                                       // Exit "arc"
+            else                                  // Exit "arc"
                this.addBallExitEvt(time, arc.posX, arc.posY, ballId);
             
             // Create a sequence of ball positions, except for exit "arc"
