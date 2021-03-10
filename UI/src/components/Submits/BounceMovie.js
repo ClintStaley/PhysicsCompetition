@@ -48,7 +48,7 @@ export class BounceMovie {
                   let x = arc.posX + arcTime * arc.velocityX;
                   let y = arc.posY + arcTime * arc.velocityY
                    - cG*arcTime*arcTime/2;
-                  this.addBallPositionEvt(time, x, y, ballId);
+                  this.addBallPositionEvt(time + arcTime, x, y, ballId);
                }
                time += arcDuration;
             }
