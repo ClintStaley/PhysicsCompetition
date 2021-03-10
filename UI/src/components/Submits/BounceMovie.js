@@ -28,11 +28,11 @@ export class BounceMovie {
        brr.loY, brr.hiY));
 
       let time = 0;
-      sbm.testResult.tracks.forEach((trk, ballId) => { // One track per ball
-         trk.forEach((arc, arcId) => {                 // Several arcs per track
-            if (arcId == 0)                            // Launching arc
+      tracks.forEach((trk, ballId) => {             // One track per ball
+         trk.forEach((arc, arcId) => {              // Several arcs per track
+            if (arcId == 0)                         // Launching arc
                this.addBallLaunchEvt(time, ballId);
-            else if (arc.obstacleIdx >= 0) {           // Bouncing off trg/brr
+            else if (arc.obstacleIdx >= 0) {        // If bouncing off something
                if (arc.obstacleIdx < prms.targets.length)
                   this.addHitTargetEvt(time, arc.posX, arc.posY, ballId,
                    arc.obstacleIdx)
