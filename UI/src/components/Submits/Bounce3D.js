@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import * as THREE from "three";
 import { AmbientLightProbe } from "three";
 import "./Bounce.css";
+import Slider from 'react-rangeslider';
+import 'react-rangeslider/lib/index.css'
 
 export class Bounce3D extends React.Component {
   constructor(props) {
@@ -9,7 +11,8 @@ export class Bounce3D extends React.Component {
     this.state = {
       test: 15,
       playing: false,
-      time: 0,
+      delta: 0,
+      changedTime:false
     };
   }
 
@@ -79,16 +82,32 @@ export class Bounce3D extends React.Component {
 
   animate = (timestamp) => {
     if (this.state.playing) {
+
       if (!this.start) this.start = timestamp;
 
-      this.delta = timestamp - this.start;
+      this.frame(timestamp);
+      requestAnimationFrame(this.animate);
+    }
+  };
 
-      console.log(this.delta);
 
-      if (this.delta > this.duration) return;
+  frame = (timestamp, test) => {
+    console.log(`rerendering ${test}`)
 
+      var timePlaying = test ? test : timestamp - this.start;
+
+      if (timePlaying > this.duration) {
+        this.setState({playing:false});
+        return;
+      } 
+
+      if (test) {
+        this.evtIdx = 0;
+      }
+
+      this.setState({delta:timePlaying});
       var evts = [];
-      while (this.model.events[this.evtIdx].time * 100 < this.delta) {
+      while (this.model.events[this.evtIdx].time * 100 < timePlaying) {
         evts.push(this.model.events[this.evtIdx]);
         this.evtIdx++;
       }
@@ -104,19 +123,17 @@ export class Bounce3D extends React.Component {
         }
       }
 
-      this.setState({ time: this.state.time + 1 });
-      // vx += 0.001;
       this.renderer.render(this.scene, this.camera);
-      requestAnimationFrame(this.animate);
-    }
-  };
+  }
 
   render() {
     return (
       <div>
         <button
           onClick={() => {
-            this.setState({ playing: !this.state.playing }, () =>
+            this.start = undefined;
+            this.evtIdx = 0;
+            this.setState({ playing: true }, () =>
               this.animate()
             );
           }}
@@ -129,42 +146,15 @@ export class Bounce3D extends React.Component {
             this.mount = mount;
           }}
         ></div>
-        <div
-          id="slider-bg"
-          onMouseOver={(event) => {
-            let vratio = (event.clientX - 80) / event.target.getBoundingClientRect().width;
-            let start = vratio * this.duration;
-            this.setState({ time: start });
-
-            var evts = [];
-            var idx = 0;
-            while (this.model.events[idx].time * 100 < start) {
-              evts.push(this.model.events[idx]);
-              idx++;
-            }
-
-
-
-
-
+        <Slider
+          value={this.state.delta}
+          max={this.duration}
+          onChange={(value)=>{
+            this.setState({delta:value, changedTime:true})
+            this.frame(0, value)
+            
           }}
-          style={{
-            height: "11px",
-            width: "calc(100%)",
-            background: "white",
-            border: "solid 1px black",
-          }}
-        >
-          <div
-            id="slider"
-            style={{
-              height: "10px",
-              width: "10%",
-              background: "rgb(189, 63, 63)",
-              position: "relative",
-            }}
-          ></div>
-        </div>
+        />
       </div>
     );
   }
