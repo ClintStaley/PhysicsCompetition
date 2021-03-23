@@ -26,7 +26,7 @@ export class Bounce extends Component {
       this.props.prms.targets.forEach(() => obstacleStatus.push(true));
       this.props.prms.barriers.forEach(() => obstacleStatus.push(true));
 
-      return {frame : 0, obstacleStatus};
+      return { frame: 0, obstacleStatus , is2D: true};
    }
 
    // Any time props are updated (due to new sbm or even updated prms),
@@ -64,7 +64,7 @@ export class Bounce extends Component {
       return {
          xPos: (time) => (time * event.velocityX) + event.posX,
          yPos: (time) => (time * time * -this.G / 2)
-          + (time * event.velocityY) + event.posY
+            + (time * event.velocityY) + event.posY
       };
    }
 
@@ -84,9 +84,9 @@ export class Bounce extends Component {
       }
 
       // Run advanceFrame() at every frame
-      this.intervalID = setInterval( () => {
+      this.intervalID = setInterval(() => {
          this.advanceFrame(totalTime);
-      }, secondsToMiliseconds/frameRate);
+      }, secondsToMiliseconds / frameRate);
    }
 
    advanceFrame = (totalTime) => {
@@ -95,7 +95,7 @@ export class Bounce extends Component {
       if (++frame / this.frameRate > totalTime)
          this.stopMovie();
 
-      this.setState({frame, obstacleStatus: this.calculateObstacles(frame)});
+      this.setState({ frame, obstacleStatus: this.calculateObstacles(frame) });
    }
 
    stopMovie = () => {
@@ -104,7 +104,7 @@ export class Bounce extends Component {
 
    calculateObstacles = (frame) => {
       var events = this.props.sbm.testResult.events;
-      var time = frame/this.frameRate;
+      var time = frame / this.frameRate;
       var elapsedTime = 0;  // CAS FIX: Rename to baseTime
       var obstacleState = this.state.obstacleStatus.splice(0);
 
@@ -113,8 +113,8 @@ export class Bounce extends Component {
          eventArr.forEach((event) => {
             //checks if time is greater than collision time on obstacles
             if (event.obstacleIdx !== -1
-             && obstacleState[event.obstacleIdx]
-             && time > event.time + elapsedTime)
+               && obstacleState[event.obstacleIdx]
+               && time > event.time + elapsedTime)
                obstacleState[event.obstacleIdx] = false;
          });
          elapsedTime += eventArr[eventArr.length - 1].time;
@@ -135,45 +135,45 @@ export class Bounce extends Component {
       if (score) {
          testResult.events.forEach((ballArray) => {
             hits.push(<h4 key={"Ball #" + ballNum}
-            className={colors[(ballNum - 1) % numColors]}>Ball # {ballNum}</h4>)
+               className={colors[(ballNum - 1) % numColors]}>Ball # {ballNum}</h4>)
 
             //creates rows onb table, 4 sig figs on values
             ballArray.forEach((event) => {
                if (event.obstacleIdx !== -1 &&
-                !this.state.obstacleStatus[event.obstacleIdx])
+                  !this.state.obstacleStatus[event.obstacleIdx])
                   ballEvents.push(
-                  <tr key={"tableSummary" + eventNum++}>
-                    <th>{parseFloat(event.time.toFixed(4))}</th>
-                    <th>{parseFloat(event.posX.toFixed(4))}</th>
-                    <th>{parseFloat(event.posY.toFixed(4))}</th>
-                    <th>{parseFloat(event.velocityX.toFixed(4))}</th>
-                    <th>{parseFloat(event.velocityY.toFixed(4))}</th>
-                  </tr>);
+                     <tr key={"tableSummary" + eventNum++}>
+                        <th>{parseFloat(event.time.toFixed(4))}</th>
+                        <th>{parseFloat(event.posX.toFixed(4))}</th>
+                        <th>{parseFloat(event.posY.toFixed(4))}</th>
+                        <th>{parseFloat(event.velocityX.toFixed(4))}</th>
+                        <th>{parseFloat(event.velocityY.toFixed(4))}</th>
+                     </tr>);
             });
 
             hits.push(
-            <table key={"Summary" + ballNum++}>
-              <tbody>
-                <tr>
-                  <th>Time</th>
-                  <th>X Position</th>
-                  <th>Y Position</th>
-                  <th>X Velocity</th>
-                  <th>Y Velocity</th>
-                </tr>
-                {ballEvents}
-              </tbody>
-            </table>);
+               <table key={"Summary" + ballNum++}>
+                  <tbody>
+                     <tr>
+                        <th>Time</th>
+                        <th>X Position</th>
+                        <th>Y Position</th>
+                        <th>X Velocity</th>
+                        <th>Y Velocity</th>
+                     </tr>
+                     {ballEvents}
+                  </tbody>
+               </table>);
 
             ballEvents = [];
          });
       }
 
       return (
-      <div>
-        <h4>Platforms Hit: {testResult.obstaclesHit}</h4>
-          {hits}
-        </div>
+         <div>
+            <h4>Platforms Hit: {testResult.obstaclesHit}</h4>
+            {hits}
+         </div>
       )
    }
 
@@ -189,7 +189,7 @@ export class Bounce extends Component {
       var hashClass, offs, rect, grid, obstacles;
       var summary = null;
       var dimensions =
-       {fieldLength: this.fieldLength, fieldHeight: this.fieldHeight};
+         { fieldLength: this.fieldLength, fieldHeight: this.fieldHeight };
       var numObstacles = prms.targets.length;
 
       var fieldHeight = this.fieldHeight;
@@ -201,13 +201,13 @@ export class Bounce extends Component {
       grid = [];
       for (offs = graphOffset; offs < longerSide; offs += graphOffset) {
          hashClass = offs % (graphOffset * 2) ===
-          graphOffset ? "graph5B" : "graph10B";
+            graphOffset ? "graph5B" : "graph10B";
          grid.push(
-          <line key={"XL" + offs} x1={offs} y1="0" x2={offs} y2={fieldHeight}
-          className={hashClass}/>);
+            <line key={"XL" + offs} x1={offs} y1="0" x2={offs} y2={fieldHeight}
+               className={hashClass} />);
          grid.push(
-          <line key={"YL" + offs} x1="0" y1={offs} x2={fieldLength} y2={offs}
-          className={hashClass}/>);
+            <line key={"YL" + offs} x1="0" y1={offs} x2={fieldLength} y2={offs}
+               className={hashClass} />);
       }
 
 
@@ -216,55 +216,55 @@ export class Bounce extends Component {
 
       prms.barriers && prms.barriers.forEach((rect, idx) => {
          obstacles.push(
-          <rect key={"BR"+(idx)} x={rect.loX} y={fieldHeight-rect.hiY}
-          width={rect.hiX - rect.loX} height={rect.hiY - rect.loY}
-          className= {this.state.obstacleStatus[idx + numObstacles] ? "bPlatform" :
-          "hitBPlatform"}/>);
+            <rect key={"BR" + (idx)} x={rect.loX} y={fieldHeight - rect.hiY}
+               width={rect.hiX - rect.loX} height={rect.hiY - rect.loY}
+               className={this.state.obstacleStatus[idx + numObstacles] ? "bPlatform" :
+                  "hitBPlatform"} />);
 
-          var classLeft = (rect.hiX - rect.loX) > .8 ? "text" : "rhsText";
-          var classRight = (rect.hiX - rect.loX) > .8 ? "rhsText" : "text";
+         var classLeft = (rect.hiX - rect.loX) > .8 ? "text" : "rhsText";
+         var classRight = (rect.hiX - rect.loX) > .8 ? "rhsText" : "text";
 
          obstacles.push(
-          <text key={"BUL"+idx} x={rect.loX} y={fieldHeight-rect.hiY+.13}
-          className={classLeft}>{"(" + rect.loX + "," + rect.hiY + ")"}</text>);
+            <text key={"BUL" + idx} x={rect.loX} y={fieldHeight - rect.hiY + .13}
+               className={classLeft}>{"(" + rect.loX + "," + rect.hiY + ")"}</text>);
          obstacles.push(
-          <text key={"BUR"+idx} x={rect.hiX} y={fieldHeight-rect.hiY+.13}
-          className={classRight}>{"(" + rect.hiX + "," + rect.hiY + ")"}</text>);
+            <text key={"BUR" + idx} x={rect.hiX} y={fieldHeight - rect.hiY + .13}
+               className={classRight}>{"(" + rect.hiX + "," + rect.hiY + ")"}</text>);
          obstacles.push(
-          <text key={"BLL"+idx} x={rect.loX} y={fieldHeight-rect.loY-.05}
-          className={classLeft}>{"(" + rect.loX + "," + rect.loY + ")"}</text>);
+            <text key={"BLL" + idx} x={rect.loX} y={fieldHeight - rect.loY - .05}
+               className={classLeft}>{"(" + rect.loX + "," + rect.loY + ")"}</text>);
          obstacles.push(
-          <text key={"BLR"+idx} x={rect.hiX} y={fieldHeight-rect.loY-.05}
-          className={classRight}>{"(" + rect.hiX + "," + rect.loY + ")"}</text>);
+            <text key={"BLR" + idx} x={rect.hiX} y={fieldHeight - rect.loY - .05}
+               className={classRight}>{"(" + rect.hiX + "," + rect.loY + ")"}</text>);
       });
 
       prms.targets.forEach((rect, idx) => {
          obstacles.push(
-          <rect key={"R"+idx} x={rect.loX} y={fieldHeight-rect.hiY}
-          width={rect.hiX - rect.loX} height={rect.hiY - rect.loY}
-          className= {this.state.obstacleStatus[idx] ? "platform" :
-          "hitPlatform"}/>);
+            <rect key={"R" + idx} x={rect.loX} y={fieldHeight - rect.hiY}
+               width={rect.hiX - rect.loX} height={rect.hiY - rect.loY}
+               className={this.state.obstacleStatus[idx] ? "platform" :
+                  "hitPlatform"} />);
 
          var classLeft = (rect.hiX - rect.loX) > .8 ? "text" : "rhsText";
          var classRight = (rect.hiX - rect.loX) > .8 ? "rhsText" : "text";
 
          var highY = rect.hiY - rect.loY > .3 ? rect.hiY :
-           ((0.3 - (rect.hiY - rect.loY))/2) + rect.hiY;
+            ((0.3 - (rect.hiY - rect.loY)) / 2) + rect.hiY;
          var lowY = rect.hiY - rect.loY > .3 ? rect.loY :
-           rect.loY - ((0.3 - (rect.hiY - rect.loY))/2);
+            rect.loY - ((0.3 - (rect.hiY - rect.loY)) / 2);
 
          obstacles.push(
-          <text key={"UL"+idx} x={rect.loX} y={fieldHeight-highY+.13}
-          className={classLeft}>{"(" + rect.loX + "," + rect.hiY + ")"}</text>);
+            <text key={"UL" + idx} x={rect.loX} y={fieldHeight - highY + .13}
+               className={classLeft}>{"(" + rect.loX + "," + rect.hiY + ")"}</text>);
          obstacles.push(
-          <text key={"UR"+idx} x={rect.hiX} y={fieldHeight-highY+.13}
-          className={classRight}>{"(" + rect.hiX + "," + rect.hiY + ")"}</text>);
+            <text key={"UR" + idx} x={rect.hiX} y={fieldHeight - highY + .13}
+               className={classRight}>{"(" + rect.hiX + "," + rect.hiY + ")"}</text>);
          obstacles.push(
-          <text key={"LL"+idx} x={rect.loX} y={fieldHeight-lowY-.05}
-          className={classLeft}>{"(" + rect.loX + "," + rect.loY + ")"}</text>);
+            <text key={"LL" + idx} x={rect.loX} y={fieldHeight - lowY - .05}
+               className={classLeft}>{"(" + rect.loX + "," + rect.loY + ")"}</text>);
          obstacles.push(
-          <text key={"LR"+idx} x={rect.hiX} y={fieldHeight-lowY-.05}
-          className={classRight}>{"(" + rect.hiX + "," + rect.loY + ")"}</text>);
+            <text key={"LR" + idx} x={rect.hiX} y={fieldHeight - lowY - .05}
+               className={classRight}>{"(" + rect.hiX + "," + rect.loY + ")"}</text>);
       });
 
       if (sbm && sbm.testResult && sbm.score)
@@ -273,41 +273,48 @@ export class Bounce extends Component {
       var readyRun = !sbm || !sbm.testResult;
 
       return (<section className="container">
-        <h2>Problem Diagram</h2>
-        <Bounce3D events={sbm.testResult.events}/>
-        <Button className="pull-right" disabled = {readyRun}
-         onClick={() => this.replay()}>Replay</Button>
-        <Button className="pull-right" disabled = {readyRun}
-         onClick={() => this.stopMovie()}>Pause</Button>
-        <Button className="pull-right" disabled = {readyRun}
-         onClick={() => this.startMovie(sbm.testResult.events)}>Play</Button>
-        <svg viewBox={"-.1 -.1 " + (fieldLength + .1) + " " + (fieldHeight + .1)}
-         width="100%" className="panel">
-          <rect x="0" y="0" width={fieldLength} height={fieldHeight}
-           className="graphBkg"/>
-          {grid}
-          {obstacles}
+         <h2>Problem Diagram</h2>
 
-          {sbm && sbm.testResult ?
-          <g>
-            <BallManager frameRate = {this.frameRate}
-             frame = {this.state.frame}
-             events = {sbm.testResult.events}
-             positionEquations = {this.positionEquations}
-             colors = {this.colors}
-             dimensions = {dimensions}/>
+            <button onClick={()=>{this.setState({is2D:!this.state.is2D})}}>switch view</button>
 
-            <TrackManager
-             frameRate = {this.frameRate}
-             frame = {this.state.frame}
-             events = {sbm.testResult.events}
-             positionEquations = {this.positionEquations}
-             colors = {this.colors}
-             dimensions = {dimensions}/>
-          </g>
-          : ''}
-        </svg>
-        {summary}
+            {this.state.is2D ? <div>
+               <ButtonBar 
+                  play={() => this.startMovie(sbm.testResult.events)} 
+                  replay={() => this.replay()} 
+                  pause={() => this.stopMovie()} 
+               />
+
+               <svg viewBox={"-.1 -.1 " + (fieldLength + .1) + " " + (fieldHeight + .1)}
+                  width="100%" className="panel">
+                  <rect x="0" y="0" width={fieldLength} height={fieldHeight}
+                     className="graphBkg" />
+                  {grid}
+                  {obstacles}
+
+                  {sbm && sbm.testResult ?
+                     <g>
+                        <BallManager frameRate={this.frameRate}
+                           frame={this.state.frame}
+                           events={sbm.testResult.events}
+                           positionEquations={this.positionEquations}
+                           colors={this.colors}
+                           dimensions={dimensions} />
+
+                        <TrackManager
+                           frameRate={this.frameRate}
+                           frame={this.state.frame}
+                           events={sbm.testResult.events}
+                           positionEquations={this.positionEquations}
+                           colors={this.colors}
+                           dimensions={dimensions} />
+                     </g>
+                     : ''}
+               </svg>
+               </div> : 
+                  <Bounce3D movie={new BounceMovie(60, prms, sbm)}/>
+            }
+            
+         {summary}
       </section>);
    }
 }
@@ -331,12 +338,12 @@ class BallManager extends Component {
 
          for (var idxB = 0; idxB < events[idxA].length; idxB++) {
             nextEvent = events[idxA][idxB];
-            if (nextEvent.time + timeElapsed > currentTime ) {
+            if (nextEvent.time + timeElapsed > currentTime) {
                break;
             }
             event = nextEvent;
          }
-         if (nextEvent.time + timeElapsed > currentTime ) {
+         if (nextEvent.time + timeElapsed > currentTime) {
             break;
          }
          //makes sure there is another ball
@@ -346,11 +353,11 @@ class BallManager extends Component {
 
       var equations = props.positionEquations(event);
 
-      return (  <circle key={"crc"}
-       cx={equations.xPos(currentTime - timeElapsed - event.time)}
-       cy={fieldHeight - equations.yPos(currentTime - timeElapsed - event.time)}
-       r = {.1}
-       className={'ball ' + props.colors[ballNum % 5]}/>);
+      return (<circle key={"crc"}
+         cx={equations.xPos(currentTime - timeElapsed - event.time)}
+         cy={fieldHeight - equations.yPos(currentTime - timeElapsed - event.time)}
+         r={.1}
+         className={'ball ' + props.colors[ballNum % 5]} />);
    }
 }
 
@@ -362,19 +369,19 @@ class TrackManager extends Component {
       var elapsedTime = 0;
 
       // Push all arcs
-      for ( var trackNum = 0; trackNum < props.events.length; trackNum++ ) {
+      for (var trackNum = 0; trackNum < props.events.length; trackNum++) {
          ballTracks.push(
-           <BallTrack key={"BallTrack" + trackNum}
-            startTime = {elapsedTime}
-            frameRate = {props.frameRate}
-            currentTime = {props.frame/props.frameRate}
-            color = {this.props.colors[trackNum % 5]}
-            positionEquations = {this.props.positionEquations}
-            events = {this.props.events[trackNum]}
-            dimensions = {this.props.dimensions}/>);
+            <BallTrack key={"BallTrack" + trackNum}
+               startTime={elapsedTime}
+               frameRate={props.frameRate}
+               currentTime={props.frame / props.frameRate}
+               color={this.props.colors[trackNum % 5]}
+               positionEquations={this.props.positionEquations}
+               events={this.props.events[trackNum]}
+               dimensions={this.props.dimensions} />);
 
          elapsedTime += this.props
-          .events[trackNum][this.props.events[trackNum].length - 1].time;
+            .events[trackNum][this.props.events[trackNum].length - 1].time;
       }
       return (<g> {ballTracks} </g>);
    }
@@ -388,13 +395,13 @@ class BallTrack extends Component {
 
       //need to re-render, the ball has been reset
       if (nextProps.currentTime < props.currentTime &&
-       props.startTime > props.currentTime)
+         props.startTime > props.currentTime)
          return true;
 
       //returns true iff current time is between event start time and end time
       return (nextProps.currentTime >= props.startTime) ||
-       (props.currentTime <=  props.events[props.events.length - 1].time
-       + props.startTime);
+         (props.currentTime <= props.events[props.events.length - 1].time
+            + props.startTime);
    }
 
    render() {
@@ -402,17 +409,17 @@ class BallTrack extends Component {
       var ballTrack = [];
 
       //push all arcs
-      for (var eventNum = 0; eventNum < props.events.length - 1; eventNum++ ) {
+      for (var eventNum = 0; eventNum < props.events.length - 1; eventNum++) {
          ballTrack.push(
-         <BallArc key={"BallArc" + eventNum}
-          startTime = {props.startTime}
-          endTime = {props.events[eventNum + 1].time}
-          frameRate = {props.frameRate}
-          currentTime = {props.currentTime}
-          color = {props.color}
-          positionEquations = {this.props.positionEquations}
-          event = {props.events[eventNum]}
-          dimensions = {props.dimensions}/>);
+            <BallArc key={"BallArc" + eventNum}
+               startTime={props.startTime}
+               endTime={props.events[eventNum + 1].time}
+               frameRate={props.frameRate}
+               currentTime={props.currentTime}
+               color={props.color}
+               positionEquations={this.props.positionEquations}
+               event={props.events[eventNum]}
+               dimensions={props.dimensions} />);
       }
 
       return (<g> {ballTrack} </g>);
@@ -426,13 +433,13 @@ class BallArc extends Component {
 
       //need to re-render, the ball has been reset
       if (nextProps.currentTime < props.currentTime &&
-       props.startTime + props.event.time > props.currentTime)
+         props.startTime + props.event.time > props.currentTime)
          return true;
 
       //returns true iff current time is after arc start,
       //and before arc end time
       return (nextProps.currentTime >= props.startTime + props.event.time) ||
-       (props.currentTime <= props.endTime + props.startTime);
+         (props.currentTime <= props.endTime + props.startTime);
    }
 
    render() {
@@ -445,38 +452,38 @@ class BallArc extends Component {
       var equations = props.positionEquations(props.event);
 
       //the current time is before the start
-      if ( event.time + props.startTime >= props.currentTime )
+      if (event.time + props.startTime >= props.currentTime)
          color += " invisible";
 
       //push the initial collision, not first event
       if (event.time !== 0.0)
          ballArc.push(<circle key={"ArcStart" + event.time}
-          cx={equations.xPos(0)}
-          cy={fieldHeight - equations.yPos(0)}
-          r = {.1}
-          className={"ball faded " + color}/>);
+            cx={equations.xPos(0)}
+            cy={fieldHeight - equations.yPos(0)}
+            r={.1}
+            className={"ball faded " + color} />);
 
       var startTime =
-       (Math.ceil(event.time * props.frameRate) / props.frameRate);
+         (Math.ceil(event.time * props.frameRate) / props.frameRate);
 
       for (var timer = startTime - event.time;
-       timer < props.endTime - event.time; timer += 1.0/props.frameRate ){
+         timer < props.endTime - event.time; timer += 1.0 / props.frameRate) {
          color = props.color;
 
          if (props.startTime + startTime + timer >= props.currentTime)
             color += " invisible";
 
          ballArc.push(<circle key={"ArcPoint" + (timer + props.startTime)}
-          cx={equations.xPos(timer)}
-          cy={fieldHeight - equations.yPos(timer)}
-          r = {.02}
-          className={color}/>);
+            cx={equations.xPos(timer)}
+            cy={fieldHeight - equations.yPos(timer)}
+            r={.02}
+            className={color} />);
       }
 
       return (
-      <g>
-        {ballArc}
-      </g>
+         <g>
+            {ballArc}
+         </g>
       );
    }
 }
