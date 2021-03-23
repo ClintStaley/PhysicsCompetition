@@ -1,0 +1,14 @@
+.bar-button {
+    background: var(--accent);
+    color: white !important;
+    border: solid 2px var(--accent);
+    border-radius: 2px;
+    margin: 4px;
+    outline: none;
+    transition: .1s;
+}
+
+.bar-button:hover {
+    background: white;
+    color: var(--accent) !important;
+}
