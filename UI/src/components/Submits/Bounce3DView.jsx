@@ -5,7 +5,7 @@ import "./Bounce.css";
 import Slider from 'react-rangeslider';
 import 'react-rangeslider/lib/index.css'
 
-export class Bounce3D extends React.Component {
+export class Bounce3DView extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -29,9 +29,16 @@ export class Bounce3D extends React.Component {
 
     this.mount.appendChild(this.renderer.domElement);
 
-    this.camera = new THREE.PerspectiveCamera(100, width / height, 0.1, 1000);
+    const left = -20;
+    const right = 20;
+    const top = 20;
+    const bottom = -20;
+    const near = 5;
+    const far = 50;
+    this.camera = new THREE.OrthographicCamera(left, right, top, bottom, near, far);
+        //  = new THREE.PerspectiveCamera(100, width / height, 0.1, 1000);
     this.camera.position.z = 20;
-    this.camera.position.y = 20;
+    this.camera.position.y = 0;
 
     this.scene.add(this.camera);
 
@@ -49,8 +56,8 @@ export class Bounce3D extends React.Component {
       color: "#555",
     });
     this.ball = new THREE.Mesh(geometry, material);
-    this.ball.position.y = 28.5;
-    this.ball.position.x = -13.5;
+    this.ball.position.y = -1;
+    this.ball.position.x = 0;
     this.scene.add(this.ball);
 
     this.start;
@@ -65,19 +72,29 @@ export class Bounce3D extends React.Component {
   }
 
   setup = () => {
-    const set = this.model.events.filter((evt) => evt.time < 0);
+    console.log(this.props.movie.evts);
+    const set = this.props.movie.evts.filter((evt) => evt.time < 0);//this.model.events.filter((evt) => evt.time < 0);
+    let brr = set[0]
+    const width = brr.hiX - brr.loX;
+    const height = brr.hiY - brr.loY;
+    const geometry = new THREE.BoxGeometry(width, height, 3);
+    const material = new THREE.MeshPhongMaterial({ color: `#123` });
+    const barrier = new THREE.Mesh(geometry, material);
+    barrier.position.x = brr.loX;
+    barrier.position.y = brr.loY;
+    this.scene.add(barrier);
 
-    set.forEach((brr) => {
-      const width = brr.hiX - brr.loX;
-      const height = brr.hiY - brr.loY;
-      const geometry = new THREE.BoxGeometry(width, height, 3);
-      const material = new THREE.MeshPhongMaterial({ color: "#678" });
-      const barrier = new THREE.Mesh(geometry, material);
-      barrier.position.x = brr.loX;
-      barrier.position.y = brr.loY;
-      this.scene.add(barrier);
-      this.evtIdx++;
-    });
+    // set.forEach((brr, idx) => {
+    //   const width = brr.hiX - brr.loX;
+    //   const height = brr.hiY - brr.loY;
+    //   const geometry = new THREE.BoxGeometry(width, height, 3);
+    //   const material = new THREE.MeshPhongMaterial({ color: `#${1 + idx}${2 + idx}${3 + idx}` });
+    //   const barrier = new THREE.Mesh(geometry, material);
+    //   barrier.position.x = brr.loX;
+    //   barrier.position.y = brr.loY;
+    //   this.scene.add(barrier);
+    //   this.evtIdx++;
+    // });
   };
 
   animate = (timestamp) => {
@@ -127,6 +144,7 @@ export class Bounce3D extends React.Component {
   }
 
   render() {
+    console.log(this.props.movie);
     return (
       <div>
         <button
