@@ -1,21 +1,21 @@
+const cBallPosition = 0;
+const cMakeBarrier = 1;
+const cMakeTarget = 2;
+const cHitTarget = 3;
+const cHitBarrier = 4;
+const cBallLaunch = 5;
+const cBallExit = 6;
 export class BounceMovie {
-   const cBallPosition = 0;
-   const cMakeBarrier = 1;
-   const cMakeTarget = 2;
-   const cHitTarget = 3;
-   const cHitbarrier = 4;
-   const cBallLaunch = 5;
-   const cBallExit = 6;
    
    // Construct with background as indicated, and events drawn from prms and sbm
-   constructor(frameRate, height, width, prms, sbm) {
+   constructor(frameRate, prms, sbm) {
       const cG = 9.80665;                  // Gravity in m/s^2
       let tracks = sbm.testResult.events;  // Should be named tracks...
 
       this.background = {};
       this.background.frameRate = frameRate;
-      this.background.height = height;
-      this.background.width = width;
+      // this.background.height = height;
+      // this.background.width = width;
       this.evts = [];
 
       // Targets numbered from 0
@@ -23,12 +23,13 @@ export class BounceMovie {
        this.addMakeTargetEvt(-1, idx, trg.loX, trg.hiX, trg.loY, trg.hiY));
 
       // Barriers numbered from targets.length
-      prms.barriers.forEach((brr, idx) => 
-       this.addMakeTargetEvt(-1, prm.targets.length+idx, brr.loX, brr.hiX,
-       brr.loY, brr.hiY));
+      prms.barriers.forEach((brr, idx) => {
+       console.log(brr);
+       this.addMakeTargetEvt(-1, prms.targets.length+idx, brr.loX, brr.hiX,
+       brr.loY, brr.hiY)});
 
       let time = 0;
-      sbm.testResult.tracks.forEach((trk, ballId) => { // One track per ball
+      tracks.forEach((trk, ballId) => { // One track per ball
          trk.forEach((arc, arcId) => {                 // Several arcs per track
             if (arcId == 0)                            // Launching arc
                this.addBallLaunchEvt(time, ballId);
