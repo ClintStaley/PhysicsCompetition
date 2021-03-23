@@ -1,5 +1,5 @@
 .form {
-    background-color: #2C858D;
+    background-color: var(--accent);
     object-fit: contain;
     padding: 40px;
     border-radius: 15px;
@@ -30,25 +30,25 @@
 }
 
 .signin {
-    background-color: #FFF7E1;
+    background-color: white;
 }
 
 .submit {
     background-color: transparent;
     border: none;
-    color: #FFF7E1;
+    color: white;
     font-weight: 800;
     margin-top: 20px;
     padding: 8px;
     border-radius: 5px;
-    border: solid 3px #FFF7E1;
+    border: solid 3px white;
     transition: .2s;
 }
 
 .submit:hover {
-    background-color: #FFF7E1;
+    background-color: white;
 
-    color: #2C858D;
+    color: var(--accent);
 }
 
 @media (max-width: 1000px) {

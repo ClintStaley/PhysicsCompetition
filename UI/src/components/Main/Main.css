@@ -3,7 +3,8 @@
 }
 
 :root {
-  --accent: rgb(88, 124, 158);
+  --accent: rgb(88, 130, 158);
+  --main: rgb(63, 66, 68);
 }
 
 .flex {
@@ -11,7 +12,7 @@
 }
 
 .navigation {
-  background: var(--accent);
+  background: var(--main);
   height: 100%;
   list-style: none;
   padding-top:20px;

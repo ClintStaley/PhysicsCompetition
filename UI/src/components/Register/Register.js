@@ -181,7 +181,6 @@ class Register extends Component {
           </div>
         </form>
 
-        <img src={register_illustration} alt="Register"></img>
         {this.state.password !== this.state.passwordTwo ?
           <Alert bsStyle="warning">
             Passwords do not match.

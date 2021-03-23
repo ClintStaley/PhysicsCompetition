@@ -16,6 +16,7 @@ form {
     justify-content: space-evenly;
     background-color: #FFF7E1;
     padding: 50px;
+    margin: 30px;
 }
 
 @media (max-width: 1000px) {

@@ -56,9 +56,6 @@ class Main extends Component {
                 {this.signedIn() ?
                   // User is signed in
                   [
-                    <span key={3}>
-                  {`Signed in as: ${this.props.prs.firstName} ${this.props.prs.lastName}`}
-                </span>,
                     <LinkContainer key={0} to="/MyCmpsPage" >
                       <NavItem>My Competitions</NavItem>
                     </LinkContainer>,
