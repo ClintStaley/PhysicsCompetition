@@ -33,7 +33,7 @@ export class BounceMovie {
          trk.forEach((arc, arcId) => {                 // Several arcs per track
             if (arcId == 0)                            // Launching arc
                this.addBallLaunchEvt(time, ballId);
-            else if (arc.obstacleIdx >= 0) {           // Bouncing off trg/brr
+            else if (arc.obstacleIdx >= 0) {      // If bouncing off something
                if (arc.obstacleIdx < prms.targets.length)
                   this.addHitTargetEvt(time, arc.posX, arc.posY, ballId,
                    arc.obstacleIdx)
@@ -41,7 +41,7 @@ export class BounceMovie {
                   this.addHitBarrierEvt(time, arc.posX, arc.posY, ballId,
                    arc.obstacleIdx)
             }
-            else                                       // Exit "arc"
+            else                                  // Exit "arc"
                this.addBallExitEvt(time, arc.posX, arc.posY, ballId);
             
             // Create a sequence of ball positions, except for exit "arc"
@@ -52,7 +52,7 @@ export class BounceMovie {
                   let x = arc.posX + arcTime * arc.velocityX;
                   let y = arc.posY + arcTime * arc.velocityY
                    - cG*arcTime*arcTime/2;
-                  this.addBallPositionEvt(time, x, y, ballId);
+                  this.addBallPositionEvt(time + arcTime, x, y, ballId);
                }
                time += arcDuration;
             }
