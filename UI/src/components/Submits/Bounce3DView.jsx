@@ -62,7 +62,7 @@ export class Bounce3DView extends React.Component {
       this.renderer.render(this.scene, this.camera);
    }
 
-   setup = () => {
+   setup () {
       const set = this.props.movie.evts.filter((evt) => evt.time < 0);
       const r = 5;
       const geometry = new THREE.SphereGeometry(r, 32, 16);
@@ -87,7 +87,7 @@ export class Bounce3DView extends React.Component {
       });
    };
 
-   animate = (timestamp) => {
+   animate (timestamp) {
       if (this.state.playing) {
 
          if (!this.start) this.start = timestamp;
@@ -97,7 +97,7 @@ export class Bounce3DView extends React.Component {
       }
    };
 
-   setFrame = (timestamp, specificTime) => {
+   setFrame (timestamp, specificTime){
       var timePlaying = specificTime ? specificTime : timestamp - this.start;
 
       if (timePlaying > this.duration) {
