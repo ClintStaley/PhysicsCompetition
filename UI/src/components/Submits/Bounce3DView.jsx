@@ -87,7 +87,7 @@ export class Bounce3DView extends React.Component {
       });
    };
 
-   animate = (timestamp) => {
+   play = (timestamp) => {
       if (this.state.playing) {
 
          if (!this.start) this.start = timestamp;
