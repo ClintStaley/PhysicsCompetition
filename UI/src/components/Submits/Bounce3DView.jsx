@@ -56,7 +56,7 @@ export class Bounce3DView extends React.Component {
       this.d2 = 0;
       this.frames = 0;
       this.duration = this.model.events[this.model.events.length - 1].time * 100;
-      // this.animate();
+      // this.play();
 
       this.setup();
       this.renderer.render(this.scene, this.camera);
@@ -87,13 +87,13 @@ export class Bounce3DView extends React.Component {
       });
    };
 
-   animate (timestamp) {
+   play = (timestamp) => {
       if (this.state.playing) {
 
          if (!this.start) this.start = timestamp;
 
          this.frame(timestamp);
-         requestAnimationFrame(this.animate);
+         requestAnimationFrame(this.play);
       }
    };
 
@@ -141,7 +141,7 @@ export class Bounce3DView extends React.Component {
                   this.start = undefined;
                   this.evtIdx = 0;
                   this.setState({ playing: true }, () =>
-                     this.animate()
+                     this.play()
                   );
                }}
             >

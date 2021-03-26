@@ -1,21 +1,22 @@
-const cBallPosition = 0;
-const cMakeBarrier = 1;
-const cMakeTarget = 2;
-const cHitTarget = 3;
-const cHitBarrier = 4;
-const cBallLaunch = 5;
-const cBallExit = 6;
 export class BounceMovie {
-   
+   static cBallPosition = 0;
+   static cMakeBarrier = 1;
+   static cMakeTarget = 2;
+   static cHitTarget = 3;
+   static cHitBarrier = 4;
+   static cBallLaunch = 5;
+   static cBallExit = 6;
+
    // Construct with background as indicated, and events drawn from prms and sbm
    constructor(frameRate, prms, sbm) {
       const cG = 9.80665;                  // Gravity in m/s^2
+      const bkgSize = 10.0;                // Standard field size
       let tracks = sbm.testResult.events;  // Should be named tracks...
 
       this.background = {};
       this.background.frameRate = frameRate;
-      // this.background.height = height;
-      // this.background.width = width;
+      this.background.height = bkgSize;
+      this.background.width = bkgSize;
       this.evts = [];
 
       // Targets numbered from 0
@@ -30,8 +31,8 @@ export class BounceMovie {
 
       let time = 0;
       tracks.forEach((trk, ballId) => { // One track per ball
-         trk.forEach((arc, arcId) => {                 // Several arcs per track
-            if (arcId == 0)                            // Launching arc
+         trk.forEach((arc, arcId) => {           // Several arcs per track
+            if (arcId == 0)                      // Launching arc
                this.addBallLaunchEvt(time, ballId);
             else if (arc.obstacleIdx >= 0) {      // If bouncing off something
                if (arc.obstacleIdx < prms.targets.length)
