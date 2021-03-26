@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './MovieBarController.css';
 
-export class MovieControllerBar extends Component {
+export class MovieController extends Component {
 
    render() {
       return (
