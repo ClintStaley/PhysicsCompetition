@@ -62,6 +62,10 @@ export class Bounce3DView extends React.Component {
       this.renderer.render(this.scene, this.camera);
    }
 
+   getLabel() {
+      return '3D';
+   }
+
    setup () {
       const set = this.props.movie.evts.filter((evt) => evt.time < 0);
       const r = 5;

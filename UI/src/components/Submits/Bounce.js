@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { Bounce3D } from './Bounce3D';
+import { Bounce3DView } from './Bounce3DView';
 import { BounceMovie } from './BounceMovie';
-import { ButtonBar } from './ButtonBar';
+import { MovieController } from './MovieController';
 
 import './Bounce.css'
 import { Sphere } from 'three';
@@ -275,45 +275,41 @@ export class Bounce extends Component {
       return (<section className="container">
          <h2>Problem Diagram</h2>
 
-            <button onClick={()=>{this.setState({is2D:!this.state.is2D})}}>switch view</button>
-
-            {this.state.is2D ? <div>
-               <ButtonBar 
+               <MovieController
                   play={() => this.startMovie(sbm.testResult.events)} 
                   replay={() => this.replay()} 
                   pause={() => this.stopMovie()} 
+                  views={[<Bounce3DView movie={new BounceMovie(60, prms, sbm)}/>,
+               //       <svg viewBox={"-.1 -.1 " + (fieldLength + .1) + " " + (fieldHeight + .1)}
+               //    width="100%" className="panel">
+               //    <rect x="0" y="0" width={fieldLength} height={fieldHeight}
+               //       className="graphBkg" />
+               //    {grid}
+               //    {obstacles}
+
+               //    {sbm && sbm.testResult ?
+               //       <g>
+               //          <BallManager frameRate={this.frameRate}
+               //             frame={this.state.frame}
+               //             events={sbm.testResult.events}
+               //             positionEquations={this.positionEquations}
+               //             colors={this.colors}
+               //             dimensions={dimensions} />
+
+               //          <TrackManager
+               //             frameRate={this.frameRate}
+               //             frame={this.state.frame}
+               //             events={sbm.testResult.events}
+               //             positionEquations={this.positionEquations}
+               //             colors={this.colors}
+               //             dimensions={dimensions} />
+               //       </g>
+               //       : ''}
+               // </svg>
+                  ]}
                />
 
-               <svg viewBox={"-.1 -.1 " + (fieldLength + .1) + " " + (fieldHeight + .1)}
-                  width="100%" className="panel">
-                  <rect x="0" y="0" width={fieldLength} height={fieldHeight}
-                     className="graphBkg" />
-                  {grid}
-                  {obstacles}
-
-                  {sbm && sbm.testResult ?
-                     <g>
-                        <BallManager frameRate={this.frameRate}
-                           frame={this.state.frame}
-                           events={sbm.testResult.events}
-                           positionEquations={this.positionEquations}
-                           colors={this.colors}
-                           dimensions={dimensions} />
-
-                        <TrackManager
-                           frameRate={this.frameRate}
-                           frame={this.state.frame}
-                           events={sbm.testResult.events}
-                           positionEquations={this.positionEquations}
-                           colors={this.colors}
-                           dimensions={dimensions} />
-                     </g>
-                     : ''}
-               </svg>
-               </div> : 
-                  <Bounce3D movie={new BounceMovie(60, prms, sbm)}/>
-            }
-            
+                        
          {summary}
       </section>);
    }
