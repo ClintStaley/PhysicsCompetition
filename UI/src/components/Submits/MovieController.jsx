@@ -9,16 +9,17 @@ export class MovieController extends Component {
          currentViewIdx : 0,
          frame : 0
       };
+      this.currentView = new props.views[this.state.currentViewIdx];
+
    }
 
    render() {
 
-      var currentView = new this.props.views[this.state.currentViewIdx];
       //var CurrentViewComponent = this.props.views[0];
       return (
          <div>
             <div>
-               <button className='bar-button' onClick={currentView.play}>Play</button>
+               <button className='bar-button' onClick={this.currentView.play}>Play</button>
                <button className='bar-button' onClick={this.props.pause}>Pause</button>
                <button className='bar-button' onClick={this.props.replay}>Replay</button>
             </div>
@@ -33,7 +34,7 @@ export class MovieController extends Component {
                   </button>
                )
             }
-            {currentView.render()}
+            {this.currentView.render()}
          </div>
 
          );
