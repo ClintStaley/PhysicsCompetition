@@ -8,6 +8,7 @@ import 'react-rangeslider/lib/index.css'
 export class Bounce3DView extends React.Component {
    constructor(props) {
       super(props);
+      this.random = Math.random()*1000;
       this.state = {
          test: 15,
          playing: false,
@@ -29,14 +30,14 @@ export class Bounce3DView extends React.Component {
 
       this.mount.appendChild(this.renderer.domElement);
 
-      this.fov = 50;
+      this.fov = 100;
       const aspect = 2;
       const near = .1;
       const far = 25;
       this.camera = new THREE.PerspectiveCamera(this.fov, aspect, near, far);
       //  = new THREE.PerspectiveCamera(100, width / height, 0.1, 1000);
-      this.camera.position.z = 20;
-      this.camera.position.y = 0;
+      this.camera.position.z = 5;
+      this.camera.position.y = 10;
 
       this.scene.add(this.camera);
 
@@ -54,9 +55,8 @@ export class Bounce3DView extends React.Component {
       this.start;
       this.delta;
       this.d2 = 0;
-      this.frames = 0;
+      this.setFrames = 0;
       this.duration = this.model.events[this.model.events.length - 1].time * 100;
-      // this.play();
 
       this.setup();
       this.renderer.render(this.scene, this.camera);
@@ -68,7 +68,7 @@ export class Bounce3DView extends React.Component {
 
    setup () {
       const set = this.props.movie.evts.filter((evt) => evt.time < 0);
-      const r = 5;
+      const r = 1;
       const geometry = new THREE.SphereGeometry(r, 32, 16);
       const material = new THREE.MeshPhongMaterial({
          color: "#555",
@@ -81,23 +81,35 @@ export class Bounce3DView extends React.Component {
       set.forEach((brr, idx) => {
          const width = brr.hiX - brr.loX;
          const height = brr.hiY - brr.loY;
-         const geometry = new THREE.BoxGeometry(width, height, 3);
+         const geometry = new THREE.BoxGeometry(width, height, 1);
          const material = new THREE.MeshPhongMaterial({ color: `#${1 + idx}${2 + idx}${3 + idx}` });
          const barrier = new THREE.Mesh(geometry, material);
-         barrier.position.x = brr.loX;
          barrier.position.y = brr.loY;
+         barrier.position.z = 1;
+         barrier.position.x = brr.loX;
          this.scene.add(barrier);
          this.evtIdx++;
       });
    };
 
-   play = (timestamp) => {
+   play = () => {
+      console.log('play')
+      console.log(this.random)
+      this.start = undefined;
+      this.evtIdx = 0;
+      this.setState({ playing: true }, () =>
+         this.animate()
+      );
+   }
+
+   animate = (timestamp) => {
+      console.log('clicked')
       if (this.state.playing) {
 
          if (!this.start) this.start = timestamp;
 
-         this.frame(timestamp);
-         requestAnimationFrame(this.play);
+         this.setFrame(timestamp);
+         requestAnimationFrame(this.animate);
       }
    };
 
@@ -137,17 +149,12 @@ export class Bounce3DView extends React.Component {
    }
 
    render() {
-      console.log(this.props.movie.evts)
+      console.log('render here')
+      console.log(this.random)
       return (
          <div>
             <button
-               onClick={() => {
-                  this.start = undefined;
-                  this.evtIdx = 0;
-                  this.setState({ playing: true }, () =>
-                     this.play()
-                  );
-               }}
+               onClick={this.play}
             >
                play
         </button>
@@ -162,7 +169,7 @@ export class Bounce3DView extends React.Component {
                max={this.duration}
                onChange={(value) => {
                   this.setState({ delta: value, changedTime: true })
-                  this.frame(0, value)
+                  this.setFrame(0, value)
 
                }}
             />
