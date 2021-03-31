@@ -272,42 +272,46 @@ export class Bounce extends Component {
 
       var readyRun = !sbm || !sbm.testResult;
 
+      var jsonMovie = new BounceMovie(60, prms, sbm);
+      var threedview = new Bounce3DView({movie:jsonMovie});
+
       return (<section className="container">
          <h2>Problem Diagram</h2>
 
                <MovieController
+                  jsonMovie={jsonMovie}
                   play={() => this.startMovie(sbm.testResult.events)} 
                   replay={() => this.replay()} 
                   pause={() => this.stopMovie()} 
-                  views={[<Bounce3DView movie={new BounceMovie(60, prms, sbm)}/>,
-               //       <svg viewBox={"-.1 -.1 " + (fieldLength + .1) + " " + (fieldHeight + .1)}
-               //    width="100%" className="panel">
-               //    <rect x="0" y="0" width={fieldLength} height={fieldHeight}
-               //       className="graphBkg" />
-               //    {grid}
-               //    {obstacles}
-
-               //    {sbm && sbm.testResult ?
-               //       <g>
-               //          <BallManager frameRate={this.frameRate}
-               //             frame={this.state.frame}
-               //             events={sbm.testResult.events}
-               //             positionEquations={this.positionEquations}
-               //             colors={this.colors}
-               //             dimensions={dimensions} />
-
-               //          <TrackManager
-               //             frameRate={this.frameRate}
-               //             frame={this.state.frame}
-               //             events={sbm.testResult.events}
-               //             positionEquations={this.positionEquations}
-               //             colors={this.colors}
-               //             dimensions={dimensions} />
-               //       </g>
-               //       : ''}
-               // </svg>
+                  views={[ <Bounce3DView movie={jsonMovie}/>,
                   ]}
                />
+                     {/* <svg viewBox={"-.1 -.1 " + (fieldLength + .1) + " " + (fieldHeight + .1)}
+                  width="100%" className="panel">
+                  <rect x="0" y="0" width={fieldLength} height={fieldHeight}
+                     className="graphBkg" />
+                  {grid}
+                  {obstacles}
+
+                  {sbm && sbm.testResult ?
+                     <g>
+                        <BallManager frameRate={this.frameRate}
+                           frame={this.state.frame}
+                           events={sbm.testResult.events}
+                           positionEquations={this.positionEquations}
+                           colors={this.colors}
+                           dimensions={dimensions} />
+
+                        <TrackManager
+                           frameRate={this.frameRate}
+                           frame={this.state.frame}
+                           events={sbm.testResult.events}
+                           positionEquations={this.positionEquations}
+                           colors={this.colors}
+                           dimensions={dimensions} />
+                     </g>
+                     : ''}
+               </svg> */}
 
                         
          {summary}
