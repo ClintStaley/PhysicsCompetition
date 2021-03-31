@@ -13,7 +13,7 @@ export class MovieController extends Component {
 
    render() {
 
-      var currentView = new this.props.views[this.state.currentViewIdx].type;
+      var currentView = new this.props.views[this.state.currentViewIdx];
       //var CurrentViewComponent = this.props.views[0];
       return (
          <div>
@@ -29,11 +29,11 @@ export class MovieController extends Component {
                      key={idx}
                      onClick={()=>this.setState({currentViewIdx: idx})}
                   >
-                     {(new view.type).getLabel()} 
+                     {(new view).getLabel()} 
                   </button>
                )
             }
-            {this.props.views[0]}
+            {currentView.render()}
          </div>
 
          );

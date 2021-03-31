@@ -283,8 +283,7 @@ export class Bounce extends Component {
                   play={() => this.startMovie(sbm.testResult.events)} 
                   replay={() => this.replay()} 
                   pause={() => this.stopMovie()} 
-                  views={[ <Bounce3DView movie={jsonMovie}/>,
-                  ]}
+                  views={[Bounce3DView,]}
                />
                      {/* <svg viewBox={"-.1 -.1 " + (fieldLength + .1) + " " + (fieldHeight + .1)}
                   width="100%" className="panel">
