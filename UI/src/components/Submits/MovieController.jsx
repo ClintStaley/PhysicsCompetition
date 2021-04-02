@@ -35,6 +35,9 @@ export class MovieController extends Component {
                )
             }
             {this.currentView.render()}
+
+            // try React.createElement(this.currentView, {})
+            // reference: https://reactjs.org/docs/jsx-in-depth.html
          </div>
 
          );
