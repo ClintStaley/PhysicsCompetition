@@ -7,11 +7,11 @@ export class MovieController extends Component {
     super(props);
     this.state = {
       currentViewIdx: 0,
-      currentFrame: 0,
+      currentOffset: 0,
       playing: false,
     };
+    this.firstTimestamp = 0;
     this.currentView = props.views[this.state.currentViewIdx];
-    this.jsonMovie = props.jsonMovie;
   }
 
   play = () => {
@@ -23,12 +23,12 @@ export class MovieController extends Component {
   };
 
   replay = () => {
-    this.setState({ playing: true, currentFrame: 0 }, this.animate);
+    this.setState({ playing: true, currentOffset: 0 }, this.animate);
   };
 
   animate = (timestamp) => {
     if (this.state.playing) {
-      this.setState({ currentOffset: timestamp }, () => {
+      this.setState({ currentOffset: timestamp-this.firstTimestamp }, () => {
         requestAnimationFrame(this.animate);
       });
     }
@@ -57,12 +57,10 @@ export class MovieController extends Component {
           </button>
         ))}
         {React.createElement(Bounce3DView, {
-          currentFrame: this.state.currentFrame,
-          jsonMovie: this.jsonMovie,
+          currentOffset: this.state.currentOffset,
+          movie: this.props.jsonMovie,
         })}
 
-        {/* try React.createElement(this.currentView, {})
-            // reference: https://reactjs.org/docs/jsx-in-depth.html */}
       </div>
     );
   }

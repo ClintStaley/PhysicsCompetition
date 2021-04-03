@@ -59,8 +59,10 @@ export class Bounce3DView extends React.Component {
       this.d2 = 0;
       this.setFrames = 0;
       this.duration = this.model.events[this.model.events.length - 1].time * 100;
-
-      //this.setup();
+      this.ball;
+      this.firstTimeStamp = -1;
+      this.frame;
+      this.setup();
       this.renderer.render(this.scene, this.camera);
    }
 
@@ -79,6 +81,7 @@ export class Bounce3DView extends React.Component {
       this.ball.position.y = 10;
       this.ball.position.x = 0 - this.fov/2 + r;
       this.scene.add(this.ball);
+      console.log(this.ball)
 
       set.forEach((brr, idx) => {
          const width = brr.hiX - brr.loX;
@@ -94,46 +97,11 @@ export class Bounce3DView extends React.Component {
       });
    };
 
-   play = () => {
-      console.log('play')
-      console.log(this.random)
-      this.start = undefined;
-      this.evtIdx = 0;
-      this.setState({ playing: true }, () =>
-         this.animate()
-      );
-   }
-
-   animate = (timestamp) => {
-      console.log('clicked')
-      if (this.state.playing) {
-
-         if (!this.start) this.start = timestamp;
-
-         this.setFrame(timestamp);
-         requestAnimationFrame(this.animate);
-      }
-   };
-
-   setFrame (timestamp, specificTime){
-      var timePlaying = specificTime ? specificTime : timestamp - this.start;
-
-      if (timePlaying > this.duration) {
-         this.setState({ playing: false });
-         return;
-      }
-
-      if (specificTime) {
-         this.evtIdx = 0;
-      }
-
-      if (this.props.movie.evts[this.evtIdx] === undefined) {
-         this.setState({ playing: false });
-      }
-
-      this.setState({ delta: timePlaying });
+   displayFrame (timestamp){
+      //this.setState({ delta: timePlaying });
       var evts = [];
-      while (this.props.movie.evts[this.evtIdx] && this.props.movie.evts[this.evtIdx].time * 100 < timePlaying) {
+      console.log(timestamp)
+      while (this.props.movie.evts[this.evtIdx] && this.props.movie.evts[this.evtIdx].time * 100 < timestamp) {
          evts.push(this.props.movie.evts[this.evtIdx]);
          this.evtIdx++;
       }
@@ -151,15 +119,19 @@ export class Bounce3DView extends React.Component {
    }
 
    render() {
-      console.log('render here')
-      console.log(this.random)
+      console.log(this.frame)
+      if(this.ball && this.scene && this.frame !== undefined) {
+         this.displayFrame(this.frame)
+         this.frame = this.props.currentOffset-this.firstTimeStamp;
+
+      }
+
+      if(this.firstTimeStamp < 0 && this.props.currentOffset) {
+         this.firstTimeStamp = this.props.currentOffset;
+         this.frame = this.props.currentOffset-this.firstTimeStamp;
+      }
+
       return (
-      //    <div>
-      //       <button
-      //          onClick={this.play}
-      //       >
-      //          play
-      //   </button>
             <div
                style={{ height: "600px", width: "100%" }}
                ref={(mount) => {
