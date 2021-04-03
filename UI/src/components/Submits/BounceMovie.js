@@ -62,30 +62,30 @@ export class BounceMovie {
    }
 
    addBallPositionEvt(time, x, y, ballNumber) {
-      this.evts.push({type: cBallPosition, time, x, y, ballNumber});
+      this.evts.push({type: BounceMovie.cBallPosition, time, x, y, ballNumber});
    }
 
    addMakeBarrierEvt(time, id, loX, loY, hiX, hiY) {
-      this.evts.push({type: cMakeBarrier, id, loX, loY, hiX, hiY});
+      this.evts.push({type: BounceMovie.cMakeBarrier, id, loX, loY, hiX, hiY});
    }
 
    addMakeTargetEvt(time, id, loX, loY, hiX, hiY) {
-      this.evts.push({type: cMakeTarget, time, id, loX, loY, hiX, hiY});
+      this.evts.push({type: BounceMovie.cMakeTarget, time, id, loX, loY, hiX, hiY});
    }
 
    addHitBarrierEvt(time, x, y, ballNumber, barrierId) {
-      this.evts.push({type: cHitBarrier, time, x, y, ballNumber, barrierId});
+      this.evts.push({type: BounceMovie.cHitBarrier, time, x, y, ballNumber, barrierId});
    }
 
    addHitTargetEvt(time, x, y, ballNumber, targetId) {
-      this.evts.push({type: cHitTarget, time, x, y, ballNumber, targetId});
+      this.evts.push({type: BounceMovie.cHitTarget, time, x, y, ballNumber, targetId});
    }
 
    addBallLaunchEvt(time, ballNumber) {
-      this.evts.push({type: cBallLaunch, time, ballNumber});
+      this.evts.push({type: BounceMovie.cBallLaunch, time, ballNumber});
    }
 
    addBallExitEvt(time, x, y, ballNumber) {
-      this.evts.push({type: cBallExit, time, x, y, ballNumber});
+      this.evts.push({type: BounceMovie.cBallExit, time, x, y, ballNumber});
    }
 }
