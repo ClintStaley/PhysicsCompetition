@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import "./MovieBarController.css";
 import { Bounce3DView } from "./Bounce3DView";
+import Slider from 'react-rangeslider';
 
 export class MovieController extends Component {
   constructor(props) {
@@ -9,9 +10,15 @@ export class MovieController extends Component {
       currentViewIdx: 0,
       currentOffset: 0,
       playing: false,
+      childEventIdx: 0
     };
-    this.firstTimestamp = 0;
+    this.duration = this.props.jsonMovie.evts[this.props.jsonMovie.evts.length-2].time;
+    this.firstTimeStamp;
     this.currentView = props.views[this.state.currentViewIdx];
+  }
+
+  updateEventIdx(eventIdx) {
+    this.setState({ childEventIdx: eventIdx });
   }
 
   play = () => {
@@ -23,12 +30,16 @@ export class MovieController extends Component {
   };
 
   replay = () => {
-    this.setState({ playing: true, currentOffset: 0 }, this.animate);
+    this.firstTimeStamp = undefined;
+    this.setState({ playing: true }, this.animate);
   };
 
   animate = (timestamp) => {
     if (this.state.playing) {
-      this.setState({ currentOffset: timestamp-this.firstTimestamp }, () => {
+      if (!this.firstTimeStamp) {
+        this.firstTimeStamp = timestamp
+      }
+      this.setState({ currentOffset: timestamp - this.firstTimeStamp }, () => {
         requestAnimationFrame(this.animate);
       });
     }
@@ -60,6 +71,13 @@ export class MovieController extends Component {
           currentOffset: this.state.currentOffset,
           movie: this.props.jsonMovie,
         })}
+        <Slider
+          value={this.state.currentOffset}
+           max={this.duration}
+          onChange={(value) => {
+            this.setState({ currentOffset: value })
+          }}
+        />
 
       </div>
     );

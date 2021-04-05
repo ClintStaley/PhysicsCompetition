@@ -62,7 +62,7 @@ export class BounceMovie {
    }
 
    addBallPositionEvt(time, x, y, ballNumber) {
-      this.evts.push({type: BounceMovie.cBallPosition, time, x, y, ballNumber});
+      this.evts.push({type: BounceMovie.cBallPosition, time:time*1000, x, y, ballNumber});
    }
 
    addMakeBarrierEvt(time, id, loX, loY, hiX, hiY) {

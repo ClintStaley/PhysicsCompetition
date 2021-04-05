@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import * as THREE from "three";
 import { AmbientLightProbe } from "three";
 import "./Bounce.css";
-import Slider from 'react-rangeslider';
 import 'react-rangeslider/lib/index.css'
 
 export class Bounce3DView extends React.Component {
@@ -98,10 +97,10 @@ export class Bounce3DView extends React.Component {
    };
 
    displayFrame (timestamp){
-      //this.setState({ delta: timePlaying });
       var evts = [];
-      console.log(timestamp)
-      while (this.props.movie.evts[this.evtIdx] && this.props.movie.evts[this.evtIdx].time * 100 < timestamp) {
+      this.evtIdx = 0;
+
+      while (this.props.movie.evts[this.evtIdx] && this.props.movie.evts[this.evtIdx].time < timestamp) {
          evts.push(this.props.movie.evts[this.evtIdx]);
          this.evtIdx++;
       }
@@ -119,17 +118,8 @@ export class Bounce3DView extends React.Component {
    }
 
    render() {
-      console.log(this.frame)
-      if(this.ball && this.scene && this.frame !== undefined) {
-         this.displayFrame(this.frame)
-         this.frame = this.props.currentOffset-this.firstTimeStamp;
-
-      }
-
-      if(this.firstTimeStamp < 0 && this.props.currentOffset) {
-         this.firstTimeStamp = this.props.currentOffset;
-         this.frame = this.props.currentOffset-this.firstTimeStamp;
-      }
+      if(this.ball && this.scene)
+         this.displayFrame(this.props.currentOffset);
 
       return (
             <div
@@ -138,16 +128,6 @@ export class Bounce3DView extends React.Component {
                   this.mount = mount;
                }}
             ></div>
-         //    <Slider
-         //       value={this.state.delta}
-         //       max={this.duration}
-         //       onChange={(value) => {
-         //          this.setState({ delta: value, changedTime: true })
-         //          this.setFrame(0, value)
-
-         //       }}
-         //    />
-         // </div>
       );
    }
 }
