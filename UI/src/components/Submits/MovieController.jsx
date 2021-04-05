@@ -12,7 +12,7 @@ export class MovieController extends Component {
       playing: false,
       childEventIdx: 0
     };
-    this.duration = this.props.jsonMovie.evts[this.props.jsonMovie.evts.length-2].time;
+    this.duration = this.props.jsonMovie.evts[this.props.jsonMovie.evts.length - 2].time;
     this.firstTimeStamp;
     this.currentView = props.views[this.state.currentViewIdx];
   }
@@ -39,13 +39,19 @@ export class MovieController extends Component {
       if (!this.firstTimeStamp) {
         this.firstTimeStamp = timestamp
       }
+      if (this.state.currentOffset > this.duration) {
+        this.firstTimeStamp = undefined;
+        this.pause();
+      }
       this.setState({ currentOffset: timestamp - this.firstTimeStamp }, () => {
         requestAnimationFrame(this.animate);
       });
     }
+   
   };
 
   render() {
+
     return (
       <div>
         <div>
@@ -73,7 +79,7 @@ export class MovieController extends Component {
         })}
         <Slider
           value={this.state.currentOffset}
-           max={this.duration}
+          max={this.duration}
           onChange={(value) => {
             this.setState({ currentOffset: value })
           }}
