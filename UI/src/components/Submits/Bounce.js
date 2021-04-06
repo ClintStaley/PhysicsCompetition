@@ -284,7 +284,7 @@ export class Bounce extends Component {
                   pause={() => this.stopMovie()} 
                   views={[Bounce3DView,]}
                />
-                     {/* <svg viewBox={"-.1 -.1 " + (fieldLength + .1) + " " + (fieldHeight + .1)}
+                     <svg viewBox={"-.1 -.1 " + (fieldLength + .1) + " " + (fieldHeight + .1)}
                   width="100%" className="panel">
                   <rect x="0" y="0" width={fieldLength} height={fieldHeight}
                      className="graphBkg" />
@@ -309,7 +309,7 @@ export class Bounce extends Component {
                            dimensions={dimensions} />
                      </g>
                      : ''}
-               </svg> */}
+               </svg>
 
                         
          {summary}
