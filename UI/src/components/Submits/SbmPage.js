@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Button } from 'react-bootstrap';
 import { Bounce, BSubmitModal } from './Bounce'
+import { BounceMovie } from './BounceMovie';
 import { LandGrab, LGSubmitModal } from './LandGrab'
 import { Ricochet, RSubmitModal } from './Ricochet'
 
@@ -125,7 +126,7 @@ export default class SbmPage extends Component {
       }
       else if (ctpName === "Bounce") {
          prbDiagram = (<Bounce className="clearfix"
-             prms={cmp.prms} sbm={sbm}/>);
+          prms={cmp.prms} sbm={sbm}/>);
          sbmDialog = (<BSubmitModal prms={cmp.prms}
              submitFn={this.state.sbmFunction}/>);
       }
