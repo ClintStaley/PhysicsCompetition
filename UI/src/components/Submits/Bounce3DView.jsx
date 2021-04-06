@@ -11,14 +11,11 @@ export class Bounce3DView extends React.Component {
       this.state = {
          test: 15,
          playing: false,
-         delta: 0,
          changedTime: false
       };
    }
 
    componentDidMount() {
-      console.log('component did mount')
-      this.model = require("./model-movie.json");
       this.evtIdx = 0;
       const width = this.mount.clientWidth;
       const height = this.mount.clientHeight;
@@ -35,7 +32,6 @@ export class Bounce3DView extends React.Component {
       const near = .1;
       const far = 25;
       this.camera = new THREE.PerspectiveCamera(this.fov, aspect, near, far);
-      //  = new THREE.PerspectiveCamera(100, width / height, 0.1, 1000);
       this.camera.position.z = 5;
       this.camera.position.y = 7.5;
       this.camera.position.x = 5;
@@ -51,15 +47,7 @@ export class Bounce3DView extends React.Component {
 
       // https://redstapler.co/realistic-reflection-effect-three-js/
 
-      
-
-      this.start;
-      this.delta;
-      this.d2 = 0;
-      this.setFrames = 0;
-      this.duration = this.model.events[this.model.events.length - 1].time * 100;
       this.ball;
-      this.firstTimeStamp = -1;
       this.frame;
       this.setup();
       this.renderer.render(this.scene, this.camera);
@@ -70,12 +58,14 @@ export class Bounce3DView extends React.Component {
    }
 
    setup () {
-      const set = this.props.movie.evts.filter((evt) => evt.time < 0);
+      let set = this.props.movie.evts.filter((evt) => evt.time < 0);
       const r = .4;
       const geometry = new THREE.SphereGeometry(r, 32, 16);
       const material = new THREE.MeshPhongMaterial({
          color: "#555",
       });
+      console.log(set);
+      set = [set[3]]
       this.ball = new THREE.Mesh(geometry, material);
       this.ball.position.y = 10;
       this.ball.position.x = 0 - this.fov/2 + r;
