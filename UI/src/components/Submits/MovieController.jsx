@@ -17,20 +17,20 @@ export class MovieController extends Component {
    }
 
    updateEventIdx(eventIdx) {
-      this.setState({ childEventIdx: eventIdx });
+      this.setState({childEventIdx: eventIdx});
    }
 
    play = () => {
-      this.setState({ playing: true }, this.animate);
+      this.setState({playing: true}, this.animate);
    };
 
    pause = () => {
-      this.setState({ playing: false });
+      this.setState({playing: false});
    };
 
    replay = () => {
       this.firstTimeStamp = undefined;
-      this.setState({ playing: true }, this.animate);
+      this.setState({playing: true}, this.animate);
    };
 
    animate = (timestamp) => {
@@ -65,7 +65,7 @@ export class MovieController extends Component {
             {this.props.views.map((view, idx) => (
                <button
                   key={idx}
-                  onClick={() => this.setState({ currentViewIdx: idx })}
+                  onClick={() => this.setState({currentViewIdx: idx})}
                >
                   {new view().getLabel()}
                </button>
@@ -78,7 +78,7 @@ export class MovieController extends Component {
                value={this.state.currentOffset}
                max={this.duration}
                onChange={(value) => {
-                  this.setState({ currentOffset: value })
+                  this.setState({currentOffset: value})
                }}
             />
          </div>
