@@ -6,42 +6,27 @@ import { MovieController } from './MovieController';
 import './Bounce.css'
 import { Sphere } from 'three';
 
-
-// Expected props are, exactly and only:
+// Expected props are, exactly:
 //  prms -- the parameters for the displayed competition
 //  sbm -- the submission to display
+//
+// Bounce uses these props to build a BounceMovie, whicn it passes to 
+// a MovieController to display in one of several forms (e.g, Bounce3DView,
+// BounceSVGView)
 export class Bounce extends Component {
    constructor(props) {
       super(props);
 
-      this.state = this.getInitialState();
+      this.state = {}
    }
 
-   // Get initial state for construction or reset
-   getInitialState = () => {
-      // Boolean array indicating if obstacles and/or targets are unhit
-      // First portion represents targets; latter represents obstacles
-      var obstacleStatus = [];
-
-      this.props.prms.targets.forEach(() => obstacleStatus.push(true));
-      this.props.prms.barriers.forEach(() => obstacleStatus.push(true));
-
-      return { frame: 0, obstacleStatus , is2D: true};
-   }
-
-   // Any time props are updated (due to new sbm or even updated prms),
-   // refresh state accordingly.  Otherwise proceed if state or props are
-   // changed.
-   shouldComponentUpdate(nextProps, nextState) {
-      var props = this.props;
-
-      if (props !== nextProps) {
-         this.setState(this.getInitialState());
-         if (!nextProps.sbm || !nextProps.sbm.testResult)
-            this.stopMovie();
+   getDerivedStateFromProps(props, state) {
+      if (props.sbm && props.testResult)
+         return {movie: new BounceMovie(24, props.prms, props.sbm)};
+      else {
+         this.stopMovie();
+         return {movie: null};
       }
-
-      return props !== nextProps || this.state !== nextState;
    }
 
    // Stop timer when component closes, to avoid accessing parameters

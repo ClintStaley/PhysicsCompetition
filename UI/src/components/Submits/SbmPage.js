@@ -126,7 +126,7 @@ export default class SbmPage extends Component {
       }
       else if (ctpName === "Bounce") {
          prbDiagram = (<Bounce className="clearfix"
-             prms={cmp.prms} sbm={sbm}/>);
+          prms={cmp.prms} sbm={sbm}/>);
          sbmDialog = (<BSubmitModal prms={cmp.prms}
              submitFn={this.state.sbmFunction}/>);
       }
