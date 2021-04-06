@@ -46,7 +46,6 @@ class Main extends Component {
    // {...this.props} />)}} />
 
    render() {
-      console.log(this.props);
      var ProtectedRoute = this.ProtectedRoute;
 
     return (

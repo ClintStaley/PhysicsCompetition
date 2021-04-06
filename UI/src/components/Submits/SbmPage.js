@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Button } from 'react-bootstrap';
-import { Bounce, BSubmitModal } from './Bounce'
-import { BounceMovie } from './BounceMovie';
+import { Bounce } from './Bounce'
+import { BSubmitModal } from './BounceSubmitModal';
 import { LandGrab, LGSubmitModal } from './LandGrab'
 import { Ricochet, RSubmitModal } from './Ricochet'
 

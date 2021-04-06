@@ -258,7 +258,6 @@ export class Bounce extends Component {
       var readyRun = !sbm || !sbm.testResult;
 
       var jsonMovie = new BounceMovie(60, prms, sbm);
-      var threedview = new Bounce3DView({movie:jsonMovie});
 
       return (<section className="container">
          <h2>Problem Diagram</h2>
