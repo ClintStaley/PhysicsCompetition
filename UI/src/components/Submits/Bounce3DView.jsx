@@ -3,11 +3,13 @@ import * as THREE from "three";
 import { AmbientLightProbe } from "three";
 import "./Bounce.css";
 import 'react-rangeslider/lib/index.css'
+import CameraControls from 'camera-controls';
 
 export class Bounce3DView extends React.Component {
    constructor(props) {
       super(props);
       this.random = Math.random() * 1000;
+      CameraControls.install({THREE});
       this.state = {
          test: 15,
          playing: false,
@@ -26,7 +28,7 @@ export class Bounce3DView extends React.Component {
       let images = ['posx', 'negx', 'posy', 'negy', 'posz', 'negz'];
       let materials = [];
       for (const image of images) {
-         let texture = new THREE.TextureLoader().load(path + image);
+         let texture = new THREE.TextureLoader().load(path + image + '.jpg');
          let material = new THREE.MeshBasicMaterial({ map: texture });
          material.side = THREE.BackSide;
          materials.push(material);
@@ -61,6 +63,9 @@ export class Bounce3DView extends React.Component {
       
       this.scene.add(this.camera);
 
+      this.cameraControls = new CameraControls( this.camera, this.renderer.domElement );
+
+
 
       this.plight = new THREE.PointLight('0xfff', 5);
       this.plight.position.set(-10, 30, 10);
@@ -77,10 +82,6 @@ export class Bounce3DView extends React.Component {
       //this.scene.add(this.createSkyBox())
 
       // https://redstapler.co/realistic-reflection-effect-three-js/
-
-      this.ball;
-      this.frame;
-
       this.setup();
       this.renderer.render(this.scene, this.camera);
    }
@@ -143,6 +144,7 @@ export class Bounce3DView extends React.Component {
          }
       }
       //this.sphereCamera.updateCubeMap(this.renderer, this.scene);
+      this.cameraControls.update( timestamp);
       this.renderer.render(this.scene, this.camera);
    }
 
