@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "bootstrap": "^3.4.1",
+    "camera-controls": "^1.28.0",
     "history": "^4.10.1",
     "immutability-helper": "^2.9.1",
     "react": "^15.7.0",
