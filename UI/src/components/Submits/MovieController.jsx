@@ -34,6 +34,7 @@ export class MovieController extends Component {
    };
 
    animate = (timestamp) => {
+      timestamp /= 1000;
       if (this.state.playing) {
          if (!this.firstTimeStamp) {
             this.firstTimeStamp = timestamp
@@ -77,6 +78,8 @@ export class MovieController extends Component {
             <Slider
                value={this.state.currentOffset}
                max={this.duration}
+               step={0.001*this.duration}
+               tooltip={false}
                onChange={(value) => {
                   this.setState({currentOffset: value})
                }}

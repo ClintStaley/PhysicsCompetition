@@ -21,13 +21,15 @@ export class BounceMovie {
 
       // Targets numbered from 0
       prms.targets.forEach((trg, idx) => 
-       this.addMakeTargetEvt(-1, idx, trg.loX, trg.hiX, trg.loY, trg.hiY));
+      this.addMakeTargetEvt(-1, idx, trg.loX, trg.loY, trg.hiX, trg.hiY));
 
       // Barriers numbered from targets.length
       prms.barriers.forEach((brr, idx) => {
        console.log(brr);
-       this.addMakeTargetEvt(-1, prms.targets.length+idx, brr.loX, brr.hiX,
-       brr.loY, brr.hiY)});
+       this.addMakeBarrierEvt(-1, prms.targets.length+idx, brr.loX, brr.loY,
+       brr.hiX, brr.hiY)
+       
+      });
 
       let time = 0;
       tracks.forEach((trk, ballId) => { // One track per ball
@@ -62,11 +64,11 @@ export class BounceMovie {
    }
 
    addBallPositionEvt(time, x, y, ballNumber) {
-      this.evts.push({type: BounceMovie.cBallPosition, time:time*1000, x, y, ballNumber});
+      this.evts.push({type: BounceMovie.cBallPosition, time:time, x, y, ballNumber});
    }
 
    addMakeBarrierEvt(time, id, loX, loY, hiX, hiY) {
-      this.evts.push({type: BounceMovie.cMakeBarrier, id, loX, loY, hiX, hiY});
+      this.evts.push({type: BounceMovie.cMakeBarrier, time, id, loX, loY, hiX, hiY});
    }
 
    addMakeTargetEvt(time, id, loX, loY, hiX, hiY) {
