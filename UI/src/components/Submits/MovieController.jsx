@@ -8,7 +8,7 @@ export class MovieController extends Component {
       super(props);
       this.state = {
          currentViewIdx: 0,
-         currentOffset: 0,
+         currentOffset: 0.01,
          playing: false,
          childEventIdx: 0
       };
@@ -25,6 +25,7 @@ export class MovieController extends Component {
    };
 
    pause = () => {
+      //console.log()
       this.setState({playing: false});
    };
 
@@ -43,7 +44,8 @@ export class MovieController extends Component {
             this.firstTimeStamp = undefined;
             this.pause();
          }
-         this.setState({ currentOffset: timestamp - this.firstTimeStamp }, () => {
+         this.setState({ currentOffset: timestamp - this.firstTimeStamp }, 
+            () => {
             requestAnimationFrame(this.animate);
          });
       }
@@ -72,7 +74,7 @@ export class MovieController extends Component {
                </button>
             ))}
             {React.createElement(Bounce3DView, {
-               currentOffset: this.state.currentOffset,
+               currentOffset: this.state.currentOffset || 0.01,
                movie: this.props.jsonMovie,
             })}
             <Slider
