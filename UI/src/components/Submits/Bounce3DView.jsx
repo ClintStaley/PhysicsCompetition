@@ -150,63 +150,6 @@ export class Bounce3DView extends React.Component {
       const height = brr.hiY - brr.loY;
       const geometry = new THREE.BoxGeometry(width, height, 0.5);
       const material = this.createMetalMaterial();
-<<<<<<< HEAD
-
-      this.ball = new THREE.Mesh(geometry, material);
-      this.scene.add(this.ball);
-      this.ball.position.x = ball.x;
-      this.ball.position.y = ball.y;
-      console.log(this.ball.position)
-
-      set.forEach((brr, idx) => {
-         console.log(brr);
-         const width = brr.hiX - brr.loX;
-         const height = brr.hiY - brr.loY;
-         const geometry = new THREE.BoxGeometry(width, height, 0.5);
-         const material = this.createMetalMaterial();
-         const barrier = new THREE.Mesh(geometry, material);
-         barrier.position.y = brr.loY + height / 2;
-         barrier.position.z = 0;
-         barrier.position.x = brr.loX + width / 2;
-         console.log(barrier.position)
-         this.scene.add(barrier);
-         this.evtIdx++;
-      });
-   }
-
-   displayFrame(timestamp) {
-      var evts = [];
-      this.evtIdx = 0;
-      this.timestamp = timestamp;
-
-      // CAS FIX: Why the preliminary pre-copy?  And, doesn't this redo a
-      // pass through all events from 0 to now on every frame?  I am writing 
-      // mine to incrementally move forward or back from a given point in
-      // the movie, which point I store in the state.
-      while (
-         this.props.movie.evts[this.evtIdx] &&
-         this.props.movie.evts[this.evtIdx].time <= timestamp
-      ) {
-         evts.push(this.props.movie.evts[this.evtIdx]);
-         this.evtIdx++;
-      }
-
-      for (const evt of evts) {
-         switch (evt.type) {
-            case 0:
-               this.ball.position.x = evt.x;
-               this.ball.position.y = evt.y;
-               break;
-            case 3:
-               this.ball.position.x = evt.x;
-               this.ball.position.y = evt.y;
-               break;
-            case 4:
-               this.ball.position.x = evt.x;
-               this.ball.position.y = evt.y;
-               break;
-         }
-=======
       const barrier = new THREE.Mesh(geometry, material);
       barrier.position.y = brr.loY + height / 2;
       barrier.position.z = 0;
@@ -221,6 +164,10 @@ export class Bounce3DView extends React.Component {
     this.evtIdx = 0;
     this.timestamp = timestamp;
 
+    // CAS FIX: Why the preliminary pre-copy?  And, doesn't this redo a
+    // pass through all events from 0 to now on every frame?  I am writing 
+    // mine to incrementally move forward or back from a given point in
+    // the movie, which point I store in the state.
     while (
       this.props.movie.evts[this.evtIdx] &&
       this.props.movie.evts[this.evtIdx].time <= timestamp
@@ -243,7 +190,6 @@ export class Bounce3DView extends React.Component {
           this.ball.position.x = evt.x;
           this.ball.position.y = evt.y;
           break;
->>>>>>> bbc7fb47a95dc420dac27c04fd59816b1c83704b
       }
     }
     this.cubeCamera.update(this.renderer, this.scene);
