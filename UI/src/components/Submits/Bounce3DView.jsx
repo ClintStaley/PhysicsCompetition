@@ -130,6 +130,10 @@ export class Bounce3DView extends React.Component {
       this.evtIdx = 0;
       this.timestamp = timestamp;
 
+      // CAS FIX: Why the preliminary pre-copy?  And, doesn't this redo a
+      // pass through all events from 0 to now on every frame?  I am writing 
+      // mine to incrementally move forward or back from a given point in
+      // the movie, which point I store in the state.
       while (
          this.props.movie.evts[this.evtIdx] &&
          this.props.movie.evts[this.evtIdx].time <= timestamp
