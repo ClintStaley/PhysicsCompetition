@@ -171,6 +171,7 @@ export class Bounce extends Component {
    render() {
       var prms = this.props.prms;
       var sbm = this.props.sbm;
+      console.log(sbm);
       var hashClass, offs, rect, grid, obstacles;
       var summary = null;
       var dimensions =
@@ -203,8 +204,7 @@ export class Bounce extends Component {
          obstacles.push(
             <rect key={"BR" + (idx)} x={rect.loX} y={fieldHeight - rect.hiY}
                width={rect.hiX - rect.loX} height={rect.hiY - rect.loY}
-               className={this.state.obstacleStatus[idx + numObstacles] ? "bPlatform" :
-                  "hitBPlatform"} />);
+               className="bPlatform"  />);
 
          var classLeft = (rect.hiX - rect.loX) > .8 ? "text" : "rhsText";
          var classRight = (rect.hiX - rect.loX) > .8 ? "rhsText" : "text";
@@ -227,8 +227,7 @@ export class Bounce extends Component {
          obstacles.push(
             <rect key={"R" + idx} x={rect.loX} y={fieldHeight - rect.hiY}
                width={rect.hiX - rect.loX} height={rect.hiY - rect.loY}
-               className={this.state.obstacleStatus[idx] ? "platform" :
-                  "hitPlatform"} />);
+               className= "platform"  />);
 
          var classLeft = (rect.hiX - rect.loX) > .8 ? "text" : "rhsText";
          var classRight = (rect.hiX - rect.loX) > .8 ? "rhsText" : "text";

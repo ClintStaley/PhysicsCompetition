@@ -70,9 +70,6 @@ class Main extends Component {
                     <LinkContainer key={0} to="/signin">
                       <NavItem>Sign In</NavItem>
                     </LinkContainer>,
-                    <LinkContainer key={0} to="/signin">
-                      <NavItem>Sign In</NavItem>
-                    </LinkContainer>,
                     <LinkContainer key={1} to="/register">
                       <NavItem>Register</NavItem>
                     </LinkContainer>,
