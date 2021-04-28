@@ -76,7 +76,6 @@ export class Bounce3DView extends React.Component {
     this.scene = new THREE.Scene();
     this.loadAsset("table");
     this.createSkyBox();
-    //this.render
     this.setState({isFirstRender: false});
       
   }
@@ -161,7 +160,6 @@ export class Bounce3DView extends React.Component {
     this.ball.position.set(ball.x, ball.y);
 
     set.forEach((brr, idx) => {
-      brr.loY = 3;
       const width = brr.hiX - brr.loX;
       const height = brr.hiY - brr.loY;
       const geometry = new THREE.BoxGeometry(width, height, 0.5);
