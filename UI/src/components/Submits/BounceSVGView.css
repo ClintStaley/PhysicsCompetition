@@ -31,13 +31,13 @@
    fill:black;
 }
 
-.hitPlatform {
+.target {
   stroke: #00000040;
   stroke-width:.01;
   fill:#A0A0FF10;
 }
 
-.hitBPlatform {
+.hitTarget {
   stroke: #00000040;
   stroke-width:.01;
   fill:#FF606010;
