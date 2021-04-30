@@ -1,0 +1,7 @@
+
+
+q1
+
+
+i changed the [Check Student A Dropped] and the following test to mirror the new behavior
+which has 404 sent back instead of 400 and notFound, is that wrong?
