@@ -37,15 +37,15 @@ export class Bounce extends Component {
       var hits = [];
       var ballEvents = [];
       var eventNum = 1, ballNum = 1;
-      var colors = this.ballColors;
+      var colors = Bounce.ballColors;
       var numColors = colors.length;
 
       if (score) {
          testResult.events.forEach((ballArray) => {
             hits.push(<h4 key={"Ball #" + ballNum}
-             className={colors[(ballNum - 1) % numColors]}>Ball # {ballNum}</h4>)
+             className={colors[(ballNum - 1) % numColors]}>Ball #{ballNum}</h4>)
 
-            //creates rows onb table, 4 sig figs on values
+            //creates rows on table, 4 sig figs on values
             ballArray.forEach((event) => {
                if (event.obstacleIdx !== -1 &&
                   !this.state.obstacleStatus[event.obstacleIdx])

@@ -7,8 +7,6 @@ import './BounceSVGView.css'
 
 export class BounceSVGView extends Component {
    static ballColors = ["red", "green", "orange", "purple", "cyan", "blue"];
-   static graphLine = .5;      // Distance between graph lines in meters
-   static graphLine = .5;      // Distance between graph lines in meters
    static ballPosRadius = .02; // Radius of ball position marker
    static ballRadius = .1;     // Radius of ball
 
@@ -145,14 +143,15 @@ export class BounceSVGView extends Component {
          }
          else if (evt.type === BounceMovie.cBallPosition) {
             svgElms.push(<circle key={"ballPos" + evt.time} cx={evt.x}
-             cy={yTop - evt.y} r={this.ballPosRadius} 
-             className={this.ballColors[evt.ballNumber]}/>);
+             cy={yTop - evt.y} r={BounceSVGView.ballPosRadius} 
+             className={BounceSVGView.ballColors[evt.ballNumber]}/>);
          }
          else if (evt.type === BounceMovie.cHitBarrier
           || evt.type === BounceMovie.cHitTarget) {
             svgElms.push(<circle key={"Hit" + evt.time} cx={evt.x}
-             cy={yTop - evt.y} r={this.ballRadius}
-             className={"ball faded " + this.ballColors[evt.ballNumber]} />)
+             cy={yTop - evt.y} r={BounceSVGView.ballRadius}
+             className={"ball faded "
+              + BounceSVGView.ballColors[evt.ballNumber]} />)
 
             if (evt.type === BounceMovie.cHitTarget) {
                let trgEvt = trgEvts[evt.targetId];
@@ -180,8 +179,8 @@ export class BounceSVGView extends Component {
 
       // Loop from current evtIdx backward to find most recent event that draws
       // a full ball, or null if most recent is a ballExit.
-      ballEvt = null;
-      for (searchIdx = evtIdx; searchIdx >= 0; searchIdx--) {
+      let ballEvt = null;
+      for (let searchIdx = evtIdx; searchIdx >= 0; searchIdx--) {
          let testEvt = evts[searchIdx];
          if (testEvt.type === BounceMovie.cBallExit)
             break;
@@ -205,8 +204,8 @@ export class BounceSVGView extends Component {
           className="panel">
             {this.state.svgElms}
             {ballEvt ? <circle key={"Ball" + (ballEvt.time)} cx={ballEvt.x}
-             cy={height - ballEvt.y} r={this.ballRadius} 
-             className={this.ballColors[ballEvt.ballNumber]}/>: ""}
+             cy={height - ballEvt.y} r={BounceSVGView.ballRadius} 
+             className={BounceSVGView.ballColors[ballEvt.ballNumber]}/>: ""}
          </svg>);
    }
 }
