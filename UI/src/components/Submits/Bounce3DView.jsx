@@ -24,17 +24,32 @@ export class Bounce3DView extends React.Component {
     };
   }
 
-  createMaterial() {
-    // return new THREE.MeshLambertMaterial({
-    //   color: 0xffffff,
-    //   envMap: this.cubeRenderTarget.texture,
-    // });
-    let textureUrl =`${window.location.origin}/models/table/textures/Material_baseColor.jpeg`;
-    let texture = new THREE.TextureLoader().load(textureUrl);
-    let material = new THREE.MeshPhongMaterial({color: 0xf0f0f0, map: texture });
+  createFancyMaterial() {
+    let loader = new THREE.TextureLoader();
+    let path = `${window.location.origin}/textures/steelplate1-ue/`;
+    let material = new THREE.MeshStandardMaterial(
+      {
+        color:0x111111,
+        normalMap:loader.load(`${path}/steelplate1_normal-dx.png`),
+        displacementMap:loader.load(`${path}/steelplate1_height.png`),
+        displacementScale: 0.2,
+        roughnessMap:loader.load(`${path}/steelplate1_roughness.png`),
+        aoMap:loader.load(`${path}/steelplate1_ao.png`),
+        metalnessMap: loader.load(`${path}/steelplate1_metallic.png`),
+        metalness: 0.5,
+        
+      }
+    );
     return material;
   }
 
+  createMaterial() {
+    let textureUrl =`${window.location.origin}/textures/embossed_metal.jpg`;
+    let texture = new THREE.TextureLoader().load(textureUrl);
+    let material = new THREE.MeshPhongMaterial({color: 0x555555, map: texture });
+    return material;
+  }
+//https://3dtextures.me/2018/09/28/metal-plate-010/
   createSkyBox() {
     let images = [posx, negx, posy, negy, posz, negz];
     let materials = [];
@@ -74,7 +89,6 @@ export class Bounce3DView extends React.Component {
 
   initialBackground(){
     this.scene = new THREE.Scene();
-    this.loadAsset("table");
     this.createSkyBox();
     this.setState({isFirstRender: false});
       
@@ -96,9 +110,7 @@ export class Bounce3DView extends React.Component {
     const near = 0.1;
     const far = 1000;
     this.camera = new THREE.PerspectiveCamera(this.fov, aspect, near, far);
-
     this.camera.position.set(-7, 0, 10);
-
     this.scene.add(this.camera);
 
     this.cameraControls = new CameraControls(
@@ -152,17 +164,22 @@ export class Bounce3DView extends React.Component {
       (evt) => evt.time === 0 && evt.type === 0
     )[0];
     const r = 0.1;
-    const geometry = new THREE.SphereGeometry(r, 32, 16);
-    const material = this.createMaterial();
-
-    this.ball = new THREE.Mesh(geometry, material);
-    this.scene.add(this.ball);
+    const ballGeo = new THREE.SphereGeometry(r, 32, 16);
+    this.ball = new THREE.Mesh(ballGeo, this.createMaterial());
     this.ball.position.set(ball.x, ball.y);
+    this.scene.add(this.ball);
+
+    const wallGeo = new THREE.PlaneGeometry(8, 8, 512, 512);
+    this.wall = new THREE.Mesh(wallGeo, this.createFancyMaterial());
+    this.scene.add(this.wall);
+    this.wall.position.set(5, 5, -.25);
+
+
 
     set.forEach((brr, idx) => {
       const width = brr.hiX - brr.loX;
       const height = brr.hiY - brr.loY;
-      const geometry = new THREE.BoxGeometry(width, height, 0.5);
+      const geometry = new THREE.BoxGeometry(width, height, 1);
       const material = this.createMaterial();
       const barrier = new THREE.Mesh(geometry, material);
       barrier.position.y = brr.loY + height / 2;
@@ -179,11 +196,6 @@ export class Bounce3DView extends React.Component {
   displayFrame(timestamp) {
     var evts = [];
     this.timestamp = timestamp;
-
-    // CAS FIX: Why the preliminary pre-copy?  And, doesn't this redo a
-    // pass through all events from 0 to now on every frame?  I am writing 
-    // mine to incrementally move forward or back from a given point in
-    // the movie, which point I store in the state.
     while (
       this.props.movie.evts[this.evtIdx] &&
       this.props.movie.evts[this.evtIdx].time <= timestamp
