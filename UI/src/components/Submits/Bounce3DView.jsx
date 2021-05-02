@@ -24,29 +24,43 @@ export class Bounce3DView extends React.Component {
     };
   }
 
+  loadTexture(path) {
+    let loader = new THREE.TextureLoader();
+    let texture = loader.load(path, (texture)=>{
+      texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+      texture.repeat.set( 3, 3 );
+    });
+
+    return texture;
+  }
+
   createFancyMaterial() {
     let loader = new THREE.TextureLoader();
     let path = `${window.location.origin}/textures/steelplate1-ue/`;
     let material = new THREE.MeshStandardMaterial(
       {
         color:0x111111,
-        normalMap:loader.load(`${path}/steelplate1_normal-dx.png`),
-        displacementMap:loader.load(`${path}/steelplate1_height.png`),
-        displacementScale: 0.2,
-        roughnessMap:loader.load(`${path}/steelplate1_roughness.png`),
-        aoMap:loader.load(`${path}/steelplate1_ao.png`),
+        normalMap:this.loadTexture(`${path}/steelplate1_normal-dx.png`),
+        displacementMap:this.loadTexture(`${path}/steelplate1_height.png`),
+        displacementScale: 0.1,
+        roughnessMap:this.loadTexture(`${path}/steelplate1_roughness.png`),
+        aoMap:this.loadTexture(`${path}/steelplate1_ao.png`),
         metalnessMap: loader.load(`${path}/steelplate1_metallic.png`),
         metalness: 0.5,
-        
       }
     );
     return material;
   }
 
   createMaterial() {
-    let textureUrl =`${window.location.origin}/textures/embossed_metal.jpg`;
-    let texture = new THREE.TextureLoader().load(textureUrl);
-    let material = new THREE.MeshPhongMaterial({color: 0x555555, map: texture });
+    let loader = new THREE.TextureLoader();
+    let path = `${window.location.origin}/textures/steelplate1-ue/`;
+
+    let material = new THREE.MeshStandardMaterial({
+      color:0x121212,
+       roughnessMap:this.loadTexture(`${path}/simple_metal.jpg`),
+        metalness: 0.5,
+    });
     return material;
   }
 //https://3dtextures.me/2018/09/28/metal-plate-010/
@@ -125,11 +139,11 @@ export class Bounce3DView extends React.Component {
     this.cameraControls.setTarget(6.7, 6, 0);
 
     this.plight = new THREE.PointLight("0xffffff", 5);
-    this.plight.position.set(-10, 30, 10);
+    this.plight.position.set(-10, 10, 10);
     this.scene.add(this.plight);
 
     this.plight2 = new THREE.PointLight("0x123123", 3);
-    this.plight2.position.set(20, 30, 10);
+    this.plight2.position.set(0, 10, 20);
     this.scene.add(this.plight2);
 
     this.cubeRenderTarget = new THREE.WebGLCubeRenderTarget(128, {
@@ -169,7 +183,7 @@ export class Bounce3DView extends React.Component {
     this.ball.position.set(ball.x, ball.y);
     this.scene.add(this.ball);
 
-    const wallGeo = new THREE.PlaneGeometry(8, 8, 512, 512);
+    const wallGeo = new THREE.PlaneGeometry(12, 12, 512, 512);
     this.wall = new THREE.Mesh(wallGeo, this.createFancyMaterial());
     this.scene.add(this.wall);
     this.wall.position.set(5, 5, -.25);
