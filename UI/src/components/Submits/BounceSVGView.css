@@ -1,0 +1,90 @@
+.lightLine {
+   stroke: #E0E0E0;
+   stroke-width:0.01;
+}
+
+.heavyLine {
+   stroke:#C8C8C8;
+   stroke-width:0.01;
+}
+
+.graphBkg {
+   fill:#F0F0FF;
+   stroke:"gray";
+
+}
+
+.platform {
+   stroke: black;
+   stroke-width:.01;
+   fill:#A0A0FF;
+}
+
+.barrier {
+   stroke: black;
+   stroke-width:.01;
+   fill:#FF6060;
+}
+
+
+.startingPosition {
+   fill:black;
+}
+
+.target {
+  stroke: #00000040;
+  stroke-width:.01;
+  fill:#A0A0FF10;
+}
+
+.hitTarget {
+  stroke: #00000040;
+  stroke-width:.01;
+  fill:#FF606010;
+}
+
+.ball {
+   stroke: black;
+   stroke-width:.01;
+}
+
+.red {
+  fill:#F00;
+  color:#F00;
+}
+
+.green {
+   fill:#0F0;
+   color:#0F0;
+}
+
+.orange {
+   fill:#FF8C00;
+   color:#FF8C00;
+}
+
+.purple {
+   fill:#F0F;
+   color:#F0F;
+}
+
+.cyan {
+   fill:#0FF;
+   color:#0FF;
+}
+
+.faded {
+  opacity:.20;
+}
+
+.invisible {
+  visibility: hidden;
+}
+
+.text, .rhsText {
+   font-size:.13px;
+}
+
+.rhsText {
+   text-anchor:end;
+}
