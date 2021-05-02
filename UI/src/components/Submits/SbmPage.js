@@ -72,7 +72,7 @@ export default class SbmPage extends Component {
          else {
             this.setState({refreshNote: "Checking for results..."});
             this.props.refreshSbms(() => {
-            if (current)  // CAS FIX: How is this false?
+            if (current)  // CAS FIX: How is this ever false?
                this.props.getTeamsById(current.cmpId, current.teamId);
             else
                this.setState({refreshNote: "No results yet.."});
@@ -86,6 +86,8 @@ export default class SbmPage extends Component {
       var ctpName = this.state.ctpName;
       var sbmStatus = null;
       var prbDiagram = null;
+
+      console.log('Rendering SbmPage for ', this.state);
 
       if (this.props.sbms.current) {
          sbm = this.props.sbms.current;

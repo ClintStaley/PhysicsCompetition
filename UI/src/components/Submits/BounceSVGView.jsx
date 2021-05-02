@@ -136,7 +136,7 @@ export class BounceSVGView extends Component {
       while (evtIdx < evts.length && timeStamp >= evts[evtIdx+1].time) {
          evt = evts[++evtIdx];
          if (evt.type === BounceMovie.cMakeBarrier) {
-            svgElms.push(makeLabeledRect(evt, "barrier"));
+            svgElms.push(this.makeLabeledRect(evt, "barrier"));
          }
          else if (evt.type === BounceMovie.cMakeTarget) {
             evt.svgIdx = svgElms.length;
@@ -154,9 +154,9 @@ export class BounceSVGView extends Component {
              cy={yTop - evt.y} r={this.ballRadius}
              className={"ball faded " + this.ballColors[evt.ballNumber]} />)
 
-            if (evt.type === cHitTarget) {
+            if (evt.type === BounceMovie.cHitTarget) {
                let trgEvt = trgEvts[evt.targetId];
-               svgElms[trgEvt.svgIdx] = makeLabeledRect(trgEvt, "hitTarget")
+               svgElms[trgEvt.svgIdx] = this.makeLabeledRect(trgEvt, "hitTarget")
             }
          }
          // Ball launch and ball exit require no action here.
@@ -174,7 +174,7 @@ export class BounceSVGView extends Component {
 
          if (evt.type === BounceMovie.cHitTarget) {
             let trgEvt = trgEvts[evt.targetId];
-            svgElms[trgEvt.svgIdx] = makeLabeledRect(trgEvt, "target")
+            svgElms[trgEvt.svgIdx] = this.makeLabeledRect(trgEvt, "target")
          }
       }
 
