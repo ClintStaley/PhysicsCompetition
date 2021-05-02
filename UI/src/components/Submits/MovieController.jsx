@@ -1,6 +1,7 @@
-import React, { Component } from "react";
+import React, {Component} from "react";
 import "./MovieBarController.css";
-import { Bounce3DView } from "./Bounce3DView";
+import {Bounce3DView}  from "./Bounce3DView";
+import {BounceSVGView} from "./BounceSVGView";
 import Slider from 'react-rangeslider';
 
 export class MovieController extends Component {
@@ -12,7 +13,8 @@ export class MovieController extends Component {
          playing: false,
          childEventIdx: 0
       };
-      this.duration = this.props.jsonMovie.evts[this.props.jsonMovie.evts.length - 2].time;
+      this.duration = this.props.jsonMovie.evts
+       [this.props.jsonMovie.evts.length - 2].time;
       this.currentView = props.views[this.state.currentViewIdx];
    }
 
@@ -73,7 +75,7 @@ export class MovieController extends Component {
                   {new view().getLabel()}
                </button>
             ))}
-            {React.createElement(Bounce3DView, {
+            {React.createElement(BounceSVGView, {
                currentOffset: this.state.currentOffset || 0.01,
                movie: this.props.jsonMovie,
             })}

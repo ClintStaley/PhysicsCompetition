@@ -3,7 +3,11 @@ import { Button } from 'react-bootstrap';
 import { Bounce } from './Bounce'
 import { BSubmitModal } from './BounceSubmitModal';
 import { LandGrab, LGSubmitModal } from './LandGrab'
-import { Ricochet, RSubmitModal } from './Ricochet'
+// import { Ricochet, RSubmitModal } from './Ricochet'
+
+// Set up a page managing submissions for a competition and team.  This includes
+// a submission dialog, automatic polling for a test result on any standing
+// submission, and a display of the results.
 
 // Expected props are:
 //   cmp -- competition object to be worked with
@@ -28,8 +32,8 @@ export default class SbmPage extends Component {
    componentDidMount = () => {
       this.props.getSbms(this.state.cmp, this.props.team.id,
        () => {
-          this.setCtpType();
-          this.startTimer(); // Shouldn't this happen only if there is a pending submit?
+          this.setState({ctpName : this.props.sbms.ctpName});
+          this.startTimer(); // CAS FIX: Shouldn't this happen only if there is a pending submit?
        });
    }
 
@@ -38,10 +42,6 @@ export default class SbmPage extends Component {
    componentWillUnmount = () => {
       if (this.timerId)
          this.stopTimer();
-   }
-
-   setCtpType = () => {
-      this.setState({ctpName : this.props.sbms.ctpName});
    }
 
    startTimer = () => {
@@ -66,28 +66,26 @@ export default class SbmPage extends Component {
       var current = this.props.sbms && this.props.sbms.current;
 
       if (current)
-         if (current.testResult && this.timerId){
+         if (current.testResult && this.timerId) {
             this.stopTimer();
          }
          else {
             this.setState({refreshNote: "Checking for results..."});
             this.props.refreshSbms(() => {
-            if (current)
+            if (current)  // CAS FIX: How is this false?
                this.props.getTeamsById(current.cmpId, current.teamId);
             else
                this.setState({refreshNote: "No results yet.."});
-          }
-            );
+            });
          }
    }
 
    render() {
       var sbm, sbmTime, dateStr, timeStr,  sbmDialog;
-      var cmp = this.state.cmp, ctpName;
+      var cmp = this.state.cmp;
+      var ctpName = this.state.ctpName;
       var sbmStatus = null;
       var prbDiagram = null;
-
-      ctpName = this.state.ctpName;
 
       if (this.props.sbms.current) {
          sbm = this.props.sbms.current;
@@ -101,8 +99,9 @@ export default class SbmPage extends Component {
            <div className="row">
              <div className="col-sm-9">
                <h4>Submission received at {timeStr} on {dateStr}</h4>
-               <h4>{this.props.team.bestScore !== -1 ? `Best score: ${this.props.team.bestScore}` :
-                'Best score: NA'}</h4>
+               <h4>{this.props.team.bestScore !== -1 ?
+                `Best score: ${this.props.team.bestScore}` :
+                'Best score: N/A'}</h4>
                <h4>{sbm.score != null ? `This score: ${sbm.score}` :
                 this.state.refreshNote}</h4>
              </div>
@@ -111,31 +110,35 @@ export default class SbmPage extends Component {
       }
 
       var sbmButton = (<div className="col-sm-3">
-        <Button disabled={(!this.props.team.canSubmit) ||
-            (this.props.sbms.current && !this.props.sbms.current.testResult)}
+        <Button disabled={!this.props.team.canSubmit ||
+         this.props.sbms.current && !this.props.sbms.current.testResult}
          onClick={() => this.setState({sbmFunction: this.doSubmit})}>
            Make Attempt
         </Button>
       </div>);
 
       if (ctpName === "LandGrab") {
-         prbDiagram = (<LandGrab className="clearfix"
-             prms={cmp.prms} sbm={sbm}/>);
-         sbmDialog = (<LGSubmitModal prms={cmp.prms}
-             submitFn={this.state.sbmFunction}/>);
+         prbDiagram = (<LandGrab className="clearfix" prms={cmp.prms}
+          sbm={sbm}/>);
+         
+          sbmDialog = (<LGSubmitModal prms={cmp.prms}
+          submitFn={this.state.sbmFunction}/>);
       }
       else if (ctpName === "Bounce") {
          prbDiagram = (<Bounce className="clearfix"
           prms={cmp.prms} sbm={sbm}/>);
-         sbmDialog = (<BSubmitModal prms={cmp.prms}
-             submitFn={this.state.sbmFunction}/>);
+         
+          sbmDialog = (<BSubmitModal prms={cmp.prms}
+          submitFn={this.state.sbmFunction}/>);
       }
+      /* Install later
       else if (ctpName === "Ricochet") {
          prbDiagram = (<Ricochet className="clearfix"
-             prms={cmp.prms} sbm={sbm}/>);
+          prms={cmp.prms} sbm={sbm}/>);
+         
          sbmDialog = (<RSubmitModal prms={cmp.prms}
-             submitFn={this.state.sbmFunction}/>);
-      }
+          submitFn={this.state.sbmFunction}/>);
+      }*/
 
       return (<div className="container">
         <h1>{cmp.title}</h1>

@@ -1,3 +1,8 @@
+.graphBkg {
+   fill:#F0F0FF;
+   stroke:"gray";
+}
+
 .lightLine {
    stroke: #E0E0E0;
    stroke-width:0.01;
@@ -6,12 +11,6 @@
 .heavyLine {
    stroke:#C8C8C8;
    stroke-width:0.01;
-}
-
-.graphBkg {
-   fill:#F0F0FF;
-   stroke:"gray";
-
 }
 
 .platform {
@@ -24,11 +23,6 @@
    stroke: black;
    stroke-width:.01;
    fill:#FF6060;
-}
-
-
-.startingPosition {
-   fill:black;
 }
 
 .target {
@@ -75,10 +69,6 @@
 
 .faded {
   opacity:.20;
-}
-
-.invisible {
-  visibility: hidden;
 }
 
 .text, .rhsText {
