@@ -119,7 +119,7 @@ export class Bounce3DView extends React.Component {
     );
 
     this.cameraControls.addEventListener("control", () => {
-      this.cameraControls.update(this.props.currentOffset);
+      this.cameraControls.update(this.props.offset);
       this.renderer.render(this.scene, this.camera);
     });
     this.cameraControls.setTarget(6.7, 6, 0);
@@ -227,7 +227,7 @@ export class Bounce3DView extends React.Component {
     if (this.state.isFirstRender)      
       this.initialBackground();
     else
-      this.displayFrame(this.props.currentOffset);
+      this.displayFrame(this.props.offset);
 
 
     return (
