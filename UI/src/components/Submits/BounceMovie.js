@@ -25,7 +25,6 @@ export class BounceMovie {
 
       // Barriers numbered from targets.length
       prms.barriers.forEach((brr, idx) => {
-       console.log(brr);
        this.addMakeBarrierEvt(-1, prms.targets.length+idx, brr.loX, brr.loY,
        brr.hiX, brr.hiY)
        

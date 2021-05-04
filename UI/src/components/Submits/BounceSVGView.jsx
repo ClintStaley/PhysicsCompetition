@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
-import {FormGroup, FormControl, HelpBlock, ControlLabel}
-  from 'react-bootstrap';
 import {BounceMovie} from './BounceMovie';
 
 import './BounceSVGView.css'
 
-export class BounceSVGView extends Component {
+export class BounceSVGView extends React.Component {
    static ballColors = ["red", "green", "orange", "purple", "cyan", "blue"];
    static ballPosRadius = .02; // Radius of ball position marker
    static ballRadius = .1;     // Radius of ball
@@ -68,7 +66,7 @@ export class BounceSVGView extends Component {
    }
 
    // Return label for button activating this view
-   getLabel() {
+   static getLabel() {
       return "Diagram";
    }
 
@@ -138,12 +136,12 @@ export class BounceSVGView extends Component {
       while (evtIdx < evts.length && timeStamp >= evts[evtIdx+1].time) {
          evt = evts[++evtIdx];
          if (evt.type === BounceMovie.cMakeBarrier) {
-            svgElms.push(makeLabeledRect(evt, "barrier", yTop));
+            svgElms.push(BounceSVGView.makeLabeledRect(evt, "barrier", yTop));
          }
          else if (evt.type === BounceMovie.cMakeTarget) {
             evt.svgIdx = svgElms.length;
-            trgEvts[evt.targetId] = evt;  // Save event for redrawing if hit
-            svgElms.push(makeLabeledRect(evt, "target", yTop));
+            trgEvts[evt.id] = evt;  // Save event for redrawing if hit
+            svgElms.push(BounceSVGView.makeLabeledRect(evt, "target", yTop));
          }
          else if (evt.type === BounceMovie.cBallPosition) {
             svgElms.push(<circle key={"ballPos" + evt.time} cx={evt.x}
@@ -159,8 +157,8 @@ export class BounceSVGView extends Component {
 
             if (evt.type === BounceMovie.cHitTarget) {
                let trgEvt = trgEvts[evt.targetId];
-               svgElms[trgEvt.svgIdx] = makeLabeledRect(trgEvt, "hitTarget",
-                yTop)
+               svgElms[trgEvt.svgIdx]
+                = BounceSVGView.makeLabeledRect(trgEvt, "hitTarget", yTop)
             }
          }
          // Ball launch and ball exit require no action here.
@@ -173,13 +171,14 @@ export class BounceSVGView extends Component {
       while (evtIdx > 0 && timeStamp < evts[evtIdx].time) {
          evt = evts[evtIdx--];
          if (evt.type === BounceMovie.cBallPosition
-          || evt.type === cHitBarrier || evt.type === cHitTarget)
+          || evt.type === BounceMovie.cHitBarrier 
+          || evt.type === BounceMovie.cHitTarget)
             svgElms.pop();
 
          if (evt.type === BounceMovie.cHitTarget) {
             let trgEvt = trgEvts[evt.targetId];
-            svgElms[trgEvt.svgIdx] = this.makeLabeledRect(trgEvt, "target",
-              yTop)
+            svgElms[trgEvt.svgIdx]
+             = BounceSVGView.makeLabeledRect(trgEvt, "target", yTop)
          }
       }
 

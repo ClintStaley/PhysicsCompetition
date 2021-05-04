@@ -9,7 +9,7 @@ export class MovieController extends Component {
       super(props);
       this.state = {
          currentViewIdx: 0,
-         currentOffset: 0.01,
+         currentOffset: 0,
          playing: false,
          childEventIdx: 0
       };
@@ -18,6 +18,8 @@ export class MovieController extends Component {
       this.currentView = props.views[this.state.currentViewIdx];
    }
 
+   // CAS FIX: Are this method and the childEventIdx even used?  Pls remove
+   // them unless they're needed.
    updateEventIdx(eventIdx) {
       this.setState({childEventIdx: eventIdx});
    }
@@ -54,6 +56,7 @@ export class MovieController extends Component {
    };
 
    render() {
+      console.log("Rendering MC with props ", this.props, this.state);
       return (
          <div>
             <div>
@@ -72,11 +75,11 @@ export class MovieController extends Component {
                   key={idx}
                   onClick={() => this.setState({currentViewIdx: idx})}
                >
-                  {new view().getLabel()}
+                  {view.getLabel()}
                </button>
             ))}
             {React.createElement(BounceSVGView, {
-               currentOffset: this.state.currentOffset || 0.01,
+               offset: this.state.currentOffset || 0,
                movie: this.props.jsonMovie,
             })}
             <Slider

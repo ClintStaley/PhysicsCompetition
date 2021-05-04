@@ -144,7 +144,7 @@ export class Bounce3DView extends React.Component {
     this.renderer.render(this.scene, this.camera);
   }
 
-  getLabel() {
+  static getLabel() {
     return "3D";
   }
 

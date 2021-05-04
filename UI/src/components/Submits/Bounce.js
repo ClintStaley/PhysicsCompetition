@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import { Bounce3DView } from './Bounce3DView';
-//import {BounceSVGView} from "./BounceSVGView";
+import {BounceSVGView} from "./BounceSVGView";
 import { BounceMovie } from './BounceMovie';
 import { MovieController } from './MovieController';
 
 import './Bounce.css'
-import { Sphere } from 'three';
 
 // Expected props are, exactly:
 //  prms -- the parameters for the displayed competition
@@ -99,9 +98,6 @@ export class Bounce extends Component {
       let summary = null;
       let ready = sbm && sbm.testResult && sbm.score !== null;
       
-      console.log("Rendering bounce for ", sbm);
-      console.log(`Ready is ${ready}`)
-
       if (ready) {
          jsonMovie = new BounceMovie(60, prms, sbm);
          summary = this.getSummary(sbm.testResult, sbm.score);
@@ -115,7 +111,7 @@ export class Bounce extends Component {
              play={() => this.startMovie(sbm.testResult.events)} 
              replay={() => this.replay()} 
              pause={() => this.stopMovie()} 
-             views={[Bounce3DView]}
+             views={[Bounce3DView, BounceSVGView]}
           />,               
           summary] : ''}
       </section>);
