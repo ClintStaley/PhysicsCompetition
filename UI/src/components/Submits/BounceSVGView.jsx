@@ -210,7 +210,7 @@ export class BounceSVGView extends React.Component {
       return  ( 
          <svg viewBox={`-.1 -.1 ${width + .1} ${height + .1}`} width="100%"
           className="panel">
-            {this.state.svgElms}
+            <g>{this.state.svgElms}</g>
             {ballEvt ? <circle key={"BallLoc"} cx={ballEvt.x}
              cy={height - ballEvt.y} r={BounceSVGView.ballRadius} 
              className={BounceSVGView.ballColors[ballEvt.ballNumber]}/>: ""}
