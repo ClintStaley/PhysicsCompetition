@@ -56,7 +56,7 @@ export class MovieController extends Component {
    };
 
    render() {
-      console.log("Rendering MC with props ", this.props, this.state);
+      // console.log("Rendering MC with props ", this.props, this.state);
       return (
          <div>
             <div>

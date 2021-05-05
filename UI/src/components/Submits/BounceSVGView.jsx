@@ -15,7 +15,7 @@ export class BounceSVGView extends React.Component {
    constructor(props) {
       super(props);
 
-      this.state = BounceSVGView.setOffset(props.movie, 
+      this.state = BounceSVGView.setOffset(
        BounceSVGView.getInitState(props.movie), props.offset);
    }
 
@@ -75,22 +75,24 @@ export class BounceSVGView extends React.Component {
 
       if (newProps.movie !== oldState.movie) // Complete reset
          rtn = BounceSVGView.getInitState(newProps.movie);
-      return BounceSVGView.setOffset(newProps.movie, rtn, newProps.offset);
+      return BounceSVGView.setOffset(rtn, newProps.offset);
    }
 
    // Create an svg <g> object representing a rectangle of class |cls| with
    // dimensions as indicated by |evt| and with corner coordinates drawn in
    // text form.
    static makeLabeledRect(evt, cls, yTop) {
-      const textSize = .8;  // Minimum width of rect to fit text inside
-      const topLead = .13;  // Leading for text on top
-      const btmLead = .05;  // Leading for text on bottom
+      const textSize = 1.2;  // Minimum width of rect to fit text inside
+      const textHeight = .13;  // Height of a text line
+      const minHeight = textHeight * 2.1; // Minimum height to fit 2 text lines
       
       let elms = [];        // Returned SVG elements
-      let width = evt.hiX - evt.loX + 1;
-      let height = evt.hiY - evt.loY + 1;
+      let width = evt.hiX - evt.loX;
+      let height = evt.hiY - evt.loY;
       let classLeft = width > textSize ? "text" : "rhsText";
       let classRight = width > textSize ? "rhsText" : "text";
+      let topYAdjust = height > minHeight ? textHeight : 0;
+      let btmYAdjust = height > minHeight ? 0 : textHeight;
 
       // Main rectangle
       elms.push(<rect key={"Blk" + evt.id} x={evt.loX} y={yTop - evt.hiY}
@@ -98,27 +100,26 @@ export class BounceSVGView extends React.Component {
       
       // Upper left label showing (loX, hiY)
       elms.push(<text key={"BlkUL" + evt.id} x={evt.loX} 
-       y={yTop - evt.hiY + topLead} className={classLeft}>
-       {`(${evt.loX}, ${evt.hiY})`}
+       y={yTop - evt.hiY + topYAdjust} className={classLeft}>
+       {`(${evt.loX.toFixed(2)}, ${evt.hiY.toFixed(2)})`}
        </text>);
 
       // Upper right label showing (hiX, hiY)
       elms.push(<text key={"BlkUR" + evt.id} x={evt.hiX}
-       y={yTop - evt.hiY + topLead} className={classRight}>
-       {`(${evt.hiX}, ${evt.hiY})`}
+       y={yTop - evt.hiY + topYAdjust} className={classRight}>
+       {`(${evt.hiX.toFixed(2)}, ${evt.hiY.toFixed(2)})`}
        </text>);
 
       // Lower left label showing (loX, loY)
       elms.push(<text key={"BlkLL" + evt.id} x={evt.loX} 
-       y={yTop - evt.loY + topLead} className={classLeft}>
-       {`(${evt.loX}, ${evt.loY})`}
+       y={yTop - evt.loY + btmYAdjust} className={classLeft}>
+       {`(${evt.loX.toFixed(2)}, ${evt.loY.toFixed(2)})`}
        </text>);
-
 
       // Lower right label showing (hiX, loY)
       elms.push(<text key={"BlkLR" + evt.id} x={evt.hiX} 
-       y={yTop - evt.loY + topLead} className={classRight}>
-       {`(${evt.hiX}, ${evt.loY})`}
+       y={yTop - evt.loY + btmYAdjust} className={classRight}>
+       {`(${evt.hiX.toFixed(2)}, ${evt.loY.toFixed(2)})`}
        </text>);
 
       return <g>{elms}</g>;
@@ -127,11 +128,13 @@ export class BounceSVGView extends React.Component {
    // Advance/retract |state| so that svgElms reflects all and only those events
    // in |movie| with time <= |timeStamp|.  Assume existing |state| was built
    // from |movie| so incremental change is appropriate.  Return adjusted state
-   static setOffset(movie, state, timeStamp) {
+   static setOffset(state, timeStamp) {
+      let movie = state.movie;
       let evts = movie.evts;
       let {trgEvts, ballEvt, evtIdx, svgElms} = state;
       let yTop = movie.background.height;
       let evt;
+console.log("SetOffset ", timeStamp, movie);
 
       while (evtIdx < evts.length && timeStamp >= evts[evtIdx+1].time) {
          evt = evts[++evtIdx];
