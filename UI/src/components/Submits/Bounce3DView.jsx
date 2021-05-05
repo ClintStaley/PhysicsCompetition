@@ -15,12 +15,12 @@ CameraControls.install({ THREE: THREE });
 export class Bounce3DView extends React.Component {
   constructor(props) {
     super(props);
-    this.random = Math.random() * 1000;
     this.state = {
       test: 15,
       playing: false,
       changedTime: false,
-      isFirstRender: true
+      isFirstRender: true,
+      barrierHit: false
     };
   }
 
@@ -53,7 +53,6 @@ export class Bounce3DView extends React.Component {
   }
 
   createMaterial() {
-    let loader = new THREE.TextureLoader();
     let path = `${window.location.origin}/textures/steelplate1-ue/`;
 
     let material = new THREE.MeshStandardMaterial({
@@ -108,6 +107,12 @@ export class Bounce3DView extends React.Component {
       
   }
 
+  addPointLight(intensity, x, y, z) {
+    let light = new THREE.PointLight("0xffffff", intensity);
+    light.position.set(x, y, z);
+    this.scene.add(light);
+  }
+
   componentDidMount() {
     this.evtIdx = 0;
     const width = this.mount.clientWidth;
@@ -136,41 +141,25 @@ export class Bounce3DView extends React.Component {
       this.cameraControls.update(this.props.currentOffset);
       this.renderer.render(this.scene, this.camera);
     });
+
     this.cameraControls.setTarget(6.7, 6, 0);
 
-    this.plight = new THREE.PointLight("0xffffff", 5);
-    this.plight.position.set(-10, 10, 10);
-    this.scene.add(this.plight);
-
-    this.plight2 = new THREE.PointLight("0x123123", 3);
-    this.plight2.position.set(0, 10, 20);
-    this.scene.add(this.plight2);
-
-    this.cubeRenderTarget = new THREE.WebGLCubeRenderTarget(128, {
-      format: THREE.RGBFormat,
-      generateMipmaps: true,
-      minFilter: THREE.LinearMipmapLinearFilter,
-    });
+    this.addPointLight(2, 0, 20, -20);
+    this.addPointLight(2, 0, 20, 0);
+    this.addPointLight(5, 0, 10, 20);
 
     this.setup();
     this.evtIdx = 0;
-    this.cameraControls.update(1);
-    this.renderer.render(this.scene, this.camera);
+    this.barrierHit = false;
+    this.targetIds = [];
+    this.cameraControls.update(this.props.currentOffset);
+    //this.renderer.render(this.scene, this.camera);
   }
 
   getLabel() {
     return "3D";
   }
 
-  hitBarrier() {
-    if(this.test){
-      for(const child of this.scene.children) {
-        if(child.uuid === this.test){
-          child.position.z -= 2;
-        }
-      }
-    }
-  }
 
   setup() {
     let set = this.props.movie.evts.filter((evt) => evt.time < 0);
@@ -187,10 +176,14 @@ export class Bounce3DView extends React.Component {
     this.wall = new THREE.Mesh(wallGeo, this.createFancyMaterial());
     this.scene.add(this.wall);
     this.wall.position.set(5, 5, -.25);
+    const wallDepthGeo = new THREE.BoxGeometry(12, 12, 2);
+    this.wallDepth = new THREE.Mesh(wallDepthGeo, this.createMaterial());
+    this.scene.add(this.wallDepth);
+    this.wallDepth.position.set(5, 5, -1.25);
 
 
 
-    set.forEach((brr, idx) => {
+    set.forEach((brr) => {
       const width = brr.hiX - brr.loX;
       const height = brr.hiY - brr.loY;
       const geometry = new THREE.BoxGeometry(width, height, 1);
@@ -200,14 +193,31 @@ export class Bounce3DView extends React.Component {
       barrier.position.z = 0;
       barrier.position.x = brr.loX + width / 2;
       if(brr.type === 1) {
-        this.test = barrier.uuid;
+        this.barrierId = barrier.uuid;
       }
       this.scene.add(barrier);
       this.evtIdx++;
     });
   }
 
+  hitBarrier() {
+    this.barrierHit = !this.barrierHit;
+      for(const child of this.scene.children) {
+        if(child.uuid === this.barrierId){
+          if (this.barrierHit){
+            console.log('hit!')
+            child.position.z = -0.55;
+          } else {
+            child.position.z = 0;
+          }
+        }
+      }
+  }
+
   displayFrame(timestamp) {
+    if(this.props.scrubbing) {
+      this.evtIdx = 0;
+    }
     var evts = [];
     this.timestamp = timestamp;
     while (
@@ -240,8 +250,10 @@ export class Bounce3DView extends React.Component {
 
     if (this.state.isFirstRender)      
       this.initialBackground();
-    else
+    else{
+      this.renderer.render(this.scene, this.camera);
       this.displayFrame(this.props.currentOffset);
+    }
 
 
     return (
