@@ -134,7 +134,6 @@ export class BounceSVGView extends React.Component {
       let {trgEvts, ballEvt, evtIdx, svgElms} = state;
       let yTop = movie.background.height;
       let evt;
-// console.log("SetOffset ", timeStamp, movie);
 
       while (evtIdx < evts.length-1 && timeStamp >= evts[evtIdx+1].time) {
          evt = evts[++evtIdx];
@@ -207,7 +206,7 @@ export class BounceSVGView extends React.Component {
       let width = this.state.movie.background.width;
       let height = this.state.movie.background.height;
 
-      // console.log("Rendering at ", this.props.offset, this.state.svgElms);
+      console.log("Rendering at ", this.props.offset, this.state.svgElms);
       return  ( 
          <svg viewBox={`-.1 -.1 ${width + .1} ${height + .1}`} width="100%"
           className="panel">

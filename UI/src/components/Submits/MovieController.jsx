@@ -81,7 +81,7 @@ export class MovieController extends Component {
                </button>
             ))}
             {React.createElement(this.props.views[this.state.currentViewIdx], {
-               currentOffset: this.state.currentOffset || 0.01,
+               offset: this.state.currentOffset || 0.01,
                movie: this.props.jsonMovie,
                scrubbing: this.state.scrubbing
             })}

@@ -14,7 +14,6 @@ export class BounceMovie {
       const pltFactor = 10;             // Divide platform x/y by this
       let tracks = sbm.testResult.events;  
 
-      console.log("Params ", prms);
       this.background = {};
       this.background.frameRate = frameRate;
       this.background.height = bkgSize;
@@ -35,7 +34,6 @@ export class BounceMovie {
       let time = 0;
       tracks.forEach((trk, ballId) => {          // One track per ball
          trk.forEach((arc, arcId) => {           // Several arcs per track
-            console.log("Arc ", arc);
             if (arcId == 0)                      // Launching arc
                this.addBallLaunchEvt(time, ballId);
             else if (arc.obstacleIdx >= 0) {      // If bouncing off something

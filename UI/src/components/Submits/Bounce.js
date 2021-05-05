@@ -111,7 +111,7 @@ export class Bounce extends Component {
              play={() => this.startMovie(sbm.testResult.events)} 
              replay={() => this.replay()} 
              pause={() => this.stopMovie()} 
-             views={[Bounce3DView, BounceSVGView]}
+             views={[BounceSVGView, Bounce3DView]}
           />,               
           summary] : ''}
       </section>);
