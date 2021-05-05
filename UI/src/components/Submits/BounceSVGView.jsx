@@ -1,31 +1,30 @@
 import React, { Component } from 'react';
-import {FormGroup, FormControl, HelpBlock, ControlLabel}
-  from 'react-bootstrap';
 import {BounceMovie} from './BounceMovie';
 
 import './BounceSVGView.css'
 
-export class BounceSVGView extends Component {
+export class BounceSVGView extends React.Component {
    static ballColors = ["red", "green", "orange", "purple", "cyan", "blue"];
    static ballPosRadius = .02; // Radius of ball position marker
    static ballRadius = .1;     // Radius of ball
 
    // Props are: {
-   //    currentOffset: time offset from movie start in sec
    //    movie: movie to display
+   //    offset: time offset from movie start in sec
    // }
    constructor(props) {
       super(props);
 
-      this.state = this.getInitState();
-      this.setOffset(props.currentOffset);
+      this.state = BounceSVGView.setOffset(
+       BounceSVGView.getInitState(props.movie), props.offset);
    }
 
-   // Return SVG element array displaying background grid and other fixtures.
-   getInitState() {
+   // Return state displaying background grid and other fixtures
+   // appropriate for |movie|
+   static getInitState(movie) {
       let bkgElms = [];
-      let width = this.props.movie.background.width;
-      let height = this.props.movie.background.height;
+      let width = movie.background.width;
+      let height = movie.background.height;
       let longDim = Math.max(width, height);
       let bigGap = longDim/10;
       let smallGap = bigGap/5;
@@ -62,34 +61,38 @@ export class BounceSVGView extends Component {
          ballEvt: null,    // Most recent ball position or hit event
          evtIdx: -1,       // Index within movie of last event shown in svgElms
          svgElms: bkgElms, // SVG elements to render at this point
+         movie             // Pointer to current movie
       }   
    }
 
    // Return label for button activating this view
-   getLabel() {
+   static getLabel() {
       return "Diagram";
    }
 
-   getDerivedStateFromProps(newProps, state) {
-      if (newProps.movie !== this.props.movie) // Complete reset
-         this.setState(this.getInitState());
-      this.setOffset(newProps.currentOffset);
+   static getDerivedStateFromProps(newProps, oldState) {
+      let rtn = oldState;
+
+      if (newProps.movie !== oldState.movie) // Complete reset
+         rtn = BounceSVGView.getInitState(newProps.movie);
+      return BounceSVGView.setOffset(rtn, newProps.offset);
    }
 
    // Create an svg <g> object representing a rectangle of class |cls| with
    // dimensions as indicated by |evt| and with corner coordinates drawn in
    // text form.
-   makeLabeledRect(evt, cls) {
-      const textSize = .8;  // Minimum width of rect to fit text inside
-      const topLead = .13;  // Leading for text on top
-      const btmLead = .05;  // Leading for text on bottom
+   static makeLabeledRect(evt, cls, yTop) {
+      const textSize = 1.2;  // Minimum width of rect to fit text inside
+      const textHeight = .13;  // Height of a text line
+      const minHeight = textHeight * 2.1; // Minimum height to fit 2 text lines
       
       let elms = [];        // Returned SVG elements
-      let width = evt.hiX - evt.loX + 1;
-      let height = evt.hiY - evt.loY + 1;
+      let width = evt.hiX - evt.loX;
+      let height = evt.hiY - evt.loY;
       let classLeft = width > textSize ? "text" : "rhsText";
       let classRight = width > textSize ? "rhsText" : "text";
-      let yTop = this.props.movie.background.height;
+      let topYAdjust = height > minHeight ? textHeight : 0;
+      let btmYAdjust = height > minHeight ? 0 : textHeight;
 
       // Main rectangle
       elms.push(<rect key={"Blk" + evt.id} x={evt.loX} y={yTop - evt.hiY}
@@ -97,49 +100,51 @@ export class BounceSVGView extends Component {
       
       // Upper left label showing (loX, hiY)
       elms.push(<text key={"BlkUL" + evt.id} x={evt.loX} 
-       y={yTop - evt.hiY + topLead} className={classLeft}>
-       {`(${evt.loX}, ${evt.hiY})`}
+       y={yTop - evt.hiY + topYAdjust} className={classLeft}>
+       {`(${evt.loX.toFixed(2)}, ${evt.hiY.toFixed(2)})`}
        </text>);
 
       // Upper right label showing (hiX, hiY)
       elms.push(<text key={"BlkUR" + evt.id} x={evt.hiX}
-       y={yTop - evt.hiY + topLead} className={classRight}>
-       {`(${evt.hiX}, ${evt.hiY})`}
+       y={yTop - evt.hiY + topYAdjust} className={classRight}>
+       {`(${evt.hiX.toFixed(2)}, ${evt.hiY.toFixed(2)})`}
        </text>);
 
       // Lower left label showing (loX, loY)
       elms.push(<text key={"BlkLL" + evt.id} x={evt.loX} 
-       y={yTop - evt.loY + topLead} className={classLeft}>
-       {`(${evt.loX}, ${evt.loY})`}
+       y={yTop - evt.loY + btmYAdjust} className={classLeft}>
+       {`(${evt.loX.toFixed(2)}, ${evt.loY.toFixed(2)})`}
        </text>);
-
 
       // Lower right label showing (hiX, loY)
       elms.push(<text key={"BlkLR" + evt.id} x={evt.hiX} 
-       y={yTop - evt.loY + topLead} className={classRight}>
-       {`(${evt.hiX}, ${evt.loY})`}
+       y={yTop - evt.loY + btmYAdjust} className={classRight}>
+       {`(${evt.hiX.toFixed(2)}, ${evt.loY.toFixed(2)})`}
        </text>);
 
       return <g>{elms}</g>;
    }
 
-   // Advance/retract so that all events with time <= |timeStamp| have been
-   // performed.  
-   setOffset(timeStamp) {
-      let evts = this.props.movie.evts;
-      let {trgEvts, ball, evtIdx, svgElms} = this.state;
-      let yTop = this.props.movie.background.height;
+   // Advance/retract |state| so that svgElms reflects all and only those events
+   // in |movie| with time <= |timeStamp|.  Assume existing |state| was built
+   // from |movie| so incremental change is appropriate.  Return adjusted state
+   static setOffset(state, timeStamp) {
+      let movie = state.movie;
+      let evts = movie.evts;
+      let {trgEvts, ballEvt, evtIdx, svgElms} = state;
+      let yTop = movie.background.height;
       let evt;
+console.log("SetOffset ", timeStamp, movie);
 
       while (evtIdx < evts.length && timeStamp >= evts[evtIdx+1].time) {
          evt = evts[++evtIdx];
          if (evt.type === BounceMovie.cMakeBarrier) {
-            svgElms.push(this.makeLabeledRect(evt, "barrier"));
+            svgElms.push(BounceSVGView.makeLabeledRect(evt, "barrier", yTop));
          }
          else if (evt.type === BounceMovie.cMakeTarget) {
             evt.svgIdx = svgElms.length;
-            trgEvts[evt.targetId] = evt;  // Save event for redrawing if hit
-            svgElms.push(this.makeLabeledRect(evt, "target"));
+            trgEvts[evt.id] = evt;  // Save event for redrawing if hit
+            svgElms.push(BounceSVGView.makeLabeledRect(evt, "target", yTop));
          }
          else if (evt.type === BounceMovie.cBallPosition) {
             svgElms.push(<circle key={"ballPos" + evt.time} cx={evt.x}
@@ -155,7 +160,8 @@ export class BounceSVGView extends Component {
 
             if (evt.type === BounceMovie.cHitTarget) {
                let trgEvt = trgEvts[evt.targetId];
-               svgElms[trgEvt.svgIdx] = this.makeLabeledRect(trgEvt, "hitTarget")
+               svgElms[trgEvt.svgIdx]
+                = BounceSVGView.makeLabeledRect(trgEvt, "hitTarget", yTop)
             }
          }
          // Ball launch and ball exit require no action here.
@@ -168,18 +174,20 @@ export class BounceSVGView extends Component {
       while (evtIdx > 0 && timeStamp < evts[evtIdx].time) {
          evt = evts[evtIdx--];
          if (evt.type === BounceMovie.cBallPosition
-          || evt.type === cHitBarrier || evt.type === cHitTarget)
+          || evt.type === BounceMovie.cHitBarrier 
+          || evt.type === BounceMovie.cHitTarget)
             svgElms.pop();
 
          if (evt.type === BounceMovie.cHitTarget) {
             let trgEvt = trgEvts[evt.targetId];
-            svgElms[trgEvt.svgIdx] = this.makeLabeledRect(trgEvt, "target")
+            svgElms[trgEvt.svgIdx]
+             = BounceSVGView.makeLabeledRect(trgEvt, "target", yTop)
          }
       }
 
       // Loop from current evtIdx backward to find most recent event that draws
       // a full ball, or null if most recent is a ballExit.
-      let ballEvt = null;
+      ballEvt = null;
       for (let searchIdx = evtIdx; searchIdx >= 0; searchIdx--) {
          let testEvt = evts[searchIdx];
          if (testEvt.type === BounceMovie.cBallExit)
@@ -191,19 +199,20 @@ export class BounceSVGView extends Component {
             break;
          }
       }
-      this.setState({trgEvts, ballEvt, evtIdx, svgElms});
+      return {trgEvts, ballEvt, evtIdx, svgElms, movie};
    }
 
    render() {
       let ballEvt = this.state.ballEvt;
-      let width = this.props.movie.background.width;
-      let height = this.props.movie.background.height;
+      let width = this.state.movie.background.width;
+      let height = this.state.movie.background.height;
 
-      return  (
+      // console.log("Rendering at ", this.props.offset, this.state.svgElms);
+      return  ( 
          <svg viewBox={`-.1 -.1 ${width + .1} ${height + .1}`} width="100%"
           className="panel">
             {this.state.svgElms}
-            {ballEvt ? <circle key={"Ball" + (ballEvt.time)} cx={ballEvt.x}
+            {ballEvt ? <circle key={"BallLoc"} cx={ballEvt.x}
              cy={height - ballEvt.y} r={BounceSVGView.ballRadius} 
              className={BounceSVGView.ballColors[ballEvt.ballNumber]}/>: ""}
          </svg>);

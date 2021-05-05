@@ -19,6 +19,8 @@ export class MovieController extends Component {
       this.currentView = props.views[this.state.currentViewIdx];
    }
 
+   // CAS FIX: Are this method and the childEventIdx even used?  Pls remove
+   // them unless they're needed.
    updateEventIdx(eventIdx) {
       this.setState({childEventIdx: eventIdx});
    }
@@ -55,6 +57,7 @@ export class MovieController extends Component {
    };
 
    render() {
+      // console.log("Rendering MC with props ", this.props, this.state);
       return (
          <div>
             <div>
@@ -74,7 +77,7 @@ export class MovieController extends Component {
                   key={idx}
                   onClick={() => this.setState({currentViewIdx: idx})}
                >
-                  {new view().getLabel()}
+                  {view.getLabel()}
                </button>
             ))}
             {React.createElement(this.props.views[this.state.currentViewIdx], {
