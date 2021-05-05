@@ -51,7 +51,7 @@ export class BounceMovie {
             
             // Create a sequence of ball positions, except for exit "arc"
             if (arcId < trk.length - 1) { 
-               let arcDuration = trk[arcId + 1].time - time; 
+               let arcDuration = trk[arcId + 1].time - arc.time; 
                for (let arcTime = 0; arcTime < arcDuration;
                 arcTime += 1.0/frameRate) {
                   let x = arc.posX + arcTime * arc.velocityX;

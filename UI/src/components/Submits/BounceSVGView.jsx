@@ -134,9 +134,9 @@ export class BounceSVGView extends React.Component {
       let {trgEvts, ballEvt, evtIdx, svgElms} = state;
       let yTop = movie.background.height;
       let evt;
-console.log("SetOffset ", timeStamp, movie);
+// console.log("SetOffset ", timeStamp, movie);
 
-      while (evtIdx < evts.length && timeStamp >= evts[evtIdx+1].time) {
+      while (evtIdx < evts.length-1 && timeStamp >= evts[evtIdx+1].time) {
          evt = evts[++evtIdx];
          if (evt.type === BounceMovie.cMakeBarrier) {
             svgElms.push(BounceSVGView.makeLabeledRect(evt, "barrier", yTop));
