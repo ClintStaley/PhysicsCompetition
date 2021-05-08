@@ -4,17 +4,22 @@ import "./Bounce.css";
 import "react-rangeslider/lib/index.css";
 import CameraControls from "camera-controls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import negy from "../../images/BounceSkyBox/negy.jpg";
-import negx from "../../images/BounceSkyBox/negx.jpg";
-import negz from "../../images/BounceSkyBox/negz.jpg";
-import posy from "../../images/BounceSkyBox/posy.jpg";
-import posx from "../../images/BounceSkyBox/posx.jpg";
-import posz from "../../images/BounceSkyBox/posz.jpg";
+import { CSG } from 'three-csg-ts';
+import UIfx from 'uifx';
+import pingAudio from '../../assets/sound/ping.mp3';
+import negy from "../../images/BounceSkyBox/ny.png";
+import negx from "../../images/BounceSkyBox/nx.png";
+import negz from "../../images/BounceSkyBox/nz.png";
+import posy from "../../images/BounceSkyBox/py.png";
+import posx from "../../images/BounceSkyBox/px.png";
+import posz from "../../images/BounceSkyBox/pz.png";
+//const ThreeBSP = new CspLibrary(THREE)
 CameraControls.install({ THREE: THREE });
 
 export class Bounce3DView extends React.Component {
   constructor(props) {
     super(props);
+    this.ping = new UIfx(pingAudio, {volume: 0.5, throttleMs: 100});
     this.state = {
       test: 15,
       playing: false,
@@ -73,7 +78,7 @@ export class Bounce3DView extends React.Component {
       materials.push(material);
     }
 
-    let skyboxGeo = new THREE.BoxGeometry(100, 100, 100);
+    let skyboxGeo = new THREE.BoxGeometry(50, 50, 50);
     let skybox = new THREE.Mesh(skyboxGeo, materials);
     skybox.position.set(0, 10, 0);
     this.scene.add(skybox);
@@ -142,9 +147,10 @@ export class Bounce3DView extends React.Component {
       this.renderer.render(this.scene, this.camera);
     });
 
+
     this.cameraControls.setTarget(6.7, 6, 0);
 
-    this.addPointLight(2, 0, 20, -20);
+    this.addPointLight(10, 0, 200, -20);
     this.addPointLight(2, 0, 20, 0);
     this.addPointLight(5, 0, 10, 20);
 
@@ -153,6 +159,7 @@ export class Bounce3DView extends React.Component {
     this.barrierHit = false;
     this.targetIds = [];
     this.cameraControls.update(this.props.currentOffset);
+
     //this.renderer.render(this.scene, this.camera);
   }
 
@@ -162,6 +169,7 @@ export class Bounce3DView extends React.Component {
 
 
   setup() {
+
     let set = this.props.movie.evts.filter((evt) => evt.time < 0);
     let ball = this.props.movie.evts.filter(
       (evt) => evt.time === 0 && evt.type === 0
@@ -178,15 +186,58 @@ export class Bounce3DView extends React.Component {
     this.wall.position.set(5, 5, -.25);
     const wallDepthGeo = new THREE.BoxGeometry(12, 12, 2);
     this.wallDepth = new THREE.Mesh(wallDepthGeo, this.createMaterial());
-    this.scene.add(this.wallDepth);
     this.wallDepth.position.set(5, 5, -1.25);
+    this.scene.add(this.wallDepth);
+
+    const wall = new THREE.Mesh(new THREE.BoxGeometry(12, 12, 2), this.createMaterial());
+    wall.position.set(5, 5, -1.25);
+    const test = new THREE.Mesh(new THREE.BoxGeometry(2, 2, 2), this.createMaterial());
+    test.position.set(5, 5, -1.25);
+    
+  //   console.log(wall.faces)
+  //   wall.updateMatrix()
+  //   test.updateMatrix()
+  //   const wallbsp = CSG.fromMesh(wall);
+  //   const testbsp = CSG.fromMesh(test);
+  //   const subtraction = wallbsp.subtract(testbsp);
+  //   const subtractionMesh = CSG.toMesh(subtraction, wall.matrix);
+  //  // subtraction.addAttribute('position', 'test');
+
+    // Make 2 box meshes..
+    // const meshA = new THREE.Mesh(new THREE.BoxGeometry(1,1,1), new THREE.MeshNormalMaterial());
+    // const meshB = new THREE.Mesh(new THREE.BoxGeometry(1,1,1));
+
+    // // Offset one of the boxes by half its width..
+    // meshB.position.add(new THREE.Vector3(0.5, 0.5, 0.5));
+
+    // // Make sure the .matrix of each mesh is current
+    // meshA.updateMatrix();
+    // meshB.updateMatrix();
+
+    // // Create a bsp tree from each of the meshes
+    // const bspA = CSG.fromMesh(meshA);
+    // const bspB = CSG.fromMesh(meshB);
+
+    // // Subtract one bsp from the other via .subtract... other supported modes are .union and .intersect
+    // const bspResult = bspA.subtract(bspB);
+
+    // // Get the resulting mesh from the result bsp
+    // this.meshResult = CSG.toMesh(bspResult, meshA.matrix);
+
+    // // Set the results material to the material of the first cube.
+    // this.meshResult.material = meshA.material;
+    // this.scene.add(this.meshResult);
 
 
 
     set.forEach((brr) => {
+      brr.hiX *= 10;
+      brr.hiY *= 10;
+      brr.loX *= 10;
+      brr.loY *= 10;
       const width = brr.hiX - brr.loX;
       const height = brr.hiY - brr.loY;
-      const geometry = new THREE.BoxGeometry(width, height, 1);
+      const geometry = new THREE.BoxGeometry(width, height, 3);
       const material = this.createMaterial();
       const barrier = new THREE.Mesh(geometry, material);
       barrier.position.y = brr.loY + height / 2;
@@ -204,12 +255,8 @@ export class Bounce3DView extends React.Component {
     this.barrierHit = !this.barrierHit;
       for(const child of this.scene.children) {
         if(child.uuid === this.barrierId){
-          if (this.barrierHit){
-            console.log('hit!')
-            child.position.z = -0.55;
-          } else {
-            child.position.z = 0;
-          }
+          this.ping.play(0.25)
+          child.position.z = this.barrierHit ? -0.55 : 0;
         }
       }
   }
