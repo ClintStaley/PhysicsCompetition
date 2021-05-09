@@ -5,7 +5,7 @@ import Draggable from 'react-draggable';
 
 class DraggableModalDialog extends React.Component {
 	render() {
-		return <Draggable handle=".modal">
+		return <Draggable handle=".modal-title">
 					<ModalDialog {...this.props} />
 			   </Draggable>
 	}
