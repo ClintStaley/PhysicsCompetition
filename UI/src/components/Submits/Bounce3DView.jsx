@@ -4,7 +4,6 @@ import "./Bounce.css";
 import "react-rangeslider/lib/index.css";
 import CameraControls from "camera-controls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { CSG } from 'three-csg-ts';
 import UIfx from 'uifx';
 import pingAudio from '../../assets/sound/ping.mp3';
 import negy from "../../images/BounceSkyBox/ny.png";
@@ -192,43 +191,7 @@ export class Bounce3DView extends React.Component {
     this.wallDepth.position.set(5, 5, -1.25);
     this.scene.add(this.wallDepth);
 
-    const wall = new THREE.Mesh(new THREE.BoxGeometry(12, 12, 2), this.createMaterial());
-    wall.position.set(5, 5, -1.25);
-    const test = new THREE.Mesh(new THREE.BoxGeometry(2, 2, 2), this.createMaterial());
-    test.position.set(5, 5, -1.25);
-    
-    // Make 2 box meshes..
-    // const meshA = new THREE.Mesh(new THREE.BoxGeometry(1,1,1), new THREE.MeshNormalMaterial());
-    // const meshB = new THREE.Mesh(new THREE.BoxGeometry(1,1,1));
-
-    // // Offset one of the boxes by half its width..
-    // meshB.position.add(new THREE.Vector3(0.5, 0.5, 0.5));
-
-    // // Make sure the .matrix of each mesh is current
-    // meshA.updateMatrix();
-    // meshB.updateMatrix();
-
-    // // Create a bsp tree from each of the meshes
-    // const bspA = CSG.fromMesh(meshA);
-    // const bspB = CSG.fromMesh(meshB);
-
-    // // Subtract one bsp from the other via .subtract... other supported modes are .union and .intersect
-    // const bspResult = bspA.subtract(bspB);
-
-    // // Get the resulting mesh from the result bsp
-    // this.meshResult = CSG.toMesh(bspResult, meshA.matrix);
-
-    // // Set the results material to the material of the first cube.
-    // this.meshResult.material = meshA.material;
-    // this.scene.add(this.meshResult);
-
-
-
     set.forEach((brr) => {
-      brr.hiX *= 10;
-      brr.hiY *= 10;
-      brr.loX *= 10;
-      brr.loY *= 10;
       const width = brr.hiX - brr.loX;
       const height = brr.hiY - brr.loY;
       const geometry = new THREE.BoxGeometry(width, height, 3);
