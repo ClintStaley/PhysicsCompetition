@@ -169,35 +169,35 @@ insert into CompetitionType (title, codeName, description, prmSchema)
             "type": "number"
           },
           "targets": {
-            "title": "Obstacles to hit",
+            "title": "Targets to hit",
             "type": "array",
             "items": {
-                "title": "Goal rectangle",
+                "title": "Target rectangle",
                 "type": "object",
                 "properties": {
                   "loX": {
                       "title": "Left edge",
                       "type": "number",
                       "minimum": 0.0,
-                      "maximum": 100.0
+                      "maximum": 10.0
                   },
                   "hiX": {
                       "title": "Right edge",
                       "type": "number",
                       "minimum": 0.0,
-                      "maximum": 100.0
+                      "maximum": 10.0
                   },
                   "loY": {
                       "title": "top edge",
                       "type": "number",
                       "minimum": 0.0,
-                      "maximum": 100.0
+                      "maximum": 10.0
                   },
                   "hiY": {
                       "title": "bottom edge",
                       "type": "number",
                       "minimum": 0.0,
-                      "maximum": 100.0
+                      "maximum": 10.0
                   }
                 },
             
@@ -218,7 +218,7 @@ insert into CompetitionType (title, codeName, description, prmSchema)
                     "title": "Left edge",
                     "type": "number",
                     "minimum": 0.0,
-                    "maximum": 100.0
+                    "maximum": 10.0
                 },
                 "hiX": {
                     "title": "Right edge",
@@ -230,13 +230,13 @@ insert into CompetitionType (title, codeName, description, prmSchema)
                     "title": "top edge",
                     "type": "number",
                     "minimum": 0.0,
-                    "maximum": 100.0
+                    "maximum": 10.0
                 },
                 "hiY": {
                     "title": "bottom edge",
                     "type": "number",
                     "minimum": 0.0,
-                    "maximum": 100.0
+                    "maximum": 10.0
                 }
              },
                 "additionalProperties": false,

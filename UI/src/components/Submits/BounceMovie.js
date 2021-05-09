@@ -11,9 +11,10 @@ export class BounceMovie {
    constructor(frameRate, prms, sbm) {
       const cG = 9.80665;               // Gravity in m/s^2
       const bkgSize = 10.0;             // Standard field size
-      const pltFactor = 10;             // Divide platform x/y by this
       let tracks = sbm.testResult.events;  
 
+      console.log("BM ", prms, sbm);
+      
       this.background = {};
       this.background.frameRate = frameRate;
       this.background.height = bkgSize;
@@ -22,13 +23,12 @@ export class BounceMovie {
 
       // Targets numbered from 0
       prms.targets.forEach((trg, idx) => 
-      this.addMakeTargetEvt(-1, idx, trg.loX/pltFactor, trg.loY/pltFactor,
-       trg.hiX/pltFactor, trg.hiY/pltFactor));
+      this.addMakeTargetEvt(-1, idx, trg.loX, trg.loY, trg.hiX, trg.hiY));
 
       // Barriers numbered from targets.length
       prms.barriers.forEach((brr, idx) => {
-         this.addMakeBarrierEvt(-1, prms.targets.length+idx, brr.loX/pltFactor,
-          brr.loY/pltFactor, brr.hiX/pltFactor, brr.hiY/pltFactor);
+         this.addMakeBarrierEvt(-1, prms.targets.length+idx,
+          brr.loX, brr.loY, brr.hiX, brr.hiY);
       });
 
       let time = 0;
