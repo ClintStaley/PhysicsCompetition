@@ -25,7 +25,6 @@ export class Bounce3DView extends React.Component {
       playing: false,
       changedTime: false,
       isFirstRender: true,
-      barrierHit: false
     };
   }
 
@@ -39,7 +38,7 @@ export class Bounce3DView extends React.Component {
     return texture;
   }
 
-  createFancyMaterial() {
+  createTexturedMaterial() {
     let loader = new THREE.TextureLoader();
     let path = `${window.location.origin}/textures/steelplate1-ue/`;
     let material = new THREE.MeshStandardMaterial(
@@ -67,7 +66,7 @@ export class Bounce3DView extends React.Component {
     });
     return material;
   }
-//https://3dtextures.me/2018/09/28/metal-plate-010/
+
   createSkyBox() {
     let images = [posx, negx, posy, negy, posz, negz];
     let materials = [];
@@ -84,17 +83,19 @@ export class Bounce3DView extends React.Component {
     this.scene.add(skybox);
   }
 
-  loadAsset(url) {
+  loadAsset(url, scale, position) {
     let loader = new GLTFLoader();
     let modelUrl = `${window.location.origin}/models/${url}/scene.gltf`;
 
     loader.load(
       modelUrl,
-       (model) => {
-        let table = model.scene.children[0];
-        table.scale.set(10, 10, 10);
-        table.position.set(7, 1.4, 2);
-        this.scene.add(model.scene);
+       (modelFile) => {
+        let model = modelFile.scene.children[0];
+        model.scale.set(5, 5, 5);
+        //model.position.setFromCylindricalCoords(20, -Math.PI * (2 + .5), 30);
+        model.position.set(10, 10, 10);
+        model.lookAt(-6.7, -2, 0)
+        this.scene.add(modelFile.scene);
         this.render();
 
       },
@@ -150,14 +151,16 @@ export class Bounce3DView extends React.Component {
 
     this.cameraControls.setTarget(6.7, 6, 0);
 
+   // this.loadAsset('wall');
+
     this.addPointLight(10, 0, 200, -20);
     this.addPointLight(2, 0, 20, 0);
     this.addPointLight(5, 0, 10, 20);
 
-    this.setup();
-    this.evtIdx = 0;
     this.barrierHit = false;
-    this.targetIds = [];
+    this.targets = [];
+    this.evtIdx = 0;
+    this.setup();
     this.cameraControls.update(this.props.currentOffset);
 
     //this.renderer.render(this.scene, this.camera);
@@ -181,7 +184,7 @@ export class Bounce3DView extends React.Component {
     this.scene.add(this.ball);
 
     const wallGeo = new THREE.PlaneGeometry(12, 12, 512, 512);
-    this.wall = new THREE.Mesh(wallGeo, this.createFancyMaterial());
+    this.wall = new THREE.Mesh(wallGeo, this.createTexturedMaterial());
     this.scene.add(this.wall);
     this.wall.position.set(5, 5, -.25);
     const wallDepthGeo = new THREE.BoxGeometry(12, 12, 2);
@@ -194,15 +197,6 @@ export class Bounce3DView extends React.Component {
     const test = new THREE.Mesh(new THREE.BoxGeometry(2, 2, 2), this.createMaterial());
     test.position.set(5, 5, -1.25);
     
-  //   console.log(wall.faces)
-  //   wall.updateMatrix()
-  //   test.updateMatrix()
-  //   const wallbsp = CSG.fromMesh(wall);
-  //   const testbsp = CSG.fromMesh(test);
-  //   const subtraction = wallbsp.subtract(testbsp);
-  //   const subtractionMesh = CSG.toMesh(subtraction, wall.matrix);
-  //  // subtraction.addAttribute('position', 'test');
-
     // Make 2 box meshes..
     // const meshA = new THREE.Mesh(new THREE.BoxGeometry(1,1,1), new THREE.MeshNormalMaterial());
     // const meshB = new THREE.Mesh(new THREE.BoxGeometry(1,1,1));
@@ -239,26 +233,31 @@ export class Bounce3DView extends React.Component {
       const height = brr.hiY - brr.loY;
       const geometry = new THREE.BoxGeometry(width, height, 3);
       const material = this.createMaterial();
-      const barrier = new THREE.Mesh(geometry, material);
-      barrier.position.y = brr.loY + height / 2;
-      barrier.position.z = 0;
-      barrier.position.x = brr.loX + width / 2;
-      if(brr.type === 1) {
-        this.barrierId = barrier.uuid;
+      const mesh = new THREE.Mesh(geometry, material);
+      mesh.position.y = brr.loY + height / 2;
+      mesh.position.z = 0;
+      mesh.position.x = brr.loX + width / 2;
+     
+      if(brr.type === 2) {
+        this.targets.push({mesh:mesh, hit:false});
       }
-      this.scene.add(barrier);
+      this.scene.add(mesh);
       this.evtIdx++;
     });
   }
 
-  hitBarrier() {
-    this.barrierHit = !this.barrierHit;
-      for(const child of this.scene.children) {
-        if(child.uuid === this.barrierId){
-          this.ping.play(0.25)
-          child.position.z = this.barrierHit ? -0.55 : 0;
-        }
-      }
+  setTargetState(targetId, isHit){
+   let target= this.targets[targetId];
+   console.log(targetId)
+   console.log(this.targets)
+    target.hit = isHit;
+
+    if(isHit && !this.props.scrubbing)
+      this.ping.play(0.25);
+
+    for(let trg of this.targets)
+      trg.mesh.position.z = trg.hit ? -1.5: 0;
+
   }
 
   displayFrame(timestamp) {
@@ -281,12 +280,14 @@ export class Bounce3DView extends React.Component {
           this.ball.position.x = evt.x;
           this.ball.position.y = evt.y;
           break;
+        case 2:
+          this.setTargetState(evt.id, false);
+          break;
         case 3:
-          this.ball.position.x = evt.x;
-          this.ball.position.y = evt.y;
+          this.setTargetState(evt.targetId, true);
           break;
         case 4:
-          this.hitBarrier();
+          this.ping.play(0.25)
           break;
       }
     }
