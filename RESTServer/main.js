@@ -115,7 +115,7 @@ var addDebugRoutes = app => {
       cbs.push(function (cb) {
          req.cnn.query('INSERT INTO Person (firstName, lastName, email,' +
             ' password, whenRegistered, role) VALUES ' +
-            '("Emma", "Lopez", "admin@softwareinventions.com","' +
+            '("Joe", "Admin", "admin@softwareinventions.com","' +
             require("crypto").createHash('sha1').update("password").digest('hex') +
             '", NOW(), 1);', cb);
       });
@@ -128,10 +128,11 @@ var addDebugRoutes = app => {
 
          var schema = JSON.stringify(schemas.LandGrab);
 
-         req.cnn.query(`insert into CompetitionType (title, description, codeName,
-          tutorial, prmSchema)  VALUES ("Land Grab", "Claim territory by
-          placing circles in a field of obstacles", "LandGrab",
-          "Claim territory by placing circles in a field of obstacles...", '${schema}');`, cb);
+         req.cnn.query(`insert into CompetitionType (title, description,
+          codeName, tutorial, prmSchema)  VALUES ("Land Grab", "Claim territory
+          by placing circles in a field of obstacles", "LandGrab",
+          "Claim territory by placing circles in a field of obstacles...",
+          '${schema}');`, cb);
       });
 
       // Callback to reinsert Bounce CompetitionType
@@ -140,7 +141,8 @@ var addDebugRoutes = app => {
          var schema = JSON.stringify(schemas.Bounce);
 
          req.cnn.query(
-            `insert into CompetitionType (title, description, codeName, tutorial, prmSchema)
+            `insert into CompetitionType (title, description, codeName, ` +
+            `tutorial, prmSchema)
             VALUES ("Bounce", "Bounce a ball across platforms", "Bounce",
          " a ball across platforms by inputing a speed",'${schema}');`, cb);
       });

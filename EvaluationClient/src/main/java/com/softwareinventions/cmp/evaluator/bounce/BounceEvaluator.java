@@ -276,7 +276,7 @@ public class BounceEvaluator implements Evaluator {
 
       // Loops until there are no more collisions calculated.
       while (nextCollision.isPresent()) {
-         ballEvents.add(calculateBallColision(ballEvents.getLast(),
+         ballEvents.add(calculateBallCollision(ballEvents.getLast(),
                nextCollision.get()));
 
          nextCollision = getNextCollision(obstacles, ballEvents.getLast());
@@ -292,7 +292,7 @@ public class BounceEvaluator implements Evaluator {
 
    // Returns the new ball event after calculating all values,
    // may return null, if no collisions occur.
-   private BounceEvent calculateBallColision(BounceEvent current,
+   private BounceEvent calculateBallCollision(BounceEvent current,
          Collision collision) {
       BounceEvent newBallEvent = new BounceEvent(current, collision.time);
 
@@ -315,8 +315,10 @@ public class BounceEvaluator implements Evaluator {
          double magnitude = dx * newBallEvent.velocityX
                + dy * newBallEvent.velocityY;
 
-         newBallEvent.velocityX = newBallEvent.velocityX + (-2.0 * magnitude * dx);
-         newBallEvent.velocityY = newBallEvent.velocityY + (-2.0 * magnitude * dy);
+         newBallEvent.velocityX = newBallEvent.velocityX
+               + (-2.0 * magnitude * dx);
+         newBallEvent.velocityY = newBallEvent.velocityY
+               + (-2.0 * magnitude * dy);
 
          newBallEvent.obstacleIdx = collision.obstacleIdx;
          break;
