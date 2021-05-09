@@ -25,7 +25,8 @@
     "redux": "^3.7.2",
     "redux-thunk": "^2.2.0",
     "three": "^0.125.2",
-    "three-csg-ts": "^2.2.2"
+    "three-csg-ts": "^2.2.2",
+    "uifx": "^2.0.7"
   },
   "scripts": {
     "start": "react-scripts start",
