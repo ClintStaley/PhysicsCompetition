@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  FormGroup, ControlLabel, FormControl, HelpBlock, Checkbox, Alert
+  FormGroup, ControlLabel, FormControl, HelpBlock, Alert
 } from 'react-bootstrap';
 
 import './Register.css';
@@ -13,7 +13,7 @@ import { ConfDialog } from '../concentrator'
 function FieldGroup({ id, label, help, ...props }) {
   return (
     <FormGroup controlId={id}>
-      <ControlLabel>{label}</ControlLabel>
+      <FormControl.ControlLabel>{label}</FormControl.ControlLabel>
       <FormControl {...props} />
       {help && <HelpBlock>{help}</HelpBlock>}
     </FormGroup>
@@ -153,7 +153,7 @@ class Register extends Component {
             value={this.state.passwordTwo}
             style={{ border: 'none' }}
           />
-          <Checkbox
+          <FormControl.Checkbox
             value={this.state.termsAccepted}
             onChange={this.handleChange}
             id="termsAccepted"

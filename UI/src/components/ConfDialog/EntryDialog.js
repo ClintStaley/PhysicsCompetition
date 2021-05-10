@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import {
-   FormGroup, ControlLabel, FormControl, HelpBlock, Button, Modal
+   FormGroup, FormControl, HelpBlock, Button, Modal
 } from 'react-bootstrap';
 
 
@@ -61,7 +61,7 @@ export default class EntryDialog extends PureComponent {
        <Modal.Body>
          <FormGroup controlId={"val"}
          validationState={this.getValidationState()}>
-           <ControlLabel>{props.label}</ControlLabel>
+           <FormControl.ControlLabel>{props.label}</FormControl.ControlLabel>
            <FormControl type="text" placeholder={`Enter ${props.label}`}
             value = {this.state.value} onChange={this.handleChange}/>
 

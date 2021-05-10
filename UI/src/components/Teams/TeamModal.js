@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  Modal, Button, FormControl, ControlLabel, FormGroup, HelpBlock
+  Modal, Button, FormControl, FormGroup, HelpBlock
 } from 'react-bootstrap';
 import Select from 'react-select';
 import 'react-select/dist/react-select.css';
@@ -76,21 +76,20 @@ export default class TeamModal extends Component {
            <form onSubmit={(e) =>
            this.state.teamName.length ?
            this.close("OK") : this.close("Cancel")}>
-             <FormGroup
-             controlId="formBasicText"
-             validationState={this.getValidationState()}>
+            <FormGroup
+               controlId="formBasicText"
+               validationState={this.getValidationState()}>
 
-               <ControlLabel>Team Name</ControlLabel>
+               <FormControl.ControlLabel>Team Name</FormControl.ControlLabel>
                <FormControl
-               type="text"
-               value={this.state.teamName}
-               placeholder="Enter text"
-               onChange={this.handleChange}/>
-
+                  type="text"
+                  value={this.state.teamName}
+                  placeholder="Enter text"
+                  onChange={this.handleChange}/>
                <FormControl.Feedback />
                <HelpBlock>There must be a team name.</HelpBlock>
 
-               <ControlLabel>Team Leader</ControlLabel>
+               <FormControl.ControlLabel>Team Leader</FormControl.ControlLabel>
 
                <Select
                name="Leader"

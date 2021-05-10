@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-   Form, FormGroup, FormControl, ControlLabel, Row
+   Form, FormGroup, FormControl, Row
 } from 'react-bootstrap';
 import './SignIn.css';
 
@@ -50,9 +50,9 @@ class SignIn extends Component {
                <Form className='form'>
                   <h1 className='signin-title'>Sign in</h1>
                   <FormGroup controlId="formHorizontalEmail">
-                     <ControlLabel>
+                     <FormControl.ControlLabel>
                         Email:
-                     </ControlLabel>
+                     </FormControl.ControlLabel>
                      <FormControl
                         type="email"
                         name="email"
@@ -62,9 +62,9 @@ class SignIn extends Component {
                      />
                   </FormGroup>
                   <FormGroup controlId="formHorizontalPassword">
-                     <ControlLabel>
+                     <FormControl.ControlLabel>
                         Password:
-                     </ControlLabel>
+                     </FormControl.ControlLabel>
                      <FormControl
                         type="password"
                         name="password"

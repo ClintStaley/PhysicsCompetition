@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { FormGroup, FormControl, HelpBlock, ControlLabel, Button }
+import { FormGroup, FormControl, HelpBlock, Button }
    from 'react-bootstrap';
 import DragModal from '../Util/DraggableModal.js';
 
@@ -106,7 +106,9 @@ export class BSubmitModal extends Component {
                 <div className="col-sm-1"><h5>Ball {idx}</h5></div>
                 <div className="col-sm-2">
                    <FormGroup controlId={idS}>
-                      <ControlLabel>Launch Speed</ControlLabel>
+                      <FormControl.ControlLabel>
+                         Launch Speed
+                      </FormControl.ControlLabel>
                       <FormControl
                          type="text"
                          id={idS}
@@ -120,7 +122,7 @@ export class BSubmitModal extends Component {
  
                 <div className="col-sm-2">
                    <FormGroup controlId={idT}>
-                      <ControlLabel>Time</ControlLabel>
+                      <FormControl.ControlLabel>Time</FormControl.ontrolLabel>
                       <FormControl
                          type="text"
                          id={idT}
@@ -134,7 +136,7 @@ export class BSubmitModal extends Component {
  
                 <div className="col-sm-2">
                    <FormGroup controlId={idX}>
-                      <ControlLabel>X</ControlLabel>
+                      <FormControl.ControlLabel>X</FormControl.ControlLabel>
                       <FormControl
                          type="text"
                          id={idX}
@@ -148,7 +150,7 @@ export class BSubmitModal extends Component {
  
                 <div className="col-sm-2">
                    <FormGroup controlId={idY}>
-                      <ControlLabel>Y</ControlLabel>
+                      <FormControl.ControlLabel>Y</FormControl.ControlLabel>
                       <FormControl
                          type="text"
                          id={idY}
