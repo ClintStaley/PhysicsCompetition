@@ -1,6 +1,6 @@
 import React from 'react';
 import { Modal } from 'react-bootstrap';
-import ModalDialog from 'react-bootstrap/lib/ModalDialog';
+import ModalDialog from 'react-bootstrap/cjs/ModalDialog';
 import Draggable from 'react-draggable';
 
 class DraggableModalDialog extends React.Component {

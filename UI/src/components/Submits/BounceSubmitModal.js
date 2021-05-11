@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { FormGroup, FormControl, HelpBlock, Button }
-   from 'react-bootstrap';
+import {Form, Button } from 'react-bootstrap';
 import DragModal from '../Util/DraggableModal.js';
 
 export class BSubmitModal extends Component {
@@ -105,61 +104,60 @@ export class BSubmitModal extends Component {
              <div className="row">
                 <div className="col-sm-1"><h5>Ball {idx}</h5></div>
                 <div className="col-sm-2">
-                   <FormGroup controlId={idS}>
-                      <FormControl.ControlLabel>
+                   <Form.Group controlId={idS}>
+                      <Form.Label>
                          Launch Speed
-                      </FormControl.ControlLabel>
-                      <FormControl
+                      </Form.Label>
+                      <Form.Control
                          type="text"
                          id={idS}
                          value={this.state.launchSpec[idx].speed}
                          required={true}
                          onChange={this.handleChange} />
-                      <HelpBlock>At most 20 m/s</HelpBlock>
-                      <FormControl.Feedback />
-                   </FormGroup>
+                      <Form.Text muted>At most 20 m/s</Form.Text>
+                   </Form.Group>
                 </div>
  
                 <div className="col-sm-2">
-                   <FormGroup controlId={idT}>
-                      <FormControl.ControlLabel>Time</FormControl.ontrolLabel>
-                      <FormControl
+                   <Form.Group controlId={idT}>
+                      <Form.Label>Time</Form.Label>
+                      <Form.Control
                          type="text"
                          id={idT}
                          value={this.state.launchSpec[idx].finalTime}
                          required={true}
                          onChange={this.handleChange}
                       />
-                      <FormControl.Feedback />
-                   </FormGroup>
+                      <Form.Control.Feedback />
+                   </Form.Group>
                 </div>
  
                 <div className="col-sm-2">
-                   <FormGroup controlId={idX}>
-                      <FormControl.ControlLabel>X</FormControl.ControlLabel>
-                      <FormControl
+                   <Form.Group controlId={idX}>
+                      <Form.Label>X</Form.Label>
+                      <Form.Control
                          type="text"
                          id={idX}
                          value={this.state.launchSpec[idx].finalX}
                          required={true}
                          onChange={this.handleChange}
                       />
-                      <FormControl.Feedback />
-                   </FormGroup>
+                      <Form.Control.Feedback />
+                   </Form.Group>
                 </div>
  
                 <div className="col-sm-2">
-                   <FormGroup controlId={idY}>
-                      <FormControl.ControlLabel>Y</FormControl.ControlLabel>
-                      <FormControl
+                   <Form.Group controlId={idY}>
+                      <Form.Label>Y</Form.Label>
+                      <Form.Control
                          type="text"
                          id={idY}
                          value={this.state.launchSpec[idx].finalY}
                          required={true}
                          onChange={this.handleChange}
                       />
-                      <FormControl.Feedback />
-                   </FormGroup>
+                      <Form.Control.Feedback />
+                   </Form.Group>
                 </div>
  
              </div>

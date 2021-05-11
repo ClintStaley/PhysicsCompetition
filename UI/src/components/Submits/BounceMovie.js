@@ -12,8 +12,6 @@ export class BounceMovie {
       const cG = 9.80665;               // Gravity in m/s^2
       const bkgSize = 10.0;             // Standard field size
       let tracks = sbm.testResult.events;  
-
-      console.log("BM ", prms, sbm);
       
       this.background = {};
       this.background.frameRate = frameRate;

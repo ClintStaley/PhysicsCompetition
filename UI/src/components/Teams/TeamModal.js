@@ -3,7 +3,7 @@ import {
   Modal, Button, FormControl, FormGroup, HelpBlock
 } from 'react-bootstrap';
 import Select from 'react-select';
-import 'react-select/dist/react-select.css';
+// import 'react-select/dist/react-select.css';
 
 export default class TeamModal extends Component {
    constructor(props) {
@@ -87,7 +87,7 @@ export default class TeamModal extends Component {
                   placeholder="Enter text"
                   onChange={this.handleChange}/>
                <FormControl.Feedback />
-               <HelpBlock>There must be a team name.</HelpBlock>
+               <FormControl.HelpBlock>Team name required</FormControl.HelpBlock>
 
                <FormControl.ControlLabel>Team Leader</FormControl.ControlLabel>
 

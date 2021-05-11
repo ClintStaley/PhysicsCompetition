@@ -50,9 +50,9 @@ class SignIn extends Component {
                <Form className='form'>
                   <h1 className='signin-title'>Sign in</h1>
                   <FormGroup controlId="formHorizontalEmail">
-                     <FormControl.ControlLabel>
+                     <Form.Label>
                         Email:
-                     </FormControl.ControlLabel>
+                     </Form.Label>
                      <FormControl
                         type="email"
                         name="email"
@@ -62,9 +62,9 @@ class SignIn extends Component {
                      />
                   </FormGroup>
                   <FormGroup controlId="formHorizontalPassword">
-                     <FormControl.ControlLabel>
+                     <Form.Label>
                         Password:
-                     </FormControl.ControlLabel>
+                     </Form.Label>
                      <FormControl
                         type="password"
                         name="password"

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {FormGroup, FormControl, HelpBlock, ControlLabel, Button }
+import {FormGroup, FormControl, HelpBlock, Button }
   from 'react-bootstrap';
 import DragModal from '../Util/DraggableModal.js';
 import './LandGrab.css';
@@ -103,7 +103,7 @@ export class LGSubmitModal extends Component {
 
              <div className='col-sm-2'>
                <FormGroup controlId={idX}>
-                 <ControlLabel>X Coord</ControlLabel>
+                 <FormControl.ControlLabel>X Coord</FormControl.ControlLabel>
                  <FormControl
                    type="text"
                    id={idX}
@@ -112,13 +112,13 @@ export class LGSubmitModal extends Component {
                    onChange={this.handleChange}
                  />
                  <FormControl.Feedback/>
-                 <HelpBlock>At most 100</HelpBlock>
+                 <FormControl.HelpBlock>At most 100</FormControl.HelpBlock>
                </FormGroup>
              </div>
 
              <div className='col-sm-2'>
                <FormGroup controlId={idY}>
-                 <ControlLabel>Y Coord</ControlLabel>
+                 <FormControl.ControlLabel>Y Coord</FormControl.ControlLabel>
                  <FormControl
                    type="text"
                    id={idY}
@@ -127,13 +127,13 @@ export class LGSubmitModal extends Component {
                    onChange={this.handleChange}
                  />
                  <FormControl.Feedback/>
-                 <HelpBlock>At most 100</HelpBlock>
+                 <FormControl.HelpBlock>At most 100</FormControl.HelpBlock>
                </FormGroup>
              </div>
 
              <div className='col-sm-2'>
                <FormGroup controlId={idR}>
-                 <ControlLabel>Radius</ControlLabel>
+                 <FormControl.ControlLabel>Radius</FormControl.ControlLabel>
                  <FormControl
                    type="text"
                    id={idR}
@@ -142,7 +142,7 @@ export class LGSubmitModal extends Component {
                    onChange={this.handleChange}
                  />
                  <FormControl.Feedback/>
-                 <HelpBlock>At most 50</HelpBlock>
+                 <FormControl.HelpBlock>At most 100</FormControl.HelpBlock>
                </FormGroup>
              </div>
            </div>

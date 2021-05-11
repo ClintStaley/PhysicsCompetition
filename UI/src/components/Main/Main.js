@@ -75,15 +75,15 @@ class Main extends Component {
                     </LinkContainer>,
                   ]
                 }
-              <NavItem eventKey={5} onClick = {() => this.openHelp()}>
+              <NavItem onClick = {() => this.openHelp()}>
                 Help
               </NavItem>
               {this.signedIn() ?
                 <div>
-                 <NavItem eventKey={4} onClick = {() => this.refresh()}>
+                 <NavItem onClick = {() => this.refresh()}>
                   Refresh
                 </NavItem>
-                <NavItem eventKey={3} onClick = {() => this.signOut()}>
+                <NavItem onClick = {() => this.signOut()}>
                   Sign out
                 </NavItem> 
                   </div>

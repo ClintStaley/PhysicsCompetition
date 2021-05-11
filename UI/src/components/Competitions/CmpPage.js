@@ -177,9 +177,9 @@ const TeamLine = function (props) {
       ' (Your team) '
       : ''}
 
-     <div className="pull-right">
+     <div className="float-right">
      { props.myTeamLink ?
-        <div>
+       <div>
        <label className = "scoreLabel">
          Last Score:{props.bestScore !== -1 ? props.bestScore : "N/A"}
        </label>

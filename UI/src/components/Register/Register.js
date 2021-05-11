@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import {
-  FormGroup, ControlLabel, FormControl, HelpBlock, Alert
-} from 'react-bootstrap';
+  FormGroup, FormControl, Alert} from 'react-bootstrap';
 
 import './Register.css';
 
@@ -13,9 +12,9 @@ import { ConfDialog } from '../concentrator'
 function FieldGroup({ id, label, help, ...props }) {
   return (
     <FormGroup controlId={id}>
-      <FormControl.ControlLabel>{label}</FormControl.ControlLabel>
+      <Form.Label>{label}</Form.Label>
       <FormControl {...props} />
-      {help && <HelpBlock>{help}</HelpBlock>}
+      {help && <FormControl.HelpBlock>{help}</FormControl.HelpBlock>}
     </FormGroup>
   );
 }
@@ -161,7 +160,7 @@ class Register extends Component {
           >
             Do you accept the <a onClick={this.openTerms}>terms </a>
              and conditions?
-          </Checkbox>
+          </FormControl.Checkbox>
           {/* <Button
           bsStyle="primary"
           onClick={() => this.submit()}

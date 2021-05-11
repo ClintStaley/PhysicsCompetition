@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { ListGroup, ListGroupItem, Button, Glyphicon, Popover, OverlayTrigger } from 'react-bootstrap';
+import { ListGroup, ListGroupItem, Button, Popover, OverlayTrigger }
+ from 'react-bootstrap';
 import { ConfDialog, EntryDialog } from '../concentrator';
 import * as actionCreators from '../../actions/actionCreators';
 import TeamModal from './TeamModal'
@@ -190,18 +191,18 @@ const TeamLine = function(props) {
          <OverlayTrigger trigger={["focus", "hover"]}
          placement="bottom" overlay={addTip}>
            <Button bsSize="small" onClick={props.addMmb}>
-             <Glyphicon glyph="plus" />
+              <span className="fa fa-plus"/>
            </Button>
          </OverlayTrigger>
 
          <Button bsSize="small" onClick={props.edit}>
-           <Glyphicon glyph="edit" />
+            <span className="fa fa-edit"/>
          </Button>
 
          <OverlayTrigger trigger={["focus", "hover"]}
          placement="bottom" overlay={delTip}>
            <Button bsSize="small" onClick={props.del}>
-             <Glyphicon glyph="trash" />
+              <span className="fa fa-trash"/>
            </Button>
          </OverlayTrigger>
        </div>
