@@ -48,104 +48,90 @@ class Main extends Component {
    render() {
      var ProtectedRoute = this.ProtectedRoute;
 
-    return (
-      <div  className='flex'>
-        <div>
-              <div className='navigation'>
-                {this.signedIn() ?
-                  // User is signed in
-                  [
-                    <LinkContainer key={0} to="/MyCmpsPage" >
-                      <NavItem>My Competitions</NavItem>
-                    </LinkContainer>,
-                    <LinkContainer key={1} to="/AllCmpsPage">
-                      <NavItem>Join Competitions</NavItem>
-                    </LinkContainer>,
-                    <LinkContainer key={2} to="/TeamsPage">
-                      <NavItem>Teams</NavItem>
-                    </LinkContainer>,
-                  ]
-                  :
-                  [
-                    <LinkContainer key={0} to="/signin">
-                      <NavItem>Sign In</NavItem>
-                    </LinkContainer>,
-                    <LinkContainer key={1} to="/register">
-                      <NavItem>Register</NavItem>
-                    </LinkContainer>,
-                  ]
-                }
-              <NavItem onClick = {() => this.openHelp()}>
-                Help
-              </NavItem>
-              {this.signedIn() ?
-                <div>
-                 <NavItem onClick = {() => this.refresh()}>
-                  Refresh
-                </NavItem>
-                <NavItem onClick = {() => this.signOut()}>
-                  Sign out
-                </NavItem> 
-                  </div>
-                
-               : ''}
-              </div>
-        </div>
-        <Switch>
-          <Route exact path='/' children={Home} />
+    // Navbar notes.  
+    // For sidebar, you need a surrounding div to tell the overall layout that
+    // your Switch goes to the side of the navbar.  You also need expand="false"
+    // or the style navbar-expand is auto-attached to Navbar, forcing a row
+    // orientation on the navbar, when a columnar is desired.  (Apparently
+    // expandability is only a row-based concept in Navbar.)
+    return (<div className="flex-main">
+      <Navbar className='navbar-col' expand="false" bg="primary" variant="dark">
+        <Nav>
+          {this.signedIn() ?
+            [
+              <LinkContainer key={0} to="/MyCmpsPage" >
+                <Nav.Link>My Competitions</Nav.Link>
+              </LinkContainer>,
+              <LinkContainer key={1} to="/AllCmpsPage">
+                <Nav.Link>Join Competitions</Nav.Link>
+              </LinkContainer>,
+              <LinkContainer key={2} to="/TeamsPage">
+                <Nav.Link>Teams</Nav.Link>
+              </LinkContainer>,
+            ]
+            :
+            [
+              <LinkContainer key={0} to="/signin">
+                <Nav.Link>Sign In</Nav.Link>
+              </LinkContainer>,
+              <LinkContainer key={1} to="/register">
+                <Nav.Link>Register</Nav.Link>
+              </LinkContainer>,
+            ]
+          }
+          <Nav.Link onClick = {() => this.openHelp()}>Help</Nav.Link>
+          {this.signedIn() ?
+            <div>
+              <Nav.Link onClick = {() => this.refresh()}>
+                Refresh
+              </Nav.Link>
+              <Nav.Link onClick = {() => this.signOut()}>
+                Sign out
+              </Nav.Link> 
+            </div>
+            : ''}
+        </Nav>
+      </Navbar>
 
-          <ProtectedRoute path='/MyCmpsPage' {...this.props}
-           component = {CmpsPage} showAll = {false}/>
+      <Switch className='page-col'>
+        <Route exact path='/' children={Home} />
 
-          <ProtectedRoute path='/AllCmpsPage' {...this.props}
-           component = {CmpsPage} showAll = {true}/>
+        <ProtectedRoute path='/MyCmpsPage' {...this.props}
+         component = {CmpsPage} showAll = {false}/>
 
-          <ProtectedRoute path='/TeamsPage' {...this.props} component = {TeamsPage}/>
+        <ProtectedRoute path='/AllCmpsPage' {...this.props}
+         component = {CmpsPage} showAll = {true}/>
 
-          <Route path='/signin' render={() => <SignIn {...this.props} />}/>
-          <Route path='/register' render = {() => <Register {...this.props}/>}/>
+        <ProtectedRoute path='/TeamsPage' {...this.props} component = {TeamsPage}/>
 
-          <Route path='/MyCmpPage/:cmpId/' render={pathProps =>
-            <ProtectedRoute path='/MyCmpPage/:cmpId' {...this.props}
-            component={CmpPage} myCmpLink = {true}
+        <Route path='/signin' render={() => <SignIn {...this.props} />}/>
+        <Route path='/register' render = {() => <Register {...this.props}/>}/>
+
+        <Route path='/MyCmpPage/:cmpId/' render={pathProps =>
+          <ProtectedRoute path='/MyCmpPage/:cmpId' {...this.props}
+          component={CmpPage} myCmpLink = {true}
+          cmpId = {pathProps.match.params.cmpId}/>
+        }/>
+
+        <Route path='/JoinCmpPage/:cmpId/' render={pathProps =>
+           <ProtectedRoute path='/JoinCmpPage/:cmpId/' {...this.props}
+            component = {CmpPage}   myCmpLink = {false}
             cmpId = {pathProps.match.params.cmpId}/>
-          }/>
+        }/>
 
-          <Route path='/JoinCmpPage/:cmpId/' render={pathProps =>
-             <ProtectedRoute path='/JoinCmpPage/:cmpId/' {...this.props}
-              component = {CmpPage}   myCmpLink = {false}
-              cmpId = {pathProps.match.params.cmpId}/>
-          }/>
+        <Route path='/Instructions/:cmpId' render = {pathProps =>
+           <ProtectedRoute path='/Instructions/:cmpId' {...this.props}
+            component = {InstructionsPage} cmpId = {pathProps.match.params.cmpId}/>
+        }/>
 
-          <Route path='/Instructions/:cmpId' render = {pathProps =>
-             <ProtectedRoute path='/Instructions/:cmpId' {...this.props}
-              component = {InstructionsPage} cmpId = {pathProps.match.params.cmpId}/>
-          }/>
+        <Route path='/SbmPage/:teamId' render={pathProps =>
+           <ProtectedRoute path='/SbmPage/:teamId' {...this.props}
+            component={SbmPage} team={this.props.teams[pathProps.match.params.teamId]}/>
+        }/>
 
-          <Route path='/SbmPage/:teamId' render={pathProps =>
-             <ProtectedRoute path='/SbmPage/:teamId' {...this.props}
-              component={SbmPage} team={this.props.teams[pathProps.match.params.teamId]}/>
-          }/>
-
-        </Switch>
-
-        {/*Error popup dialog*/}
-        <ConfDialog
-           show={this.props.errs.length > 0}
-           title="Error Notice"
-           body={<ListGroup>
-             {this.props.errs.map((err, i) =>
-               <ListGroupItem key={i} bsStyle="danger">
-                 {err}
-               </ListGroupItem>
-             )}
-           </ListGroup>}
-           buttons={['OK']}
-           onClose={() => {this.props.clearErrors()}}
-        />
-      </div>
-    )
-   }
+      </Switch>
+    </div>);
+  }
 }
 
 export default Main

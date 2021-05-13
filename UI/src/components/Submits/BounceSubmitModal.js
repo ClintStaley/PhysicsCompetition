@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {Form, Button } from 'react-bootstrap';
-import DragModal from '../Util/DraggableModal.js';
+import DraggableModal from '../Util/DraggableModal.js';
 
 export class BSubmitModal extends Component {
     constructor(props) {
@@ -103,7 +103,7 @@ export class BSubmitModal extends Component {
           lines.push(<div className="container" key={idx}>
              <div className="row">
                 <div className="col-sm-1"><h5>Ball {idx}</h5></div>
-                <div className="col-sm-2">
+                <div className="col-sm-3">
                    <Form.Group controlId={idS}>
                       <Form.Label>
                          Launch Speed
@@ -176,7 +176,7 @@ export class BSubmitModal extends Component {
           <Button key={3} onClick={() => this.close('Cancel')}>Cancel</Button>
        ];
  
-       return (<DragModal
+       return (<DraggableModal
           show={this.props.submitFn !== null}
           onHide={() => this.close("Cancel")}
           bsSize="lg"

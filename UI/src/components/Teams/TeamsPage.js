@@ -187,7 +187,7 @@ const TeamLine = function(props) {
        {' -- ' + props.cmpName}
 
      {isLeader ?
-       <div className="pull-right">
+       <div className="float-right">
          <OverlayTrigger trigger={["focus", "hover"]}
          placement="bottom" overlay={addTip}>
            <Button bsSize="small" onClick={props.addMmb}>
@@ -242,11 +242,11 @@ const MmbItem = function (props) {
      {props.name}
      {props.isLeader ? ` -- lead (${props.contact})` : ''}
      {props.del ?
-        <div className="pull-right">
+        <div className="float-right">
           <OverlayTrigger trigger={["focus", "hover"]}
           placement="bottom" overlay={delTip}>
             <Button bsSize="small" onClick={props.del}>
-              <Glyphicon glyph="trash" />
+               <span className="fa fa-trash"/>
             </Button>
           </OverlayTrigger>
         </div>

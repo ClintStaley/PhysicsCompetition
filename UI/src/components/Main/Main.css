@@ -7,35 +7,30 @@
   --main: rgb(63, 66, 68);
 }
 
-.flex {
+.flex-main {
   display: flex;
+  align-items: flex-start;
 }
 
-.navigation {
-  background: var(--main);
-  height: 100%;
-  list-style: none;
-  padding-top:20px;
+.navbar-col {
+  flex-basis: 100px;
+}
+
+.page-col {
+  flex-row: 1;
 }
 
 li {
   padding: 10px 20px;
-
 }
 
 li:hover {
   background: rgb(89, 155, 216);
 }
 
-a{
-  color:white !important;
-}
-
 a:hover{  
   text-decoration: none !important;
-  
 }
-
 
 .App-logo {
   animation: App-logo-spin infinite 20s linear;
