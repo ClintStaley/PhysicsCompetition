@@ -21,7 +21,7 @@ sudo apt-get install nodejs
   1. Log in to SQL server via mysql as SQL root user.  There are various ways to do this, the simplest being to run mysql -uroot -p and supply the root password you configured on install.  
 	2. Create a nonroot user for yourself: create user 'newuser'@'localhost' identified with mysql_native_password by 'newpassword';  This will let you point the RESTServer to a database under that user, rather than using root privilege.
 	3. Grant your new user general permissions for the CmpDB database with: GRANT ALL PRIVILEGES ON CmpDB.* TO 'newUser'@'localhost'; You may also find this guide useful: https://www.digitalocean.com/community/tutorials/how-to-create-a-new-user-and-grant-permissions-in-mysql
-  1. For your new SQL user, create a CmpDB database by running Deploy.sql from RESTServer/DB.  MySQL command `source Deploy.sql` will do this if you log in to mysql from the DB directory.
+  1. For your new SQL user, create a CmpDB database by running, from the MySQL client, the Deploy.sql file that is in RESTServer/DB.  MySQL command `source Deploy.sql` will do this if you log in to mysql from the DB directory.  Or in Windows, you may need `source <full path to Deploy.sql starting from c:>`
   1. In RESTServer/Routes create a connection.json file, using exampleConnection.json as a reference.  This connection.json file specifies, for the REST server, how to log in to the database, and what database to use.  Fill in the relevant fields with the CmpDB database, non-root user id, and password.
 
 ## Running RESTServer
