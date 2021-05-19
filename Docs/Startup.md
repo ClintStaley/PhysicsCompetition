@@ -22,7 +22,7 @@ sudo apt-get install nodejs
 	2. Create a nonroot user for yourself: create user 'newuser'@'localhost' identified with mysql_native_password by 'newpassword';  This will let you point the RESTServer to a database under that user, rather than using root privilege.
 	3. Grant your new user general permissions for the CmpDB database with: GRANT ALL PRIVILEGES ON CmpDB.* TO 'newUser'@'localhost'; You may also find this guide useful: https://www.digitalocean.com/community/tutorials/how-to-create-a-new-user-and-grant-permissions-in-mysql
   1. For your new SQL user, create a CmpDB database by running Deploy.sql from RESTServer/DB.  MySQL command `source Deploy.sql` will do this if you log in to mysql from the DB directory.
-  1. In RESTServer/Routes create a connection.json file, using exampleConnection.json as a reference.
+  1. In RESTServer/Routes create a connection.json file, using exampleConnection.json as a reference.  This connection.json file specifies, for the REST server, how to log in to the database, and what database to use.  Fill in the relevant fields with the CmpDB database, non-root user id, and password.
 
 ## Running RESTServer
   1. Run the server from RESTServer via `node main.js -h -test -p <port>`, using a port number of your choice.  This should be equal to the api port [line 2 of UI/src/api.js] for compatibility with the clientside UI, and should match whatever port your Postman test suite addresses (preferably the same) for testing with Postman (see below)
