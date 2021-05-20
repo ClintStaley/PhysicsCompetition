@@ -42,13 +42,19 @@ sudo apt-get install nodejs
   1. install Maven.
   1. Install Eclipse.
   1. Install Eclipse plugin Maven2Eclipse. Open eclipse and under the help menu click install new software, and click add site, you can use http://www.eclipse.org/m2e/m2e-downloads.html to find the address for the version you want.  If you are using an older version of eclipse then you must use an older version of M2E I had to use version 1.3.1 of M2e to go with my version 3.8 eclipse.
-  ### Error Troubleshooting
-  1. If running EVCMain results in an error mentioning log4j the Maven library has not been correctly loaded. In a Windows Command Line enter `mvn eclipse:clean` to erase all maven dependencies (If the mvn command is not found you must add the maven/bin directory to the build path in windows settings). Right click the pom.xml select maven -> Update Project to build the correct dependencies. NOTE: This may remove any Additional Libraries as well.
-  2. If there is no maven project to update. Right click the main project file in Eclipse select Configure -> Convert -> Maven Project. Then complete the update mentioned above and the Maven Dependencies should populate in the workspace.
+
+### Troubleshooting
+  1. If running EVCMain results in an error mentioning log4j you may need to regenerate the Maven Dependencies. In a Windows Command Line, running in the EVC source directory, enter `mvn eclipse:clean` to erase all maven dependencies (If the mvn command is not found you must add the maven/bin directory to the executable path in Windows Settings).  After cleaning, right click the pom.xml select maven -> Update Project to build the correct dependencies. NOTE: This may remove any Additional Libraries as well.
+  2. If there is no maven project to update, right click the main project file in Eclipse and select Configure -> Convert -> Maven Project. Then complete the update mentioned above and the Maven Dependencies should populate in the workspace.
   3. For any other errors, ensure that the build path inside of Eclipse for the project is correct. Right click the project select Build Path -> Configure Build Path. Under the Source tab in the Java Build Path section there should be 2 folders, EvaluationClient/src/main/java and EvaluationClient/src/test/java. If either folder is not present select Add Folder and select the appropriate folders. Eclipse may need to restart after this step.
 
 ## Test Run with UI and EVC
 1. Run the RESTServer with port matching the UI, as described above.
-2. Start the clientside app via `npm start` in UI directory.  This should bring up a browser with the app.  If npm start throws a watch error enospc, then this command may fix the problem:`echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p`
+2. Start the clientside app via `npm start` in UI directory.  This should bring up a browser with the app. 
+3. Run EVC by running the com.softwareinventions.cmp.driver.EVCMain class as an app.  This class expects a commandline argument (settable via Eclipse Run Configurations) providing the name of an EVC.properties file, which tells EVC where the RESTServer is, and provides credentials to log in.  This file must reside at the root of the EvaluationClient directory, which is the default working dir when you run a main.  The file EVC.example.properties is a good basis from which to create your EVC.properties file.
+
+### Troubleshooting Notes
+ 1. If npm start throws a watch error enospc, then this command may fix the problem:`echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p`
+
   
 
