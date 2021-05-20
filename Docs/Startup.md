@@ -45,7 +45,7 @@ sudo apt-get install nodejs
   ### Error Troubleshooting
   1. If running EVCMain results in an error mentioning log4j the Maven library has not been correctly loaded. In a Windows Command Line enter `mvn eclipse:clean` to erase all maven dependencies (If the mvn command is not found you must add the maven/bin directory to the build path in windows settings). Right click the pom.xml select maven -> Update Project to build the correct dependencies. NOTE: This may remove any Additional Libraries as well.
   2. If there is no maven project to update. Right click the main project file in Eclipse select Configure -> Convert -> Maven Project. Then complete the update mentioned above and the Maven Dependencies should populate in the workspace.
-  3. For any other errors ensure that the build path inside of Eclipse for the project is correct. Right click the project select Build Path -> Configure Build Path. Under the Source tab in the Java Build Path section there should be 2 folders, EvaluationClient/src/main/java and EvaluationClient/src/test/java. If either folder is not present select Add Folder and select the appropriate folders. Eclipse may need to restart after this step.
+  3. For any other errors, ensure that the build path inside of Eclipse for the project is correct. Right click the project select Build Path -> Configure Build Path. Under the Source tab in the Java Build Path section there should be 2 folders, EvaluationClient/src/main/java and EvaluationClient/src/test/java. If either folder is not present select Add Folder and select the appropriate folders. Eclipse may need to restart after this step.
 
 ## Test Run with UI and EVC
 1. Run the RESTServer with port matching the UI, as described above.
