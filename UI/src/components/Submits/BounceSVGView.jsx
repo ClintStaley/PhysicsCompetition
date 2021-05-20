@@ -26,8 +26,8 @@ export class BounceSVGView extends React.Component {
       let width = movie.background.width;
       let height = movie.background.height;
       let longDim = Math.max(width, height);
-      let bigGap = longDim/10;
-      let smallGap = bigGap/5;
+      let bigGap = longDim/10;  // Gap between heavy graph lines
+      let smallGap = bigGap/5;  // Gap between light graph lines
  
       bkgElms.push(<rect x="0" y="0" width={width} height={height}
        className="graphBkg"/>);
@@ -78,9 +78,9 @@ export class BounceSVGView extends React.Component {
       return BounceSVGView.setOffset(rtn, newProps.offset);
    }
 
-   // Create an svg <g> object representing a rectangle of class |cls| with
+   // Return an svg <g> object representing a rectangle of class |cls| with
    // dimensions as indicated by |evt| and with corner coordinates drawn in
-   // text form.
+   // text form, inside the rectangle if room suffices, otherwise outside.
    static makeLabeledRect(evt, cls, yTop) {
       const textSize = 1.2;  // Minimum width of rect to fit text inside
       const textHeight = .13;  // Height of a text line
@@ -89,6 +89,8 @@ export class BounceSVGView extends React.Component {
       let elms = [];        // Returned SVG elements
       let width = evt.hiX - evt.loX;
       let height = evt.hiY - evt.loY;
+
+      // Values to put text inside or outside the rectangle, in both dimensions
       let classLeft = width > textSize ? "text" : "rhsText";
       let classRight = width > textSize ? "rhsText" : "text";
       let topYAdjust = height > minHeight ? textHeight : 0;
@@ -166,8 +168,8 @@ export class BounceSVGView extends React.Component {
          // Ball launch and ball exit require no action here.
       }
 
-      // Undo events to move backward in time. Note that this and the prior
-      // while condition are mutually exclusive. Presumes that barrier and
+      // Undo events to move backward in time. (Note that this and the prior
+      // while condition are mutually exclusive.) Assume that barrier and
       // target creation occur at negative time and thus will not be "backed
       // over"
       while (evtIdx > 0 && timeStamp < evts[evtIdx].time) {
