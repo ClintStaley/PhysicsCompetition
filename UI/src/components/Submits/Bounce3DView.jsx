@@ -31,6 +31,8 @@ export class Bounce3DView extends React.Component {
     return texture;
   }
 
+  // CAS Fix: Hardwired scale and position.
+  // CAS Fix: Entire file violates three space indentation
   loadAsset(url) {
     let loader = new GLTFLoader();
     let modelUrl = `${window.location.origin}/models/${url}/scene.gltf`;
@@ -85,12 +87,9 @@ export class Bounce3DView extends React.Component {
     return material;
   }
 
-
-
   initialBackground(){
     this.scene = new THREE.Scene();
-    this.setState({isFirstRender: false});
-      
+    this.setState({isFirstRender: false});   
   }
 
   addPointLight(intensity, x, y, z, castShadow) {
