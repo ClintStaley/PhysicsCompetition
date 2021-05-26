@@ -57,7 +57,6 @@ export class Bounce3DView extends React.Component {
     );
   }
 
-
   createTexturedMaterial(maps) {
     let loader = new THREE.TextureLoader();
     let path = `${window.location.origin}/textures/${maps.root}/`;
