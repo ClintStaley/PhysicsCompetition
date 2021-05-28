@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "8552430b-3ea0-4f22-a4f0-d9efe547c791",
+		"_postman_id": "f5bd62ae-a560-482a-8f94-e52cf5623e73",
 		"name": "PhysicsCompetitionREST Test",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -1470,10 +1470,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"checkStatus(pm, 200);"
-								]
+									"checkAndSavePost(pm, \"StdAId\");"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -1508,10 +1508,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"checkStatus(pm, 200);"
-								]
+									"checkAndSavePost(pm, \"CmpTypeA\");"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -1546,10 +1546,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"checkStatus(pm, 200);"
-								]
+									"checkAndSavePost(pm, \"CmpTypeB\");"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -1584,10 +1584,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 400\"] = responseCode.code === 400;"
-								]
+									"checkSimpleError(pm, \"missingField\", [\"title\"]);"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -1601,7 +1601,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"description\": \"Building Bridges\"\n}"
+							"raw": "{\n    \"tutorial\": \"Testing\",\n    \"description\": \"Building Bridges\",\n    \"prmSchema\": \"this is a test\"\n}"
 						},
 						"url": {
 							"raw": "{{url}}/Ctps",
@@ -1622,10 +1622,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 400\"] = responseCode.code === 400;"
-								]
+									"checkSimpleError(pm, \"dupTitle\");"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -6251,9 +6251,9 @@
 					"   pm.test(`The one error is ${tag} w/params ${params}`, () => {",
 					"      let body = pm.response.json();",
 					"",
-					"      pm.expect(body.length).eq(1);",
-					"      pm.expect(body).to.deep.equal([{tag, params: params || null}]);",
-					"   });",
+					"     pm.expect(body.length).eq(1);",
+					"     pm.expect(body).to.deep.equal([{tag, params: params || null}]);",
+					"    });",
 					"}",
 					"",
 					"checkAndSavePost = (pm, varName) => {   ",
@@ -6279,6 +6279,14 @@
 		},
 		{
 			"key": "StdALoginId",
+			"value": ""
+		},
+		{
+			"key": "CmpTypeA",
+			"value": ""
+		},
+		{
+			"key": "CmpTypeB",
 			"value": ""
 		}
 	]
