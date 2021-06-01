@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "f5bd62ae-a560-482a-8f94-e52cf5623e73",
+		"_postman_id": "3ec5122d-17d8-474d-b116-a3d242bfd197",
 		"name": "PhysicsCompetitionREST Test",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -278,6 +278,47 @@
 					"response": []
 				},
 				{
+					"name": "Get Info on admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"checkStatus(pm, 200);",
+									"pm.test(\"No information given\", () => pm.expect(pm.response.json().length).equals(0));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/Prss?email=adm",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Prss"
+							],
+							"query": [
+								{
+									"key": "email",
+									"value": "adm"
+								}
+							]
+						},
+						"description": "Get Info on Admin\n"
+					},
+					"response": []
+				},
+				{
 					"name": "Register Student w/ Empty Body",
 					"event": [
 						{
@@ -323,47 +364,6 @@
 							]
 						},
 						"description": "\n"
-					},
-					"response": []
-				},
-				{
-					"name": "Get Info on admin",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"checkStatus(pm, 200);",
-									"pm.test(\"No information given\", () => pm.expect(pm.response.json().length).equals(0));"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"url": {
-							"raw": "{{url}}/Prss?email=adm",
-							"host": [
-								"{{url}}"
-							],
-							"path": [
-								"Prss"
-							],
-							"query": [
-								{
-									"key": "email",
-									"value": "adm"
-								}
-							]
-						},
-						"description": "Get Info on Admin\n"
 					},
 					"response": []
 				},
@@ -955,12 +955,12 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 401\"] = responseCode.code === 401;",
-									"",
-									"tests[\"Body matches string\"] = responseBody === \"\";"
-								]
+									"checkStatus(pm, 401);",
+									"pm.test(\"Body matches string\", () => pm.expect(responseBody).eq(\"\"));",
+									""
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -1067,10 +1067,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 403\"] = responseCode.code === 403;"
-								]
+									"checkStatus(pm, 403);"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -1105,14 +1105,11 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"var jsonBody = responseBody ? JSON.parse(responseBody) : [];",
-									"",
-									"tests[\"Status code is 400\"] = responseCode.code === 400;",
-									"tests[\"Body has oldPwdMismatch\"] = jsonBody.length && jsonBody[0].tag === \"oldPwdMismatch\";",
-									"tests[\"And only one error\"] = jsonBody.length === 1;"
-								]
+									"checkSimpleError(pm, \"oldPwdMismatch\", 0 );",
+									""
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -1147,11 +1144,11 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 403\"] = responseCode.code === 403;",
+									"checkStatus(pm, 403);",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -1186,11 +1183,11 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 403\"] = responseCode.code === 403;",
+									"checkStatus(pm, 403);",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -1293,13 +1290,14 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"checkStatus(pm, 200);",
-									"",
-									"var jsonData = JSON.parse(responseBody);",
-									"tests[\"Correct Name\"] = jsonData.firstName === \"FirstAV1\";"
-								]
+									"pm.test(\"Correct Name\", () => {",
+									"    var jsonData = JSON.parse(responseBody);",
+									"    pm.expect(jsonData.firstName).to.equal(\"FirstAV1\");",
+									"});"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -1360,9 +1358,8 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"tests[\"Status code is 400\"] = responseCode.code === 404;",
-									"",
-									"// tests[\"Not Found\"] = responseBody.has(\"notFound\");"
+									"checkStatus(pm, 404);",
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -1391,10 +1388,8 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
-									"",
-									"tests[\"Status code is 400 and notFound\"] = responseCode.code === 404",
-									" //&& jsonBody.length && jsonBody[0].tag === \"notFound\";"
+									"checkStatus(pm, 404);",
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -6255,6 +6250,8 @@
 					"     pm.expect(body).to.deep.equal([{tag, params: params || null}]);",
 					"    });",
 					"}",
+					"",
+					"",
 					"",
 					"checkAndSavePost = (pm, varName) => {   ",
 					"    pm.test(\"Post Succeeded\", () => pm.response.to.have.status(200));",
