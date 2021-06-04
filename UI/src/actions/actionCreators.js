@@ -31,11 +31,10 @@ export function register(user, cb){
 export function getCtp(ctpId, cb){
    return ((dispatch, getState) => {
       addStdHandlers(dispatch, cb,
-      api.getCtpById(ctpId)
-      .then((ctp) => {
-         dispatch({ type: 'GET_CTP', ctp });
-      })
-      .then(() => {if (cb) cb()})
+       api.getCtpById(ctpId)
+       .then((ctp) => {
+          dispatch({type: 'GET_CTP', ctp});
+       })
    )})
 }
 
@@ -117,9 +116,9 @@ export function putTeam(cmpId, teamId, newTeamData, cb) {
    }
 }
 
-export function getTeamsById(cmpId, teamId, cb) {
+export function getTeamById(cmpId, teamId, cb) {
    return (dispatch, getState) => {
-      api.getTeamsById(cmpId, teamId)
+      api.getTeamById(cmpId, teamId)
       .then((team) => {
          team.mmbs = {};
          team.toggled = false;
@@ -192,7 +191,7 @@ export function postSbm(cmpId, teamId, submit, cb) {
        api.postSbm(cmpId, teamId, submit)
        .then(() =>  api.getSbms(cmpId, teamId, 1))
        .then((sbms) => dispatch({type: "POST_SBM", sbm: sbms[0]}))
-       .then(() => api.getTeamsById(cmpId, teamId, cb))
+       .then(() => api.getTeamById(cmpId, teamId, cb))
        .then((team) => {
           dispatch({type: "GET_TEAM", newTeamData: team});
        })

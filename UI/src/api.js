@@ -1,4 +1,21 @@
-//const baseURL = "https://www.softwareinventions.com:8443/";
+// Orderly interface to the REST server, providing:
+// 1. Standard URL base
+// 2. Standard headers to manage CORS and content type
+// 3. Guarantee that 4xx and 5xx results are returned as
+//    rejected promises, with a payload comprising an
+//    array of objects of form: {
+//       tag: <error tag e.g. dupEmail>
+//       params: <array of params, or null>
+//       descr: string describing the error in preferred language.
+// 4. All successful post operations return promises that
+//    resolve to a JS object representing the newly added
+//    entity.  Except for postPrs (which cannot do a Prss
+//    get without a login, resolved promise provides all 
+//    fields, not just those in the post body
+// 5. Signin and signout operations that retain relevant
+//    ssnId data.  Successful signin returns promise 
+//    resolving to newly signed in user.
+
 const baseURL = "http://localhost:4005/";
 const headers = new Headers();
 let cookie;
@@ -21,8 +38,7 @@ function safeFetch(endpoint, body) {
 // with reason: array of one or more error strings suitable for display.
 function createErrorPromise(response) {
    if (response.status === 400)
-      return Promise.resolve(response)
-      .then(response => response.json())
+      return response.json()
       .then(errorList => Promise.reject(errorList.map(
          err => errorTranslate(err.tag))));
    else
@@ -94,15 +110,15 @@ export function del(endpoint) {
 */
 export function signIn(cred) {
    return post("Ssns", cred)
-      .then((response) => {
-         var location = response.headers.get("Location").split('/');
+   .then((response) => {
+      var location = response.headers.get("Location").split('/');
 
-         cookie = location[location.length - 1];
-         return get("Ssns/" + cookie)
-      })
-      .then((response) => response.json())
-      .then((body) => get('Prss/' + body.prsId))
-      .then((userResponse) => userResponse.json())
+      cookie = location[location.length - 1];
+      return get("Ssns/" + cookie)
+   })
+   .then(response => response.json())
+   .then(body => get('Prss/' + body.prsId))
+   .then(userResponse => userResponse.json())
 }
 
 /**
@@ -183,7 +199,7 @@ export function postCmp(body) {
    .then(rsp => rsp.headers["Location"])
 }
 
-export function getTeamsById(cmpId, teamId) {
+export function getTeamById(cmpId, teamId) {
    return get(`Cmps/${cmpId}/Teams/${teamId}`)
    .then((teamData) => teamData.json())
    /*.then((teamData) => {

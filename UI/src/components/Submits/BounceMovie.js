@@ -1,3 +1,7 @@
+// BounceMovie provides background information on framerate and size of the
+// overall background, plus a series of events describing changes to the scene
+// such as ball movements, collisions, etc.  Events are each time stamped with
+// a number of seconds since the start of the movie.
 export class BounceMovie {
    static cBallPosition = 0;
    static cMakeBarrier = 1;

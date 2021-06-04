@@ -8,10 +8,9 @@ import './Main.css';
 
 const Home = (
    <div width="100%" height="100%">
-     <img  src="PhysicsCompetitionHomePicture.png" alt="PhysicsCompetition" width="100%" height="100%"/>
+      <img  src="PhysicsCompetitionHomePicture.png" alt="PhysicsCompetition"
+       width="100%" height="100%"/>
   </div>); // TODO make real home component
-
-
 
 class Main extends Component {
    signedIn() {
@@ -126,7 +125,8 @@ class Main extends Component {
 
         <Route path='/SbmPage/:teamId' render={pathProps =>
            <ProtectedRoute path='/SbmPage/:teamId' {...this.props}
-            component={SbmPage} team={this.props.teams[pathProps.match.params.teamId]}/>
+            component={SbmPage}
+            team={this.props.teams[pathProps.match.params.teamId]}/>
         }/>
 
       </Switch>

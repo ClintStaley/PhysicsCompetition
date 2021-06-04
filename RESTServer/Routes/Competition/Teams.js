@@ -41,12 +41,12 @@ router.post('/', (req, res) => {
          cnn.chkQry('select * from Competition where id = ?', body.cmpId, cb);
       }
    },
-   (Cmp, fields, cb) => {
+   (cmp, fields, cb) => {
       // save rules and the current team for future use
       //create new team
-      if (vld.check(Cmp && Cmp.length, Tags.notFound, cb)) {
-         rules = Cmp[0].rules;
-         curTeam = Cmp[0].curTeam;
+      if (vld.check(cmp && cmp.length, Tags.notFound, cb)) {
+         rules = cmp[0].rules;
+         curTeam = cmp[0].curTeam;
          cnn.chkQry('insert into Team set ?', body, cb);
       }
    },

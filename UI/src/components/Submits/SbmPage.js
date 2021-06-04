@@ -73,7 +73,7 @@ export default class SbmPage extends Component {
             this.setState({refreshNote: "Checking for results..."});
             this.props.refreshSbms(() => {
             if (current)  // CAS FIX: How is this ever false?
-               this.props.getTeamsById(current.cmpId, current.teamId);
+               this.props.getTeamById(current.cmpId, current.teamId);
             else
                this.setState({refreshNote: "No results yet.."});
             });
