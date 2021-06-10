@@ -54,7 +54,8 @@ export default class CmpPage extends Component {
    }
 
    toggleView = (teamId) => {
-      //check for membership data, only update when no membership data is available
+      // Check for membership data, only update when no membership data is
+      // available
       if (this.props.teams[teamId].mmbs &&
        Object.keys(this.props.teams[teamId].mmbs).length  === 0){
          this.props.getTeamMmbs(this.props.cmpId ,teamId);
