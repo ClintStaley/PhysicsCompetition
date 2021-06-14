@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "3ec5122d-17d8-474d-b116-a3d242bfd197",
+		"_postman_id": "efb5bde8-6962-4053-a839-1e0da21a2b2f",
 		"name": "PhysicsCompetitionREST Test",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -1655,12 +1655,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
-									"",
 									"checkStatus(pm, 200);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -1691,15 +1689,16 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
-									" var cpt = jsonBody;",
-									"",
 									"checkStatus(pm, 200);",
-									"tests[\"Expected Content\"] = cpt.title === \"Land Grab\";",
+									"",
+									"pm.test('Expected Content',() =>{",
+									"    var jsonData = JSON.parse(responseBody);    ",
+									"    pm.expect(jsonData.title).to.equal(\"Land Grab\")",
+									"})",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -1732,16 +1731,8 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
-									"",
-									"tests[\"Status code is 404\"] = responseCode.code === 404;",
-									"// tests[\"One Error\"] = jsonBody.length === 1;",
-									"",
-									"// if (jsonBody.length) {",
-									"//    var cpt = jsonBody[0];",
-									"   ",
-									"//    tests[\"Expected error\"] = cpt.tag === \"notFound\";",
-									"//}"
+									"checkStatus(pm, 404);",
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -1886,7 +1877,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"tests[\"Status code is 404\"] = responseCode.code === 404;"
+									"checkStatus(pm, 404)"
 								],
 								"type": "text/javascript"
 							}
@@ -1990,19 +1981,18 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
-									"",
+									"var jsonData = JSON.parse(responseBody);   ",
 									"checkStatus(pm, 200);",
-									"tests[\"Three Ctps\"] = jsonBody.length === 3;",
-									"",
-									"if (jsonBody.length) {",
-									"   var cpt = jsonBody[0];",
-									"   ",
-									"   tests[\"Expected Content\"] = cpt.title === \"Land Grab\";",
-									"}"
-								]
+									"pm.test(\"Three Ctps\", () =>{",
+									"    pm.expect(jsonData.length).to.equal(3);",
+									"});",
+									"pm.test(\"Expected Content\", () =>{",
+									"    pm.expect(jsonData[0].title).to.equal(\"Land Grab\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -2033,10 +2023,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 403\"] = responseCode.code === 403;"
-								]
+									"checkStatus(pm, 403);"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -2071,10 +2061,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 403\"] = responseCode.code === 403;"
-								]
+									"checkStatus(pm, 403);"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
