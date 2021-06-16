@@ -106,8 +106,8 @@ router.put('/:id', (req, res) => {
        (vld.checkPrsOK(req.params.id, cb)) &&
        vld.hasOnlyFields(body,
        ["firstName", "lastName", "password", "oldPassword", "role"])
-       .chain(!("password" in body) || body.password, Tags.badValue, ["password"])
-       .chain(!body.role || admin && body.role === 1, Tags.badValue, ["role"])
+       .chain(!("password" in body) || body.password, [Tags.badValue,"password"])
+       .chain(!body.role || admin && body.role === 1, [Tags.badValue,"role"])
        .check(!body.password || body.oldPassword || admin, Tags.noOldPwd, cb))
          cnn.chkQry("select * from Person where id = ? ", req.params.id, cb);
    },

@@ -67,7 +67,7 @@ router.delete('/:id', (req, res) => {
       if (vld.check(leader && leader.length , Tags.notFound, cb))
          if (vld.chain(ssn && (ssn.isAdmin() ||
           ssn.prsId == leader[0].leaderId || ssn.prsId == req.params.id),
-          Tags.noPermission,null).
+          Tags.noPermission).
           check(!(leader[0].leaderId == req.params.id),
           Tags.cantRemoveLeader, cb))
             req.cnn.query('delete from Membership where prsId = ? && teamId = ?'
