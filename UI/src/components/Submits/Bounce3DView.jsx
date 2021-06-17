@@ -51,9 +51,7 @@ export class Bounce3DView extends React.Component {
 
          },
          undefined,
-         (err) => {
-            console.log(err);
-         }
+         (err) => console.log(err)
       );
    }
 
@@ -87,12 +85,9 @@ export class Bounce3DView extends React.Component {
       return material;
    }
 
-
-
    initialBackground() {
       this.scene = new THREE.Scene();
       this.setState({ isFirstRender: false });
-
    }
 
    addPointLight(intensity, x, y, z, castShadow) {
@@ -104,8 +99,10 @@ export class Bounce3DView extends React.Component {
 
    addBoxMeshes(dimensionsArr) {
       for (const dimensions of dimensionsArr) {
-         let boxGeo = new THREE.BoxBufferGeometry(dimensions.w, dimensions.h, dimensions.d);
+         let boxGeo = new THREE.BoxBufferGeometry
+          (dimensions.w, dimensions.h, dimensions.d);
          let box = new THREE.Mesh(boxGeo);
+
          dimensions.x = dimensions.x === undefined ? 0 : dimensions.x;
          dimensions.y = dimensions.y === undefined ? 0 : dimensions.y;
          dimensions.z = dimensions.x === undefined ? 0 : dimensions.z;
@@ -147,7 +144,7 @@ export class Bounce3DView extends React.Component {
       );
 
       this.cameraControls.addEventListener("control", () => {
-         this.cameraControls.update(this.props.offset);
+         this.cameraControls.update(this.props.offset); // Needed w/o animation?
          this.renderer.render(this.scene, this.camera);
       });
 

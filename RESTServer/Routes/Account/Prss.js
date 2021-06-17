@@ -1,6 +1,6 @@
-var Express = require('express');
+var express = require('express');
 var Tags = require('../Validator.js').Tags;
-var router = Express.Router({caseSensitive: true});
+var router = express.Router({caseSensitive: true});
 var async = require('async');
 var crypto = require("crypto");
 
@@ -42,10 +42,11 @@ router.post('/', (req, res) => {
 
    async.waterfall([
    (cb) => { // Check properties and search for Email duplicates
-      if (vld.hasFields(body, ["email","firstName", "lastName", "password", "role"], cb) &&
+      if (vld.hasFields(body, ["email","firstName", "lastName", "password",
+       "role"], cb) &&
        vld.chain(body.role === 0 || admin, Tags.noPermission)
        .chain(body.termsAccepted || admin, Tags.noTerms)
-       .check(body.role === 0 || body.role === 1, [Tags.badValue, "role"], cb)) {
+       .check(body.role === 0 || body.role === 1, [Tags.badValue, "role"], cb)){
          cnn.chkQry('select * from Person where email = ?', body.email, cb);
       }
    },
@@ -61,7 +62,7 @@ router.post('/', (req, res) => {
       res.location(router.baseURL + '/' + result.insertId).end();
       cb();
    }],
-   () => {
+   (err) => {
       cnn.release();
    });
 });

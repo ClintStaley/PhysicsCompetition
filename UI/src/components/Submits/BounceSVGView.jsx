@@ -22,7 +22,7 @@ export class BounceSVGView extends React.Component {
    // Return state displaying background grid and other fixtures
    // appropriate for |movie|
    static getInitState(movie) {
-      let bkgElms = [];
+      let bkgElms = []; 
       let width = movie.background.width;
       let height = movie.background.height;
       let longDim = Math.max(width, height);
