@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "efb5bde8-6962-4053-a839-1e0da21a2b2f",
+		"_postman_id": "c490446c-6376-4782-9407-1c99aa2c2243",
 		"name": "PhysicsCompetitionREST Test",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -285,7 +285,13 @@
 							"script": {
 								"exec": [
 									"checkStatus(pm, 200);",
-									"pm.test(\"No information given\", () => pm.expect(pm.response.json().length).equals(0));"
+									"",
+									"pm.test(\"Returned Admin Info\", () => {",
+									"    var body = JSON.parse(responseBody);",
+									"    pm.test(\"Only one person\", () => pm.expect(body.length).to.equal(1));",
+									"    pm.test(\"Correct id\", () => pm.expect(body[0].id).to.equal(1));",
+									"    pm.test(\"Correct email\", () => pm.expect(body[0].email).equals(\"admin@softwareinventions.com\"));",
+									"});"
 								],
 								"type": "text/javascript"
 							}
@@ -1106,7 +1112,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"checkSimpleError(pm, \"oldPwdMismatch\", 0 );",
+									"checkSimpleError(pm, \"oldPwdMismatch\");",
 									""
 								],
 								"type": "text/javascript"
