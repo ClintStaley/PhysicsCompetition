@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "c490446c-6376-4782-9407-1c99aa2c2243",
+		"_postman_id": "a0c5fac2-f8c4-41e3-b16d-6b7668e4ed43",
 		"name": "PhysicsCompetitionREST Test",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -1805,7 +1805,7 @@
 					"response": []
 				},
 				{
-					"name": "Edit CompetitionType descriotion only",
+					"name": "Edit CompetitionType description only",
 					"event": [
 						{
 							"listen": "test",
@@ -1828,6 +1828,52 @@
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"description\": \"Changed Description\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/Ctps/4",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Ctps",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check description change",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"checkStatus(pm, 200);\r",
+									"\r",
+									"pm.test('Good Description', ()=>{\r",
+									"    var body =  pm.response.json();\r",
+									"    pm.expect(body.description).to.eql(\"Changed Description\")\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
 						},
 						"url": {
 							"raw": "{{url}}/Ctps/4",
@@ -2024,7 +2070,7 @@
 					"response": []
 				},
 				{
-					"name": "try to Register Competition Type B again",
+					"name": "Try to Register Competition Type B again",
 					"event": [
 						{
 							"listen": "test",
@@ -2062,7 +2108,7 @@
 					"response": []
 				},
 				{
-					"name": "try to Remove CompetitionTypes A",
+					"name": "Try to Remove CompetitionTypes A",
 					"event": [
 						{
 							"listen": "test",
@@ -3135,10 +3181,11 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"checkStatus(pm, 200);"
-								]
+									"checkStatus(pm, 200);\r",
+									""
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -3175,10 +3222,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"checkStatus(pm, 200);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -3215,10 +3262,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 400\"] = responseCode.code === 400;"
-								]
+									"checkStatus(pm, 400);"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -3295,19 +3342,22 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
+									"var jsonBody = pm.response.json();",
 									"",
 									"checkStatus(pm, 200);",
-									"tests[\"Two Teams\"] = jsonBody.length === 2;",
 									"",
-									"if (jsonBody.length) {",
-									"   var cpt = jsonBody[0];",
-									"   ",
-									"   tests[\"Expected Content\"] = cpt.teamName === \"Team A\";",
-									"}"
-								]
+									"pm.test('Two Teams', ()=>{",
+									"    pm.expect(jsonBody.length).to.eql(2);",
+									"});",
+									"",
+									"pm.test('Expected Content', ()=>{",
+									"    var cpt = jsonBody[0];",
+									"    pm.expect(cpt.teamName).to.eql(\"Team A\")",
+									"})",
+									""
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -3381,7 +3431,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"tests[\"Status code is 404\"] = responseCode.code === 404;"
+									"checkStatus(pm,404);"
 								],
 								"type": "text/javascript"
 							}
@@ -3420,10 +3470,11 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 400\"] = responseCode.code === 400;"
-								]
+									"checkStatus(pm,400);\r",
+									""
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -3496,14 +3547,17 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
+									"var jsonBody = pm.response.json();",
 									"",
 									"checkStatus(pm, 200);",
-									"tests[\"Expected Content\"] = jsonBody.title === \"Land Grab A\";",
+									"",
+									"pm.test('Expected Content', ()=>{",
+									"    pm.expect(jsonBody.title).to.eql(\"Land Grab A\")",
+									"})",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -3687,19 +3741,19 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
+									"var jsonBody = pm.response.json();",
 									"",
 									"checkStatus(pm, 200);",
-									"tests[\"Two Teams\"] = jsonBody.length === 2;",
+									"pm.test('Two Teams', () =>{",
+									"    pm.expect(jsonBody.length).to.eql(2)",
+									"});",
 									"",
-									"if (jsonBody.length) {",
-									"   var Team = jsonBody[0];",
-									"   ",
-									"   tests[\"Expected Content\"] = Team.teamName === \"Team A\";",
-									"}"
-								]
+									"pm.test('Expected Content', ()=>{",
+									"    pm.expect(jsonBody[0].teamName).to.eql(\"Team A\");",
+									"});"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -3772,14 +3826,19 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
+									"var jsonBody = pm.response.json();",
 									"",
 									"checkStatus(pm, 200);",
-									"tests[\"Expected Content\"] = jsonBody.teamName === \"Team A\";",
+									"",
+									"pm.test('Expected Content', ()=>{",
+									"    pm.expect(jsonBody.teamName).to.eql(\"Team A\");",
+									"",
+									"});",
+									"",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -3849,10 +3908,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 403\"] = responseCode.code === 403;"
-								]
+									"checkStatus(pm,403);"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -4857,7 +4916,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"tests[\"Status code is 404\"] = responseCode.code === 404;"
+									"checkStatus(pm,404);"
 								],
 								"type": "text/javascript"
 							}
@@ -4982,13 +5041,16 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
+									"var jsonBody = pm.response.json();",
 									"",
 									"checkStatus(pm, 200);",
-									"tests[\"Two Submissions\"] = jsonBody.length === 2;"
-								]
+									"",
+									"pm.test('Two Submissions', ()=>{",
+									"    pm.expect(jsonBody.length).to.eql(2);",
+									"});"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -5024,10 +5086,13 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
+									"var jsonBody = pm.response.json();",
 									"",
 									"checkStatus(pm, 200);",
-									"tests[\"Two Submissions\"] = jsonBody.length === 1;"
+									"",
+									"pm.test('Two Submissions', ()=>{",
+									"    pm.expect(jsonBody.length).to.eql(1);",
+									"});"
 								],
 								"type": "text/javascript"
 							}
@@ -5064,13 +5129,17 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
+									"var jsonBody = pm.response.json();",
 									"",
 									"checkStatus(pm, 200);",
-									"tests[\"Three Submissions\"] = jsonBody.length === 3;"
-								]
+									"",
+									"pm.test('Three Submissions', ()=>{",
+									"    pm.expect(jsonBody.length).to.eql(3);",
+									"})",
+									""
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -5103,13 +5172,16 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
+									"var jsonBody =  pm.response.json();",
 									"",
 									"checkStatus(pm, 200);",
-									"tests[\"Two Submissions\"] = jsonBody.length === 2;"
-								]
+									"",
+									"pm.test(\"Two Submissions\", ()=>{",
+									"    pm.expect(jsonBody.length).to.eql(2);",
+									"});"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -5148,14 +5220,17 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
+									"var jsonBody = pm.response.json();",
 									"",
 									"checkStatus(pm, 200);",
-									"tests[\"Expected Content\"] = jsonBody.content === \"[   {     \\\"centerX\\\": 50.0,     \\\"centerY\\\": 45.2,     \\\"radius\\\": 15.9   },   {     \\\"centerX\\\": 10.3,     \\\"centerY\\\": 42.0,     \\\"radius\\\": 11   },   {     \\\"centerX\\\": 23,     \\\"centerY\\\": 89,     \\\"radius\\\": 40   } ]\";",
+									"",
+									"pm.test('Expected Content', ()=>{",
+									"    pm.expect(jsonBody.content).to.eql(\"[   {     \\\"centerX\\\": 50.0,     \\\"centerY\\\": 45.2,     \\\"radius\\\": 15.9   },   {     \\\"centerX\\\": 10.3,     \\\"centerY\\\": 42.0,     \\\"radius\\\": 11   },   {     \\\"centerX\\\": 23,     \\\"centerY\\\": 89,     \\\"radius\\\": 40   } ]\")",
+									"});",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -5347,13 +5422,16 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
+									"var jsonBody = pm.response.json();",
 									"",
 									"checkStatus(pm, 200);",
-									"tests[\"Three Submissions\"] = jsonBody.length === 3;"
-								]
+									"",
+									"pm.test('Three Submissions', ()=>{",
+									"    pm.expect(jsonBody.length).to.eql(3);",
+									"});"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -6072,10 +6150,13 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
+									"var jsonData = pm.response.json();",
 									"",
 									"checkStatus(pm, 200);",
-									""
+									"",
+									"pm.test('One Team', ()=>{",
+									"    pm.expect(jsonData.length).to.eql(1);",
+									"})"
 								],
 								"type": "text/javascript"
 							}
@@ -6111,10 +6192,13 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
+									"var jsonBody = pm.response.json();",
 									"",
 									"checkStatus(pm, 200);",
-									"tests[\"Three Submissions\"] = jsonBody.length === 3;"
+									"",
+									"pm.test(\"Three Submissions\", ()=>{",
+									"    pm.expect(jsonBody.length).to.eql(3);",
+									"});"
 								],
 								"type": "text/javascript"
 							}
@@ -6280,6 +6364,10 @@
 		},
 		{
 			"key": "CmpTypeB",
+			"value": ""
+		},
+		{
+			"key": "teamId",
 			"value": ""
 		}
 	]
