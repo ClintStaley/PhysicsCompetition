@@ -12,11 +12,6 @@ router.get('/', (req, res) => {
    var fillers = [];
    var emailPrefix = req.query.email;
 
-   // Limit to information on AU if not admin.
-   if (!ssn.isAdmin()) {
-      clause += " where id = ?";
-      fillers.push(ssn.prsId);
-   }
 
    // Add email prefix qualifier if requested
    if (emailPrefix) {
