@@ -87,7 +87,6 @@ Validator.prototype.checkPrsOK = function (prsId, cb) {
     Validator.Tags.noPermission, cb);
 };
 
-<<<<<<< HEAD
 // Verify that each field[i] (a field name) of body, if present, is a string
 // and at most lengths[i] long.  Post badValue for any exceptions.  Return 
 // this for chaining.
@@ -97,7 +96,7 @@ Validator.prototype.checkFieldLengths = function(body, fields, lengths) {
    for (var i = 0; i < fields.length; i++) {
       val = body[fields[i]];
       this.chain(!val || typeof val === 'string'
-       && val.length <= lengths[i], Validator.Tags.badValue, [fields[i]])
+       && val.length <= lengths[i], [Validator.Tags.badValue, fields[i]])
    }
 
    return this;
@@ -105,13 +104,8 @@ Validator.prototype.checkFieldLengths = function(body, fields, lengths) {
 
 Validator.prototype.hasOnlyFields = function(obj, fieldList) {
    Object.keys(obj).forEach(prop => {
-      this.chain(fieldList.indexOf(prop) >= 0, Validator.
-       Tags.forbiddenField, [prop]);
-=======
-Validator.prototype.hasOnlyFields = function (obj, fieldList) {
-   Object.keys(obj).forEach((prop) => {
-      this.chain(fieldList.indexOf(prop) >= 0, [Validator.Tags.forbiddenField, prop]);
->>>>>>> fdb42f4368416fd2485ed99149b0d352ab04c31d
+      this.chain(fieldList.indexOf(prop) >= 0, 
+       [Validator.Tags.forbiddenField, prop]);
    });
 
    return this;
