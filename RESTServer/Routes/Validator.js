@@ -66,9 +66,12 @@ Validator.prototype.check = function (test, err, cb) {
 
 // Somewhat like |check|, but designed to allow several chained checks
 // in a row, finalized by a check call.
-Validator.prototype.chain = function (test, tag, params) {
+Validator.prototype.chain = function (test, err) {
    if (!test)
-      this.errors.push({tag: tag, params: params || null});
+      if(Array.isArray(err))
+         this.errors.push({tag:err[0], params:err.slice(1)});
+      else
+         this.errors.push({tag:err, params: null});
    return this;
 };
 
@@ -84,6 +87,7 @@ Validator.prototype.checkPrsOK = function (prsId, cb) {
     Validator.Tags.noPermission, cb);
 };
 
+<<<<<<< HEAD
 // Verify that each field[i] (a field name) of body, if present, is a string
 // and at most lengths[i] long.  Post badValue for any exceptions.  Return 
 // this for chaining.
@@ -103,6 +107,11 @@ Validator.prototype.hasOnlyFields = function(obj, fieldList) {
    Object.keys(obj).forEach(prop => {
       this.chain(fieldList.indexOf(prop) >= 0, Validator.
        Tags.forbiddenField, [prop]);
+=======
+Validator.prototype.hasOnlyFields = function (obj, fieldList) {
+   Object.keys(obj).forEach((prop) => {
+      this.chain(fieldList.indexOf(prop) >= 0, [Validator.Tags.forbiddenField, prop]);
+>>>>>>> fdb42f4368416fd2485ed99149b0d352ab04c31d
    });
 
    return this;
@@ -114,7 +123,7 @@ Validator.prototype.hasFields = function (obj, fieldList, cb) {
    fieldList.forEach((name) => {
       this.chain(obj.hasOwnProperty(name) && obj[name] !== "" && obj[name]
        !== null && obj[name] !== undefined,
-       Validator.Tags.missingField, [name]);
+       [Validator.Tags.missingField, name]);
    });
 
    return this.check(true, null, cb);
