@@ -33,10 +33,14 @@ export class Bounce3DView extends React.Component {
       let height = movie.background.height;
       let longDim = Math.max(width, height);
       let scene = new THREE.Scene();
+
+      // Add cameras, lighting, and general background elements like the room
+      // and the steel wall (but not the targets or barriers) to the scene.
  
       return {
          trgEvts: [],    // Target creation events (each w/ptr to scene Group)
          evtIdx: -1,     // Index within movie of last event shown in scene
+         ballEvt: null,  // Most recent event that placed the ball
          scene,          // scene to render at this point
          movie           // Pointer to current movie
       }   
@@ -77,11 +81,11 @@ export class Bounce3DView extends React.Component {
             // Add indicated target to scene
          }
          else if (evt.type === BounceMovie.cBallPosition) {
-            // Move ball to indicated new position in scene
+            ballEvt = evt;
          }
          else if (evt.type === BounceMovie.cHitBarrier
           || evt.type === BounceMovie.cHitTarget) {
-            // Move ball to indicated hit location in scene
+            ballEvt = evt;
 
             if (evt.type === BounceMovie.cHitTarget) {
                let trgEvt = trgEvts[evt.targetId];
@@ -98,11 +102,6 @@ export class Bounce3DView extends React.Component {
       // over"
       while (evtIdx > 0 && timeStamp < evts[evtIdx].time) {
          evt = evts[evtIdx--];
-         if (evt.type === BounceMovie.cBallPosition
-          || evt.type === BounceMovie.cHitBarrier 
-          || evt.type === BounceMovie.cHitTarget)
-            // Move ball back to earlier position.
-
          if (evt.type === BounceMovie.cHitTarget) {
             let trgEvt = trgEvts[evt.targetId];
             // Pop indicated target back out.
@@ -127,7 +126,9 @@ export class Bounce3DView extends React.Component {
    }
 
    render() {
+      // Add ball to scene in position indicated by state.ballEvt.
       // Render current scene.
+      // Remove the ball
       return (
          <div
             style={{ height: "600px", width: "100%" }}
