@@ -43,9 +43,8 @@ router.post('/', (req, res) => {
       }
    },
    (result, fields, cb) => {
-      // Return location of inserted Member
-      res.location(router.baseURL.replace(":cmpId", req.params.cmpId)
-       .replace(":teamId", req.params.teamId) + '/' + result.insertId).end();
+      // DO NOT Return location of inserted Member (but do confirm resolution of chkQry)
+      res.end();
       cb();
    }],
    () => {

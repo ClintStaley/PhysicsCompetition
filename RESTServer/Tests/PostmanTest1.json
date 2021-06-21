@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "a0c5fac2-f8c4-41e3-b16d-6b7668e4ed43",
+		"_postman_id": "e1153903-598e-456e-b944-4c4aeb95dee4",
 		"name": "PhysicsCompetitionREST Test",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -1656,40 +1656,6 @@
 					"response": []
 				},
 				{
-					"name": "Get all CompTypes",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"checkStatus(pm, 200);"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"url": {
-							"raw": "{{url}}/Ctps",
-							"host": [
-								"{{url}}"
-							],
-							"path": [
-								"Ctps"
-							]
-						},
-						"description": "Get Info on Admin\n"
-					},
-					"response": []
-				},
-				{
 					"name": "Get one CompTypes",
 					"event": [
 						{
@@ -1724,6 +1690,40 @@
 							"path": [
 								"Ctps",
 								"1"
+							]
+						},
+						"description": "Get Info on Admin\n"
+					},
+					"response": []
+				},
+				{
+					"name": "Get all CompTypes",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"checkStatus(pm, 200);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/Ctps",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Ctps"
 							]
 						},
 						"description": "Get Info on Admin\n"
@@ -2206,7 +2206,8 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"checkLogin(pm);"
+									"checkLogin(pm);\r",
+									"pm.collectionVariables.set(\"curLoginEmail\", JSON.parse(pm.request.body.raw).email);"
 								],
 								"type": "text/javascript"
 							}
@@ -2244,7 +2245,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"checkStatus(pm, 200);"
+									"checkAndSavePost(pm, \"LandGrabAId\");"
 								],
 								"type": "text/javascript"
 							}
@@ -2260,7 +2261,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"ctpId\": 3,\n  \"title\": \"Land Grab A\",\n  \"prms\": \"{     \\\"numCircles\\\": 3,     \\\"goalArea\\\": 5000.0,    \\\"obstacles\\\": [        {          \\\"loX\\\": 0,          \\\"hiX\\\": 40.2,          \\\"loY\\\": 0,          \\\"hiY\\\": 28.7        },        {          \\\"loX\\\": 0,          \\\"hiX\\\": 50,          \\\"loY\\\": 85,          \\\"hiY\\\": 100        },         {          \\\"loX\\\": 80,          \\\"hiX\\\": 100,          \\\"loY\\\": 0,          \\\"hiY\\\": 12        }      ]    }\",\n  \"rules\": 1,\n  \"description\": \"description of Land Grab .....\"\n}"
+							"raw": "{\n    \"ctpId\": {{CmpTypeA}},\n    \"title\": \"Land Grab A\",\n    \"prms\": \"{     \\\"numCircles\\\": 3,     \\\"goalArea\\\": 5000.0,    \\\"obstacles\\\": [        {          \\\"loX\\\": 0,          \\\"hiX\\\": 40.2,          \\\"loY\\\": 0,          \\\"hiY\\\": 28.7        },        {          \\\"loX\\\": 0,          \\\"hiX\\\": 50,          \\\"loY\\\": 85,          \\\"hiY\\\": 100        },         {          \\\"loX\\\": 80,          \\\"hiX\\\": 100,          \\\"loY\\\": 0,          \\\"hiY\\\": 12        }      ]    }\",\n    \"rules\": 1,\n    \"description\": \"description of Land Grab .....\"\n}"
 						},
 						"url": {
 							"raw": "{{url}}/Cmps",
@@ -2282,7 +2283,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"checkStatus(pm, 200);"
+									"checkAndSavePost(pm, \"LandGrabBId\");"
 								],
 								"type": "text/javascript"
 							}
@@ -2298,7 +2299,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"ctpId\": 3,\n  \"title\": \"Land Grab B\",\n  \"prms\": \"{      \\\"numCircles\\\": 3,   \\\"goalArea\\\": 5000.0,     \\\"obstacles\\\": [        {          \\\"loX\\\": 0,          \\\"hiX\\\": 40.2,          \\\"loY\\\": 0,          \\\"hiY\\\": 28.7        },        {          \\\"loX\\\": 0,          \\\"hiX\\\": 50,          \\\"loY\\\": 85,          \\\"hiY\\\": 100        },         {          \\\"loX\\\": 80,          \\\"hiX\\\": 100,          \\\"loY\\\": 0,          \\\"hiY\\\": 12        }      ]    }\",\n  \"description\": \"description of Land Grab .....\"\n}"
+							"raw": "{\n    \"ctpId\": {{CmpTypeA}},\n  \"title\": \"Land Grab B\",\n  \"prms\": \"{      \\\"numCircles\\\": 3,   \\\"goalArea\\\": 5000.0,     \\\"obstacles\\\": [        {          \\\"loX\\\": 0,          \\\"hiX\\\": 40.2,          \\\"loY\\\": 0,          \\\"hiY\\\": 28.7        },        {          \\\"loX\\\": 0,          \\\"hiX\\\": 50,          \\\"loY\\\": 85,          \\\"hiY\\\": 100        },         {          \\\"loX\\\": 80,          \\\"hiX\\\": 100,          \\\"loY\\\": 0,          \\\"hiY\\\": 12        }      ]    }\",\n  \"description\": \"description of Land Grab .....\"\n}"
 						},
 						"url": {
 							"raw": "{{url}}/Cmps",
@@ -2354,14 +2355,16 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
-									"",
 									"checkStatus(pm, 200);",
-									"tests[\"Expected Content\"] = jsonBody.title === \"Land Grab A\";",
+									"pm.test(\"Expected Land Grab A\", () =>{",
+									"    pm.expect(jsonBody).to.have.property(\"title\");",
+									"    pm.expect(pm.expect(jsonBody.title).to.equal(\"Land Grab A\"));",
+									"});",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -2374,13 +2377,13 @@
 							}
 						],
 						"url": {
-							"raw": "{{url}}/Cmps/1",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"1"
+								"{{LandGrabAId}}"
 							]
 						},
 						"description": "Get Info on Admin\n"
@@ -2393,19 +2396,16 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
-									"",
 									"checkStatus(pm, 200);",
-									"tests[\"Two Cmps\"] = jsonBody.length === 2;",
-									"",
-									"if (jsonBody.length) {",
-									"   var cpt = jsonBody[0];",
-									"   ",
-									"   tests[\"Expected Content\"] = cpt.title === \"Land Grab A\";",
-									"}"
-								]
+									"pm.test(\"Two Cmps\", pm.expect(jsonBody.length).equals(2));",
+									"pm.test(\"Expected Land Grab A\", () =>{",
+									"    pm.expect(jsonBody).to.have.property(0).to.have.property(\"title\");",
+									"    pm.expect(pm.expect(jsonBody[0].title).to.equal(\"Land Grab A\"));",
+									"});"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -2418,7 +2418,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{url}}/Cmps?email=admin@softwareinventions.com",
+							"raw": "{{url}}/Cmps?email={{curLoginEmail}}",
 							"host": [
 								"{{url}}"
 							],
@@ -2428,7 +2428,7 @@
 							"query": [
 								{
 									"key": "email",
-									"value": "admin@softwareinventions.com"
+									"value": "{{curLoginEmail}}"
 								}
 							]
 						},
@@ -2442,19 +2442,16 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
-									"",
-									"checkStatus(pm, 200);",
-									"tests[\"Two Cmps\"] = jsonBody.length === 2;",
-									"",
-									"if (jsonBody.length) {",
-									"   var cpt = jsonBody[0];",
-									"   ",
-									"   tests[\"Expected Content\"] = cpt.title === \"Land Grab A\";",
-									"}"
-								]
+									"checkStatus(pm, 200); ",
+									"pm.test(\"Two Cmps\", pm.expect(jsonBody.length).equals(2));",
+									"pm.test(\"Expected Land Grab A\", () =>{",
+									"    pm.expect(jsonBody).to.have.property(0).to.have.property(\"title\");",
+									"    pm.expect(pm.expect(jsonBody[0].title).to.equal(\"Land Grab A\"));",
+									"});"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -2467,7 +2464,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{url}}/Cmps?CompetitionType=3",
+							"raw": "{{url}}/Cmps?CompetitionType={{CmpTypeA}}",
 							"host": [
 								"{{url}}"
 							],
@@ -2477,7 +2474,7 @@
 							"query": [
 								{
 									"key": "CompetitionType",
-									"value": "3"
+									"value": "{{CmpTypeA}}"
 								}
 							]
 						},
@@ -2491,10 +2488,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"checkStatus(pm, 200);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -2511,13 +2508,13 @@
 							"raw": "{\n  \"title\": \"Land Grab C\",\n  \"prms\": \"{      \\\"numCircles\\\": 3,     \\\"goalArea\\\": 5000.0,       \\\"obstacles\\\": [        {          \\\"loX\\\": 0,          \\\"hiX\\\": 40.2,          \\\"loY\\\": 0,          \\\"hiY\\\": 28.7        },        {          \\\"loX\\\": 0,          \\\"hiX\\\": 50,          \\\"loY\\\": 85,          \\\"hiY\\\": 100        },         {          \\\"loX\\\": 80,          \\\"hiX\\\": 100,          \\\"loY\\\": 0,          \\\"hiY\\\": 12        }      ]    }\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/2",
+							"raw": "{{url}}/Cmps/{{LandGrabBId}}",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"2"
+								"{{LandGrabBId}}"
 							]
 						}
 					},
@@ -2549,13 +2546,13 @@
 							"raw": "{\n  \"prms\": \"{      \\\"numCircles\\\": 3,    \\\"goalArea\\\": 5000.0,        \\\"obstacles\\\": [        {          \\\"loX\\\": 0,          \\\"hiX\\\": 40.2,          \\\"loY\\\": 0,          \\\"hiY\\\": 28.7        },        {          \\\"loX\\\": 0,          \\\"hiX\\\": 50,          \\\"loY\\\": 80,          \\\"hiY\\\": 100        },         {          \\\"loX\\\": 80,          \\\"hiX\\\": 100,          \\\"loY\\\": 0,          \\\"hiY\\\": 12        }      ]    }\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/1",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"1"
+								"{{LandGrabAId}}"
 							]
 						}
 					},
@@ -2582,13 +2579,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/2",
+							"raw": "{{url}}/Cmps/{{LandGrabBId}}",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"2"
+								"{{LandGrabBId}}"
 							]
 						},
 						"description": "\n"
@@ -2602,7 +2599,8 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"tests[\"Status code is 404\"] = responseCode.code === 404;"
+									"\r",
+									"checkStatus(pm, 404);"
 								],
 								"type": "text/javascript"
 							}
@@ -2616,13 +2614,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/2",
+							"raw": "{{url}}/Cmps/{{LandGrabBId}}",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"2"
+								"{{LandGrabBId}}"
 							]
 						},
 						"description": "\n"
@@ -2636,7 +2634,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"checkStatus(pm, 200);"
+									"checkAndSavePost(pm, \"LandGrabBId\");"
 								],
 								"type": "text/javascript"
 							}
@@ -2652,7 +2650,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"ctpId\": 3,\n  \"title\": \"Land Grab B\",\n  \"prms\": \"{      \\\"numCircles\\\": 3,   \\\"goalArea\\\": 5000.0,     \\\"obstacles\\\": [        {          \\\"loX\\\": 0,          \\\"hiX\\\": 40.2,          \\\"loY\\\": 0,          \\\"hiY\\\": 28.7        },        {          \\\"loX\\\": 0,          \\\"hiX\\\": 50,          \\\"loY\\\": 85,          \\\"hiY\\\": 100        },         {          \\\"loX\\\": 80,          \\\"hiX\\\": 100,          \\\"loY\\\": 0,          \\\"hiY\\\": 12        }      ]    }\",\n  \"description\": \"description of Land Grab .....\"\n}"
+							"raw": "{\n    \"ctpId\": {{CmpTypeA}},\n  \"title\": \"Land Grab B\",\n  \"prms\": \"{      \\\"numCircles\\\": 3,   \\\"goalArea\\\": 5000.0,     \\\"obstacles\\\": [        {          \\\"loX\\\": 0,          \\\"hiX\\\": 40.2,          \\\"loY\\\": 0,          \\\"hiY\\\": 28.7        },        {          \\\"loX\\\": 0,          \\\"hiX\\\": 50,          \\\"loY\\\": 85,          \\\"hiY\\\": 100        },         {          \\\"loX\\\": 80,          \\\"hiX\\\": 100,          \\\"loY\\\": 0,          \\\"hiY\\\": 12        }      ]    }\",\n  \"description\": \"description of Land Grab .....\"\n}"
 						},
 						"url": {
 							"raw": "{{url}}/Cmps",
@@ -2668,13 +2666,13 @@
 					"response": []
 				},
 				{
-					"name": "Post Solar Car CmpType",
+					"name": "Post Solar Car CmpType (C)",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"checkStatus(pm, 200);"
+									"checkAndSavePost(pm, \"CmpTypeC\");"
 								],
 								"type": "text/javascript"
 							}
@@ -2706,13 +2704,13 @@
 					"response": []
 				},
 				{
-					"name": "Register Solar Car Cmp",
+					"name": "Register Solar Car A Cmp",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"checkStatus(pm, 200);"
+									"checkAndSavePost(pm, \"SolarCarId\");"
 								],
 								"type": "text/javascript"
 							}
@@ -2728,7 +2726,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"ctpId\": 5,\n  \"title\": \"Solar Car A\",\n  \"prms\": \"{   \\\"Altitude Profiles\\\": [[2,2],[2,2],[2,2]],   \\\"Cell Output profile\\\": [[2,2],[2,2]],   \\\"Friction\\\": [2],   \\\"Energy /m alt\\\": 1,   \\\"Battery I/o\\\": [[5,4],[5,4]],   \\\"Regen Efficiency\\\": 9,   \\\"Initial Battery\\\": 9 }\",\n  \"description\": \"description of Land Grab .....\"\n}"
+							"raw": "{\n    \"ctpId\": {{CmpTypeC}},\n  \"title\": \"Solar Car A\",\n  \"prms\": \"{   \\\"Altitude Profiles\\\": [[2,2],[2,2],[2,2]],   \\\"Cell Output profile\\\": [[2,2],[2,2]],   \\\"Friction\\\": [2],   \\\"Energy /m alt\\\": 1,   \\\"Battery I/o\\\": [[5,4],[5,4]],   \\\"Regen Efficiency\\\": 9,   \\\"Initial Battery\\\": 9 }\",\n  \"description\": \"description of Land Grab .....\"\n}"
 						},
 						"url": {
 							"raw": "{{url}}/Cmps",
@@ -2751,9 +2749,9 @@
 							"script": {
 								"exec": [
 									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
-									"",
 									"checkStatus(pm, 200);",
-									"tests[\"Two Cmps\"] = jsonBody.length === 3;"
+									"pm.test(\"Three Cmps\", pm.expect(jsonBody.length).equals(3)); ",
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -2801,13 +2799,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/Ctps/5",
+							"raw": "{{url}}/Ctps/{{CmpTypeC}}",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Ctps",
-								"5"
+								"{{CmpTypeC}}"
 							]
 						},
 						"description": "\n"
@@ -2824,7 +2822,7 @@
 									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
 									"",
 									"checkStatus(pm, 200);",
-									"tests[\"One Cmp\"] = jsonBody.length === 2;"
+									"pm.test(\"Two Cmps\", pm.expect(jsonBody.length).equals(2));"
 								],
 								"type": "text/javascript"
 							}
@@ -2891,9 +2889,8 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"checkStatus(pm, 200);",
 									"checkLogin(pm);",
-									""
+									"pm.collectionVariables.set(\"curLoginEmail\", JSON.parse(pm.request.body.raw).email);"
 								],
 								"type": "text/javascript"
 							}
@@ -2931,7 +2928,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"tests[\"Status code is 403\"] = responseCode.code === 403;"
+									"checkStatus(pm, 403);"
 								],
 								"type": "text/javascript"
 							}
@@ -2968,10 +2965,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 403\"] = responseCode.code === 403;"
-								]
+									"checkStatus(pm, 403);"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -3003,7 +3000,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"tests[\"Status code is 403\"] = responseCode.code === 403;"
+									"checkStatus(pm, 403);"
 								],
 								"type": "text/javascript"
 							}
@@ -3019,7 +3016,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"ctpId\": 3,\n  \"title\": \"Competition A\",\n  \"prms\": \"{    \\\"Altitude Profiles \\\": [[2,2],[2,2],[2,2]],    \\\"Cell Output profile \\\": [[2,2],[2,2]],    \\\"Friction \\\": [2],    \\\"Energy /m alt \\\": 1,    \\\"Battery I/o \\\": [[5,4],[5,4]],    \\\"Regen Efficiency \\\": 9 ,    \\\"Initial Battery \\\": 9 }\"\n}"
+							"raw": "{\n    \"ctpId\": {{CmpTypeA}},\n  \"title\": \"Competition A\",\n  \"prms\": \"{    \\\"Altitude Profiles \\\": [[2,2],[2,2],[2,2]],    \\\"Cell Output profile \\\": [[2,2],[2,2]],    \\\"Friction \\\": [2],    \\\"Energy /m alt \\\": 1,    \\\"Battery I/o \\\": [[5,4],[5,4]],    \\\"Regen Efficiency \\\": 9 ,    \\\"Initial Battery \\\": 9 }\"\n}"
 						},
 						"url": {
 							"raw": "{{url}}/Cmps",
@@ -3035,6 +3032,48 @@
 					"response": []
 				},
 				{
+					"name": "Get all Competitions by owner",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
+									"checkStatus(pm, 200);",
+									"pm.test(\"No Cmps\", pm.expect(jsonBody.length).equals(0));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/Cmps?email={{curLoginEmail}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Cmps"
+							],
+							"query": [
+								{
+									"key": "email",
+									"value": "{{curLoginEmail}}"
+								}
+							]
+						},
+						"description": "Get Info on Admin\n"
+					},
+					"response": []
+				},
+				{
 					"name": "Get all Competitions",
 					"event": [
 						{
@@ -3044,13 +3083,11 @@
 									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
 									"",
 									"checkStatus(pm, 200);",
-									"tests[\"Two Ctps\"] = jsonBody.length === 2;",
-									"",
-									"if (jsonBody.length) {",
-									"   var cpt = jsonBody[0];",
-									"   ",
-									"   tests[\"Expected Content\"] = cpt.title === \"Land Grab A\";",
-									"}"
+									"pm.test(\"Two Cmps\", pm.expect(jsonBody.length).equals(2)); ",
+									"pm.test(\"Expected Land Grab A\", () =>{",
+									"    pm.expect(jsonBody).to.have.property(0).to.have.property(\"title\");",
+									"    pm.expect(pm.expect(jsonBody[0].title).to.equal(\"Land Grab A\"));",
+									"});"
 								],
 								"type": "text/javascript"
 							}
@@ -4043,7 +4080,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"checkStatus(pm, 200);",
+									"checkStatus(pm, 200)",
 									"checkLogin(pm);"
 								],
 								"type": "text/javascript"
@@ -4081,10 +4118,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"checkStatus(pm, 200);"
-								]
+									"checkAndSavePost(pm);"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -4101,13 +4138,13 @@
 							"raw": "{\n  \"prsId\": 1\n}"
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/1/Teams/5/Mmbs",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/5/Mmbs",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"1",
+								"{{LandGrabAId}}",
 								"Teams",
 								"5",
 								"Mmbs"
@@ -4123,10 +4160,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 400\"] = responseCode.code === 400;"
-								]
+									"checkStatus(pm, 400);"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -4143,13 +4180,13 @@
 							"raw": "{\n  \"prsId\": 1\n}"
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/1/Teams/1/Mmbs",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/1/Mmbs",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"1",
+								"{{LandGrabAId}}",
 								"Teams",
 								"1",
 								"Mmbs"
@@ -4160,57 +4197,15 @@
 					"response": []
 				},
 				{
-					"name": "Register Member C",
+					"name": "Register Member B",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"checkStatus(pm, 200);"
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"prsId\": 4\n}"
-						},
-						"url": {
-							"raw": "{{url}}/Cmps/1/Teams/3/Mmbs",
-							"host": [
-								"{{url}}"
-							],
-							"path": [
-								"Cmps",
-								"1",
-								"Teams",
-								"3",
-								"Mmbs"
-							]
-						},
-						"description": "\n"
-					},
-					"response": []
-				},
-				{
-					"name": "Register Member C copy",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": [
-									"checkStatus(pm, 200);"
-								]
+									"checkAndSavePost(pm);"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -4227,13 +4222,13 @@
 							"raw": "{\n  \"prsId\": 3\n}"
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/1/Teams/3/Mmbs",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/3/Mmbs",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"1",
+								"{{LandGrabAId}}",
 								"Teams",
 								"3",
 								"Mmbs"
@@ -4244,24 +4239,62 @@
 					"response": []
 				},
 				{
-					"name": "Get all Members",
+					"name": "Register Member C",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
+								"exec": [
+									"checkAndSavePost(pm);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"prsId\": 4\n}"
+						},
+						"url": {
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/3/Mmbs",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Cmps",
+								"{{LandGrabAId}}",
+								"Teams",
+								"3",
+								"Mmbs"
+							]
+						},
+						"description": "\n"
+					},
+					"response": []
+				},
+				{
+					"name": "Get all Members of Team 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
 								"exec": [
 									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
 									"",
 									"checkStatus(pm, 200);",
-									"tests[\"One Member\"] = jsonBody.length === 1;",
 									"",
-									"if (jsonBody.length) {",
-									"   var Member = jsonBody[0];",
-									"   ",
-									"   tests[\"Expected Content\"] = Member.email === \"admin@softwareinventions.com\";",
-									"}"
-								]
+									"pm.test(\"One Member\", pm.expect(jsonBody.length).equals(1));",
+									"pm.test(\"Expected Content\", pm.expect(jsonBody[0].email).to.equal(\"admin@softwareinventions.com\"));"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -4274,15 +4307,58 @@
 							}
 						],
 						"url": {
-							"raw": "{{url}}/Cmps/1/Teams/1/Mmbs",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/1/Mmbs",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"1",
+								"{{LandGrabAId}}",
 								"Teams",
 								"1",
+								"Mmbs"
+							]
+						},
+						"description": "Get Info on Admin\n"
+					},
+					"response": []
+				},
+				{
+					"name": "Get all Members of Team 3",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
+									"",
+									"checkStatus(pm, 200);",
+									"",
+									"pm.test(\"Three Members\", pm.expect(jsonBody.length).equals(3));",
+									"pm.test(\"Expected Content\", pm.expect(jsonBody[0].email).to.equal(\"admin@softwareinventions.com\"));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/3/Mmbs",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Cmps",
+								"{{LandGrabAId}}",
+								"Teams",
+								"3",
 								"Mmbs"
 							]
 						},
@@ -4296,10 +4372,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 400\"] = responseCode.code === 400;"
-								]
+									"checkStatus(pm, 400);"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -4311,13 +4387,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/1/Teams/1/Mmbs/1",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/1/Mmbs/1",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"1",
+								"{{LandGrabAId}}",
 								"Teams",
 								"1",
 								"Mmbs",
@@ -4406,10 +4482,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"checkStatus(pm, 200);"
-								]
+									"checkAndSavePost(pm);"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -4426,13 +4502,13 @@
 							"raw": "{\n  \"prsId\": 4\n}"
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/1/Teams/1/Mmbs",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/1/Mmbs",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"1",
+								"{{LandGrabAId}}",
 								"Teams",
 								"1",
 								"Mmbs"
@@ -4443,24 +4519,19 @@
 					"response": []
 				},
 				{
-					"name": "Get all Members",
+					"name": "Get all Members of Team 1",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
 									"",
 									"checkStatus(pm, 200);",
-									"tests[\"Two Members\"] = jsonBody.length === 2;",
-									"",
-									"if (jsonBody.length) {",
-									"   var Member = jsonBody[0];",
-									"   ",
-									"   tests[\"Expected Content\"] = Member.email === \"admin@softwareinventions.com\";",
-									"}"
-								]
+									"pm.test(\"Two Members\", pm.expect(jsonBody.length).equals(2));",
+									"pm.test(\"Expected Content\", pm.expect(jsonBody[0].email).to.equal(\"admin@softwareinventions.com\"));"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -4473,13 +4544,13 @@
 							}
 						],
 						"url": {
-							"raw": "{{url}}/Cmps/1/Teams/1/Mmbs",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/1/Mmbs",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"1",
+								"{{LandGrabAId}}",
 								"Teams",
 								"1",
 								"Mmbs"
@@ -4495,10 +4566,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 403\"] = responseCode.code === 403;"
-								]
+									"checkStatus(pm, 403);"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -4515,13 +4586,13 @@
 							"raw": "{\n  \"prsId\": 3\n}"
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/1/Teams/1/Mmbs",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/1/Mmbs",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"1",
+								"{{LandGrabAId}}",
 								"Teams",
 								"1",
 								"Mmbs"
@@ -4537,10 +4608,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"checkStatus(pm, 200);"
-								]
+									"checkAndSavePost(pm);"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -4557,13 +4628,13 @@
 							"raw": "{\n  \"prsId\": 3\n}"
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/1/Teams/5/Mmbs",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/5/Mmbs",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"1",
+								"{{LandGrabAId}}",
 								"Teams",
 								"5",
 								"Mmbs"
@@ -4579,10 +4650,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"checkStatus(pm, 200);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -4594,13 +4665,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/1/Teams/5/Mmbs/3",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/5/Mmbs/3",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"1",
+								"{{LandGrabAId}}",
 								"Teams",
 								"5",
 								"Mmbs",
@@ -4617,10 +4688,11 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 403\"] = responseCode.code === 403;"
-								]
+									"checkStatus(pm, 403);\r",
+									""
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -4632,13 +4704,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/1/Teams/1/Mmbs/1",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/1/Mmbs/1",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"1",
+								"{{LandGrabAId}}",
 								"Teams",
 								"1",
 								"Mmbs",
@@ -4655,10 +4727,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"checkStatus(pm, 200);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -4675,13 +4747,13 @@
 							"raw": "{\n  \"leaderId\": \"1\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/1/Teams/5",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/5",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"1",
+								"{{LandGrabAId}}",
 								"Teams",
 								"5"
 							]
@@ -5564,7 +5636,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"checkStatus(pm, 200);"
+									"checkAndSavePost(pm, \"LandGrabTestId\");"
 								],
 								"type": "text/javascript"
 							}
@@ -5580,7 +5652,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"ctpId\": 1,\n  \"title\": \"Land Grab Sample Problem\",\n  \"prms\":  \"{    \\\"numCircles\\\": 3,    \\\"goalArea\\\": 5000.0,    \\\"obstacles\\\": []  }\",\n  \"rules\": 1,\n  \"description\": \"A Simple Example with No Obstacles\"\n}"
+							"raw": "{\n    \"ctpId\": {{CmpType1}},\n  \"title\": \"Land Grab Sample Problem\",\n  \"prms\":  \"{    \\\"numCircles\\\": 3,    \\\"goalArea\\\": 5000.0,    \\\"obstacles\\\": []  }\",\n  \"rules\": 1,\n  \"description\": \"A Simple Example with No Obstacles\"\n}"
 						},
 						"url": {
 							"raw": "{{url}}/Cmps",
@@ -5602,7 +5674,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"checkStatus(pm, 200);"
+									"checkAndSavePost(pm, \"LandGrabTestTeamId\");"
 								],
 								"type": "text/javascript"
 							}
@@ -5621,13 +5693,13 @@
 							"raw": "{\n  \"teamName\": \"LG Test Team\",\n  \"leaderId\": \"1\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/5/Teams",
+							"raw": "{{url}}/Cmps/{{LandGrabTestId}}/Teams",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"5",
+								"{{LandGrabTestId}}",
 								"Teams"
 							]
 						},
@@ -5661,15 +5733,15 @@
 							"raw": "{\n  \"content\": \"[   {      \\\"centerX\\\": 50.0,      \\\"centerY\\\": 50.0,      \\\"radius\\\": 50.0   } ] \"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/5/Teams/6/Sbms",
+							"raw": "{{url}}/Cmps/{{LandGrabTestId}}/Teams/{{LandGrabTestTeamId}}/Sbms",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"5",
+								"{{LandGrabTestId}}",
 								"Teams",
-								"6",
+								"{{LandGrabTestTeamId}}",
 								"Sbms"
 							]
 						},
@@ -5703,15 +5775,15 @@
 							"raw": "{\n  \"content\": \"[   {     \\\"centerX\\\": 50.0,     \\\"centerY\\\": 45.2,     \\\"radius\\\": 15.9   },   {     \\\"centerX\\\": 14,     \\\"centerY\\\": 42.0,     \\\"radius\\\": 11   },   {     \\\"centerX\\\": 50,     \\\"centerY\\\": 50,     \\\"radius\\\": 40   } ]\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/5/Teams/6/Sbms",
+							"raw": "{{url}}/Cmps/{{LandGrabTestId}}/Teams/{{LandGrabTestTeamId}}/Sbms",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"5",
+								"{{LandGrabTestId}}",
 								"Teams",
-								"6",
+								"{{LandGrabTestTeamId}}",
 								"Sbms"
 							]
 						},
@@ -5745,15 +5817,15 @@
 							"raw": "{\n  \"content\": \"[   {     \\\"centerX\\\": 5,     \\\"centerY\\\": 5,     \\\"radius\\\": 4   },   {     \\\"centerX\\\": 20,     \\\"centerY\\\": 10,     \\\"radius\\\": 10   },   {     \\\"centerX\\\": 11,     \\\"centerY\\\": 20,     \\\"radius\\\": 12   },  {     \\\"centerX\\\": 20,     \\\"centerY\\\": 10,     \\\"radius\\\": 10   }]\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/5/Teams/6/Sbms",
+							"raw": "{{url}}/Cmps/{{LandGrabTestId}}/Teams/{{LandGrabTestTeamId}}/Sbms",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"5",
+								"{{LandGrabTestId}}",
 								"Teams",
-								"6",
+								"{{LandGrabTestTeamId}}",
 								"Sbms"
 							]
 						},
@@ -5786,13 +5858,13 @@
 							}
 						],
 						"url": {
-							"raw": "{{url}}/Cmps/5/Teams",
+							"raw": "{{url}}/Cmps/{{LandGrabTestId}}/Teams",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"5",
+								"{{LandGrabTestId}}",
 								"Teams"
 							]
 						},
@@ -5810,7 +5882,7 @@
 									"var jsonBody = responseBody ? JSON.parse(responseBody) : {};",
 									"",
 									"checkStatus(pm, 200);",
-									"tests[\"Three Submissions\"] = jsonBody.length === 3;"
+									"pm.test(\"Three Submissions\", pm.expect(jsonBody.length).equals(3));"
 								],
 								"type": "text/javascript"
 							}
@@ -5825,15 +5897,15 @@
 							}
 						],
 						"url": {
-							"raw": "{{url}}/Cmps/5/Teams/6/Sbms",
+							"raw": "{{url}}/Cmps/{{LandGrabTestId}}/Teams/{{LandGrabTestTeamId}}/Sbms",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"5",
+								"{{LandGrabTestId}}",
 								"Teams",
-								"6",
+								"{{LandGrabTestTeamId}}",
 								"Sbms"
 							]
 						},
@@ -6335,11 +6407,12 @@
 					"",
 					"checkAndSavePost = (pm, varName) => {   ",
 					"    pm.test(\"Post Succeeded\", () => pm.response.to.have.status(200));",
+					"    var location = pm.response.headers.get(\"Location\");",
+					"    if (location) {",
 					"    pm.test(\"Location returned and saved\", () => {",
-					"        var location = pm.response.headers.get(\"Location\");",
-					"        pm.expect(location.to.exist);",
 					"        pm.collectionVariables.set(varName, location.split('/').pop());",
 					"    });",
+					"    }",
 					"}"
 				]
 			}
@@ -6368,6 +6441,42 @@
 		},
 		{
 			"key": "teamId",
+			"value": ""
+		},
+		{
+			"key": "LandGrabAId",
+			"value": ""
+		},
+		{
+			"key": "LandGrabBId",
+			"value": ""
+		},
+		{
+			"key": "curLoginEmail",
+			"value": ""
+		},
+		{
+			"key": "CmpTypeC",
+			"value": ""
+		},
+		{
+			"key": "SolarCarId",
+			"value": ""
+		},
+		{
+			"key": "CmpType1",
+			"value": ""
+		},
+		{
+			"key": "CmpType2",
+			"value": ""
+		},
+		{
+			"key": "LandGrabTestId",
+			"value": ""
+		},
+		{
+			"key": "LandGrabTestTeamId",
 			"value": ""
 		}
 	]
