@@ -64,3 +64,43 @@ loadTexture(path, reps) {
 
    return texture;
 }
+
+export function loadAsset(url) {
+   let loader = new GLTFLoader();
+   let modelUrl = `${window.location.origin}/models/${url}/scene.gltf`;
+
+   loader.load(
+      modelUrl,
+      (modelFile) => {
+         console.log(modelFile.scene.children)
+         let model = modelFile.scene.children[0];
+         model.scale.set(0.1, 0.1, 0.1);
+         model.rotation.x = Math.PI;
+         model.position.set(-1, 10, -27.0);
+         model.castShadow = true;
+         this.scene.add(modelFile.scene);
+         this.render();
+
+      },
+      undefined,
+      (err) => console.log(err)
+   );
+}
+
+export function createTexturedMaterial(maps) {
+   let loader = new THREE.TextureLoader();
+   let path = `${window.location.origin}/textures/${maps.root}/`;
+   let material = new THREE.MeshStandardMaterial(
+      {
+         color: 0x111111,
+         normalMap: this.loadTexture(`${path}/${maps.normal}`),
+         displacementMap: this.loadTexture(`${path}/${maps.displacement}`),
+         displacementScale: 0.1,
+         roughnessMap: this.loadTexture(`${path}/${maps.roughness}`),
+         aoMap: this.loadTexture(`${path}/${maps.ao}`),
+         metalnessMap: loader.load(`${path}/${maps.metalness}`),
+         metalness: 0.5,
+      }
+   );
+   return material;
+}
