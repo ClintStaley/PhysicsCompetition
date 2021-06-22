@@ -51,7 +51,6 @@ export function loadGLTFScene(url, transform) {
    );
 }
 
-// 
 loadTexture(path, reps) {
    let loader = new THREE.TextureLoader();
    
