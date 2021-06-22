@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
-import {BounceMovie} from './BounceMovie';
+import { BounceMovie } from './BounceMovie';
 import React, { Component } from "react";
 import * as THREE from "three";
 import CameraControls from "camera-controls";
 import pingAudio from '../../assets/sound/ping.mp3';
-import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import UIfx from 'uifx';
+import * as Loaders from '../Util/ImageUtil'
 
-CameraControls.install({THREE});
+CameraControls.install({ THREE });
 
 // Display a wall of obstacles, 
 export class Bounce3DView extends React.Component {
@@ -20,12 +21,18 @@ export class Bounce3DView extends React.Component {
    constructor(props) {
       super(props);
 
-      this.ping = new UIfx(pingAudio, {volume: 0.5, throttleMs: 100});
-      
+      this.ping = new UIfx(pingAudio, { volume: 0.5, throttleMs: 100 });
+
       this.state = Bounce3DView.setOffset(
-       Bounce3DView.getInitState(props.movie), props.offset);
+         Bounce3DView.getInitState(props.movie), props.offset);
    }
 
+   //Create standard room with set dimensions of 60x60x60 taking
+   //an array of materials for the floor,ceiling, and walls.
+   static buildRoom(textures){
+      var room = new THREE.BoxGeometry(60,60,60);
+
+   }
    // Return state displaying background grid and other fixtures
    // appropriate for |movie|
    static getInitState(movie) {
@@ -34,16 +41,58 @@ export class Bounce3DView extends React.Component {
       let longDim = Math.max(width, height);
       let scene = new THREE.Scene();
 
+      // //Add Background Elements
+      // this.renderer = new THREE.WebGLRenderer({ antialias: true });
+      // this.renderer.setClearColor("#263238");
+      // this.renderer.setSize(width, height);
+      // this.renderer.shadowMap.enabled = true;
+
+      //Retrieve textures
+      var textures = [
+          {
+            root: 'steelplate1-ue',
+            normal: 'steelplate1_normal-dx.png',
+            displacement: 'steelplate1_height.png',
+            roughness: 'steelplate1_roughness.png',
+            ao: 'steelplate1_ao.png',
+            metalness: 'steelplate1_metallic.png'
+         },
+         let concreteTextureMaps = {
+            root: 'concrete',
+            normal: 'normal.jpg',
+            displacement: 'displacement.png',
+            roughness: 'roughness.png',
+            ao: 'ao.png',
+            metalness: 'basecolor.png'
+         }
+      ]
+      this.steel = Loaders.createTexturedMaterial(textures);
+      this.concrete = Loaders.createTexturedMaterial(concreteTextureMaps);
+
+      //Create the main room.
+      
+      this.addBoxMeshes([
+         { w: 60, h: 1, d: 60, material: this.createMaterial() },
+         { w: 60, h: 1, d: 60, y: 30, material: this.createMaterial() },
+         { w: 1, h: 30, d: 60, x: -30, y: 15,  },
+         { w: 1, h: 30, d: 60, x: 30, y: 15 },
+         { w: 60, h: 30, d: 1, z: 30, y: 15 },
+         { w: 60, h: 30, d: 1, z: -30, y: 15 },
+      ])
+
+      Loaders.loadAsset('tube');
+
+
       // Add cameras, lighting, and general background elements like the room
       // and the steel wall (but not the targets or barriers) to the scene.
- 
+
       return {
          trgEvts: [],    // Target creation events (each w/ptr to scene Group)
          evtIdx: -1,     // Index within movie of last event shown in scene
          ballEvt: null,  // Most recent event that placed the ball
          scene,          // scene to render at this point
          movie           // Pointer to current movie
-      }   
+      }
    }
 
    // Return label for button activating this view
@@ -65,12 +114,12 @@ export class Bounce3DView extends React.Component {
    static setOffset(state, timeStamp) {
       let movie = state.movie;
       let evts = movie.evts;
-      let {trgEvts, ballEvt, evtIdx, scene} = state;
+      let { trgEvts, ballEvt, evtIdx, scene } = state;
       let yTop = movie.background.height;
       let evt;
 
       // While the event after evtIdx exists and needs adding to 3DElms
-      while (evtIdx+1 < evts.length && evts[evtIdx+1].time <= timeStamp) {
+      while (evtIdx + 1 < evts.length && evts[evtIdx + 1].time <= timeStamp) {
          evt = evts[++evtIdx];
          if (evt.type === BounceMovie.cMakeBarrier) {
             // Add the indicated barrier to the scene
@@ -84,7 +133,7 @@ export class Bounce3DView extends React.Component {
             ballEvt = evt;
          }
          else if (evt.type === BounceMovie.cHitBarrier
-          || evt.type === BounceMovie.cHitTarget) {
+            || evt.type === BounceMovie.cHitTarget) {
             ballEvt = evt;
 
             if (evt.type === BounceMovie.cHitTarget) {
@@ -115,14 +164,14 @@ export class Bounce3DView extends React.Component {
          let testEvt = evts[searchIdx];
          if (testEvt.type === BounceMovie.cBallExit)
             break;
-         else if (testEvt.type === BounceMovie.cBallPosition 
-          || testEvt.type === BounceMovie.cHitTarget
-          || testEvt.type === BounceMovie.cHitBarrier) {
+         else if (testEvt.type === BounceMovie.cBallPosition
+            || testEvt.type === BounceMovie.cHitTarget
+            || testEvt.type === BounceMovie.cHitBarrier) {
             ballEvt = testEvt;
             break;
          }
       }
-      return {trgEvts, ballEvt, evtIdx, scene, movie};
+      return { trgEvts, ballEvt, evtIdx, scene, movie };
    }
 
    render() {
