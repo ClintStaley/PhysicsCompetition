@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { BounceMovie } from './BounceMovie';
-import React, { Component } from "react";
 import * as THREE from "three";
 import CameraControls from "camera-controls";
 import pingAudio from '../../assets/sound/ping.mp3';
@@ -14,6 +13,24 @@ THREE.BackSide;
 // Display a wall of obstacles, 
 export class Bounce3DView extends React.Component {
    static ballRadius = .1;     // Radius of ball
+   static textures = [
+      {
+         root: 'steelplate1-ue',
+         normal: 'steelplate1_normal-dx.png',
+         displacement: 'steelplate1_height.png',
+         roughness: 'steelplate1_roughness.png',
+         ao: 'steelplate1_ao.png',
+         metalness: 'steelplate1_metallic.png'
+      },
+      {
+         root: 'concrete',
+         normal: 'normal.jpg',
+         displacement: 'displacement.png',
+         roughness: 'roughness.png',
+         ao: 'ao.png',
+         metalness: 'basecolor.png'
+      }
+   ]
 
    // Props are: {
    //    movie: movie to display
@@ -30,19 +47,44 @@ export class Bounce3DView extends React.Component {
 
    //Create standard room with set dimensions of 60x60x60 taking
    //an array of materials for the floor,ceiling, and walls.
-   static buildRoom(textures){
-      var room = new THREE.Mesh(new THREE.BoxGeometry(60,60,60), textures)
-      
+   static buildRoom(textures) {
+      var room = new THREE.Mesh(new THREE.BoxGeometry(60, 60, 60))
+
       return room
    }
    // Return state displaying background grid and other fixtures
    // appropriate for |movie|
    static getInitState(movie) {
+      var scene = new THREE.Scene();
+      var room = new THREE.Mesh(new THREE.BoxGeometry(60, 60, 60))
+      var renderer = new THREE.WebGL1Renderer();
+      var camera = new THREE.PerspectiveCamera();
+      var light1 = new THREE.PointLight("0xffffff", 2);
+      var light2 = new THREE.PointLight("0xffffff", 5);
+      var ball = new THREE.Mesh(new THREE.SphereGeometry(.1,32,16));
+      
+      
+      
+      light1.position.set(0, 20, 0);
+      light2.position.set(5, 0, 10);
+      light1.castShadow = false;
+      light2.castShadow = true;
+
+      ball.castShadow = true;
+
+      ball.name = "ball";
+      light1.name = "light1";
+      light2.name = "light2";
+      room.name = 'room';
+   
+      scene.add(light1);
+      scene.add(light2);
+      scene.add(room);
+      scene.add(ball);
       let width = movie.background.width;
       let height = movie.background.height;
       let longDim = Math.max(width, height);
-      let scene = new THREE.Scene();
-
+      console.log(scene)
       // //Add Background Elements
       // this.renderer = new THREE.WebGLRenderer({ antialias: true });
       // this.renderer.setClearColor("#263238");
@@ -50,49 +92,13 @@ export class Bounce3DView extends React.Component {
       // this.renderer.shadowMap.enabled = true;
 
       //Retrieve textures
-      var textures = [
-          {
-            root: 'steelplate1-ue',
-            normal: 'steelplate1_normal-dx.png',
-            displacement: 'steelplate1_height.png',
-            roughness: 'steelplate1_roughness.png',
-            ao: 'steelplate1_ao.png',
-            metalness: 'steelplate1_metallic.png'
-         },
-         {
-            root: 'concrete',
-            normal: 'normal.jpg',
-            displacement: 'displacement.png',
-            roughness: 'roughness.png',
-            ao: 'ao.png',
-            metalness: 'basecolor.png'
-         }
-      ]
-      this.steel = Loaders.createTexturedMaterial(textures[0]);
-      this.concrete = Loaders.createTexturedMaterial(textures[1]);
+      // this.steel = Loaders.createTexturedMaterial(textures[0]);
 
-      //Create the main room.
-      scene.add(this.buildRoom(textures))
-      
-      //Add lights to room
-      let light1 = new THREE.PointLight("0xffffff", 2);
-      light1.position.set(0,20,0);
-      light1.castShadow = false;
-
-      let light2 = new THREE.PointLight("0xffffff",5)
-      light2.position.set(5,0,10);
-      light2.castShadow(true);
-
-
-      Loaders.loadAsset('tube');
+      // Loaders.loadAsset('tube');
       
       this.barrierHit = false;
       this.targets = [];
       this.evtIdx = 0;
-      
-
-
-
       // Add cameras, lighting, and general background elements like the room
       // and the steel wall (but not the targets or barriers) to the scene.
 
@@ -135,28 +141,35 @@ export class Bounce3DView extends React.Component {
             // Add the indicated barrier to the scene
             var width = evt.hiX - evt.loX;
             var height = evt.hiY - evt.loY;
-            var mesh = new THREE.Mesh(new THREE.BoxGeometry(width,height,3),Loaders.createMaterial());
+            var mesh = new THREE.Mesh(new THREE.BoxGeometry(width, height, 3), Loaders.createMaterial("0xff0000",this.textures[0]));
             mesh.position.x = evt.loX + width / 2;
             mesh.position.y = evt.loY + height / 2;
             mesh.position.z = -27;
             mesh.receiveShadow = false;
+            mesh.name = 'Barrier'
             scene.add(mesh);
          }
          else if (evt.type === BounceMovie.cMakeTarget) {
+            console.log("ADDING TARGET");
             trgEvts[evt.id] = evt;  // Save event for redrawing if hit
             evt.sceneElm = scene.children.length; // Point to target scene object so it can be moved later
             // Add indicated target to scene
+            console.log(evt.sceneElm)
             var width = evt.hiX - evt.loX;
             var height = evt.hiY - evt.loY;
-            var mesh = new THREE.Mesh(new THREE.BoxGeometry(width,height,3),Loaders.createMaterial());
+            var mesh = new THREE.Mesh(new THREE.BoxGeometry(width, height, 3),
+             Loaders.createMaterial("0xff0000 ",this.textures[0]));
             mesh.position.x = evt.loX + width / 2;
             mesh.position.y = evt.loY + height / 2;
             mesh.position.z = -27;
             mesh.receiveShadow = false;
+            mesh.name='Target'
             scene.add(mesh);
          }
          else if (evt.type === BounceMovie.cBallPosition) {
             ballEvt = evt;
+            this.ball.position.x = evt.x;
+            this.ball.position.y = evy.y;
          }
          else if (evt.type === BounceMovie.cHitBarrier
             || evt.type === BounceMovie.cHitTarget) {
@@ -211,5 +224,6 @@ export class Bounce3DView extends React.Component {
                this.mount = mount;
             }}
          ></div>
+      )
    }
 }
