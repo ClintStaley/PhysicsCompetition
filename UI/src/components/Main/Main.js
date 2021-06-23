@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import { Register, SignIn, CmpsPage, TeamsPage, CmpPage, SbmPage, ConfDialog,
-   InstructionsPage } from '../concentrator'
+   InstructionsPage} from '../concentrator'
 import { Route, Redirect, Switch } from 'react-router-dom';
 import { Navbar, Nav, NavItem, ListGroup, ListGroupItem } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import './Main.css';
+import {Sampler3JS} from '../Util/Sampler3JS';
+import {MovieController} from '../Submits/MovieController';
 
 const Home = (
    <div width="100%" height="100%">
@@ -130,6 +132,7 @@ class Main extends Component {
         }/>
 
       </Switch>
+      <Sampler3JS/>
     </div>);
   }
 }
