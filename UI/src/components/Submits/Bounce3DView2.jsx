@@ -99,7 +99,7 @@ export class Bounce3DView extends React.Component {
 
       var base = new THREE.Mesh(new THREE.BoxGeometry(rigSize, rigSize,
        2*ballRadius), Bounce3DView.steelMat)
-      base.position.set(rigSize/2, rigSize/2, -2*ballRadius);
+      base.position.set(rigSize/2, rigSize/2, -ballRadius);
       rig.add(base);
 
       var ball = new THREE.Mesh(new THREE.SphereGeometry(ballRadius, 16, 16),
@@ -192,12 +192,11 @@ export class Bounce3DView extends React.Component {
             var obj = new THREE.Mesh(
              new THREE.BoxGeometry(width, height, 2*ballRadius), 
              Bounce3DView.metalMat);
-            obj.position.set = (evt.loX + width/2, evt.loY + height/2,
-             ballRadius)
+            obj.position.set(evt.loX + width/2, evt.loY + height/2, ballRadius);
             rig.add(obj);
 
             if (evt.type === BounceMovie.cMakeTarget) {
-               targets[evt.targetId] = obj;
+               targets[evt.id] = obj;
             }
          }
          else if (evt.type === BounceMovie.cBallPosition
@@ -243,14 +242,14 @@ export class Bounce3DView extends React.Component {
          camera,
          renderer,
          ball,
-         targets: [],  // Array of target scene elements indexed by trg id
-         evtIdx: -1,
+         targets,   // Array of target scene elements indexed by trg id
+         evtIdx,
          movie
       };
    }
 
    render() {
-      // Render current scene.
+      this.state.renderer.render(this.state.scene, this.state.camera);
       return (
          <div
             style={{ height: "600px", width: "100%" }}
