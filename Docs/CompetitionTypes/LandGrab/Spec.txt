@@ -156,9 +156,45 @@ Submission Response schema
          "title": "Circle Status",
          "type": "array",
          "items": {
-           "title": "Circle state",
-           "type": "boolean"
+            "type" : "object",
+            "properties": {
+               "area": 
+               {
+                  "type": "number"
+               },
+               "collisions": {
+                  "type": "object",
+                  "properties":{
+                     "allCircles": {
+                        "type": "array"
+                        "items": {"type": "integer"}
+                        
+                     },
+                     "barriers": {
+                        "type": "object",
+                        "properties": {
+                           "id": {"type": "integer"},
+                           "radius": {"type": "number"}
+                        }
+                     },
+                     "boundary": "number"
+
+                     "pastCircles": {
+                        "type": "object",
+                        "properties": {
+                           "id": {"type": "integer"},
+                           "radius": {"type": "number"}
+                        }
+                     }
+                  },
+                  "additionalProperties": false,
+                  "minProperties": 4 
+               },
+                  
+            }
+                  
          }
+        }
       },
       "areaCovered": {
          "title": "Area covered by valid circles",
@@ -173,7 +209,67 @@ Submission Response schema
 Example Submission Response:
 
 {
-   circleStatus: [true, false, true],
+   circleStatus: [
+      {
+         area: 2000,
+         collisions: {
+            allCircles: [4],
+            barriers: [],
+            boundary: null,
+            pastCircles: []
+         },
+      },
+      {
+         area: 2000,
+         collisions: {
+            allCircles: [2],
+            barriers: [
+               {
+                  id: 1,
+                  radius: 11
+               }
+            ],
+            boundary: null,
+            pastCircles: []
+         }
+      },
+      {
+         area:2000
+         collisions: {
+            allCircles: [1],
+            barriers: [],
+            boundary: 24,
+            pastCircles:[
+               {
+                  cId: 1,
+                  radius: 16
+               }
+            ]
+         }
+      },
+      {
+         area: 2200.2,  
+         collisions: {
+            allCircles: [],
+            barriers: [],
+            boundary: null:
+            pastCircles: []
+      },
+      {
+         area: 2000,
+         collisions: {
+            allCircles: [0]
+            barriers: [],
+            boundary: null,
+            pastCircles: [
+               {
+                  cId: 0,
+                  radius: 21
+               }
+            ],
+         },
+      }
+   ],
    areaCovered: 4200.2
 }
 
