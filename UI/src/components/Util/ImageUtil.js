@@ -15,12 +15,12 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 //   reps: {x: num, y: num}
 // }
 
-export function createMaterial(color, tex) {
+export function createMaterial(color, tex, simple) {
    let loader = new THREE.TextureLoader();
    let path = `${window.location.origin}/textures/${tex.root}/`;
    let reps = tex.reps;
    
-   return new THREE.MeshStandardMaterial({
+   var testing = new THREE.MeshStandardMaterial({
       color,
       normalMap: tex.normal && loadTexture(`${path}/${tex.normal}`, reps),
       displacementMap:
@@ -32,6 +32,21 @@ export function createMaterial(color, tex) {
       metalnessMap: tex.metal && loadTexture(`${path}/${tex.metal.file}`, reps),
       metalness: tex.metal && tex.metal.metalness,
    });
+
+   console.log(testing);
+   return testing;
+}
+
+export function simpleMat(){
+   let path = `${window.location.origin}/textures/steelplate1-ue/`;
+
+   let material = new THREE.MeshStandardMaterial({
+      color: 0xCDCDCD,
+      roughnessMap: this.loadTexture(`${path}/simple_metal.jpg`),
+      metalness: 0.5,
+      side: THREE.DoubleSide
+   });
+   return material;
 }
 
 // Load GLTF asset from |url|, obtaining from it just the scene (not cameras,
@@ -51,7 +66,7 @@ export function loadGLTFScene(url, transform) {
    );
 }
 
-loadTexture(path, reps) {
+export function loadTexture(path, reps) {
    let loader = new THREE.TextureLoader();
    
    let texture = loader.load(path, (texture) => {

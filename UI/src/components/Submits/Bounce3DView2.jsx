@@ -1,11 +1,12 @@
 import React from 'react';
-import {BounceMovie} from './BounceMovie';
+import { BounceMovie } from './BounceMovie';
 import * as THREE from "three";
 import CameraControls from "camera-controls";
 import pingAudio from '../../assets/sound/ping.mp3';
 import UIfx from 'uifx';
-
-CameraControls.install({THREE});
+import * as Loaders from '../Util/ImageUtil'
+import { DoubleSide } from 'three';
+CameraControls.install({ THREE });
 
 // Display a room with a "rig" on one wall.  The rig has the launcher, targets,
 // obstacles, and ball.  All 3JS units are meters.
@@ -14,15 +15,6 @@ export class Bounce3DView extends React.Component {
    static clearColor = "#263238"; // General blue-gray background
    static rigSize = 10;           // Rig of targets/obstacles is 10m x 10m.
    static launcherWidth = 1;      // 1m piston launcher on left side of rig
-
-   // Placeholders: light shiny metal and buff gray diffuse
-   static steelMat = new THREE.MeshPhongMaterial
-    ({color: 0x808080, specular: 0xA0A0A0, side: THREE.DoubleSide});
-   //new THREE.MeshStandardMaterial
-   // ({color: "#ffffff", metalness: 1.0, side: THREE.BackSide});
-   static concreteMat = new THREE.MeshStandardMaterial
-    ({color: "#808080", side: THREE.BackSide});
-
    static textures = [
       {
          root: 'steelplate1-ue',
@@ -41,6 +33,9 @@ export class Bounce3DView extends React.Component {
          metalness: 'basecolor.png'
       }
    ]
+   static realConcrete = Loaders.createMaterial(0xffffff, this.textures[1])
+   static steelMat = Loaders.createMaterial(0x5C5C5C, this.textures[0])
+   static simpleMat = Loaders.simpleMat();
 
    // Props are: {
    //    movie: movie to display
@@ -58,11 +53,19 @@ export class Bounce3DView extends React.Component {
    // Create standard room with center of far wall at origin
    static buildRoom() {
       var roomDim = Bounce3DView.rigSize + 2;  // 1 m boundaries around rig
+      var concreteMat = Bounce3DView.realConcrete;
+      var metalMat = Bounce3DView.steelMat;
+      var simpleMat = Bounce3DView.simpleMat;
       var room = new THREE.Mesh(
-       new THREE.BoxGeometry(roomDim, roomDim, roomDim), [concreteMat,
-       concreteMat, concreteMat, metalMat, concreteMat, concreteMat]);
+         new THREE.BoxGeometry(roomDim, roomDim, roomDim), [concreteMat,
+         concreteMat, concreteMat, simpleMat, concreteMat, concreteMat]);
 
-      room.postion.set(0, 0, roomDim);  // Z=0 at back wall
+      concreteMat.side = THREE.BackSide;
+      metalMat.side = THREE.DoubleSide;
+
+
+
+      room.position.set(0, 0, 6);  // Z=0 at back wall
 
       return room;
    }
@@ -73,22 +76,22 @@ export class Bounce3DView extends React.Component {
       const rigSize = Bounce3DView.rigSize;
       const ballRadius = Bounce3DView.ballRadius
       var scene = new THREE.Scene();
-      
+
       // CAS Fix: Try moving renderer out of state
-      var renderer = new THREE.WebGLRenderer({antialias: true});
-      renderer.setClearColor(Bounce3DView.clearColor);
+      var renderer = new THREE.WebGLRenderer({ antialias: true });
       renderer.shadowMap.enabled = true;
 
-      var camera = new THREE.PerspectiveCamera(40, 1, .01, 10*rigSize);
-      camera.position.set(0, 0, rigSize);  // Center of near wall
-   
+      var camera = new THREE.PerspectiveCamera(40, 1, .01, 2 * rigSize);
+      camera.position.set(0, 0, 15);  // Center of near wall
+
       // Full range, square-decay, white light high on near wall in center
       var light = new THREE.PointLight(0xffffff, 1);
-      light.position.set(0, 5, rigSize/2);
+      light.position.set(5, 5, rigSize / 2);
       light.castShadow = true;
       scene.add(light).add(new THREE.AmbientLight(0x404040));  // Plus general ambient
-      //scene.add(new THREE.Mesh(new THREE.BoxGeometry(50, 50, 50),
-      // Bounce3DView.steelMat));
+
+      var room = this.buildRoom();
+      scene.add(room);
 
       // Add a launcher at upper-left corner of rig. Flat horizontal steel plate
       //   with right edge at origin launch point minus .1m, so a ball can be
@@ -100,20 +103,26 @@ export class Bounce3DView extends React.Component {
       var rig = new THREE.Group();
 
       var base = new THREE.Mesh(new THREE.BoxGeometry(rigSize, rigSize,
-       2*ballRadius), Bounce3DView.steelMat)
-      base.position.set(rigSize/2, rigSize/2, -ballRadius);
+         2 * ballRadius), Bounce3DView.steelMat)
+      base.position.set(rigSize / 2, rigSize / 2, -ballRadius);
       rig.add(base);
 
+      var platform = new THREE.Mesh(new THREE.BoxGeometry(1,.25,1), Bounce3DView.simpleMat)
+
       var ball = new THREE.Mesh(new THREE.SphereGeometry(ballRadius, 16, 16),
-       Bounce3DView.steelMat);
-      
+         Bounce3DView.simpleMat);
+
       // Put ball at upper left corner of rig, just touching the base.
       ball.position.set(0, rigSize, ballRadius);
       ball.castShadow = true;
       rig.add(ball);
 
+      platform.position.set(-.5,9.5,0)
+      platform.castshadow = true;
+      rig.add(platform);
+
       // Put rig at back of room.  Assume room origin at center of back wall
-      rig.position.set(-rigSize/2, -rigSize/2, 2*ballRadius);
+      rig.position.set(-rigSize / 2, -rigSize / 2, 2 * ballRadius);
       scene.add(rig);
 
       return {
@@ -134,14 +143,14 @@ export class Bounce3DView extends React.Component {
    // 2. Adjust camera aspect ratio from default initial value of 1.
    // 3. Attach the renderer dom element to the mount.
    // 4. Do a render
-   componentDidMount(){
+   componentDidMount() {
       const width = this.mount.clientWidth;
       const height = this.mount.clientHeight;
       var cameraControls;
-      
+
       this.state.renderer.setSize(width, height);
 
-      this.state.camera.aspect = width/height;
+      this.state.camera.aspect = width / height;
       this.state.camera.updateProjectionMatrix();
       this.mount.appendChild(this.state.renderer.domElement);
 
@@ -176,8 +185,8 @@ export class Bounce3DView extends React.Component {
    // in |movie| with time <= |timeStamp|.  Assume existing |state| was built
    // from |movie| so incremental change is appropriate.  Return adjusted state
    static setOffset(state, timeStamp) {
-      const ballRadius  = Bounce3DView.ballRadius;
-      let {targets, ball, evtIdx, scene, rig, camera, renderer, movie} = state;
+      const ballRadius = Bounce3DView.ballRadius;
+      let { targets, ball, evtIdx, scene, rig, camera, renderer, movie } = state;
       let evts = movie.evts;
       let yTop = movie.background.height;
       let evt;
@@ -186,15 +195,15 @@ export class Bounce3DView extends React.Component {
       while (evtIdx + 1 < evts.length && evts[evtIdx + 1].time <= timeStamp) {
          evt = evts[++evtIdx];
          if (evt.type === BounceMovie.cMakeBarrier
-          || evt.type === BounceMovie.cMakeTarget) {
+            || evt.type === BounceMovie.cMakeTarget) {
             // Add the indicated barrier to the scene
             var width = evt.hiX - evt.loX;
             var height = evt.hiY - evt.loY;
 
             var obj = new THREE.Mesh(
-             new THREE.BoxGeometry(width, height, 2*ballRadius), 
-             Bounce3DView.steelMat);
-            obj.position.set(evt.loX + width/2, evt.loY + height/2, ballRadius);
+               new THREE.BoxGeometry(width, height, 2 * ballRadius),
+               Bounce3DView.simpleMat);
+            obj.position.set(evt.loX + width / 2, evt.loY + height / 2, ballRadius);
             rig.add(obj);
 
             if (evt.type === BounceMovie.cMakeTarget) {
@@ -202,8 +211,8 @@ export class Bounce3DView extends React.Component {
             }
          }
          else if (evt.type === BounceMovie.cBallPosition
-          || evt.type === BounceMovie.cHitBarrier 
-          || evt.type === BounceMovie.cHitTarget) {
+            || evt.type === BounceMovie.cHitBarrier
+            || evt.type === BounceMovie.cHitTarget) {
             ball.position.set(evt.x, evt.y, ballRadius);
 
             if (evt.type === BounceMovie.cHitTarget) {
@@ -225,12 +234,12 @@ export class Bounce3DView extends React.Component {
       // over"
       while (evtIdx > 0 && timeStamp < evts[evtIdx].time) {
          evt = evts[evtIdx--];
-         
+
          if (evt.type === BounceMovie.cBallPosition
-          || evt.type === BounceMovie.cHitBarrier 
-          || evt.type === BounceMovie.cHitTarget) {
+            || evt.type === BounceMovie.cHitBarrier
+            || evt.type === BounceMovie.cHitTarget) {
             ball.position.set(evt.x, evt.y, ballRadius);
-  
+
             if (evt.type === BounceMovie.cHitTarget)
                targets[evt.targetId].position.z = ballRadius;  // Pop target out
          }
