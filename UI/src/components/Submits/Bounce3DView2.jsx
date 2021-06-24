@@ -16,7 +16,8 @@ export class Bounce3DView extends React.Component {
    static launcherWidth = 1;      // 1m piston launcher on left side of rig
 
    // Placeholders: light shiny metal and buff gray diffuse
-   static steelMat = new THREE.MeshPhongMaterial({color: 0x808080});
+   static steelMat = new THREE.MeshPhongMaterial
+    ({color: 0x808080, specular: 0xA0A0A0, side: THREE.DoubleSide});
    //new THREE.MeshStandardMaterial
    // ({color: "#ffffff", metalness: 1.0, side: THREE.BackSide});
    static concreteMat = new THREE.MeshStandardMaterial
@@ -78,15 +79,16 @@ export class Bounce3DView extends React.Component {
       renderer.setClearColor(Bounce3DView.clearColor);
       renderer.shadowMap.enabled = true;
 
-      var camera = new THREE.PerspectiveCamera(40, 1, .01, 2*rigSize);
+      var camera = new THREE.PerspectiveCamera(40, 1, .01, 10*rigSize);
       camera.position.set(0, 0, rigSize);  // Center of near wall
    
       // Full range, square-decay, white light high on near wall in center
-      var light = new THREE.PointLight(0xffffff, 0, 2);
-      light.position.set(0, rigSize/2, rigSize/2);
-      //light.castShadow = true;
-
-      scene.add(light).add(new THREE.AmbientLight());  // Plus general ambient
+      var light = new THREE.PointLight(0xffffff, 1);
+      light.position.set(0, 5, rigSize/2);
+      light.castShadow = true;
+      scene.add(light).add(new THREE.AmbientLight(0x404040));  // Plus general ambient
+      //scene.add(new THREE.Mesh(new THREE.BoxGeometry(50, 50, 50),
+      // Bounce3DView.steelMat));
 
       // Add a launcher at upper-left corner of rig. Flat horizontal steel plate
       //   with right edge at origin launch point minus .1m, so a ball can be
@@ -191,7 +193,7 @@ export class Bounce3DView extends React.Component {
 
             var obj = new THREE.Mesh(
              new THREE.BoxGeometry(width, height, 2*ballRadius), 
-             Bounce3DView.metalMat);
+             Bounce3DView.steelMat);
             obj.position.set(evt.loX + width/2, evt.loY + height/2, ballRadius);
             rig.add(obj);
 
