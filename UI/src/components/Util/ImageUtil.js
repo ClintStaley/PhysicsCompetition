@@ -15,38 +15,31 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 //   reps: {x: num, y: num}
 // }
 
-export function createMaterial(color, tex, simple) {
-   let loader = new THREE.TextureLoader();
+export function createMaterial(color, tex) {
    let path = `${window.location.origin}/textures/${tex.root}/`;
    let reps = tex.reps;
+   let params = {color, side: tex.side || THREE.FrontSide};
+
+   if (tex.normal)
+      params.normalMap = loadTexture(`${path}/${tex.normal}`, reps);
+
+   if (tex.displacement) {
+      params.displacementMap = loadTexture(`${path}/${tex.displacement.file}`, reps);
+      params.displacementScale = tex.displacement.scale
+   }
    
-   var testing = new THREE.MeshStandardMaterial({
-      color,
-      normalMap: tex.normal && loadTexture(`${path}/${tex.normal}`, reps),
-      displacementMap:
-       tex.displacement && loadTexture(`${path}/${tex.displacement.file}`, reps),
-      displacementScale: tex.displacement && tex.displacement.scale,
-      roughnessMap:
-       tex.roughness && loadTexture(`${path}/${tex.roughness}, reps`),
-      aoMap: tex.ao && loadTexture(`${path}/${tex.ao}`, reps),
-      metalnessMap: tex.metal && loadTexture(`${path}/${tex.metal.file}`, reps),
-      metalness: tex.metal && tex.metal.metalness,
-   });
+   if (tex.aoMap)
+      params.aoMap = loadTexture(`${path}/${tex.ao}`, reps);
 
-   console.log(testing);
-   return testing;
-}
+   if (tex.roughness)
+      params.roughness = loadTexture(`${path}/${tex.roughness}, reps`);
 
-export function simpleMat(){
-   let path = `${window.location.origin}/textures/steelplate1-ue/`;
-
-   let material = new THREE.MeshStandardMaterial({
-      color: 0xCDCDCD,
-      roughnessMap: this.loadTexture(`${path}/simple_metal.jpg`),
-      metalness: 0.5,
-      side: THREE.DoubleSide
-   });
-   return material;
+   if (tex.metal) {
+      params.metalnessMap = loadTexture(`${path}/${tex.metal.file}`, reps);
+      params.metalness = tex.metal.metalness;
+   }
+   
+   return new THREE.MeshStandardMaterial(params);
 }
 
 // Load GLTF asset from |url|, obtaining from it just the scene (not cameras,

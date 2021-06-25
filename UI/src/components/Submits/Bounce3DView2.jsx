@@ -4,7 +4,7 @@ import * as THREE from "three";
 import CameraControls from "camera-controls";
 import pingAudio from '../../assets/sound/ping.mp3';
 import UIfx from 'uifx';
-import * as Loaders from '../Util/ImageUtil'
+import * as ImageUtil from '../Util/ImageUtil'
 import { DoubleSide } from 'three';
 CameraControls.install({ THREE });
 
@@ -15,27 +15,34 @@ export class Bounce3DView extends React.Component {
    static clearColor = "#263238"; // General blue-gray background
    static rigSize = 10;           // Rig of targets/obstacles is 10m x 10m.
    static launcherWidth = 1;      // 1m piston launcher on left side of rig
-   static textures = [
-      {
-         root: 'steelplate1-ue',
-         normal: 'steelplate1_normal-dx.png',
-         displacement: 'steelplate1_height.png',
-         roughness: 'steelplate1_roughness.png',
-         ao: 'steelplate1_ao.png',
-         metalness: 'steelplate1_metallic.png'
-      },
-      {
-         root: 'concrete',
-         normal: 'normal.jpg',
-         displacement: 'displacement.png',
-         roughness: 'roughness.png',
-         ao: 'ao.png',
-         metalness: 'basecolor.png'
-      }
-   ]
-   static realConcrete = Loaders.createMaterial(0xffffff, this.textures[1])
-   static steelMat = Loaders.createMaterial(0x5C5C5C, this.textures[0])
-   static simpleMat = Loaders.simpleMat();
+
+   static steelMat = ImageUtil.createMaterial(0xffffff, {
+      root: 'steelPlate',
+      normal: 'steelplate1_normal-dx.png',
+      displacement: {file: 'steelplate1_height.png', scale: 0.1},
+      roughness: 'steelplate1_roughness.png',
+      ao: 'steelplate1_ao.png',
+      metal: {file: 'steelplate1_metallic.png', metalness: 0.5},
+      side: THREE.DoubleSide,
+      reps: {x: 5, y: 5}
+   });
+
+   static concreteMat = ImageUtil.createMaterial(0x5C5C5C, {
+      root: 'concrete',
+      normal: 'normal.jpg',
+      displacement: {file: 'displacement.png', scale: 0.1},
+      roughness: 'roughness.jpg',
+      ao: 'ao.jpg',
+      metal: {file: 'basecolor.jpg', metalness: 0.5},
+      side: THREE.DoubleSide
+   });
+
+   static flatSteelMat = ImageUtil.createMaterial(0xffffff, {
+      root: 'flatSteel',
+      roughness: 'roughnessMap.png',
+      metal: {file: 'metalMap.png', metalness: 0.5},
+      side: THREE.DoubleSide
+   });
 
    // Props are: {
    //    movie: movie to display
@@ -51,19 +58,14 @@ export class Bounce3DView extends React.Component {
    }
 
    // Create standard room with center of far wall at origin
-   static buildRoom() {
-      var roomDim = Bounce3DView.rigSize + 2;  // 1 m boundaries around rig
-      var concreteMat = Bounce3DView.realConcrete;
-      var metalMat = Bounce3DView.steelMat;
-      var simpleMat = Bounce3DView.simpleMat;
+   static buildRoom() {      
+      var concreteMat = Bounce3DView.concreteMat;
+      var flatSteelMat = Bounce3DView.flatSteelMat;
+      
+      var roomDim = 2*Bounce3DView.rigSize + 2;  // 1 m boundaries around rig
       var room = new THREE.Mesh(
          new THREE.BoxGeometry(roomDim, roomDim, roomDim), [concreteMat,
-         concreteMat, concreteMat, simpleMat, concreteMat, concreteMat]);
-
-      concreteMat.side = THREE.BackSide;
-      metalMat.side = THREE.DoubleSide;
-
-
+         concreteMat, concreteMat, flatSteelMat, concreteMat, concreteMat]);
 
       room.position.set(0, 0, 6);  // Z=0 at back wall
 
@@ -75,13 +77,14 @@ export class Bounce3DView extends React.Component {
    static getInitState(movie) {
       const rigSize = Bounce3DView.rigSize;
       const ballRadius = Bounce3DView.ballRadius
+      const ballSteps = 16;
       var scene = new THREE.Scene();
 
       // CAS Fix: Try moving renderer out of state
       var renderer = new THREE.WebGLRenderer({ antialias: true });
       renderer.shadowMap.enabled = true;
 
-      var camera = new THREE.PerspectiveCamera(40, 1, .01, 2 * rigSize);
+      var camera = new THREE.PerspectiveCamera(40, 1, .01, 10 * rigSize);
       camera.position.set(0, 0, 15);  // Center of near wall
 
       // Full range, square-decay, white light high on near wall in center
@@ -107,13 +110,14 @@ export class Bounce3DView extends React.Component {
       base.position.set(rigSize / 2, rigSize / 2, -ballRadius);
       rig.add(base);
 
-      var platform = new THREE.Mesh(new THREE.BoxGeometry(1,.25,1), Bounce3DView.simpleMat)
+      var platform = new THREE.Mesh(new THREE.BoxGeometry(1,.25,1),
+       Bounce3DView.simpleMat)
 
-      var ball = new THREE.Mesh(new THREE.SphereGeometry(ballRadius, 16, 16),
-         Bounce3DView.simpleMat);
+      var ball = new THREE.Mesh(new THREE.SphereGeometry
+       (ballRadius, ballSteps, ballSteps), Bounce3DView.flatSteelMat);
 
       // Put ball at upper left corner of rig, just touching the base.
-      ball.position.set(0, rigSize, ballRadius);
+      ball.position.set(0, rigSize, 2*ballRadius);
       ball.castShadow = true;
       rig.add(ball);
 
@@ -201,9 +205,10 @@ export class Bounce3DView extends React.Component {
             var height = evt.hiY - evt.loY;
 
             var obj = new THREE.Mesh(
-               new THREE.BoxGeometry(width, height, 2 * ballRadius),
-               Bounce3DView.simpleMat);
-            obj.position.set(evt.loX + width / 2, evt.loY + height / 2, ballRadius);
+             new THREE.BoxGeometry(width, height, 6 * ballRadius),
+             Bounce3DView.flatSteelMat);
+            obj.position.set(evt.loX + width / 2, evt.loY + height / 2, 
+             3 * ballRadius);
             rig.add(obj);
 
             if (evt.type === BounceMovie.cMakeTarget) {
@@ -216,7 +221,7 @@ export class Bounce3DView extends React.Component {
             ball.position.set(evt.x, evt.y, ballRadius);
 
             if (evt.type === BounceMovie.cHitTarget) {
-               targets[evt.targetId].position.z = -ballRadius; // Pop in
+               targets[evt.targetId].position.z = -2*ballRadius; // Pop in
                // Play pin sound.
             }
          }
