@@ -5,18 +5,21 @@
 // a number of seconds since the start of the movie.
 export class LandGrabMovie {
         static cCircleGrowth = 0;
-        static cMakeObstacle = 1;
-        static cValidCircle = 2;
-        static cInvalidCircle = 3;
+        static cInvalidCircleGrowth = 1
+        static cMakeObstacle = 2;
+        static cValidCircle = 3;
+        static cInvalidCircle = 4;
 
     //Constructor with background as indicated, and events drawn from prms and sbm
     constructor(frameRate, prms, sbm) {
+        console.log(prms);
+        console.log(sbm);
         //declare constants
         const bkgSize = 100.0;
         const growthTime = 2;
         const validationPause = .25;
-        let tracks = sbm.testResult.events;
-
+        let circlesResults = sbm.testResult.circleData;
+        let circleContent = sbm.content;
         this.background = {};
         this.background.frameRate = frameRate;
         this.background.height = bkgSize;
@@ -24,38 +27,45 @@ export class LandGrabMovie {
         this.evts = [];
 
         // Barriers numbered from 0
-        prms.barriers.forEach((brr, idx) => 
+        prms.obstacles.forEach((brr, idx) => 
           this.addMakeObstacleEvt(-1, idx, brr.loX, brr.loY, brr.hiX, brr.hiY));
 
         let time = 0;
-        tracks.forEach((trk, circleId) => {         // One track per circle
+        circlesResults.forEach((circleResult, circleId) => {
             //this.addMakeCircleEvt(time, circleId, trk.x, trk.y, 1) //trk.r);
+            var circle = circleContent[circleId];
+            
+            var validGrowthTime = growthTime;
+            if (circleResult.badRadius)
+                validGrowthTime = growthTime * (circleResult.badRadius/circle.radius); 
+            
+            for (let t = 0; t < validGrowthTime; t += 1.0/frameRate)
+                this.addCircleGrowthEvt(time + t, circleId, circle.centerX, circle.centerY, circle.radius*(t/growthTime));
+            
+            
+            for(let t = validGrowthTime; t < growthTime; t += 1.0/frameRate)
+                this.addInvalidCircleGrowthEvt(time + t, circleId, circle.centerX, circle.centerY, circle.radius*(t/growthTime));
 
-            for(let trackTime = 0; trackTime < growthTime; trackTime += 1.0/frameRate){
-                this.addCircleGrowthEvt(time + trackTime, circleId, trk.x, trk.y, trk.r*(trackTime/growthTime))
-            }
             time += growthTime;
             
-            //not sure if this properly references each circle
-            if (trk.validity)
-                this.addValidCircleEvt(time, circleId, trk.x, trk.y, trk.r);            
-            else
-                this.addMakeInvalidCircleEvt(time, circleId, trk.x, trk.y, trk.r);
+            var validity = circleResult.badRadius ? LandGrabMovie.cInvalidCircle : LandGrabMovie.cValidCircle;
 
+            this.addMakeCircleEvt(time, circleId, circle.centerX, circle.centerY, circle.radius, validity);
+                
             time += validationPause;
-        })
+        });
 
         
     }
 
-    addCircleGrowthEvt(time, circleNumber, x, y, r, validity){
+    addCircleGrowthEvt(time, circleNumber, x, y, r){
         this.evts.push(
-         {type: LandGrabMovie.cCircleGrowth, time, circleNumber, x, y, r, validity});
+         {type: LandGrabMovie.cCircleGrowth, time, circleNumber, x, y, r});
     }
 
-    addMakeInvalidCircleEvt(time, id, x, y, r, validity) {
+    addInvalidCircleGrowthEvt(time, circleNumber, x, y, r){
         this.evts.push(
-         {type: LandGrabMovie.cInvalidCircle, time, id, x, y, r, validity});
+         {type: LandGrabMovie.cInvalidCircleGrowth, time, circleNumber, x, y, r});
     }
 
     addMakeObstacleEvt(time, id, loX, loY, hiX, hiY) {
@@ -63,9 +73,9 @@ export class LandGrabMovie {
          {type: LandGrabMovie.cMakeObstacle, time, id, loX, loY, hiX, hiY});
     }
 
-    addMakeValidCircleEvt(time, id, x, y, r) {
+    addMakeCircleEvt(time, id, x, y, r, circleType) {
         this.evts.push(
-         {type: LandGrabMovie.cValidCircle, time, id, x, y, r});
+         {type: circleType, time, id, x, y, r});
     }
 
     

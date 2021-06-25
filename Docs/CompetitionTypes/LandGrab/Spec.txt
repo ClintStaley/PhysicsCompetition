@@ -158,6 +158,9 @@ Submission Response schema
          "items": {
             "type" : "object",
             "properties": {
+               "badRadius": {
+                  "type": "number",
+               }
                "area": 
                {
                   "type": "number"
@@ -177,8 +180,9 @@ Submission Response schema
                            "radius": {"type": "number"}
                         }
                      },
-                     "boundary": "number"
-
+                     "boundary": {
+                        "type": "number"
+                     }
                      "pastCircles": {
                         "type": "object",
                         "properties": {
@@ -189,9 +193,8 @@ Submission Response schema
                   },
                   "additionalProperties": false,
                   "minProperties": 4 
-               },
-                  
-            }
+               },    
+            } 
                   
          }
         }
@@ -211,6 +214,7 @@ Example Submission Response:
 {
    circleStatus: [
       {
+         badRadius: null,
          area: 2000,
          collisions: {
             allCircles: [4],
@@ -220,6 +224,7 @@ Example Submission Response:
          },
       },
       {
+         badRadius: 11,
          area: 2000,
          collisions: {
             allCircles: [2],
@@ -234,6 +239,7 @@ Example Submission Response:
          }
       },
       {
+         badRadius: 16,
          area:2000
          collisions: {
             allCircles: [1],
@@ -248,6 +254,7 @@ Example Submission Response:
          }
       },
       {
+         badRadius: null,
          area: 2200.2,  
          collisions: {
             allCircles: [],
@@ -256,6 +263,7 @@ Example Submission Response:
             pastCircles: []
       },
       {
+         badRadius: 21,
          area: 2000,
          collisions: {
             allCircles: [0]

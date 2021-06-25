@@ -10,7 +10,7 @@ export class LandGrabSVGView extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = LandGrabMovie.setOffset(
+        this.state = LandGrabSVGView.setOffset(
             SVGUtil.getInitState(props.movie), props.offset);
     }
 
@@ -25,7 +25,7 @@ export class LandGrabSVGView extends React.Component {
         let rtn = oldState;
 
         if (newProps.movie !== oldState.movie) //Complete reset
-            rtn = LandGrabSVGView.getInitState(newProps.move);
+            rtn = SVGUtil.getInitState(newProps.movie);
         return LandGrabSVGView.setOffset(rtn, newProps.offset);
     }
 
@@ -35,7 +35,7 @@ export class LandGrabSVGView extends React.Component {
     static setOffset(state, timeStamp) {
         let movie = state.movie;
         let evts = movie.evts;
-        let {growthEvts, circleEvt, evtIdx, svgElms} = state;
+        let {growthEvt, circleEvts, evtIdx, svgElms} = state;
         let yTop = movie.background.height;
         let evt;
 
@@ -45,8 +45,7 @@ export class LandGrabSVGView extends React.Component {
             if (evt.type === LandGrabMovie.cMakeObstacle) {
                 svgElms.push(SVGUtil.makeLabeledRect(evt, "obstacle", yTop));
             }
-            else if (evt.type === LandGrabMovie.cInvalidCircle) {
-                
+            else if (evt.type === LandGrabMovie.cInvalidCircle) {  
                 svgElms.push(SVGUtil.makeLabeledCircle(evt, "badCircle", yTop));
             }
             else if (evt.type === LandGrabMovie.cValidCircle){
@@ -56,7 +55,25 @@ export class LandGrabSVGView extends React.Component {
                 //add indexing to remove circle growth
                 svgElms.push(SVGUtil.makeLabeledCircle(evt, "openCircle", yTop));
             }
+            //add indexing to remove circle growth
+            else if (evt.type === LandGrabMovie.cInvalidCircleGrowth){
+                svgElms.push(SVGUtil.makeLabeledCircle(evt, "badCircle", yTop));
+            }
         }
+        return {growthEvt, circleEvts, evtIdx, svgElms, movie};
+    }
+
+    render() { 
+        let width = this.state.movie.background.width;
+        let height = this.state.movie.background.height;
+
+      // console.log("Rendering at ", this.props.offset, this.state.svgElms);
+      return  ( 
+         <svg viewBox={`-.1 -.1 ${width + .1} ${height + .1}`} width="100%"
+          className="panel">
+            <g>{this.state.svgElms}</g>
+         </svg>);
+        
     }
 
 }
