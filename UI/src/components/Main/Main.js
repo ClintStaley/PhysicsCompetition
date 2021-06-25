@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Register, SignIn, CmpsPage, TeamsPage, CmpPage, SbmPage, ConfDialog,
+import {Register, SignIn, CmpsPage, TeamsPage, CmpPage, SbmPage, ConfDialog,
    InstructionsPage} from '../concentrator'
 import { Route, Redirect, Switch } from 'react-router-dom';
 import { Navbar, Nav, NavItem, ListGroup, ListGroupItem } from 'react-bootstrap';
@@ -132,7 +132,6 @@ class Main extends Component {
         }/>
 
       </Switch>
-      <Sampler3JS/>
     </div>);
   }
 }
