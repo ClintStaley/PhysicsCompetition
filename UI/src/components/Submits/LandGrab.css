@@ -16,16 +16,20 @@
 
 .obstacle {
    stroke: black;
-   stroke-width:.1;
+   stroke-width:.2;
    fill:#A0A0FF;
 }
 
 .goodCircle {
    fill:#80FF8040;
+   stroke: #80ff80fd;
+   stroke-width: .2
 }
 
 .badCircle {
    fill:#FF808040;
+   stroke:#ff8080f6;
+   stroke-width:.1;
 }
 
 .openCircle {
