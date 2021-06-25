@@ -24,7 +24,8 @@ export function createMaterial(color, tex) {
       params.normalMap = loadTexture(`${path}/${tex.normal}`, reps);
 
    if (tex.displacement) {
-      params.displacementMap = loadTexture(`${path}/${tex.displacement.file}`, reps);
+      params.displacementMap = loadTexture(`${path}/${tex.displacement.file}`,
+       reps);
       params.displacementScale = tex.displacement.scale
    }
    
@@ -92,22 +93,4 @@ export function loadAsset(url) {
       undefined,
       (err) => console.log(err)
    );
-}
-
-export function createTexturedMaterial(maps) {
-   let loader = new THREE.TextureLoader();
-   let path = `${window.location.origin}/textures/${maps.root}/`;
-   let material = new THREE.MeshStandardMaterial(
-      {
-         color: 0x111111,
-         normalMap: this.loadTexture(`${path}/${maps.normal}`),
-         displacementMap: this.loadTexture(`${path}/${maps.displacement}`),
-         displacementScale: 0.1,
-         roughnessMap: this.loadTexture(`${path}/${maps.roughness}`),
-         aoMap: this.loadTexture(`${path}/${maps.ao}`),
-         metalnessMap: loader.load(`${path}/${maps.metalness}`),
-         metalness: 0.5,
-      }
-   );
-   return material;
 }
