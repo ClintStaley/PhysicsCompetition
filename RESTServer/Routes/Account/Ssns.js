@@ -12,7 +12,7 @@ router.get('/', (req, res) => {
    if (req.validator.checkAdmin()) {
       for (var id of Session.getAllIds()) {
          ssn = Session.ssnsById[id];
-         if(ssn)
+         if (ssn)
             body.push({prsId: ssn.prsId, loginTime: ssn.loginTime});
       }
       res.status(200).json(body);
