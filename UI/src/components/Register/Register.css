@@ -19,6 +19,14 @@ form {
     margin: 30px;
 }
 
+.errors {
+    min-width: 16em;
+}
+
+a {
+   font-weight: bolder;
+}
+
 @media (max-width: 1000px) {
     .register {
         display: contents;

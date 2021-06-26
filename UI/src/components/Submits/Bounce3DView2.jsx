@@ -86,16 +86,17 @@ export class Bounce3DView extends React.Component {
 
       var camera = new THREE.PerspectiveCamera(40, 1, .01, 10 * rigSize);
       camera.position.set(0, 0, 15);  // Center of near wall
-
+      
       // Full range, square-decay, white light high on near wall in center
       var light = new THREE.PointLight(0xffffff, 1);
       light.position.set(5, 5, rigSize / 2);
       light.castShadow = true;
       scene.add(light).add(new THREE.AmbientLight(0x404040));  // Plus general ambient
-
+      
       var room = this.buildRoom();
+      room.name = 'room'
       scene.add(room);
-
+      
       // Add a launcher at upper-left corner of rig. Flat horizontal steel plate
       //   with right edge at origin launch point minus .1m, so a ball can be
       //   set on the right edge of plate with center at precise upper left 
@@ -111,7 +112,7 @@ export class Bounce3DView extends React.Component {
       rig.add(base);
 
       var platform = new THREE.Mesh(new THREE.BoxGeometry(1,.25,1),
-       Bounce3DView.simpleMat)
+         Bounce3DView.flatSteelMat)
 
       var ball = new THREE.Mesh(new THREE.SphereGeometry
        (ballRadius, ballSteps, ballSteps), Bounce3DView.flatSteelMat);
@@ -120,10 +121,33 @@ export class Bounce3DView extends React.Component {
       ball.position.set(0, rigSize, 2*ballRadius);
       ball.castShadow = true;
       rig.add(ball);
-
-      platform.position.set(-.5,9.5,0)
+      
+      // Put platform at upper left corner of rig, just below the ball
+      platform.position.set(-.5,rigSize-.25,0)
       platform.castshadow = true;
       rig.add(platform);
+      
+      // Put Piston base on the far left of platform
+      var pBase = new THREE.Mesh(new THREE.BoxGeometry(.5,.5,1),
+         Bounce3DView.flatSteelMat);
+
+      pBase.position.set(-.25,.25,0);
+      platform.add(pBase);
+
+      // Put Cylinder between piston base and piston face
+      var pCyl = new THREE.Mesh(new THREE.CylinderGeometry(.1,.1,.5), Bounce3DView.flatSteelMat)
+      pCyl.position.set(0,0,0);
+      pCyl.rotateZ(1.5708)
+      pCyl.name = 'pCyl'
+      pBase.add(pCyl);
+
+      // Place piston face on the far right side of the cylinder
+      var pFace = new THREE.Mesh(new THREE.BoxGeometry(.5,.1,.5), 
+         Bounce3DView.flatSteelMat);
+      
+      pFace.position.set(0,-.25,0)
+      pCyl.add(pFace);
+
 
       // Put rig at back of room.  Assume room origin at center of back wall
       rig.position.set(-rigSize / 2, -rigSize / 2, 2 * ballRadius);
@@ -151,6 +175,7 @@ export class Bounce3DView extends React.Component {
       const width = this.mount.clientWidth;
       const height = this.mount.clientHeight;
       var cameraControls;
+      var room = this.state.scene.getObjectByName('room');
 
       this.state.renderer.setSize(width, height);
 
@@ -162,6 +187,9 @@ export class Bounce3DView extends React.Component {
          this.state.camera,
          this.state.renderer.domElement
       );
+      
+      //bound camera to room needs work CWD
+      cameraControls.fitToBox(room)
 
       cameraControls.addEventListener("control", () => {
          cameraControls.update(1);   // Needed w/nonzero param
@@ -185,15 +213,17 @@ export class Bounce3DView extends React.Component {
       return Bounce3DView.setOffset(rtn, newProps.offset);
    }
 
+
    // Advance/retract |state| so that state reflects all and only those events
    // in |movie| with time <= |timeStamp|.  Assume existing |state| was built
    // from |movie| so incremental change is appropriate.  Return adjusted state
    static setOffset(state, timeStamp) {
       const ballRadius = Bounce3DView.ballRadius;
-      let { targets, ball, evtIdx, scene, rig, camera, renderer, movie } = state;
+      let { targets, ball, evtIdx, scene, rig, camera, renderer, movie, } = state;
       let evts = movie.evts;
       let yTop = movie.background.height;
       let evt;
+      let pCyl = scene.getObjectByName('pCyl', true)
 
       // While the event after evtIdx exists and needs adding to 3DElms
       while (evtIdx + 1 < evts.length && evts[evtIdx + 1].time <= timeStamp) {
@@ -228,7 +258,14 @@ export class Bounce3DView extends React.Component {
          else if (evt.type === BounceMovie.cBallExit)
             ball.position.set(0, Bounce3DView.rigSize, ballRadius);
          else if (evt.type === BounceMovie.cBallLaunch) {
+            console.log(pCyl.position)
             // Make Launcher fire by moving piston
+            pCyl.position.set(.4,0,0);
+            console.log(pCyl.position);
+            setTimeout(()=>{
+               pCyl.position.set(0,0,0)
+            },300);
+         
             // Some sort of delayed animation to retract piston.
          }
       }
