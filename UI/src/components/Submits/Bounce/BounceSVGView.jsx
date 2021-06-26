@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {BounceMovie} from './BounceMovie';
-import {SVGUtil} from './SVGUtil';
+import {SVGUtil} from '../SVGUtil';
 import './BounceSVGView.css'
 
 export class BounceSVGView extends React.Component {

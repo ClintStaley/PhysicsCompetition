@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './LandGrab.css';
 import { LandGrabSVGView } from './LandGrabSVGView';
 import { LandGrabMovie } from './LandGrabMovie';
-import { MovieController } from './MovieController';
+import { MovieController } from '../MovieController';
 
 
 
