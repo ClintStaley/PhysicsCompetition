@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { LandGrabMovie } from "./LandGrabMovie";
-import {SVGUtil} from './SVGUtil';
+import {SVGUtil} from '../SVGUtil';
 import './LandGrab.css';
 
 export class LandGrabSVGView extends React.Component {

@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import "./MovieBarController.css";
-import {Bounce3DView}  from "./Bounce3DView";
-import {BounceSVGView} from "./BounceSVGView";
+import {Bounce3DView}  from "./Bounce/Bounce3DView";
+import {BounceSVGView} from "./Bounce/BounceSVGView";
 import Slider from 'react-rangeslider';
 
 export class MovieController extends Component {
