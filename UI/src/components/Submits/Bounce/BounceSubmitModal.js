@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {Form, Button } from 'react-bootstrap';
-import DraggableModal from '../Util/DraggableModal.js';
+import DraggableModal from '../../Util/DraggableModal.js';
 
 export class BSubmitModal extends Component {
     constructor(props) {

@@ -42,6 +42,7 @@ public class LandGrabEvaluator implements Evaluator {
    }
 
    static class CircleTR {
+      public Double badRadius;
       public double area;
       public Collisions collisions;
    }
@@ -49,7 +50,7 @@ public class LandGrabEvaluator implements Evaluator {
    static class Collisions {
       public int[] AllCircles;
       public Collision[] barriers;
-      public double boundary; //null for no boundary collision
+      public Double boundary; //null for no boundary collision, thus needs to be wrapper class
       public Collision[] pastCircles;
      
    }
@@ -94,7 +95,6 @@ public class LandGrabEvaluator implements Evaluator {
             Math.round(rspLG.areaCovered * 100.0 / prms.goalArea)));
       
       lgr.info("Graded Land Grab Submission# " + eval.sbmId);
-      
       return eval;
    }
 
@@ -118,11 +118,36 @@ public class LandGrabEvaluator implements Evaluator {
       //setting CircleTR props
       CircleTR ctr = new CircleTR();
       ctr.area = areaOf(circle);
+      ctr.collisions = new Collisions();
       ctr.collisions.boundary = distanceToBounds(circle);
       ctr.collisions.barriers = getBarrierCollisions(circles, i);
       ctr.collisions.pastCircles = getCircleCollisions(circles, i);
+      
+      ctr.badRadius = findBadRadius(ctr);
+      
       setPastCirclesAllCircles(circleData, i, ctr);
       return ctr;
+   }
+   private Double findBadRadius(CircleTR ctr) {
+      Double badRadius = ctr.collisions.boundary;
+      double temp = 51;
+      for(int i = 0; i < ctr.collisions.barriers.length; i++) {
+         temp = temp < ctr.collisions.barriers[i].radius ? temp : ctr.collisions.barriers[i].radius;
+      }
+      for(int i = 0; i < ctr.collisions.pastCircles.length; i++) {
+         temp = temp < ctr.collisions.pastCircles[i].radius ? temp : ctr.collisions.pastCircles[i].radius;
+      }
+      
+      if(temp == 51)
+         return badRadius; 
+      
+      if(badRadius == null)
+         return (Double)temp;
+      
+      badRadius = badRadius < temp ? badRadius : temp;
+      
+      return badRadius;
+     
    }
 
    private Collision[] getBarrierCollisions(SbmCircle[] circles, int i){
@@ -167,11 +192,16 @@ public class LandGrabEvaluator implements Evaluator {
          tempDist = cornerHit(circle, obs.loX, obs.loY);
          d = d < tempDist ? d : tempDist;
          
-         if ( d != Double.POSITIVE_INFINITY)
-            tempCollisions.add(new Collision(-idx, d));
+         if ( d != Double.POSITIVE_INFINITY){
+            tempCollisions.add(new Collision(idx, d));
+         }
       }
-      Collision[] c = {};
-      return tempCollisions.toArray(c);
+   
+      Collision[] c = new Collision[tempCollisions.size()];
+      for(int x = 0; x < tempCollisions.size(); x++){
+         c[x] = tempCollisions.get(x);
+      }
+      return c;
    }
 
    private Collision[] getCircleCollisions(SbmCircle[] circles, int i){
@@ -192,14 +222,14 @@ public class LandGrabEvaluator implements Evaluator {
    }
 
    // Return distance to boundary if within radius, otherwise return null
-   private double distanceToBounds(SbmCircle crc) {
+   private Double distanceToBounds(SbmCircle crc) {
       double dist = crc.centerX;
       dist = dist < cGridSize - crc.centerX ? dist : cGridSize - crc.centerX;
       dist = dist < crc.centerY ? dist : crc.centerY;
       dist = dist < cGridSize - crc.centerY ? dist : cGridSize - crc.centerY;
       
       if(dist + EPS < crc.radius)
-         return dist;
+         return (Double)dist;
       return (Double) null;
    }
 

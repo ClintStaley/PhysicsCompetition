@@ -1,20 +1,17 @@
-import React, { Component } from 'react';
-import {
-  FormGroup, FormControl, Alert} from 'react-bootstrap';
-
+import React, {Component} from 'react';
+import {Form, FormGroup, Alert} from 'react-bootstrap';
+import register_illustration from '../../images/register.svg';
 import './Register.css';
 
-import register_illustration from '../../images/register.svg';
-
-import { ConfDialog } from '../concentrator'
+import {ConfDialog} from '../concentrator'
 
 //FieldGroup item, will hold a field to be entered
 function FieldGroup({ id, label, help, ...props }) {
   return (
     <FormGroup controlId={id}>
       <Form.Label>{label}</Form.Label>
-      <FormControl {...props} />
-      {help && <FormControl.HelpBlock>{help}</FormControl.HelpBlock>}
+      <Form.Control {...props} />
+      {help && <Form.Control.HelpBlock>{help}</Form.Control.HelpBlock>}
     </FormGroup>
   );
 }
@@ -99,7 +96,7 @@ class Register extends Component {
   //renders all of the fields
   render() {
     return (
-      <div className="container register">
+      <div className="register">
         <ConfDialog
           show={this.state.offerSignin}
           title="Successful registration"
@@ -151,41 +148,33 @@ class Register extends Component {
             onChange={this.handleChange}
             value={this.state.passwordTwo}
             style={{ border: 'none' }}
-          />
-          <FormControl.Checkbox
+          /> 
+          <Form.Check
+            id="termsAccepted"
             value={this.state.termsAccepted}
             onChange={this.handleChange}
-            id="termsAccepted"
-            style={{color: 'white', marginBottom:'0', border: 'transparent'}}
-          >
-            Do you accept the <a onClick={this.openTerms}>terms </a>
-             and conditions?
-          </FormControl.Checkbox>
-          {/* <Button
-          bsStyle="primary"
-          onClick={() => this.submit()}
-          disabled={!this.isFormValid()}
-        >
-          Submit
-        </Button> */}
+            label={<span>Do you accept 
+             the <a onClick={this.openTerms}>terms and conditions</a>?</span>}
+          />
+            
           <div className='centered'>
             <div
               type="submit"
               onClick={() => this.submit()}
               disabled={!this.isFormValid()}
               className='submit'
-            >
-              Register
-                     </div>
+            >Register</div>
           </div>
         </form>
-
-        {this.state.password !== this.state.passwordTwo ?
-          <Alert bsStyle="warning">
-            Passwords do not match.
-        </Alert> : ''}
-
-
+        <div className='errors'>
+           {!this.state.email || !this.state.lastName ?
+             <Alert bsStyle="warning">Email and last name required.</Alert> : ''}
+           {this.state.password !== this.state.passwordTwo ?
+             <Alert bsStyle="warning">Passwords do not match.</Alert> : ''}
+           {!this.state.termsAccepted ?
+             <Alert bsStyle="warning">Must accept terms to register.</Alert> : ''}
+        </div>
+        <img src={register_illustration} alt="Sign In"></img>
       </div>
     )
   }

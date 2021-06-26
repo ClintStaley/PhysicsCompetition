@@ -1,10 +1,11 @@
-import React, { Component } from 'react';
-import { Register, SignIn, CmpsPage, TeamsPage, CmpPage, SbmPage, ConfDialog,
-   InstructionsPage } from '../concentrator'
-import { Route, Redirect, Switch } from 'react-router-dom';
-import { Navbar, Nav, NavItem, ListGroup, ListGroupItem } from 'react-bootstrap';
-import { LinkContainer } from 'react-router-bootstrap';
+import React, {Component} from 'react';
+import {Register, SignIn, CmpsPage, TeamsPage, CmpPage, SbmPage, ConfDialog,
+   InstructionsPage} from '../concentrator'
+import {Route, Redirect, Switch} from 'react-router-dom';
+import { Navbar, Nav} from 'react-bootstrap';
+import {LinkContainer} from 'react-router-bootstrap';
 import './Main.css';
+import {Sampler3JS} from '../Util/Sampler3JS';
 
 const Home = (
    <div width="100%" height="100%">
