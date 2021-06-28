@@ -19,28 +19,28 @@ export class Bounce3DView extends React.Component {
    static steelMat = ImageUtil.createMaterial(0xffffff, {
       root: 'steelPlate',
       normal: 'steelplate1_normal-dx.png',
-      displacement: {file: 'steelplate1_height.png', scale: 0.1},
+      displacement: { file: 'steelplate1_height.png', scale: 0.1 },
       roughness: 'steelplate1_roughness.png',
       ao: 'steelplate1_ao.png',
-      metal: {file: 'steelplate1_metallic.png', metalness: 0.5},
+      metal: { file: 'steelplate1_metallic.png', metalness: 0.5 },
       side: THREE.DoubleSide,
-      reps: {x: 5, y: 5}
+      reps: { x: 5, y: 5 }
    });
 
    static concreteMat = ImageUtil.createMaterial(0x5C5C5C, {
       root: 'concrete',
       normal: 'normal.jpg',
-      displacement: {file: 'displacement.png', scale: 0.1},
+      displacement: { file: 'displacement.png', scale: 0.1 },
       roughness: 'roughness.jpg',
       ao: 'ao.jpg',
-      metal: {file: 'basecolor.jpg', metalness: 0.5},
+      metal: { file: 'basecolor.jpg', metalness: 0.5 },
       side: THREE.DoubleSide
    });
 
    static flatSteelMat = ImageUtil.createMaterial(0xffffff, {
       root: 'flatSteel',
       roughness: 'roughnessMap.png',
-      metal: {file: 'metalMap.png', metalness: 0.5},
+      metal: { file: 'metalMap.png', metalness: 0.5 },
       side: THREE.DoubleSide
    });
 
@@ -58,16 +58,16 @@ export class Bounce3DView extends React.Component {
    }
 
    // Create standard room with center of far wall at origin
-   static buildRoom() {      
+   static buildRoom() {
       var concreteMat = Bounce3DView.concreteMat;
       var flatSteelMat = Bounce3DView.flatSteelMat;
-      
-      var roomDim = 2*Bounce3DView.rigSize + 2;  // 1 m boundaries around rig
+
+      var roomDim = 3 * Bounce3DView.rigSize + 2;  // 1 m boundaries around rig
       var room = new THREE.Mesh(
          new THREE.BoxGeometry(roomDim, roomDim, roomDim), [concreteMat,
          concreteMat, concreteMat, flatSteelMat, concreteMat, concreteMat]);
 
-      room.position.set(0, 0, 6);  // Z=0 at back wall
+      room.position.set(0, 0, 9);  // Z=0 at back wall
 
       return room;
    }
@@ -86,17 +86,17 @@ export class Bounce3DView extends React.Component {
 
       var camera = new THREE.PerspectiveCamera(40, 1, .01, 10 * rigSize);
       camera.position.set(0, 0, 15);  // Center of near wall
-      
+
       // Full range, square-decay, white light high on near wall in center
       var light = new THREE.PointLight(0xffffff, 1);
       light.position.set(5, 5, rigSize / 2);
       light.castShadow = true;
       scene.add(light).add(new THREE.AmbientLight(0x404040));  // Plus general ambient
-      
+
       var room = this.buildRoom();
       room.name = 'room'
       scene.add(room);
-      
+
       // Add a launcher at upper-left corner of rig. Flat horizontal steel plate
       //   with right edge at origin launch point minus .1m, so a ball can be
       //   set on the right edge of plate with center at precise upper left 
@@ -111,41 +111,41 @@ export class Bounce3DView extends React.Component {
       base.position.set(rigSize / 2, rigSize / 2, -ballRadius);
       rig.add(base);
 
-      var platform = new THREE.Mesh(new THREE.BoxGeometry(1,.25,1),
+      var platform = new THREE.Mesh(new THREE.BoxGeometry(1, .25, 1),
          Bounce3DView.flatSteelMat)
 
       var ball = new THREE.Mesh(new THREE.SphereGeometry
-       (ballRadius, ballSteps, ballSteps), Bounce3DView.flatSteelMat);
+         (ballRadius, ballSteps, ballSteps), Bounce3DView.flatSteelMat);
 
       // Put ball at upper left corner of rig, just touching the base.
-      ball.position.set(0, rigSize, 2*ballRadius);
+      ball.position.set(0, rigSize, 2 * ballRadius);
       ball.castShadow = true;
       rig.add(ball);
-      
+
       // Put platform at upper left corner of rig, just below the ball
-      platform.position.set(-.5,rigSize-.25,0)
+      platform.position.set(-.5, rigSize - .25, 0)
       platform.castshadow = true;
       rig.add(platform);
-      
+
       // Put Piston base on the far left of platform
-      var pBase = new THREE.Mesh(new THREE.BoxGeometry(.5,.5,1),
+      var pBase = new THREE.Mesh(new THREE.BoxGeometry(.5, .5, 1),
          Bounce3DView.flatSteelMat);
 
-      pBase.position.set(-.25,.25,0);
+      pBase.position.set(-.25, .25, 0);
       platform.add(pBase);
 
       // Put Cylinder between piston base and piston face
-      var pCyl = new THREE.Mesh(new THREE.CylinderGeometry(.1,.1,.5), Bounce3DView.flatSteelMat)
-      pCyl.position.set(0,0,0);
+      var pCyl = new THREE.Mesh(new THREE.CylinderGeometry(.1, .1, .5), Bounce3DView.flatSteelMat)
+      pCyl.position.set(0, 0, 0);
       pCyl.rotateZ(1.5708)
       pCyl.name = 'pCyl'
       pBase.add(pCyl);
 
       // Place piston face on the far right side of the cylinder
-      var pFace = new THREE.Mesh(new THREE.BoxGeometry(.5,.1,.5), 
+      var pFace = new THREE.Mesh(new THREE.BoxGeometry(.5, .1, .5),
          Bounce3DView.flatSteelMat);
-      
-      pFace.position.set(0,-.25,0)
+
+      pFace.position.set(0, -.25, 0)
       pCyl.add(pFace);
 
 
@@ -174,6 +174,8 @@ export class Bounce3DView extends React.Component {
    componentDidMount() {
       const width = this.mount.clientWidth;
       const height = this.mount.clientHeight;
+      var rigSize = Bounce3DView.rigSize; 
+      console.log(rigSize);
       var cameraControls;
       var room = this.state.scene.getObjectByName('room');
 
@@ -183,15 +185,22 @@ export class Bounce3DView extends React.Component {
       this.state.camera.updateProjectionMatrix();
       this.mount.appendChild(this.state.renderer.domElement);
 
+      var testBox = new THREE.Box3(new THREE.Vector3(rigSize-24, rigSize-19, rigSize-8), new THREE.Vector3(rigSize+4,rigSize+4,rigSize+5))
+
+
+
+
+
       cameraControls = new CameraControls(
          this.state.camera,
          this.state.renderer.domElement
       );
+      // Restric right click camera movement
+      cameraControls.setBoundary(testBox);
+      cameraControls.boundaryEnclosesCamera=true;
       
-      //bound camera to room needs work CWD
-      cameraControls.fitToBox(room)
-
       cameraControls.addEventListener("control", () => {
+         console.log(this.state.camera.position);
          cameraControls.update(1);   // Needed w/nonzero param
          this.state.renderer.render(this.state.scene, this.state.camera);
       });
@@ -235,10 +244,10 @@ export class Bounce3DView extends React.Component {
             var height = evt.hiY - evt.loY;
 
             var obj = new THREE.Mesh(
-             new THREE.BoxGeometry(width, height, 6 * ballRadius),
-             Bounce3DView.flatSteelMat);
-            obj.position.set(evt.loX + width / 2, evt.loY + height / 2, 
-             3 * ballRadius);
+               new THREE.BoxGeometry(width, height, 6 * ballRadius),
+               Bounce3DView.flatSteelMat);
+            obj.position.set(evt.loX + width / 2, evt.loY + height / 2,
+               3 * ballRadius);
             rig.add(obj);
 
             if (evt.type === BounceMovie.cMakeTarget) {
@@ -251,7 +260,7 @@ export class Bounce3DView extends React.Component {
             ball.position.set(evt.x, evt.y, ballRadius);
 
             if (evt.type === BounceMovie.cHitTarget) {
-               targets[evt.targetId].position.z = -2*ballRadius; // Pop in
+               targets[evt.targetId].position.z = -2 * ballRadius; // Pop in
                // Play pin sound.
             }
          }
@@ -260,12 +269,12 @@ export class Bounce3DView extends React.Component {
          else if (evt.type === BounceMovie.cBallLaunch) {
             console.log(pCyl.position)
             // Make Launcher fire by moving piston
-            pCyl.position.set(.4,0,0);
+            pCyl.position.set(.4, 0, 0);
             console.log(pCyl.position);
-            setTimeout(()=>{
-               pCyl.position.set(0,0,0)
-            },300);
-         
+            setTimeout(() => {
+               pCyl.position.set(0, 0, 0)
+            }, 300);
+
             // Some sort of delayed animation to retract piston.
          }
       }
