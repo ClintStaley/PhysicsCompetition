@@ -42,10 +42,15 @@ export class LandGrabSVGView extends React.Component {
         // While the event after evtIdx exists and needs adding to svgElms
         while (evtIdx+1 < evts.length && evts[evtIdx+1].time <= timeStamp) {
             evt = evts[++evtIdx];
+            if (growthEvt){
+                    svgElms.pop();
+                    growthEvt = false;
+                }
+                
             if (evt.type === LandGrabMovie.cMakeObstacle) {
                 svgElms.push(SVGUtil.makeLabeledRect(evt, "obstacle", yTop));
             }
-            else if (evt.type === LandGrabMovie.cInvalidCircle) {  
+            else if (evt.type === LandGrabMovie.cInvalidCircle) {
                 svgElms.push(SVGUtil.makeLabeledCircle(evt, "badCircle", yTop));
             }
             else if (evt.type === LandGrabMovie.cValidCircle){
@@ -54,10 +59,12 @@ export class LandGrabSVGView extends React.Component {
             else if (evt.type === LandGrabMovie.cCircleGrowth){
                 //add indexing to remove circle growth
                 svgElms.push(SVGUtil.makeLabeledCircle(evt, "openCircle", yTop));
+                growthEvt = true;
             }
             //add indexing to remove circle growth
             else if (evt.type === LandGrabMovie.cInvalidCircleGrowth){
                 svgElms.push(SVGUtil.makeLabeledCircle(evt, "badCircle", yTop));
+                growthEvt = true;
             }
         }
         return {growthEvt, circleEvts, evtIdx, svgElms, movie};

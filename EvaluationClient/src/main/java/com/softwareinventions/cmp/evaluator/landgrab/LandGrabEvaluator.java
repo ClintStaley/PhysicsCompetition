@@ -154,13 +154,21 @@ public class LandGrabEvaluator implements Evaluator {
       SbmCircle circle = circles[i];   
       LinkedList<Collision> tempCollisions = new LinkedList<Collision>();
 
+   
       // Check for noncorner obstacle collision
       for (int idx = 0; idx < prms.obstacles.length; idx++) {
          BlockedRectangle obs = prms.obstacles[idx];
          double d = Double.POSITIVE_INFINITY;
          double tempDist;
+         
+         //Check for start in obstacle
+         if(GenUtil.inBounds(obs.loX + EPS, circle.centerX, obs.hiX - EPS) 
+         && GenUtil.inBounds(obs.loY + EPS, circle.centerY, obs.hiY - EPS)){
+            d = 1;
+         }
+         
          // Overlap with horizontal sides
-         if (GenUtil.inBounds(obs.loX + EPS, circle.centerX, obs.hiX - EPS) 
+         else if (GenUtil.inBounds(obs.loX + EPS, circle.centerX, obs.hiX - EPS) 
            && GenUtil.inBounds(obs.loY - circle.radius - EPS, circle.centerY,
            obs.hiY + circle.radius + EPS)){
             tempDist = Point2D.distance(circle.centerX, circle.centerY, obs.loX, circle.centerY);
