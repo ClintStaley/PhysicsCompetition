@@ -1,6 +1,7 @@
 // LandGrabMovie provides background information on framerate and size of the
-// overall background, plus a series of events describing whether the circle is valid
-// or not.  Events are each time stamped with a number of second since the start of the movie.
+// overall background, plus a series of events describing growth of each circle,
+// when each collision may occur measured by its radius, and whether the circle is 
+// valid or invalid. Events are each time stamped with a number of second since the start of the movie.
 
 // a number of seconds since the start of the movie.
 export class LandGrabMovie {
@@ -12,8 +13,6 @@ export class LandGrabMovie {
 
     //Constructor with background as indicated, and events drawn from prms and sbm
     constructor(frameRate, prms, sbm) {
-        console.log(prms);
-        console.log(sbm);
         //declare constants
         const bkgSize = 100.0;
         const validationPause = .25;
@@ -32,23 +31,31 @@ export class LandGrabMovie {
         let time = 0;
         circlesResults.forEach((circleResult, circleId) => {
             var circle = circleContent[circleId];
-            var growthTime = circle.radius * (2/25); // dimensional analysis to convert radius length to growth time. Radius of 25 will take 2 seconds
+
+            // Get total growth time (based on radius length) and
+            // valid growth time for when the circle may turn red
+            var growthTime = circle.radius * (2/25);
             var validGrowthTime = growthTime;
             if (circleResult.badRadius)
                 validGrowthTime = growthTime * (circleResult.badRadius/circle.radius); 
             
+
             for (let t = 0; t < validGrowthTime; t += 1.0/frameRate)
-                this.addCircleGrowthEvt(time + t, circleId, circle.centerX, circle.centerY, circle.radius*(t/growthTime));
+                this.addCircleGrowthEvt(time + t, circleId, circle.centerX,
+                 circle.centerY, circle.radius*(t/growthTime));
             
             
             for(let t = validGrowthTime; t < growthTime; t += 1.0/frameRate)
-                this.addInvalidCircleGrowthEvt(time + t, circleId, circle.centerX, circle.centerY, circle.radius*(t/growthTime));
+                this.addInvalidCircleGrowthEvt(time + t, circleId, circle.centerX, 
+                 circle.centerY, circle.radius*(t/growthTime));
 
             time += growthTime;
             
-            var validity = circleResult.badRadius ? LandGrabMovie.cInvalidCircle : LandGrabMovie.cValidCircle;
+            var validity = circleResult.badRadius ? 
+             LandGrabMovie.cInvalidCircle : LandGrabMovie.cValidCircle;
 
-            this.addMakeCircleEvt(time, circleId, circle.centerX, circle.centerY, circle.radius, validity);
+            this.addMakeCircleEvt(time, circleId, circle.centerX,
+             circle.centerY, circle.radius, validity);
                 
             time += validationPause;
         });

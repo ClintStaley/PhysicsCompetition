@@ -4,9 +4,7 @@ import {SVGUtil} from '../SVGUtil';
 import './LandGrab.css';
 
 export class LandGrabSVGView extends React.Component {
-    static circleColors = ["goodCircle", "badCircle", "openCircle"];
-
-
+    
     constructor(props) {
         super(props);
 
@@ -17,7 +15,7 @@ export class LandGrabSVGView extends React.Component {
     static getInitState(movie){
         var bkgElms = SVGUtil.getbkgElms(movie);
         return {
-            growthEvts : {},
+            growthEvts : [],  // array of all growth events (including invalid)
             evtIdx: -1,       // Index within movie of last event shown in svgElms
             svgElms: bkgElms, // SVG elements to render at this point
             movie             // Pointer to current movie
@@ -52,10 +50,8 @@ export class LandGrabSVGView extends React.Component {
         // While the event after evtIdx exists and needs adding to svgElms
         while (evtIdx+1 < evts.length && evts[evtIdx+1].time <= timeStamp) {
             evt = evts[++evtIdx];
-            if (growthEvts[evtIdx-1]){
+            if (growthEvts[evtIdx-1])
                     svgElms.pop();
-                    
-                }
                 
             if (evt.type === LandGrabMovie.cMakeObstacle) {
                 svgElms.push(SVGUtil.makeLabeledRect(evt, "obstacle", yTop));
@@ -84,15 +80,12 @@ export class LandGrabSVGView extends React.Component {
       // while condition are mutually exclusive.) Assume that barrier and
       // target creation occur at negative time and thus will not be "backed
       // over"
-      
       while (evtIdx > 0 && timeStamp < evts[evtIdx].time) {
-        
         evt = evts[evtIdx--];
         svgElms.pop();
-        if(growthEvts[evtIdx]){
-            
+
+        if(growthEvts[evtIdx])
             svgElms.push(growthEvts[evtIdx]);
-        }
     }
     
 

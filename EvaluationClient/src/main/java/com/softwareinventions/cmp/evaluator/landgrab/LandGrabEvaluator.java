@@ -99,22 +99,8 @@ public class LandGrabEvaluator implements Evaluator {
    }
 
 
-   //for each circle:
-      // area: r^2 * pi,
-      // collisions:
-         // allCircles: [ array with indexes of every circle that collides with this one in index order]
-         // barriers: 
-            // cId: id of barrier collided with.
-            // radius: radius the collision occurred
-         //boundary: radius of when collision occurred, NULL if no collision
-         //pastCircles:
-            // cId: id of barrier collided with.
-            // radius: radius the collision occurred
-
-      
-
    private CircleTR evaluateCircle(SbmCircle[] circles, int i, CircleTR[] circleData) {
-      SbmCircle circle = circles[i];   
+      SbmCircle circle = circles[i]; 
       //setting CircleTR props
       CircleTR ctr = new CircleTR();
       ctr.area = areaOf(circle);
@@ -128,6 +114,7 @@ public class LandGrabEvaluator implements Evaluator {
       setPastCirclesAllCircles(circleData, i, ctr);
       return ctr;
    }
+
    private Double findBadRadius(CircleTR ctr) {
       Double badRadius = ctr.collisions.boundary;
       double temp = 51;
@@ -187,7 +174,7 @@ public class LandGrabEvaluator implements Evaluator {
             d = d < tempDist ? d : tempDist;
                }   
          
-         //overlaps corners?
+         //overlap with corners
          tempDist = cornerHit(circle, obs.hiX, obs.hiY);
          d = d < tempDist ? d : tempDist;
          
@@ -205,6 +192,7 @@ public class LandGrabEvaluator implements Evaluator {
          }
       }
    
+      
       Collision[] c = new Collision[tempCollisions.size()];
       for(int x = 0; x < tempCollisions.size(); x++){
          c[x] = tempCollisions.get(x);
