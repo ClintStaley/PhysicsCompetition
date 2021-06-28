@@ -16,7 +16,6 @@ export class LandGrabMovie {
         console.log(sbm);
         //declare constants
         const bkgSize = 100.0;
-        const growthTime = 2;
         const validationPause = .25;
         let circlesResults = sbm.testResult.circleData;
         let circleContent = sbm.content;
@@ -32,9 +31,8 @@ export class LandGrabMovie {
 
         let time = 0;
         circlesResults.forEach((circleResult, circleId) => {
-            //this.addMakeCircleEvt(time, circleId, trk.x, trk.y, 1) //trk.r);
             var circle = circleContent[circleId];
-            
+            var growthTime = circle.radius * (2/25); // dimensional analysis to convert radius length to growth time. Radius of 25 will take 2 seconds
             var validGrowthTime = growthTime;
             if (circleResult.badRadius)
                 validGrowthTime = growthTime * (circleResult.badRadius/circle.radius); 

@@ -1,12 +1,9 @@
 //Utility object to reduce repetitiveness of .*SVG.jsx files
 
-
-
-
 export class SVGUtil{
     
 
-    static getInitState(movie) { //no need for bkgElms because it starts as empty
+    static getbkgElms(movie) { //no need for bkgElms because it starts as empty
         let bkgElms = []; 
         let width = movie.background.width;
         let height = movie.background.height;
@@ -40,14 +37,7 @@ export class SVGUtil{
                 bkgElms.push(<line key={"HL" + smallOffset} x1="0" y1={smallOffset}
                 x2={width} y2={smallOffset} className="lightLine" />);
         }
-    
-        return {
-            trgEvts: [],      // Target creation events (each w/index into svgElms)
-            ballEvt: null,    // Most recent ball position or hit event
-            evtIdx: -1,       // Index within movie of last event shown in svgElms
-            svgElms: bkgElms, // SVG elements to render at this point
-            movie             // Pointer to current movie
-         }
+        return bkgElms;
     
     }
 
@@ -55,7 +45,7 @@ export class SVGUtil{
     // dimensions as indicated by |evt| and with corner coordinates drawn in
     // text form, inside the rectangle if room suffices, otherwise outside.
 
-    //evt must be an object with an id, and coordinates
+    //evt must be an object with an id, and coordinates in hiX, loX format
     static makeLabeledRect(evt, cls, yTop){
         const textSize = 1.2;  // Minimum width of rect to fit text inside
         const textHeight = .13;  // Height of a text line
