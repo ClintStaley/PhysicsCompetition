@@ -11,13 +11,14 @@
     "express": "^4.16.4",
     "mysql": "^2.11.1"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "nyc": "^15.1.0"
+  },
   "scripts": {
     "test": "node main.js",
     "start": "node main.js"
   },
   "author": [
-    "Johnathan Nicholson",
     "Clinton Staley"
   ]
 }

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {BounceMovie} from './BounceMovie';
-
+import {SVGUtil} from '../SVGUtil';
 import './BounceSVGView.css'
 
 export class BounceSVGView extends React.Component {
@@ -19,51 +19,17 @@ export class BounceSVGView extends React.Component {
        BounceSVGView.getInitState(props.movie), props.offset);
    }
 
-   // Return state displaying background grid and other fixtures
-   // appropriate for |movie|
-   static getInitState(movie) {
-      let bkgElms = []; 
-      let width = movie.background.width;
-      let height = movie.background.height;
-      let longDim = Math.max(width, height);
-      let bigGap = longDim/10;  // Gap between heavy graph lines
-      let smallGap = bigGap/5;  // Gap between light graph lines
- 
-      bkgElms.push(<rect x="0" y="0" width={width} height={height}
-       className="graphBkg"/>);
-
-      // Vertical lines
-      for (var bigOffset = 0; bigOffset <= width; bigOffset += bigGap) {
-
-         bkgElms.push(<line key={"VL" + bigOffset} x1={bigOffset} y1="0"
-          x2={bigOffset} y2={height} className="heavyLine"/>);
-
-         for (var smallOffset = bigOffset + smallGap;
-          smallOffset < bigOffset + bigGap; smallOffset += smallGap)
-            bkgElms.push(<line key={"VL" + smallOffset} x1={smallOffset} y1="0"
-             x2={smallOffset} y2={height} className="lightLine" />);
-      }
-   
-      // Horizontal lines
-      for (var bigOffset = 0; bigOffset <= height; bigOffset += bigGap) {
-
-         bkgElms.push(<line key={"HL" + bigOffset} x1="0" y1={bigOffset}
-            x2={width} y2={bigOffset} className="heavyLine" />);
-
-         for (var smallOffset = bigOffset + smallGap;
-          smallOffset < bigOffset + bigGap; smallOffset += smallGap)
-            bkgElms.push(<line key={"HL" + smallOffset} x1="0" y1={smallOffset}
-             x2={width} y2={smallOffset} className="lightLine" />);
-      }
-
+   static getInitState(movie){
+      var bkgElms = SVGUtil.getbkgElms(movie); //gets background and graph lines
       return {
          trgEvts: [],      // Target creation events (each w/index into svgElms)
          ballEvt: null,    // Most recent ball position or hit event
          evtIdx: -1,       // Index within movie of last event shown in svgElms
          svgElms: bkgElms, // SVG elements to render at this point
          movie             // Pointer to current movie
-      }   
+      }
    }
+
 
    // Return label for button activating this view
    static getLabel() {
@@ -78,54 +44,6 @@ export class BounceSVGView extends React.Component {
       return BounceSVGView.setOffset(rtn, newProps.offset);
    }
 
-   // Return an svg <g> object representing a rectangle of class |cls| with
-   // dimensions as indicated by |evt| and with corner coordinates drawn in
-   // text form, inside the rectangle if room suffices, otherwise outside.
-   static makeLabeledRect(evt, cls, yTop) {
-      const textSize = 1.2;  // Minimum width of rect to fit text inside
-      const textHeight = .13;  // Height of a text line
-      const minHeight = textHeight * 2.1; // Minimum height to fit 2 text lines
-      
-      let elms = [];        // Returned SVG elements
-      let width = evt.hiX - evt.loX;
-      let height = evt.hiY - evt.loY;
-
-      // Values to put text inside or outside the rectangle, in both dimensions
-      let classLeft = width > textSize ? "text" : "rhsText";
-      let classRight = width > textSize ? "rhsText" : "text";
-      let topYAdjust = height > minHeight ? textHeight : 0;
-      let btmYAdjust = height > minHeight ? 0 : textHeight;
-
-      // Main rectangle
-      elms.push(<rect key={"Blk" + evt.id} x={evt.loX} y={yTop - evt.hiY}
-       width={width} height={height} className={cls}/>);
-      
-      // Upper left label showing (loX, hiY)
-      elms.push(<text key={"BlkUL" + evt.id} x={evt.loX} 
-       y={yTop - evt.hiY + topYAdjust} className={classLeft}>
-       {`(${evt.loX.toFixed(2)}, ${evt.hiY.toFixed(2)})`}
-       </text>);
-
-      // Upper right label showing (hiX, hiY)
-      elms.push(<text key={"BlkUR" + evt.id} x={evt.hiX}
-       y={yTop - evt.hiY + topYAdjust} className={classRight}>
-       {`(${evt.hiX.toFixed(2)}, ${evt.hiY.toFixed(2)})`}
-       </text>);
-
-      // Lower left label showing (loX, loY)
-      elms.push(<text key={"BlkLL" + evt.id} x={evt.loX} 
-       y={yTop - evt.loY + btmYAdjust} className={classLeft}>
-       {`(${evt.loX.toFixed(2)}, ${evt.loY.toFixed(2)})`}
-       </text>);
-
-      // Lower right label showing (hiX, loY)
-      elms.push(<text key={"BlkLR" + evt.id} x={evt.hiX} 
-       y={yTop - evt.loY + btmYAdjust} className={classRight}>
-       {`(${evt.hiX.toFixed(2)}, ${evt.loY.toFixed(2)})`}
-       </text>);
-
-      return <g>{elms}</g>;
-   }
 
    // Advance/retract |state| so that svgElms reflects all and only those events
    // in |movie| with time <= |timeStamp|.  Assume existing |state| was built
@@ -141,12 +59,12 @@ export class BounceSVGView extends React.Component {
       while (evtIdx+1 < evts.length && evts[evtIdx+1].time <= timeStamp) {
          evt = evts[++evtIdx];
          if (evt.type === BounceMovie.cMakeBarrier) {
-            svgElms.push(BounceSVGView.makeLabeledRect(evt, "barrier", yTop));
+            svgElms.push(SVGUtil.makeLabeledRect(evt, "barrier", yTop));
          }
          else if (evt.type === BounceMovie.cMakeTarget) {
             evt.svgIdx = svgElms.length;
             trgEvts[evt.id] = evt;  // Save event for redrawing if hit
-            svgElms.push(BounceSVGView.makeLabeledRect(evt, "target", yTop));
+            svgElms.push(SVGUtil.makeLabeledRect(evt, "target", yTop));
          }
          else if (evt.type === BounceMovie.cBallPosition) {
             svgElms.push(<circle key={"ballPos" + evt.time} cx={evt.x}
@@ -163,7 +81,7 @@ export class BounceSVGView extends React.Component {
             if (evt.type === BounceMovie.cHitTarget) {
                let trgEvt = trgEvts[evt.targetId];
                svgElms[trgEvt.svgIdx]
-                = BounceSVGView.makeLabeledRect(trgEvt, "hitTarget", yTop)
+                = SVGUtil.makeLabeledRect(trgEvt, "hitTarget", yTop)
             }
          }
          // Ball launch and ball exit require no action here.
@@ -183,7 +101,7 @@ export class BounceSVGView extends React.Component {
          if (evt.type === BounceMovie.cHitTarget) {
             let trgEvt = trgEvts[evt.targetId];
             svgElms[trgEvt.svgIdx]
-             = BounceSVGView.makeLabeledRect(trgEvt, "target", yTop)
+             = SVGUtil.makeLabeledRect(trgEvt, "target", yTop)
          }
       }
 
@@ -209,7 +127,6 @@ export class BounceSVGView extends React.Component {
       let width = this.state.movie.background.width;
       let height = this.state.movie.background.height;
 
-      // console.log("Rendering at ", this.props.offset, this.state.svgElms);
       return  ( 
          <svg viewBox={`-.1 -.1 ${width + .1} ${height + .1}`} width="100%"
           className="panel">

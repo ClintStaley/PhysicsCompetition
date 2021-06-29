@@ -5,7 +5,7 @@ import "react-rangeslider/lib/index.css";
 import CameraControls from "camera-controls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import UIfx from 'uifx';
-import pingAudio from '../../assets/sound/ping.mp3';
+import pingAudio from '../../../assets/sound/ping.mp3';
 //const ThreeBSP = new CspLibrary(THREE)
 CameraControls.install({ THREE: THREE });
 

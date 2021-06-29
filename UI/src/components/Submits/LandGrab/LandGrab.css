@@ -14,18 +14,32 @@
    stroke-width:.1;
 }
 
+.lightLine {
+   stroke: #E0E0E0;
+   stroke-width: .01;
+}
+
+.heavyLine {
+   stroke:#C8C8C8;
+   stroke-width: .02;
+}
+
 .obstacle {
    stroke: black;
-   stroke-width:.1;
-   fill:#A0A0FF;
+   stroke-width:.02;
+   fill:#a0a0ffc0;
 }
 
 .goodCircle {
    fill:#80FF8040;
+   stroke: #80ff80fd;
+   stroke-width: .2
 }
 
 .badCircle {
    fill:#FF808040;
+   stroke:#ff8080f6;
+   stroke-width:.1;
 }
 
 .openCircle {
