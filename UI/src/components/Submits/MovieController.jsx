@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import "./MovieBarController.css";
-import {Bounce3DView}  from "./Bounce/Bounce3DView";
-import {BounceSVGView} from "./Bounce/BounceSVGView";
+//import {Bounce3DView}  from "./Bounce/Bounce3DView";
+//import {BounceSVGView} from "./Bounce/BounceSVGView";
 import Slider from 'react-rangeslider';
 
 export class MovieController extends Component {
@@ -32,6 +32,7 @@ export class MovieController extends Component {
    pause = () => {
       //console.log()
       this.setState({playing: false});
+      this.timeAtPause = this.state.currentOffset + this.firstTimeStamp;
    };
 
    replay = () => {
@@ -39,11 +40,16 @@ export class MovieController extends Component {
       this.setState({playing: true}, this.animate);
    };
 
-   animate = (timestamp) => {
+   animate = (timestamp) => { // timestamp DNE until requestAnimationFrame calls it
       timestamp /= 1000;
+      
       if (this.state.playing) {
+         if (this.timeAtPause && timestamp){ //firstTime stamp is shifted forward for paused time
+            this.firstTimeStamp += timestamp - this.timeAtPause;
+            this.timeAtPause = null;
+         }
          if (!this.firstTimeStamp) {
-            this.firstTimeStamp = timestamp
+            this.firstTimeStamp = timestamp; 
          }
          if (this.state.currentOffset > this.duration) {
             this.firstTimeStamp = undefined;
