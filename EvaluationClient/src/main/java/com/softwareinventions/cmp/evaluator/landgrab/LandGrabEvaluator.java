@@ -99,22 +99,8 @@ public class LandGrabEvaluator implements Evaluator {
    }
 
 
-   //for each circle:
-      // area: r^2 * pi,
-      // collisions:
-         // allCircles: [ array with indexes of every circle that collides with this one in index order]
-         // barriers: 
-            // cId: id of barrier collided with.
-            // radius: radius the collision occurred
-         //boundary: radius of when collision occurred, NULL if no collision
-         //pastCircles:
-            // cId: id of barrier collided with.
-            // radius: radius the collision occurred
-
-      
-
    private CircleTR evaluateCircle(SbmCircle[] circles, int i, CircleTR[] circleData) {
-      SbmCircle circle = circles[i];   
+      SbmCircle circle = circles[i]; 
       //setting CircleTR props
       CircleTR ctr = new CircleTR();
       ctr.area = areaOf(circle);
@@ -128,6 +114,7 @@ public class LandGrabEvaluator implements Evaluator {
       setPastCirclesAllCircles(circleData, i, ctr);
       return ctr;
    }
+
    private Double findBadRadius(CircleTR ctr) {
       Double badRadius = ctr.collisions.boundary;
       double temp = 51;
@@ -154,13 +141,21 @@ public class LandGrabEvaluator implements Evaluator {
       SbmCircle circle = circles[i];   
       LinkedList<Collision> tempCollisions = new LinkedList<Collision>();
 
+   
       // Check for noncorner obstacle collision
       for (int idx = 0; idx < prms.obstacles.length; idx++) {
          BlockedRectangle obs = prms.obstacles[idx];
          double d = Double.POSITIVE_INFINITY;
          double tempDist;
+         
+         //Check for start in obstacle
+         if(GenUtil.inBounds(obs.loX + EPS, circle.centerX, obs.hiX - EPS) 
+         && GenUtil.inBounds(obs.loY + EPS, circle.centerY, obs.hiY - EPS)){
+            d = 1;
+         }
+         
          // Overlap with horizontal sides
-         if (GenUtil.inBounds(obs.loX + EPS, circle.centerX, obs.hiX - EPS) 
+         else if (GenUtil.inBounds(obs.loX + EPS, circle.centerX, obs.hiX - EPS) 
            && GenUtil.inBounds(obs.loY - circle.radius - EPS, circle.centerY,
            obs.hiY + circle.radius + EPS)){
             tempDist = Point2D.distance(circle.centerX, circle.centerY, obs.loX, circle.centerY);
@@ -179,7 +174,7 @@ public class LandGrabEvaluator implements Evaluator {
             d = d < tempDist ? d : tempDist;
                }   
          
-         //overlaps corners?
+         //overlap with corners
          tempDist = cornerHit(circle, obs.hiX, obs.hiY);
          d = d < tempDist ? d : tempDist;
          
@@ -197,6 +192,7 @@ public class LandGrabEvaluator implements Evaluator {
          }
       }
    
+      
       Collision[] c = new Collision[tempCollisions.size()];
       for(int x = 0; x < tempCollisions.size(); x++){
          c[x] = tempCollisions.get(x);
