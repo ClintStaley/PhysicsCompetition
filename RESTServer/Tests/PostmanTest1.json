@@ -5305,6 +5305,56 @@
 					"response": []
 				},
 				{
+					"name": "Get all Submissions limit to 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonBody = pm.response.json();",
+									"",
+									"checkStatus(pm, 200);",
+									"",
+									"pm.test('One Submissions', ()=>{",
+									"    pm.expect(jsonBody.length).to.eql(1);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/Cmps/1/Teams/1/Sbms?num=1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Cmps",
+								"1",
+								"Teams",
+								"1",
+								"Sbms"
+							],
+							"query": [
+								{
+									"key": "num",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Get Info on Admin\n"
+					},
+					"response": []
+				},
+				{
 					"name": "Get all Submissions in different competition",
 					"event": [
 						{
@@ -5486,7 +5536,7 @@
 					"response": []
 				},
 				{
-					"name": "Give a response",
+					"name": "Give a response with improved score",
 					"event": [
 						{
 							"listen": "test",
@@ -5508,7 +5558,49 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"testResult\": \"{     \\\"circleStatus\\\": [true, false, true],     \\\"areaCovered\\\": 4200.2 }\",\n  \"score\": 0\n}"
+							"raw": "{\n    \"testResult\": \"{     \\\"circleStatus\\\": [true, false, true],     \\\"areaCovered\\\": 4200.2 }\",\n    \"score\": 1,\n    \"canSubmit\": true\n}"
+						},
+						"url": {
+							"raw": "{{url}}/Cmps/1/Teams/1/Sbms/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Cmps",
+								"1",
+								"Teams",
+								"1",
+								"Sbms",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Give a response Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"checkStatus(pm, 200);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \n}"
 						},
 						"url": {
 							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/{{TeamAId}}/Sbms/1",
@@ -6506,6 +6598,66 @@
 							""
 						]
 					}
+				}
+			]
+		},
+		{
+			"name": "Delete Server",
+			"item": [
+				{
+					"name": "Admin Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"checkLogin(pm);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"email\": \"admin@softwareinventions.com\", \"password\": \"password\"}"
+						},
+						"url": {
+							"raw": "{{url}}/Ssns",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Ssns"
+							]
+						},
+						"description": "Good Login\n"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Server",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/Server",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Server"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		}
