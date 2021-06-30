@@ -125,9 +125,6 @@ var addDebugRoutes = app => {
             '", NOW(), 1);', cb);
       });
 
-      // Callback to reinsert Bounce CompetitionType TEST
-
-
       // Callback to reinsert Land Grab CompetitionType
       cbs.push(function (cb) {
 

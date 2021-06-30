@@ -118,9 +118,9 @@ Example Parameter
    ] ,
      "barriers": []
 }
+
+
 Submission Schema:
-
-
 {
    "$schema": "http://json-schema.org/draft-07/schema#",
     
@@ -142,7 +142,6 @@ Submission Schema:
 }
 
 Example Submission
-
 [
   {
     "speed": 50.0
@@ -156,7 +155,6 @@ Example Submission
 ]
 
 Response schema
-
 {
    "$schema": "http://json-schema.org/draft-07/schema#",
     
@@ -218,7 +216,6 @@ Response schema
 }
 
 Example Response:
-
 {
    "obstaclesHit": 3,
    "ballMap": [
@@ -257,6 +254,5 @@ Example Response:
    ] 
 }
 
-testing prms, submissions and response
 
 
