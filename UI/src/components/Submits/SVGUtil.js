@@ -2,7 +2,7 @@
 
 export class SVGUtil{
     
-
+// CAS: poor name.  Seems that this draws a graph background.  getGraphGrid?
     static getbkgElms(movie) { //no need for bkgElms because it starts as empty
         let bkgElms = []; 
         let width = movie.background.width;
