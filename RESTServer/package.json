@@ -12,10 +12,12 @@
     "mysql": "^2.11.1"
   },
   "devDependencies": {
+    "chai": "^4.3.4",
+    "mocha": "^9.0.1",
     "nyc": "^15.1.0"
   },
   "scripts": {
-    "test": "node main.js",
+    "test": "mocha",
     "start": "node main.js"
   },
   "author": [
