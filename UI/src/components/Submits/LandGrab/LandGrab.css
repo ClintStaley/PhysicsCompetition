@@ -14,10 +14,20 @@
    stroke-width:.1;
 }
 
+.lightLine {
+   stroke: #E0E0E0;
+   stroke-width: .01;
+}
+
+.heavyLine {
+   stroke:#C8C8C8;
+   stroke-width: .02;
+}
+
 .obstacle {
    stroke: black;
-   stroke-width:.2;
-   fill:#A0A0FF;
+   stroke-width:.02;
+   fill:#a0a0ffc0;
 }
 
 .goodCircle {

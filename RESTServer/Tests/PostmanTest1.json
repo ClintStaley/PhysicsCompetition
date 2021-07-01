@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "ae86e874-4625-4843-b6bf-cf526db472a9",
+		"_postman_id": "21d28879-2be5-498e-8510-e2219ec1caf1",
 		"name": "PhysicsCompetitionREST Test",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -3220,8 +3220,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"checkStatus(pm, 200);\r",
-									""
+									"checkAndSavePost(pm, \"TeamAId\");"
 								],
 								"type": "text/javascript"
 							}
@@ -3240,13 +3239,89 @@
 							"raw": "{\n  \"teamName\": \"Team A\",\n  \"leaderId\": \"1\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/1/Teams",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"1",
+								"{{LandGrabAId}}",
+								"Teams"
+							]
+						},
+						"description": "\n"
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Team A",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"checkStatus(pm, 200);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/{{TeamAId}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Cmps",
+								"{{LandGrabAId}}",
+								"Teams",
+								"{{TeamAId}}"
+							]
+						},
+						"description": "\n"
+					},
+					"response": []
+				},
+				{
+					"name": "Register Team A again",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"checkAndSavePost(pm, \"TeamAId\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"teamName\": \"Team A\",\n  \"leaderId\": \"1\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Cmps",
+								"{{LandGrabAId}}",
 								"Teams"
 							]
 						},
@@ -3261,7 +3336,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"checkStatus(pm, 200);"
+									"checkAndSavePost(pm, \"TeamBId\");"
 								],
 								"type": "text/javascript"
 							}
@@ -3280,13 +3355,13 @@
 							"raw": "{\n  \"teamName\": \"Team B\",\n  \"leaderId\": \"1\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/1/Teams",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"1",
+								"{{LandGrabAId}}",
 								"Teams"
 							]
 						},
@@ -3295,7 +3370,83 @@
 					"response": []
 				},
 				{
-					"name": "Register Team B Again",
+					"name": "Remove Team A again while otherTeam present",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"checkStatus(pm, 200);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/{{TeamAId}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Cmps",
+								"{{LandGrabAId}}",
+								"Teams",
+								"{{TeamAId}}"
+							]
+						},
+						"description": "\n"
+					},
+					"response": []
+				},
+				{
+					"name": "Register Team A again",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"checkAndSavePost(pm, \"TeamAId\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"teamName\": \"Team A\",\n  \"leaderId\": \"1\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Cmps",
+								"{{LandGrabAId}}",
+								"Teams"
+							]
+						},
+						"description": "\n"
+					},
+					"response": []
+				},
+				{
+					"name": "Register Team A Again",
 					"event": [
 						{
 							"listen": "test",
@@ -3320,13 +3471,13 @@
 							"raw": "{\n  \"teamName\": \"Team B\",\n  \"leaderId\": \"1\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/1/Teams",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"1",
+								"{{LandGrabAId}}",
 								"Teams"
 							]
 						},
@@ -3341,7 +3492,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"checkStatus(pm, 200);"
+									"checkAndSavePost(pm, \"TeamCId\");"
 								],
 								"type": "text/javascript"
 							}
@@ -3360,13 +3511,13 @@
 							"raw": "{\n  \"teamName\": \"Team C\",\n  \"leaderId\": \"1\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/3/Teams",
+							"raw": "{{url}}/Cmps/{{LandGrabBId}}/Teams",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"3",
+								"{{LandGrabBId}}",
 								"Teams"
 							]
 						},
@@ -3391,7 +3542,7 @@
 									"",
 									"pm.test('Expected Content', ()=>{",
 									"    var cpt = jsonBody[0];",
-									"    pm.expect(cpt.teamName).to.eql(\"Team A\")",
+									"    pm.expect(cpt.teamName).to.eql(\"Team B\")",
 									"})",
 									""
 								],
@@ -3408,13 +3559,13 @@
 							}
 						],
 						"url": {
-							"raw": "{{url}}/Cmps/1/Teams",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"1",
+								"{{LandGrabAId}}",
 								"Teams"
 							]
 						},
@@ -3428,10 +3579,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"checkStatus(pm, 200);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -3448,15 +3599,15 @@
 							"raw": "{\n  \"teamName\": \"Team 2\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/1/Teams/2",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/{{TeamBId}}",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"1",
+								"{{LandGrabAId}}",
 								"Teams",
-								"2"
+								"{{TeamBId}}"
 							]
 						}
 					},
@@ -3488,15 +3639,15 @@
 							"raw": "{\n  \"teamName\": \"Team 1\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/3/Teams/2",
+							"raw": "{{url}}/Cmps/{{LandGrabBId}}/Teams/{{TeamBId}}",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"3",
+								"{{LandGrabBId}}",
 								"Teams",
-								"2"
+								"{{TeamBId}}"
 							]
 						}
 					},
@@ -3529,7 +3680,7 @@
 							"raw": "{\n  \"leaderId\": \"4\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/1/Teams/2",
+							"raw": "{{url}}/Cmps/1/Teams/{{TeamBId}}",
 							"host": [
 								"{{url}}"
 							],
@@ -3537,7 +3688,7 @@
 								"Cmps",
 								"1",
 								"Teams",
-								"2"
+								"{{TeamBId}}"
 							]
 						}
 					},
@@ -3549,10 +3700,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"checkStatus(pm, 200);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -3564,15 +3715,15 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/1/Teams/2",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/{{TeamBId}}",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"1",
+								"{{LandGrabAId}}",
 								"Teams",
-								"2"
+								"{{TeamBId}}"
 							]
 						},
 						"description": "\n"
@@ -3608,13 +3759,13 @@
 							}
 						],
 						"url": {
-							"raw": "{{url}}/Cmps/1",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"1"
+								"{{LandGrabAId}}"
 							]
 						},
 						"description": "Get Info on Admin\n"
@@ -3735,15 +3886,15 @@
 					"response": []
 				},
 				{
-					"name": "Register Team C",
+					"name": "Register Team 3",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"checkStatus(pm, 200);"
-								]
+									"checkAndSavePost(pm, \"Team3Id\")"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -3760,13 +3911,13 @@
 							"raw": "{\n  \"teamName\": \"Team C\",\n  \"leaderId\": \"4\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/1/Teams",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"1",
+								"{{LandGrabAId}}",
 								"Teams"
 							]
 						},
@@ -3805,13 +3956,13 @@
 							}
 						],
 						"url": {
-							"raw": "{{url}}/Cmps/1/Teams",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"1",
+								"{{LandGrabAId}}",
 								"Teams"
 							]
 						},
@@ -3820,15 +3971,15 @@
 					"response": []
 				},
 				{
-					"name": "Edit Team C",
+					"name": "Edit Team 3",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"checkStatus(pm, 200);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -3845,15 +3996,15 @@
 							"raw": "{\n  \"teamName\": \"Team 3\",\n  \"leaderId\": \"4\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/1/Teams/4",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/{{Team3Id}}",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"1",
+								"{{LandGrabAId}}",
 								"Teams",
-								"4"
+								"{{Team3Id}}"
 							]
 						}
 					},
@@ -3890,15 +4041,15 @@
 							}
 						],
 						"url": {
-							"raw": "{{url}}/Cmps/1/teams/1",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/teams/{{TeamAId}}",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"1",
+								"{{LandGrabAId}}",
 								"teams",
-								"1"
+								"{{TeamAId}}"
 							]
 						},
 						"description": "Get Info on Admin\n"
@@ -3906,15 +4057,15 @@
 					"response": []
 				},
 				{
-					"name": "Remove Team C",
+					"name": "Remove Team 3",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"checkStatus(pm, 200);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -3926,15 +4077,15 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/1/Teams/4",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/{{Team3Id}}",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"1",
+								"{{LandGrabAId}}",
 								"Teams",
-								"4"
+								"{{Team3Id}}"
 							]
 						},
 						"description": "\n"
@@ -3962,15 +4113,15 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/1/Teams/1",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/{{TeamAId}}",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"1",
+								"{{LandGrabAId}}",
 								"Teams",
-								"1"
+								"{{TeamAId}}"
 							]
 						},
 						"description": "\n"
@@ -3983,10 +4134,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
-									"checkStatus(pm, 200);"
-								]
+									"checkAndSavePost(pm, \"TeamDId\");"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -4003,13 +4154,13 @@
 							"raw": "{\n  \"teamName\": \"Team D\",\n  \"leaderId\": \"4\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/1/Teams",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"1",
+								"{{LandGrabAId}}",
 								"Teams"
 							]
 						},
@@ -4140,7 +4291,7 @@
 							"raw": "{\n  \"prsId\": 1\n}"
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/5/Mmbs",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/{{TeamDId}}/Mmbs",
 							"host": [
 								"{{url}}"
 							],
@@ -4148,7 +4299,7 @@
 								"Cmps",
 								"{{LandGrabAId}}",
 								"Teams",
-								"5",
+								"{{TeamDId}}",
 								"Mmbs"
 							]
 						},
@@ -4182,7 +4333,7 @@
 							"raw": "{\n  \"prsId\": 1\n}"
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/1/Mmbs",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/{{TeamAId}}/Mmbs",
 							"host": [
 								"{{url}}"
 							],
@@ -4190,7 +4341,7 @@
 								"Cmps",
 								"{{LandGrabAId}}",
 								"Teams",
-								"1",
+								"{{TeamAId}}",
 								"Mmbs"
 							]
 						},
@@ -4224,7 +4375,7 @@
 							"raw": "{\n  \"prsId\": 3\n}"
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/3/Mmbs",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/{{TeamCId}}/Mmbs",
 							"host": [
 								"{{url}}"
 							],
@@ -4232,7 +4383,7 @@
 								"Cmps",
 								"{{LandGrabAId}}",
 								"Teams",
-								"3",
+								"{{TeamCId}}",
 								"Mmbs"
 							]
 						},
@@ -4266,7 +4417,7 @@
 							"raw": "{\n  \"prsId\": 4\n}"
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/3/Mmbs",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/{{TeamCId}}/Mmbs",
 							"host": [
 								"{{url}}"
 							],
@@ -4274,7 +4425,7 @@
 								"Cmps",
 								"{{LandGrabAId}}",
 								"Teams",
-								"3",
+								"{{TeamCId}}",
 								"Mmbs"
 							]
 						},
@@ -4309,7 +4460,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/1/Mmbs",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/{{TeamAId}}/Mmbs",
 							"host": [
 								"{{url}}"
 							],
@@ -4317,7 +4468,7 @@
 								"Cmps",
 								"{{LandGrabAId}}",
 								"Teams",
-								"1",
+								"{{TeamAId}}",
 								"Mmbs"
 							]
 						},
@@ -4326,7 +4477,7 @@
 					"response": []
 				},
 				{
-					"name": "Get all Members of Team 3",
+					"name": "Get all Members of Team C",
 					"event": [
 						{
 							"listen": "test",
@@ -4352,7 +4503,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/3/Mmbs",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/{{TeamCId}}/Mmbs",
 							"host": [
 								"{{url}}"
 							],
@@ -4360,7 +4511,7 @@
 								"Cmps",
 								"{{LandGrabAId}}",
 								"Teams",
-								"3",
+								"{{TeamCId}}",
 								"Mmbs"
 							]
 						},
@@ -4389,7 +4540,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/1/Mmbs/1",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/{{TeamAId}}/Mmbs/1",
 							"host": [
 								"{{url}}"
 							],
@@ -4397,7 +4548,7 @@
 								"Cmps",
 								"{{LandGrabAId}}",
 								"Teams",
-								"1",
+								"{{TeamAId}}",
 								"Mmbs",
 								"1"
 							]
@@ -4504,7 +4655,7 @@
 							"raw": "{\n  \"prsId\": 4\n}"
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/1/Mmbs",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/{{TeamAId}}/Mmbs",
 							"host": [
 								"{{url}}"
 							],
@@ -4512,7 +4663,7 @@
 								"Cmps",
 								"{{LandGrabAId}}",
 								"Teams",
-								"1",
+								"{{TeamAId}}",
 								"Mmbs"
 							]
 						},
@@ -4521,7 +4672,7 @@
 					"response": []
 				},
 				{
-					"name": "Get all Members of Team 1",
+					"name": "Get all Members of Team A",
 					"event": [
 						{
 							"listen": "test",
@@ -4546,7 +4697,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/1/Mmbs",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/{{TeamAId}}/Mmbs",
 							"host": [
 								"{{url}}"
 							],
@@ -4554,7 +4705,7 @@
 								"Cmps",
 								"{{LandGrabAId}}",
 								"Teams",
-								"1",
+								"{{TeamAId}}",
 								"Mmbs"
 							]
 						},
@@ -4588,7 +4739,7 @@
 							"raw": "{\n  \"prsId\": 3\n}"
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/1/Mmbs",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/{{TeamAId}}/Mmbs",
 							"host": [
 								"{{url}}"
 							],
@@ -4596,7 +4747,7 @@
 								"Cmps",
 								"{{LandGrabAId}}",
 								"Teams",
-								"1",
+								"{{TeamAId}}",
 								"Mmbs"
 							]
 						},
@@ -4630,7 +4781,7 @@
 							"raw": "{\n  \"prsId\": 3\n}"
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/5/Mmbs",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/{{TeamDId}}/Mmbs",
 							"host": [
 								"{{url}}"
 							],
@@ -4638,7 +4789,7 @@
 								"Cmps",
 								"{{LandGrabAId}}",
 								"Teams",
-								"5",
+								"{{TeamDId}}",
 								"Mmbs"
 							]
 						},
@@ -4667,7 +4818,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/5/Mmbs/3",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/{{TeamDId}}/Mmbs/3",
 							"host": [
 								"{{url}}"
 							],
@@ -4675,7 +4826,7 @@
 								"Cmps",
 								"{{LandGrabAId}}",
 								"Teams",
-								"5",
+								"{{TeamDId}}",
 								"Mmbs",
 								"3"
 							]
@@ -4706,7 +4857,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/1/Mmbs/1",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/{{TeamAId}}/Mmbs/1",
 							"host": [
 								"{{url}}"
 							],
@@ -4714,7 +4865,7 @@
 								"Cmps",
 								"{{LandGrabAId}}",
 								"Teams",
-								"1",
+								"{{TeamAId}}",
 								"Mmbs",
 								"1"
 							]
@@ -4749,7 +4900,7 @@
 							"raw": "{\n  \"leaderId\": \"1\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/5",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/{{TeamDId}}",
 							"host": [
 								"{{url}}"
 							],
@@ -4757,7 +4908,7 @@
 								"Cmps",
 								"{{LandGrabAId}}",
 								"Teams",
-								"5"
+								"{{TeamDId}}"
 							]
 						}
 					},
@@ -4905,10 +5056,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"checkStatus(pm, 200);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -4925,15 +5076,15 @@
 							"raw": "{\n  \"content\": \"[   {     \\\"centerX\\\": 50.0,     \\\"centerY\\\": 45.2,     \\\"radius\\\": 15.9   },   {     \\\"centerX\\\": 10.3,     \\\"centerY\\\": 42.0,     \\\"radius\\\": 11   },   {     \\\"centerX\\\": 23,     \\\"centerY\\\": 89,     \\\"radius\\\": 40   } ]\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/1/Teams/1/Sbms",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/{{TeamAId}}/Sbms",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"1",
+								"{{LandGrabAId}}",
 								"Teams",
-								"1",
+								"{{TeamAId}}",
 								"Sbms"
 							]
 						},
@@ -4947,10 +5098,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"checkStatus(pm, 200);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -4967,15 +5118,15 @@
 							"raw": "{\n  \"content\": \"[   {     \\\"centerX\\\": 50.0,     \\\"centerY\\\": 45.2,     \\\"radius\\\": 15.9   },   {     \\\"centerX\\\": 10.3,     \\\"centerY\\\": 42.0,     \\\"radius\\\": 11   },   {     \\\"centerX\\\": 23,     \\\"centerY\\\": 89,     \\\"radius\\\": 40   } ]\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/1/Teams/1/Sbms",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/{{TeamAId}}/Sbms",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"1",
+								"{{LandGrabAId}}",
 								"Teams",
-								"1",
+								"{{TeamAId}}",
 								"Sbms"
 							]
 						},
@@ -5009,15 +5160,15 @@
 							"raw": "{\n  \"content\": \"[   {     \\\"centerX\\\": 50.0,     \\\"centerY\\\": 45.2,     \\\"radius\\\": 15.9   },   {     \\\"centerX\\\": 10.3,     \\\"centerY\\\": 42.0,     \\\"radius\\\": 11   },   {     \\\"centerX\\\": 23,     \\\"centerY\\\": 89,     \\\"radius\\\": 40   } ]\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/3/Teams/1/Sbms",
+							"raw": "{{url}}/Cmps/{{LandGrabBId}}/Teams/{{TeamAId}}/Sbms",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"3",
+								"{{LandGrabBId}}",
 								"Teams",
-								"1",
+								"{{TeamAId}}",
 								"Sbms"
 							]
 						},
@@ -5051,15 +5202,15 @@
 							"raw": "{\n  \"content\": \"[   {     \\\"centerX\\\": 50.0,     \\\"centerY\\\": 45.2,     \\\"radius\\\": 15.9   },   {     \\\"centerX\\\": 10.3,     \\\"centerY\\\": 42.0,     \\\"radius\\\": 11   },   {     \\\"centerX\\\": 23,     \\\"centerY\\\": 89,     \\\"radius\\\": 40   } ]\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/3/Teams/3/Sbms",
+							"raw": "{{url}}/Cmps/{{LandGrabBId}}/Teams/{{TeamCId}}/Sbms",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"3",
+								"{{LandGrabBId}}",
 								"Teams",
-								"3",
+								"{{TeamCId}}",
 								"Sbms"
 							]
 						},
@@ -5073,10 +5224,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"checkStatus(pm, 200);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -5093,15 +5244,15 @@
 							"raw": "{\n  \"content\": \"[   {     \\\"centerX\\\": 50.0,     \\\"centerY\\\": 45.2,     \\\"radius\\\": 15.9   },   {     \\\"centerX\\\": 10.3,     \\\"centerY\\\": 42.0,     \\\"radius\\\": 11   },   {     \\\"centerX\\\": 23,     \\\"centerY\\\": 89,     \\\"radius\\\": 40   } ]\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/1/Teams/5/Sbms",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/{{TeamDId}}/Sbms",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"1",
+								"{{LandGrabAId}}",
 								"Teams",
-								"5",
+								"{{TeamDId}}",
 								"Sbms"
 							]
 						},
@@ -5137,7 +5288,51 @@
 							}
 						],
 						"url": {
-							"raw": "{{url}}/Cmps/1/Teams/1/Sbms",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/{{TeamAId}}/Sbms",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Cmps",
+								"{{LandGrabAId}}",
+								"Teams",
+								"{{TeamAId}}",
+								"Sbms"
+							]
+						},
+						"description": "Get Info on Admin\n"
+					},
+					"response": []
+				},
+				{
+					"name": "Get all Submissions limit to 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonBody = pm.response.json();",
+									"",
+									"checkStatus(pm, 200);",
+									"",
+									"pm.test('One Submissions', ()=>{",
+									"    pm.expect(jsonBody.length).to.eql(1);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/Cmps/1/Teams/1/Sbms?num=1",
 							"host": [
 								"{{url}}"
 							],
@@ -5147,6 +5342,12 @@
 								"Teams",
 								"1",
 								"Sbms"
+							],
+							"query": [
+								{
+									"key": "num",
+									"value": "1"
+								}
 							]
 						},
 						"description": "Get Info on Admin\n"
@@ -5181,15 +5382,15 @@
 							}
 						],
 						"url": {
-							"raw": "{{url}}/Cmps/3/Teams/3/Sbms",
+							"raw": "{{url}}/Cmps/{{LandGrabBId}}/Teams/{{TeamCId}}/Sbms",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"3",
+								"{{LandGrabBId}}",
 								"Teams",
-								"3",
+								"{{TeamCId}}",
 								"Sbms"
 							]
 						},
@@ -5226,13 +5427,13 @@
 							}
 						],
 						"url": {
-							"raw": "{{url}}/Cmps/1/WaitingSbms",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/WaitingSbms",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"1",
+								"{{LandGrabAId}}",
 								"WaitingSbms"
 							]
 						},
@@ -5268,13 +5469,13 @@
 							}
 						],
 						"url": {
-							"raw": "{{url}}/Cmps/1/WaitingSbms?num=2",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/WaitingSbms?num=2",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"1",
+								"{{LandGrabAId}}",
 								"WaitingSbms"
 							],
 							"query": [
@@ -5317,15 +5518,15 @@
 							}
 						],
 						"url": {
-							"raw": "{{url}}/Cmps/1/Teams/1/Sbms/1",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/{{TeamAId}}/Sbms/1",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"1",
+								"{{LandGrabAId}}",
 								"Teams",
-								"1",
+								"{{TeamAId}}",
 								"Sbms",
 								"1"
 							]
@@ -5335,7 +5536,7 @@
 					"response": []
 				},
 				{
-					"name": "Give a response",
+					"name": "Give a response with improved score",
 					"event": [
 						{
 							"listen": "test",
@@ -5357,7 +5558,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"testResult\": \"{     \\\"circleStatus\\\": [true, false, true],     \\\"areaCovered\\\": 4200.2 }\",\n  \"score\": 0\n}"
+							"raw": "{\n    \"testResult\": \"{     \\\"circleStatus\\\": [true, false, true],     \\\"areaCovered\\\": 4200.2 }\",\n    \"score\": 1,\n    \"canSubmit\": true\n}"
 						},
 						"url": {
 							"raw": "{{url}}/Cmps/1/Teams/1/Sbms/1",
@@ -5369,6 +5570,48 @@
 								"1",
 								"Teams",
 								"1",
+								"Sbms",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Give a response Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"checkStatus(pm, 200);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \n}"
+						},
+						"url": {
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/{{TeamAId}}/Sbms/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Cmps",
+								"{{LandGrabAId}}",
+								"Teams",
+								"{{TeamAId}}",
 								"Sbms",
 								"1"
 							]
@@ -5454,10 +5697,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"checkStatus(pm, 200);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -5474,15 +5717,15 @@
 							"raw": "{\n  \"content\": \"[   {     \\\"centerX\\\": 50.0,     \\\"centerY\\\": 45.2,     \\\"radius\\\": 15.9   },   {     \\\"centerX\\\": 10.3,     \\\"centerY\\\": 42.0,     \\\"radius\\\": 11   },   {     \\\"centerX\\\": 23,     \\\"centerY\\\": 89,     \\\"radius\\\": 40   } ]\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/1/Teams/1/Sbms",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/{{TeamAId}}/Sbms",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"1",
+								"{{LandGrabAId}}",
 								"Teams",
-								"1",
+								"{{TeamAId}}",
 								"Sbms"
 							]
 						},
@@ -5518,15 +5761,15 @@
 							}
 						],
 						"url": {
-							"raw": "{{url}}/Cmps/1/Teams/1/Sbms",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/{{TeamAId}}/Sbms",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"1",
+								"{{LandGrabAId}}",
 								"Teams",
-								"1",
+								"{{TeamAId}}",
 								"Sbms"
 							]
 						},
@@ -6020,7 +6263,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"checkStatus(pm, 200);"
+									"checkAndSavePost(pm, \"BounceAId\");"
 								],
 								"type": "text/javascript"
 							}
@@ -6058,7 +6301,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"checkStatus(pm, 200);"
+									"checkAndSavePost(pm, \"BounceTeamId\");"
 								],
 								"type": "text/javascript"
 							}
@@ -6077,13 +6320,13 @@
 							"raw": "{\n  \"teamName\": \"Bounce Test Team\",\n  \"leaderId\": \"1\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/6/Teams",
+							"raw": "{{url}}/Cmps/{{BounceAId}}/Teams",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"6",
+								"{{BounceAId}}",
 								"Teams"
 							]
 						},
@@ -6117,15 +6360,15 @@
 							"raw": "{\n  \"content\": \"[  { \\\"speed\\\": 1.6  },  { \\\"speed\\\": 1.3  },  {  \\\"speed\\\": 2  }, { \\\"speed\\\": 10.0  }] \"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/6/Teams/7/Sbms",
+							"raw": "{{url}}/Cmps/{{BounceAId}}/Teams/{{BounceTeamId}}/Sbms",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"6",
+								"{{BounceAId}}",
 								"Teams",
-								"7",
+								"{{BounceTeamId}}",
 								"Sbms"
 							]
 						},
@@ -6159,15 +6402,15 @@
 							"raw": "{\n  \"content\": \"[  { \\\"speed\\\": 0.0  },  {  \\\"speed\\\": 100.0 }] \"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/6/Teams/7/Sbms",
+							"raw": "{{url}}/Cmps/{{BounceAId}}/Teams/{{BounceTeamId}}/Sbms",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"6",
+								"{{BounceAId}}",
 								"Teams",
-								"7",
+								"{{BounceTeamId}}",
 								"Sbms"
 							]
 						},
@@ -6201,15 +6444,15 @@
 							"raw": "{\n  \"content\": \"[  { \\\"speed\\\": 1.6 },  { \\\"speed\\\": 1.8  } ] \"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/6/Teams/7/Sbms",
+							"raw": "{{url}}/Cmps/{{BounceAId}}/Teams/{{BounceTeamId}}/Sbms",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"6",
+								"{{BounceAId}}",
 								"Teams",
-								"7",
+								"{{BounceTeamId}}",
 								"Sbms"
 							]
 						},
@@ -6245,13 +6488,13 @@
 							}
 						],
 						"url": {
-							"raw": "{{url}}/Cmps/6/Teams",
+							"raw": "{{url}}/Cmps/{{BounceAId}}/Teams",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"6",
+								"{{BounceAId}}",
 								"Teams"
 							]
 						},
@@ -6287,15 +6530,15 @@
 							}
 						],
 						"url": {
-							"raw": "{{url}}/Cmps/6/Teams/7/Sbms",
+							"raw": "{{url}}/Cmps/{{BounceAId}}/Teams/{{BounceTeamId}}/Sbms",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"6",
+								"{{BounceAId}}",
 								"Teams",
-								"7",
+								"{{BounceTeamId}}",
 								"Sbms"
 							]
 						},
@@ -6355,6 +6598,66 @@
 							""
 						]
 					}
+				}
+			]
+		},
+		{
+			"name": "Delete Server",
+			"item": [
+				{
+					"name": "Admin Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"checkLogin(pm);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"email\": \"admin@softwareinventions.com\", \"password\": \"password\"}"
+						},
+						"url": {
+							"raw": "{{url}}/Ssns",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Ssns"
+							]
+						},
+						"description": "Good Login\n"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Server",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/Server",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Server"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		}
@@ -6487,6 +6790,31 @@
 			"value": ""
 		},
 		{
+			"key": "TeamAId",
+			"value": ""
+		},
+		{
+			"key": "TeamBId",
+			"value": ""
+		},
+		{
+			"key": "TeamCId",
+			"value": ""
+		},
+		{
+			"key": "Team3Id",
+			"value": ""
+		},
+		{
+			"key": "TeamDId",
+			"value": ""
+		},
+		{
+			"key": "BounceAId",
+			"value": ""
+		},
+		{
+			"key": "BounceTeamId",
 			"value": ""
 		}
 	]

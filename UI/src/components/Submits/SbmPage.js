@@ -143,7 +143,6 @@ export default class SbmPage extends Component {
           submitFn={this.state.sbmFunction}/>);
       }*/
 
-        console.log(sbmDialog);
       return (<div className="container">
         <h1>{cmp.title}</h1>
         <br/>

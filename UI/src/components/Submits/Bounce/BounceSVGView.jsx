@@ -16,7 +16,18 @@ export class BounceSVGView extends React.Component {
       super(props);
 
       this.state = BounceSVGView.setOffset(
-       SVGUtil.getInitState(props.movie), props.offset);
+       BounceSVGView.getInitState(props.movie), props.offset);
+   }
+
+   static getInitState(movie){
+      var bkgElms = SVGUtil.getbkgElms(movie); //gets background and graph lines
+      return {
+         trgEvts: [],      // Target creation events (each w/index into svgElms)
+         ballEvt: null,    // Most recent ball position or hit event
+         evtIdx: -1,       // Index within movie of last event shown in svgElms
+         svgElms: bkgElms, // SVG elements to render at this point
+         movie             // Pointer to current movie
+      }
    }
 
 
@@ -29,7 +40,7 @@ export class BounceSVGView extends React.Component {
       let rtn = oldState;
 
       if (newProps.movie !== oldState.movie) // Complete reset
-         rtn = SVGUtil.getInitState(newProps.movie);
+         rtn = BounceSVGView.getInitState(newProps.movie);
       return BounceSVGView.setOffset(rtn, newProps.offset);
    }
 
@@ -116,7 +127,6 @@ export class BounceSVGView extends React.Component {
       let width = this.state.movie.background.width;
       let height = this.state.movie.background.height;
 
-      // console.log("Rendering at ", this.props.offset, this.state.svgElms);
       return  ( 
          <svg viewBox={`-.1 -.1 ${width + .1} ${height + .1}`} width="100%"
           className="panel">

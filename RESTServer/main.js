@@ -11,6 +11,8 @@ var CnnPool = require('./Routes/CnnPool.js');
 var async = require('async');
 var schemas = require('./schemas.json');
 
+let server;  // Global server object
+
 var configApp = (port, corsDomain, testFlag) => {
    var app = express();
 
@@ -83,6 +85,9 @@ var configApp = (port, corsDomain, testFlag) => {
 }
 
 var addDebugRoutes = app => {
+   console.log('Settng test routes');
+   app.delete('/Server', function(req, res) {process.exit(0);});
+
    // Debugging tool. Clear all table contents, reset all auto_increment
    // keys to 1, and reinsert one admin user.
    app.delete('/DB', function (req, res) {
@@ -119,9 +124,6 @@ var addDebugRoutes = app => {
             require("crypto").createHash('sha1').update("password").digest('hex') +
             '", NOW(), 1);', cb);
       });
-
-      // Callback to reinsert Bounce CompetitionType TEST
-
 
       // Callback to reinsert Land Grab CompetitionType
       cbs.push(function (cb) {
@@ -203,7 +205,7 @@ var addDebugRoutes = app => {
    }
    app = configApp(httpPort, corsDomain, process.argv.indexOf('-test') !== -1);
 
-   http.createServer(app)
+   server = http.createServer(app)
     .listen(httpPort, () => console.log(`Http listening on ${httpPort}`));
 
    // If not HttpOnly
@@ -218,7 +220,7 @@ var addDebugRoutes = app => {
          httpsPort = parseInt(argv[portFlag + 2]);
 
 
-      https.createServer(certOptions, app)
+      server = https.createServer(certOptions, app)
        .listen(httpsPort, () => console.log(`Https listening on ${httpsPort}`));
    }
 })(process.argv);
