@@ -16,6 +16,7 @@ export class LandGrabMovie {
         //declare constants
         const bkgSize = 100.0;
         const validationPause = .25;
+
         let circlesResults = sbm.testResult.circleData;
         let circleContent = sbm.content;
         this.background = {};
@@ -34,17 +35,17 @@ export class LandGrabMovie {
 
             // Get total growth time (based on radius length) and
             // valid growth time for when the circle may turn red
-            var growthTime = circle.radius * (2/25);
+            var growthTime = circle.radius * (2/25);  // CAS: No magic numbers
             var validGrowthTime = growthTime;
             if (circleResult.badRadius)
                 validGrowthTime = growthTime * (circleResult.badRadius/circle.radius); 
-            
 
+            // Grow steadily from center as valid circle.
             for (let t = 0; t < validGrowthTime; t += 1.0/frameRate)
                 this.addCircleGrowthEvt(time + t, circleId, circle.centerX,
-                 circle.centerY, circle.radius*(t/growthTime));
+                 circle.centerY, circle.radius*(t/growthTime));            
             
-            
+            // Finish growth to full size as invalid circle if relevant
             for(let t = validGrowthTime; t < growthTime; t += 1.0/frameRate)
                 this.addInvalidCircleGrowthEvt(time + t, circleId, circle.centerX, 
                  circle.centerY, circle.radius*(t/growthTime));
@@ -59,8 +60,6 @@ export class LandGrabMovie {
                 
             time += validationPause;
         });
-
-        
     }
 
     addCircleGrowthEvt(time, circleNumber, x, y, r){
@@ -82,6 +81,4 @@ export class LandGrabMovie {
         this.evts.push(
          {type: circleType, time, id, x, y, r});
     }
-
-    
 }
