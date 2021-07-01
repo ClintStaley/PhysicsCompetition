@@ -36,7 +36,7 @@ public class LandGrabEvaluator implements Evaluator {
       public int hiY;
    }
 
-   static class LandGrabTR {
+   static class LandGrabTR {  // CAS: TR?? Test result? 
       public CircleTR[] circleData;
       public double areaCovered;
    }
@@ -56,7 +56,7 @@ public class LandGrabEvaluator implements Evaluator {
    }
 
    static class Collision {
-      public Collision(int i, double r){
+      public Collision(int i, double r) {
          this.cId = i;
          this.radius = r;
       }
@@ -80,12 +80,19 @@ public class LandGrabEvaluator implements Evaluator {
    // Evaluate a single submission
    @Override
    public EvlPut evaluate(Submit sbm) throws Exception {
-      LandGrabTR rspLG = new LandGrabTR();
+      // CAS: TR or rsp?  Should not be both. Voting for Rsp, e.g. 
+      // LandGrabRsp.  (And, you know that Eclipse lets you change variable 
+      // names easily, right?)
+      LandGrabTR rspLG = new LandGrabTR();  
       SbmCircle[] sbmCircles = mapper.readValue(sbm.content, SbmCircle[].class);
       
+      // CAS: one-space continuation indent, right?
+      // And, "LG" suffix is needless and extra space.  Obviously we're in the
+      // middle of a LandGrab evaluator.
       rspLG.circleData = new CircleTR[Math.min(sbmCircles.length,
             prms.numCircles)];
       
+      // CAS FIX: 80-col line limit.  (Set up a gutter mark!)
       for (int i = 0; i < rspLG.circleData.length; i++) {
          rspLG.circleData[i] = evaluateCircle(sbmCircles, i, rspLG.circleData); //return new circleTR for each sbmCircle
       }
@@ -98,7 +105,7 @@ public class LandGrabEvaluator implements Evaluator {
       return eval;
    }
 
-
+   // CAS FIX: Blank line between block of declarations and rest of code
    private CircleTR evaluateCircle(SbmCircle[] circles, int i, CircleTR[] circleData) {
       SbmCircle circle = circles[i]; 
       //setting CircleTR props
@@ -111,6 +118,7 @@ public class LandGrabEvaluator implements Evaluator {
       
       ctr.badRadius = findBadRadius(ctr);
       
+      //CAS: set PastCirclesAllCircles?
       setPastCirclesAllCircles(circleData, i, ctr);
       return ctr;
    }
@@ -125,7 +133,7 @@ public class LandGrabEvaluator implements Evaluator {
          temp = temp < ctr.collisions.pastCircles[i].radius ? temp : ctr.collisions.pastCircles[i].radius;
       }
       
-      if(temp == 51)
+      if(temp == 51)  // CAS FIX:  Magic number ??
          return badRadius; 
       
       if(badRadius == null)
@@ -148,23 +156,24 @@ public class LandGrabEvaluator implements Evaluator {
          double d = Double.POSITIVE_INFINITY;
          double tempDist;
          
-         //Check for start in obstacle
+         //Check for center of circle in obstacle
          if(GenUtil.inBounds(obs.loX + EPS, circle.centerX, obs.hiX - EPS) 
-         && GenUtil.inBounds(obs.loY + EPS, circle.centerY, obs.hiY - EPS)){
-            d = 1;
+          && GenUtil.inBounds(obs.loY + EPS, circle.centerY, obs.hiY - EPS)){
+            d = 1;  // CAS: Why not 0 or EPS?
          }
          
          // Overlap with horizontal sides
          else if (GenUtil.inBounds(obs.loX + EPS, circle.centerX, obs.hiX - EPS) 
-           && GenUtil.inBounds(obs.loY - circle.radius - EPS, circle.centerY,
-           obs.hiY + circle.radius + EPS)){
+          && GenUtil.inBounds(obs.loY - circle.radius - EPS, circle.centerY,
+          obs.hiY + circle.radius + EPS)){
             tempDist = Point2D.distance(circle.centerX, circle.centerY, obs.loX, circle.centerY);
             d = d < tempDist ? d : tempDist;
             tempDist = Point2D.distance(circle.centerX, circle.centerY, obs.hiX, circle.centerY);
             d = d < tempDist ? d : tempDist;
-               }
+         }
          
          // Overlap with vertical sides
+         // CAS FIX: indentation
          else if (GenUtil.inBounds(obs.loY + EPS, circle.centerY, obs.hiY - EPS)
                && GenUtil.inBounds(obs.loX - circle.radius - EPS, circle.centerX,
                obs.hiX + circle.radius - EPS)){
@@ -191,8 +200,8 @@ public class LandGrabEvaluator implements Evaluator {
             tempCollisions.add(new Collision(idx, d));
          }
       }
-   
-      
+       
+      // CAS Fix: space after keywords: for (...)
       Collision[] c = new Collision[tempCollisions.size()];
       for(int x = 0; x < tempCollisions.size(); x++){
          c[x] = tempCollisions.get(x);
@@ -211,10 +220,10 @@ public class LandGrabEvaluator implements Evaluator {
          if (d < circle.radius - EPS)
             tempCollisions.add(new Collision(idx, d));
       }
-      Collision[] c = {};
+      Collision[] c = {};  
       c = tempCollisions.toArray(c);
-      return c;
-      
+
+      return c;  
    }
 
    // Return distance to boundary if within radius, otherwise return null
@@ -239,6 +248,7 @@ public class LandGrabEvaluator implements Evaluator {
       return GenUtil.sqr(c.radius) * Math.PI;
    }
 
+   // CAS: This one needs a brief comment in the header...
    private void setPastCirclesAllCircles(CircleTR[] circleData, int i, CircleTR ctr){
       Collision[] collisions = ctr.collisions.pastCircles;
       for(int j = 0; j < collisions.length; j++){
