@@ -100,10 +100,13 @@ class CmpsPage extends Component {
 const CompetitionItem = function (props) {
    return (
       <ListGroupItem className="clearfix">
-         <Link className='comp-item'to = {props.link} >{props.title}</Link>
-          {props.joined ? '(already joined)' : ''}
-
-          {props.joiningCmp ?
+         <div className='comp-item'>{props.title}</div>
+         {props.joined ? 
+            <div>(already joined)</div>
+            :
+            <Link to = {props.link} >{props.title}</Link>
+         }
+         {props.joiningCmp ?
           <div className="pull-right">
             <Link to = {props.link} >See Teams</Link>
           </div>
