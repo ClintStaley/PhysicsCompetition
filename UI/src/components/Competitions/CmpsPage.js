@@ -104,7 +104,7 @@ const CompetitionItem = function (props) {
          {props.joined ? 
             <div>(already joined)</div>
             :
-            <Link to = {props.link} >{props.title}</Link>
+            <Link to = {props.link} >Join this Competition</Link>
          }
          {props.joiningCmp ?
           <div className="pull-right">
