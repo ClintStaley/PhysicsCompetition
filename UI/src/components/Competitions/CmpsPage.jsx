@@ -68,11 +68,9 @@ class CmpsPage extends Component {
 
                 cmp.link = '/JoinCmpPage/' + cmp.id;
                 cmp.joiningCmp = props.showAll;
-                cmp.joined = props.prs.myCmps &&
-                 props.prs.myCmps.includes(parseInt(cmpId, 10));
+                cmp.joined = props.prs.myCmps.includes(parseInt(cmpId, 10));
 
-                return <CompetitionItem
-                  key={i} {...cmp}/>
+                return <CompetitionItem key={i} {...cmp}/>
               })}
            </div>
           :
@@ -90,7 +88,6 @@ class CmpsPage extends Component {
            </div>
            :
            <h4>You are not in any competitions, see Join Competitions to join one</h4>
-
        }
       </section>
       )
@@ -100,23 +97,19 @@ class CmpsPage extends Component {
 const CompetitionItem = function (props) {
    return (
       <ListGroupItem className="clearfix">
-         <div className='comp-item'>{props.title}</div>
-         {props.joined ? 
-            <div>(already joined)</div>
-            :
-            <Link to = {props.link} >Join this Competition</Link>
-         }
+         <div className='cmpItem'>{props.title}</div>
          {props.joiningCmp ?
-          <div className="pull-right">
-            <Link to = {props.link} >See Teams</Link>
-          </div>
-          : ''}
+            props.joined ? 
+               <div>(already joined)</div>
+               :
+               <Link to = {props.link} >Join this Competition</Link>
+            : 
+            <div>
+               <Link to = {props.link}>Competition Status</Link>
+            </div>
+         }
 
-          {props.joiningCmp ?
-          <div>
-           <div>{props.description}</div>
-         </div>
-         : ''}
+         <div>{props.description}</div>
       </ListGroupItem>
    )
 }

@@ -56,7 +56,6 @@ create table Team (
 
    constraint FKTeam_ownerId foreign key (leaderId) references
     Person(id) on delete cascade on update cascade
-
 );
 
 create table Submit
@@ -71,10 +70,10 @@ create table Submit
    score double,
    sbmTime datetime,
 
-     constraint FKSubmit_cmpId foreign key (cmpId) references
+   constraint FKSubmit_cmpId foreign key (cmpId) references
     Competition(id) on delete cascade on update cascade,
 
-      constraint FKSubmit_teamId foreign key (teamId) references
+   constraint FKSubmit_teamId foreign key (teamId) references
     Team(id) on delete cascade on update cascade
 );
 

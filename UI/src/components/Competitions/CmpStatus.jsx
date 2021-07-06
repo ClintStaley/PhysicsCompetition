@@ -113,7 +113,7 @@ export default class CmpPage extends Component {
 
         <div className = "cmpDescription">
           <div className = "instructionLink">
-            <a onClick = {this.openInstrictions}>
+            <a onClick = {this.openInstructions}>
               Full Instructions
             </a>
           </div>

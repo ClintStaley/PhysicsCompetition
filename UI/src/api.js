@@ -151,7 +151,7 @@ export function getCmps() {
    });
 }
 
-export function getCmpsByPerson(prsId) {
+export function getCmpsByPrs(prsId) {
    return get(`Prss/${prsId}/Cmps`)
    .then((rsp) => rsp.json())
    .then(cmpsData => {

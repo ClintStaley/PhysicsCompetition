@@ -2,7 +2,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import * as actionCreators from '../actions/actionCreators';
-import Main from './Main/Main';
+import Main from './Main/Main.jsx';
 
 function mapStateToProps(state) {
    return {
