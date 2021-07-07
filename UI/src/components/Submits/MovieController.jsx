@@ -40,7 +40,6 @@ export class MovieController extends Component {
    };
 
    pause = () => {
-      console.log(this.state.scrubbing);
       this.setState({playing: false});
       this.timeAtPause = this.state.currentOffset + this.firstTimeStamp;
    };
@@ -111,8 +110,7 @@ export class MovieController extends Component {
                   onChange={(value) => {
                      //as value shifts current offset changes and 
                      //state scrubbing is active iff value < currentOffset
-                     this.startedScrubbing = this.startedScrubbing ? this.startedScrubbing : this.state.currentOffset
-                     console.log(value < this.state.currentOffset);
+                     this.startedScrubbing = this.startedScrubbing ? this.startedScrubbing : this.state.currentOffset;
                      this.setState({
                         scrubbing: value < this.state.currentOffset,
                         currentOffset: value,
