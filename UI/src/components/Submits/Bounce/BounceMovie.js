@@ -11,11 +11,12 @@ export class BounceMovie {
    static cBallLaunch = 5;
    static cBallExit = 6;
 
-   // Construct with background as indicated, and events drawn from prms and sbm
+   // Construct with background as indicated, and events drawn from prms and 
+   // optional sbm.  (Generate only barrier/target creation events w/o sbm)
    constructor(frameRate, prms, sbm) {
       const cG = 9.80665;               // Gravity in m/s^2
       const bkgSize = 10.0;             // Standard field size
-      let tracks = sbm.testResult.events;  
+      let tracks = sbm && sbm.testResult ? sbm.testResult.events : [];  
       
       this.background = {};
       this.background.frameRate = frameRate;

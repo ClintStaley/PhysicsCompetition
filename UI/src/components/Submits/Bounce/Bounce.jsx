@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Bounce3DView } from './Bounce3DView';
+import { Bounce3DView } from './Bounce3DView2';
 import {BounceSVGView} from "./BounceSVGView"; 
 import { BounceMovie } from './BounceMovie';
 import { MovieController } from '../MovieController';
@@ -24,10 +24,7 @@ export class Bounce extends Component {
    }
 
    static getDerivedStateFromProps(props, state) {
-      if (props.sbm && props.testResult)
-         return {movie: new BounceMovie(24, props.prms, props.sbm)};
-      else
-         return {movie: null};
+      return {movie: new BounceMovie(60, props.prms, props.sbm)};
    }
 
    // Build table on bottom of page showing detailed info about each hit,
@@ -85,35 +82,21 @@ export class Bounce extends Component {
       )
    }
 
-   // Restart movie.
-   replay = () => {
-      this.setState(this.getInitialState());
-      this.startMovie(this.props.sbm.testResult.events);
-   }
-
    render() {
-      let prms = this.props.prms;
       let sbm = this.props.sbm;
-      let jsonMovie = new BounceMovie(60, prms, sbm);
-      let summary = null;
-      let ready = sbm && sbm.testResult && sbm.score !== null;
+      let summary = '';
       
-
-      if (ready) {
+      if (sbm && sbm.testResult && sbm.score !== null) {
          summary = this.getSummary(sbm.testResult, sbm.score);
       }
 
       return (<section className="container">
-         {ready ?
-          [<h2>Problem Diagram</h2>,
-          <MovieController
-             jsonMovie={jsonMovie}
-             play={() => this.startMovie(sbm.testResult.events)} 
-             replay={() => this.replay()} 
-             pause={() => this.stopMovie()} 
-             views={[BounceSVGView, Bounce3DView]}
-          />,               
-          summary] : ''}
+         <h2>Problem Diagram</h2>
+         <MovieController
+            movie={this.state.movie}
+            views={[BounceSVGView, Bounce3DView]}
+         />               
+         {summary}
       </section>);
    }
 }

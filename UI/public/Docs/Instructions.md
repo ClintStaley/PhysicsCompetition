@@ -23,7 +23,15 @@ Team leads can add members via the "plus" button, edit the team details via the 
 To see how you and other teams are doing in a competition, click the Competition Status button on the relevant competition in the My Competitions page.  This will lead you to a status page.
 
 ### Submit or Check a Design
-This page shows the status of any prior submission you made, including time/date of submission, score awarded, and a graphical display of your submission, possibly with animation if the competition warrants animated display. If the competition is animated, you can play, stop, and replay the animation of your submission via buttons on the right. 
+The Competition Status page shows the status of each team signed up for the competition, including team details and most recent score.  For any team you are a part of it also provides a Submit/Check button, which leads to a Submission Page.
+
+### Submission Page
+The Submission Page gives you information on your team's most recent design submission for the competition in question, including time/date of submission, score awarded, and a diagram of the competition problem, in either schematic or full 3-D form.  ....  graphical display of your submission, possibly with animation if the competition warrants animated display. 
+
+-------------
+
+
+If the competition is animated, you can play, stop, and replay the animation of your submission via buttons on the right. 
 
 ### Making a new submit
 The submit button on the Submit Page pops up a dialog via which you may enter a new submission.  Once you do this, it may take several seconds for the submission to be graded.  The page will show you a message indicating that it's checking for a result, and then will show the result once your submission is graded.  

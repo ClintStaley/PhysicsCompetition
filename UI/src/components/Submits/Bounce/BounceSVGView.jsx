@@ -30,7 +30,6 @@ export class BounceSVGView extends React.Component {
       }
    }
 
-
    // Return label for button activating this view
    static getLabel() {
       return "Diagram";
@@ -43,7 +42,6 @@ export class BounceSVGView extends React.Component {
          rtn = BounceSVGView.getInitState(newProps.movie);
       return BounceSVGView.setOffset(rtn, newProps.offset);
    }
-
 
    // Advance/retract |state| so that svgElms reflects all and only those events
    // in |movie| with time <= |timeStamp|.  Assume existing |state| was built

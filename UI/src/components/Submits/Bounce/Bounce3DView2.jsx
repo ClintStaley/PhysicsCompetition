@@ -2,9 +2,9 @@ import React from 'react';
 import { BounceMovie } from './BounceMovie';
 import * as THREE from "three";
 import CameraControls from "camera-controls";
-import pingAudio from '../../assets/sound/ping.mp3';
+import pingAudio from '../../../assets/sound/ping.mp3';
 import UIfx from 'uifx';
-import * as ImageUtil from '../Util/ImageUtil'
+import * as ImageUtil from '../../Util/ImageUtil'
 import { DoubleSide } from 'three';
 CameraControls.install({ THREE });
 
@@ -185,11 +185,9 @@ export class Bounce3DView extends React.Component {
       this.state.camera.updateProjectionMatrix();
       this.mount.appendChild(this.state.renderer.domElement);
 
-      var testBox = new THREE.Box3(new THREE.Vector3(rigSize-24, rigSize-19, rigSize-8), new THREE.Vector3(rigSize+4,rigSize+4,rigSize+5))
-
-
-
-
+      var testBox = new THREE.Box3(
+       new THREE.Vector3(rigSize-24, rigSize-19, rigSize-8),
+       new THREE.Vector3(rigSize+4,rigSize+4,rigSize+5));
 
       cameraControls = new CameraControls(
          this.state.camera,

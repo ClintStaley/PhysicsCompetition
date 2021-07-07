@@ -1,7 +1,6 @@
 import React, {Component} from "react";
-import "./MovieBarController.css";
-//import {Bounce3DView}  from "./Bounce/Bounce3DView";
-//import {BounceSVGView} from "./Bounce/BounceSVGView";
+import "./MovieController.css";
+import "react-rangeslider/lib/index.css"
 import Slider from 'react-rangeslider';
 
 // Props are {movie, views}.  Sets up a display of the movie, allowing choice
@@ -15,18 +14,12 @@ export class MovieController extends Component {
          currentViewIdx: 0,
          currentOffset: 0,
          playing: false,
-         childEventIdx: 0,
          scrubbing: false
       };
       this.duration = this.props.movie.evts
-       [this.props.movie.evts.length - 2].time;
+       [this.props.movie.evts.length - 1].time;
+      console.log(this.duration);
       this.currentView = props.views[this.state.currentViewIdx];
-   }
-
-   // CAS FIX: Are this method and the childEventIdx even used?  Pls remove
-   // them unless they're needed.
-   updateEventIdx(eventIdx) {
-      this.setState({childEventIdx: eventIdx});
    }
 
    play = () => {
@@ -66,20 +59,36 @@ export class MovieController extends Component {
    };
 
    render() {
-      // console.log("Rendering MC with props ", this.props, this.state);
       return (
-         <div>
-            <div>
-               <button className="bar-button" onClick={this.play}>
-                  Play
-               </button>
-               <button className="bar-button" onClick={this.pause}>
-                  Pause
-               </button>
-               <button className="bar-button" onClick={this.replay}>
-                  Replay
-               </button>
-            </div>
+         <div className="container">
+            {this.duration > 0 ? 
+            (<div>
+               <div>
+                  <button className="bar-button" onClick={this.play}>
+                     Play
+                  </button>
+                  <button className="bar-button" onClick={this.pause}>
+                     Pause
+                  </button>
+                  <button className="bar-button" onClick={this.replay}>
+                     Replay
+                  </button>
+               </div>
+               <Slider
+                  value={this.state.currentOffset}
+                  max={this.duration}
+                  step={0.001*this.duration}
+                  tooltip={false}
+                  onChange={(value) => {
+                     this.setState({
+                        scrubbing: value < this.state.currentOffset,
+                        currentOffset: value,
+                     })
+                  }}
+               />
+            </div>)
+            : ''}
+
             {this.props.views.map((view, idx) => (
                <button
                   key={idx}
@@ -93,19 +102,6 @@ export class MovieController extends Component {
                offset: this.state.currentOffset || 0.01,
                scrubbing: this.state.scrubbing
             })}
-            <Slider
-               value={this.state.currentOffset}
-               max={this.duration}
-               step={0.001*this.duration}
-               tooltip={false}
-               onChange={(value) => {
-                  //if(value < this.state.currentOffset)
-                  this.setState({
-                     scrubbing: value < this.state.currentOffset,
-                     currentOffset: value,
-                  })
-               }}
-            />
          </div>
       );
    }
