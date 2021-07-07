@@ -10,7 +10,6 @@ import Slider from 'react-rangeslider';
 export class MovieController extends Component {
    constructor(props) {
       super(props);
-      console.log("Constructing MC!");
       this.state = MovieController.getInitState(props);
    }
 
