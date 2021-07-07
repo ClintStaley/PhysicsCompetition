@@ -25,15 +25,12 @@ export class MovieController extends Component {
       }
    }
  
-   static priorState;
-
    static getDerivedStateFromProps(newProps, oldState) {
       let rtn = oldState;
 
       if (newProps !== oldState.props) // Reset for new movie
          rtn = MovieController.getInitState(newProps);
    
-      MovieController.priorState = rtn;
       return rtn;
    }
 

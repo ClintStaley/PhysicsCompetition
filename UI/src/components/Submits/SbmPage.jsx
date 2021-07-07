@@ -88,8 +88,6 @@ export default class SbmPage extends Component {
       var sbmStatus = null;
       var prbDiagram = null;
 
-      //console.log('Rendering SbmPage for ', this.state);
-
       if (this.props.sbms.current) {
          sbm = this.props.sbms.current;
          sbmTime = new Date(sbm.sbmTime);
