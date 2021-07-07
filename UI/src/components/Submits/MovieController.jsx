@@ -68,6 +68,7 @@ export class MovieController extends Component {
             this.timeAtPause = null;
          }
 
+         //After scrubbing is done and it is started to play again, shift firstTimeStamp and clear startedScrubbing
          if(this.startedScrubbing && !this.state.scrubbing){
             this.firstTimeStamp -= this.state.currentOffset - this.startedScrubbing;
             this.startedScrubbing = undefined;
