@@ -46,7 +46,8 @@ export class SVGUtil{
     // text form, inside the rectangle if room suffices, otherwise outside.
 
     //evt must be an object with an id, and coordinates in hiX, loX format
-    static makeLabeledRect(evt, cls, yTop){
+    static makeLabeledRect(evt, cls, yTop, fontSize){
+        
         const textSize = 1.2;  // Minimum width of rect to fit text inside
         const textHeight = .13;  // Height of a text line
         const minHeight = textHeight * 2.1; // Minimum height to fit 2 text lines
