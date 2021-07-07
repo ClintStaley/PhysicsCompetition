@@ -35,19 +35,30 @@ export class MovieController extends Component {
    }
 
    play = () => {
-      this.setState({playing: true}, this.animate);
+      if(this.state.currentOffset < this.state.duration)
+         this.setState({playing: true}, this.animate);
    };
 
    pause = () => {
+      console.log(this.state.scrubbing);
       this.setState({playing: false});
       this.timeAtPause = this.state.currentOffset + this.firstTimeStamp;
    };
 
    replay = () => {
       this.firstTimeStamp = undefined;
-      this.setState({playing: true}, this.animate);
+      this.setState({playing: true, currentOffset: 0 }, this.animate);
    };
 
+// HOW IS TIME TRACKED?
+//    requestAnimationFrame is the only source of time. It returns the current number of seconds since
+//    a page is loaded. On the first animation run we don't actually have a timestamp to give, but
+//    instead we give this.animate to requestAnimationframe which in turn will give a timestamp, so on
+//    the second call the first timestamp is set, serving as a reference point. Pauses and scrubbing excluded
+//    the currentTime - firstTimeStamp = correct Time in movie -> offset. Pausing will set another variable,
+//    called timeAtPause. On play, the firstTimestamp will shift itself forward (currentTime - timeAtPause).
+//    A similar process is used for scrubbing. When scrubbing forward or backward, the firstTimeStamp is shifted
+//    the same amount as what has been scrubbed.
    animate = (timestamp) => { // timestamp DNE until requestAnimationFrame calls it
       timestamp /= 1000;
       
@@ -56,12 +67,17 @@ export class MovieController extends Component {
             this.firstTimeStamp += timestamp - this.timeAtPause;
             this.timeAtPause = null;
          }
+
+         if(this.startedScrubbing && !this.state.scrubbing){
+            this.firstTimeStamp -= this.state.currentOffset - this.startedScrubbing;
+            this.startedScrubbing = undefined;
+         }
          if (!this.firstTimeStamp) {
             this.firstTimeStamp = timestamp; 
          }
          if (this.state.currentOffset > this.state.duration) {
-            this.firstTimeStamp = undefined;
-            this.pause();
+            //this.firstTimeStamp = undefined; //ask CAS if he wants play to default to replay if at the end of movie
+            this.setState({playing: false});
          }
          this.setState({ currentOffset: timestamp - this.firstTimeStamp }, 
             () => {
@@ -92,6 +108,10 @@ export class MovieController extends Component {
                   step={0.001*this.state.duration}
                   tooltip={false}
                   onChange={(value) => {
+                     //as value shifts current offset changes and 
+                     //state scrubbing is active iff value < currentOffset
+                     this.startedScrubbing = this.startedScrubbing ? this.startedScrubbing : this.state.currentOffset
+                     console.log(value < this.state.currentOffset);
                      this.setState({
                         scrubbing: value < this.state.currentOffset,
                         currentOffset: value,
