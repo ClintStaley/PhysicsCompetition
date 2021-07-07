@@ -12,20 +12,29 @@ export class LandGrabMovie {
         static cInvalidCircle = 4;
 
     //Constructor with background as indicated, and events drawn from prms and sbm
+    // optional sbm.  (Generate only obstacle creation events w/o sbm)
     constructor(frameRate, prms, sbm) {
         //declare constants
         const bkgSize = 100.0;
         const validationPause = .25;
 
-        let circlesResults = sbm.testResult.circleData;
+        //contains Results of circle collisions and radii of collisions
+        //has content only if EVC has returned result
+        let circlesResults = sbm && sbm.testResult ? 
+        sbm.testResult.circleData : [];
+        //contains location and order of circles
         let circleContent = sbm.content;
+
         this.background = {};
         this.background.frameRate = frameRate;
         this.background.height = bkgSize;
         this.background.width = bkgSize;
         this.evts = [];
 
-        // Barriers numbered from 0
+
+        console.log(circlesResults);
+
+        // obstacles numbered from 0
         prms.obstacles.forEach((brr, idx) => 
           this.addMakeObstacleEvt(-1, idx, brr.loX, brr.loY, brr.hiX, brr.hiY));
 
@@ -35,7 +44,14 @@ export class LandGrabMovie {
 
             // Get total growth time (based on radius length) and
             // valid growth time for when the circle may turn red
-            var growthTime = circle.radius * (2/25);  // CAS: No magic numbers
+            var growthRate = 2/25; //set standard growth rate to : a circle with radius 25 will take 2 seconds to expand (time/length)
+            var growthTime = circle.radius * growthRate; // radius times rate -> length * time/length  //CAS: No magic numbers
+            
+            /*
+            Valid growth time is "shortened" only when the badRadius exists 
+            (which means it is invalid) and validGrowthTime is the proportional
+            to badRadius/Radius (as any radius length before badRadius is valid)
+            */
             var validGrowthTime = growthTime;
             if (circleResult.badRadius)
                 validGrowthTime = growthTime * (circleResult.badRadius/circle.radius); 

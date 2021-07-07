@@ -58,11 +58,9 @@ export class LandGrabSVGView extends React.Component {
             }
             else if (evt.type === LandGrabMovie.cInvalidCircle) {
                 svgElms.push(SVGUtil.makeLabeledCircle(evt, "badCircle", yTop));
-                console.log(evts[evtIdx].time);
             }
             else if (evt.type === LandGrabMovie.cValidCircle){
                 svgElms.push(SVGUtil.makeLabeledCircle(evt, "goodCircle", yTop));
-                console.log(evts[evtIdx].time);
 
             }
             else if (evt.type === LandGrabMovie.cCircleGrowth){
