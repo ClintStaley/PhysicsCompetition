@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "21d28879-2be5-498e-8510-e2219ec1caf1",
+		"_postman_id": "e88873c9-fe32-4be7-98a1-d5257ba2a465",
 		"name": "PhysicsCompetitionREST Test",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -5315,7 +5315,7 @@
 									"",
 									"checkStatus(pm, 200);",
 									"",
-									"pm.test('One Submissions', ()=>{",
+									"pm.test('One Submission', ()=>{",
 									"    pm.expect(jsonBody.length).to.eql(1);",
 									"});"
 								],
@@ -5332,15 +5332,15 @@
 							}
 						],
 						"url": {
-							"raw": "{{url}}/Cmps/1/Teams/1/Sbms?num=1",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/{{TeamAId}}/Sbms?num=1",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"1",
+								"{{LandGrabAId}}",
 								"Teams",
-								"1",
+								"{{TeamAId}}",
 								"Sbms"
 							],
 							"query": [
@@ -5561,15 +5561,15 @@
 							"raw": "{\n    \"testResult\": \"{     \\\"circleStatus\\\": [true, false, true],     \\\"areaCovered\\\": 4200.2 }\",\n    \"score\": 1,\n    \"canSubmit\": true\n}"
 						},
 						"url": {
-							"raw": "{{url}}/Cmps/1/Teams/1/Sbms/1",
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/{{TeamAId}}/Sbms/1",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Cmps",
-								"1",
+								"{{LandGrabAId}}",
 								"Teams",
-								"1",
+								"{{TeamAId}}",
 								"Sbms",
 								"1"
 							]

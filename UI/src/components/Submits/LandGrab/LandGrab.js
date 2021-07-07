@@ -9,6 +9,10 @@ import { MovieController } from '../MovieController';
 // Expected props are:
 //  prms -- the parameters for the displayed competition
 //  sbm -- the submission to display
+
+// LandGrab uses these props to build LandGrabMovie, whicn it passes to 
+// a MovieController to display in one of several forms (e.g, LandGrab3DView,
+// LandGrabSVGView)
 export class LandGrab extends Component {
    constructor(props) {
       super(props);
@@ -17,34 +21,29 @@ export class LandGrab extends Component {
          sbmConfirm: null, // Function to post current submission
 		}
    }
+
+   static getDerivedStateFromProps(props, state) {
+      return {movie: new LandGrabMovie(60, props.prms, props.sbm)};
+   }
+
     //to be implemented later
     getSummary = (testResult, score) => {
       return;
    }
 
    render() {
-      var prms = this.props.prms;
       var sbm = this.props.sbm;
-      var jsonMovie = null;
-      var summary = null;
-      var ready = sbm && sbm.testResult && sbm.score !== null;
-      if (ready) {
-         jsonMovie = new LandGrabMovie(60, prms, sbm);
+      let summary = '';
+      if (sbm && sbm.testResult && sbm.score !== null) {
          summary = this.getSummary(sbm.testResult, sbm.score);
       }
       return (<section className="container">
          <h2>Problem Diagram</h2>
-            {ready ?
-            [<h2>Problem Diagram</h2>,
-            <MovieController
-               jsonMovie={jsonMovie}
-               play={() => this.startMovie(sbm.testResult.events)} 
-               replay={() => this.replay()} 
-               pause={() => this.stopMovie()} 
-               views={[LandGrabSVGView]}
-            />,               
-            summary] : ''}
-         
+         <MovieController
+            movie={this.state.movie}
+            views={[LandGrabSVGView]}
+         />               
+         {summary}
       </section>);
    }
 }
