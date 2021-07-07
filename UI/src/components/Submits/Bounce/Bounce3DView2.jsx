@@ -198,7 +198,6 @@ export class Bounce3DView extends React.Component {
       cameraControls.boundaryEnclosesCamera=true;
       
       cameraControls.addEventListener("control", () => {
-         console.log(this.state.camera.position);
          cameraControls.update(1);   // Needed w/nonzero param
          this.state.renderer.render(this.state.scene, this.state.camera);
       });

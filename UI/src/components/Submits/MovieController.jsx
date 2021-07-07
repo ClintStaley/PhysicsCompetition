@@ -10,16 +10,31 @@ import Slider from 'react-rangeslider';
 export class MovieController extends Component {
    constructor(props) {
       super(props);
-      this.state = {
+      console.log("Constructing MC!");
+      this.state = MovieController.getInitState(props);
+   }
+
+   static getInitState(props) {
+      return {
+         props,
          currentViewIdx: 0,
          currentOffset: 0,
          playing: false,
-         scrubbing: false
-      };
-      this.duration = this.props.movie.evts
-       [this.props.movie.evts.length - 1].time;
-      console.log(this.duration);
-      this.currentView = props.views[this.state.currentViewIdx];
+         scrubbing: false,
+         duration: props.movie.evts[props.movie.evts.length - 1].time
+      }
+   }
+ 
+   static priorState;
+
+   static getDerivedStateFromProps(newProps, oldState) {
+      let rtn = oldState;
+
+      if (newProps !== oldState.props) // Reset for new movie
+         rtn = MovieController.getInitState(newProps);
+   
+      MovieController.priorState = rtn;
+      return rtn;
    }
 
    play = () => {
@@ -47,7 +62,7 @@ export class MovieController extends Component {
          if (!this.firstTimeStamp) {
             this.firstTimeStamp = timestamp; 
          }
-         if (this.state.currentOffset > this.duration) {
+         if (this.state.currentOffset > this.state.duration) {
             this.firstTimeStamp = undefined;
             this.pause();
          }
@@ -61,7 +76,7 @@ export class MovieController extends Component {
    render() {
       return (
          <div className="container">
-            {this.duration > 0 ? 
+            {this.state.duration > 0 ? 
             (<div>
                <div>
                   <button className="bar-button" onClick={this.play}>
@@ -76,8 +91,8 @@ export class MovieController extends Component {
                </div>
                <Slider
                   value={this.state.currentOffset}
-                  max={this.duration}
-                  step={0.001*this.duration}
+                  max={this.state.duration}
+                  step={0.001*this.state.duration}
                   tooltip={false}
                   onChange={(value) => {
                      this.setState({
