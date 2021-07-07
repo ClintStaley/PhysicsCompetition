@@ -4,6 +4,10 @@ import "./MovieBarController.css";
 //import {BounceSVGView} from "./Bounce/BounceSVGView";
 import Slider from 'react-rangeslider';
 
+// Props are {movie, views}.  Sets up a display of the movie, allowing choice
+// of one of the views.  Runs movie up to just prior to offset 0, and enables
+// play/replay/pause buttons if there is more to show in the movie.  (A movie
+// displaying just the initial setup may have nothing more to show.)
 export class MovieController extends Component {
    constructor(props) {
       super(props);
@@ -14,8 +18,8 @@ export class MovieController extends Component {
          childEventIdx: 0,
          scrubbing: false
       };
-      this.duration = this.props.jsonMovie.evts
-       [this.props.jsonMovie.evts.length - 2].time;
+      this.duration = this.props.movie.evts
+       [this.props.movie.evts.length - 2].time;
       this.currentView = props.views[this.state.currentViewIdx];
    }
 
@@ -30,7 +34,6 @@ export class MovieController extends Component {
    };
 
    pause = () => {
-      //console.log()
       this.setState({playing: false});
       this.timeAtPause = this.state.currentOffset + this.firstTimeStamp;
    };
@@ -78,7 +81,6 @@ export class MovieController extends Component {
                </button>
             </div>
             {this.props.views.map((view, idx) => (
-               
                <button
                   key={idx}
                   onClick={() => this.setState({currentViewIdx: idx})}
@@ -87,8 +89,8 @@ export class MovieController extends Component {
                </button>
             ))}
             {React.createElement(this.props.views[this.state.currentViewIdx], {
+               movie: this.props.movie,
                offset: this.state.currentOffset || 0.01,
-               movie: this.props.jsonMovie,
                scrubbing: this.state.scrubbing
             })}
             <Slider

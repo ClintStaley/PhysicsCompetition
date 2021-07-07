@@ -94,12 +94,12 @@ export class Bounce extends Component {
    render() {
       let prms = this.props.prms;
       let sbm = this.props.sbm;
-      let jsonMovie = null;
+      let jsonMovie = new BounceMovie(60, prms, sbm);
       let summary = null;
       let ready = sbm && sbm.testResult && sbm.score !== null;
       
+
       if (ready) {
-         jsonMovie = new BounceMovie(60, prms, sbm);
          summary = this.getSummary(sbm.testResult, sbm.score);
       }
 
