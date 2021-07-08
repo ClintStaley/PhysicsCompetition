@@ -111,9 +111,9 @@ export default class SbmPage extends Component {
       }
       else
          sbmStatus 
-          = <div><h3>Your team has made no design submissions yet.</h3></div>;
+          = <div><h2>Your team has made no design submissions yet.</h2></div>;
 
-      var sbmButton = (<div className="col-sm-3">
+      var sbmButton = (<div className="col-sm-3 float-right">
         <Button disabled={!this.props.team.canSubmit ||
          this.props.sbms.current && !this.props.sbms.current.testResult}
          onClick={() => this.setState({sbmFunction: this.doSubmit})}>
@@ -147,9 +147,10 @@ export default class SbmPage extends Component {
 
       return (<div className="container">
         <h1>{cmp.title}</h1>
+        {sbmButton}
         <br/>
         {sbmStatus}
-        {sbmButton}
+        <br/>
         {prbDiagram}
         {sbmDialog}
       </div>);

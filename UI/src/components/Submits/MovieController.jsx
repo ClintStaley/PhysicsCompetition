@@ -105,7 +105,7 @@ export class MovieController extends Component {
                   value={this.state.currentOffset}
                   max={this.state.duration}
                   step={0.001*this.state.duration}
-                  tooltip={false}
+                  tooltip={true}
                   onChange={(value) => {
                      //as value shifts current offset changes and 
                      //state scrubbing is active iff value < currentOffset
