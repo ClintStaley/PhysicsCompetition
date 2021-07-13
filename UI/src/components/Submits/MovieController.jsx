@@ -16,6 +16,9 @@ export class MovieController extends Component {
 
    // duration indicates length, and by being nonzero, the need for movie play
    static getInitState(props) {
+      console.log("duration in get init")
+      console.log(props.movie.evts[props.movie.evts.length - 1].time);
+
       return {
          props,
          currentViewIdx: 0, // Selected type of view
@@ -28,28 +31,33 @@ export class MovieController extends Component {
  
    static getDerivedStateFromProps(newProps, oldState) {
       let rtn = oldState;
+      console.log("in getDerivedState");
 
-      if (newProps !== oldState.props) // Reset for new movie
+      if (newProps !== oldState.props){ // Reset for new movie
+         console.log("movie controller get init state");
          rtn = MovieController.getInitState(newProps);
-   
+      }
       return rtn;
    }
-
+   //set reset if else
    play = () => {
       if (this.state.currentOffset < this.state.duration)
          this.setState({playing: true}, 
+          () => requestAnimationFrame(this.animate));
+      else
+         this.setState({playing: true, startTime: null, currentOffset: 0},
           () => requestAnimationFrame(this.animate));
    };
 
    pause = () => {
       this.setState({playing: false, startTime: null});
    };
-
+/*
    replay = () => {
       this.setState({playing: true, startTime: null, currentOffset: 0},
          () => requestAnimationFrame(this.animate));
    };
-
+*/
    // RequestAnimationFrame is the only source of time.  This provides better
    // consistency than use of window.performance.now().  State.currentOffset
    // is the number of seconds into the movie at the current animation point.
@@ -87,9 +95,6 @@ export class MovieController extends Component {
                   <button className="bar-button" onClick={this.pause}>
                      Pause
                   </button>
-                  <button className="bar-button" onClick={this.replay}>
-                     Replay
-                  </button>
                </div>
                <Slider
                   value={this.state.currentOffset}
@@ -99,7 +104,8 @@ export class MovieController extends Component {
                   onChange={(value) => {
                      this.setState({
                         currentOffset: value,
-                        startTime: null
+                        startTime: null,
+                        playing: null
                      })
                   }}
                />
