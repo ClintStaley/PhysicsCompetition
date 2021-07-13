@@ -102,7 +102,6 @@ export class LandGrabSVGView extends React.Component {
         let width = this.state.movie.background.width;
         let height = this.state.movie.background.height;
 
-      // console.log("Rendering at ", this.props.offset, this.state.svgElms);
       return  ( 
          <svg viewBox={`-.1 -.1 ${width + .1} ${height + .1}`} width="100%"
           className="panel">

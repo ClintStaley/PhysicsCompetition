@@ -32,7 +32,6 @@ export class LandGrabMovie {
         this.evts = [];
 
 
-        console.log(circlesResults);
 
         // obstacles numbered from 0
         prms.obstacles.forEach((brr, idx) => 
