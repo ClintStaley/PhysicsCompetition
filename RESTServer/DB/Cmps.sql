@@ -22,22 +22,12 @@ insert into Competition (title, ctpId, ownerId, description, prms)
    }');
 
 insert into Competition (title, ctpId, ownerId, description, prms)
-   VALUES ('Bounce Competition 1', 2, 1, 'One ball; three targets', '{
-      "targetTime": 5.1505,
-      "targets": [ 
-         { "loX": 7.0, "hiX": 7.2, "hiY": 4.2, "loY": 4.0 }
-      ],
-      "barriers": [ 
-      ]
-   }');
-
-insert into Competition (title, ctpId, ownerId, description, prms)
    VALUES ('Bounce Challenge 2', 2, 1, 'Doable with one ball', '{
-      "targetTime": 5.1505,
+      "targetTime": 4.59,
       "targets": [ 
          { "loX": 1.4, "hiX": 2.4, "hiY": 7.4, "loY": 7.1 },
          { "loX": 4.0, "hiX": 5.5, "hiY": 3.9, "loY": 3.6 },
-         { "loX": 7.6, "hiX": 9.0, "hiY": 5.5, "loY": 5.2 }
+         { "loX": 8.0, "hiX": 9.5, "hiY": 5.5, "loY": 5.2 }
       ],
       "barriers": [ 
          { "loX": 6.4, "hiX": 7, "hiY": 9, "loY": 3 }

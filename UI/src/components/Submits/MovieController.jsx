@@ -50,17 +50,14 @@ export class MovieController extends Component {
          () => requestAnimationFrame(this.animate));
    };
 
-// HOW IS TIME TRACKED?
-//    requestAnimationFrame is the only source of time. It returns the current number of seconds since
-//    a page is loaded. On the first animation run we don't actually have a timestamp to give, but
-//    instead we give this.animate to requestAnimationframe which in turn will give a timestamp, so on
-//    the second call the first timestamp is set, serving as a reference point. Pauses and scrubbing excluded
-//    the currentTime - state.startTime = correct Time in movie -> offset. Pausing will set another variable,
-//    called timeAtPause. On play, the state.startTime will shift itself forward (currentTime - timeAtPause).
-//    A similar process is used for scrubbing. When scrubbing forward or backward, the state.startTime is shifted
-//    the same amount as what has been scrubbed.
+   // RequestAnimationFrame is the only source of time.  This provides better
+   // consistency than use of window.performance.now().  State.currentOffset
+   // is the number of seconds into the movie at the current animation point.
+   // State.startTime is the time of the first frame assuming the movie has 
+   // been continuously animated to the current point.  It gets reset anytime 
+   // we pause or scrub.  To reset state.startTime, set it null, and the next
+   // |animate| will reassign it appropriately.
    animate = (timestamp) => {
-      
       if (this.state.playing) {
          timestamp /= 1000;
 
@@ -119,8 +116,7 @@ export class MovieController extends Component {
             ))}
             {React.createElement(this.props.views[this.state.currentViewIdx], {
                movie: this.props.movie,
-               offset: this.state.currentOffset || 0.01,
-               scrubbing: this.state.scrubbing
+               offset: this.state.currentOffset || 0.001
             })}
          </div>
       );

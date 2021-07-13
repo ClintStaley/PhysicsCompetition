@@ -31,6 +31,7 @@ export class Bounce extends Component {
    // after that hit is shown on the animation.
    getSummary = (testResult, score) => {
       var hits = [];
+      var totalTime = 0;
       var ballEvents = [];
       var colors = Bounce.ballColors;
       var numColors = colors.length;
@@ -55,6 +56,8 @@ export class Bounce extends Component {
                   </tr>);
             });
 
+            totalTime += ballArray[ballArray.length-1].time;
+
             hits.push(
                <table key={"Summary" + ballNum++}>
                   <tbody>
@@ -69,17 +72,22 @@ export class Bounce extends Component {
                      {ballEvents}
                   </tbody>
                </table>);
-
-            ballEvents = [];
          });
-      }
-
-      return (
-         <div>
-            <h4>Targets Hit: {testResult.obstaclesHit}</h4>
+          
+         var scoreExpl = `Score of ${score.toFixed(2)} based on total time
+          ${totalTime.toFixed(2)}`;
+         
+         if (testResult.sbmPenalty)
+            scoreExpl += ` with excess submit penalty of
+             ${testResult.sbmPenalty.toFixed(2)}`
+         
+         return (<div>
+            <h4>{scoreExpl}</h4>
             {hits}
-         </div>
-      )
+         </div>);
+      }
+      else
+         return "";
    }
 
    render() {
