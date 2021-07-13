@@ -10,14 +10,11 @@ import Slider from 'react-rangeslider';
 export class MovieController extends Component {
    constructor(props) {
       super(props);
-      console.log("Movie controller!");
       this.state = MovieController.getInitState(props);
    }
 
    // duration indicates length, and by being nonzero, the need for movie play
    static getInitState(props) {
-      console.log("duration in get init")
-      console.log(props.movie.evts[props.movie.evts.length - 1].time);
 
       return {
          props,
@@ -31,15 +28,10 @@ export class MovieController extends Component {
  
    static getDerivedStateFromProps(newProps, oldState) {
       let rtn = oldState;
-      console.log("in getDerivedState");
 
-      if (newProps !== oldState.props){ // Reset for new movie
-         console.log(newProps);
-         console.log("^ new props, \\/ old state");
-         console.log(oldState.props);
-         console.log("movie controller get init state");
+      if (newProps !== oldState.props) // Reset for new movie
          rtn = MovieController.getInitState(newProps);
-      }
+
       return rtn;
    }
    //set reset if else
