@@ -10,16 +10,18 @@ import Slider from 'react-rangeslider';
 export class MovieController extends Component {
    constructor(props) {
       super(props);
+      console.log("Movie controller!");
       this.state = MovieController.getInitState(props);
    }
 
+   // duration indicates length, and by being nonzero, the need for movie play
    static getInitState(props) {
       return {
          props,
-         currentViewIdx: 0,
-         currentOffset: 0,
-         playing: false,
-         scrubbing: false,
+         currentViewIdx: 0, // Selected type of view
+         startTime: null,   // Time at which movie began; null if not playing
+         currentOffset: 0,  // Number of seconds into movie play
+         playing: false,    // Are we currently playing or stopped?
          duration: props.movie.evts[props.movie.evts.length - 1].time
       }
    }
@@ -34,18 +36,18 @@ export class MovieController extends Component {
    }
 
    play = () => {
-      if(this.state.currentOffset < this.state.duration)
-         this.setState({playing: true}, this.animate);
+      if (this.state.currentOffset < this.state.duration)
+         this.setState({playing: true}, 
+          () => requestAnimationFrame(this.animate));
    };
 
    pause = () => {
-      this.setState({playing: false});
-      this.timeAtPause = this.state.currentOffset + this.firstTimeStamp;
+      this.setState({playing: false, startTime: null});
    };
 
    replay = () => {
-      this.firstTimeStamp = undefined;
-      this.setState({playing: true, currentOffset: 0 }, this.animate);
+      this.setState({playing: true, startTime: null, currentOffset: 0},
+         () => requestAnimationFrame(this.animate));
    };
 
 // HOW IS TIME TRACKED?
@@ -53,35 +55,26 @@ export class MovieController extends Component {
 //    a page is loaded. On the first animation run we don't actually have a timestamp to give, but
 //    instead we give this.animate to requestAnimationframe which in turn will give a timestamp, so on
 //    the second call the first timestamp is set, serving as a reference point. Pauses and scrubbing excluded
-//    the currentTime - firstTimeStamp = correct Time in movie -> offset. Pausing will set another variable,
-//    called timeAtPause. On play, the firstTimestamp will shift itself forward (currentTime - timeAtPause).
-//    A similar process is used for scrubbing. When scrubbing forward or backward, the firstTimeStamp is shifted
+//    the currentTime - state.startTime = correct Time in movie -> offset. Pausing will set another variable,
+//    called timeAtPause. On play, the state.startTime will shift itself forward (currentTime - timeAtPause).
+//    A similar process is used for scrubbing. When scrubbing forward or backward, the state.startTime is shifted
 //    the same amount as what has been scrubbed.
-   animate = (timestamp) => { // timestamp DNE until requestAnimationFrame calls it
-      timestamp /= 1000;
+   animate = (timestamp) => {
       
       if (this.state.playing) {
-         if (this.timeAtPause && timestamp){ //firstTime stamp is shifted forward for paused time
-            this.firstTimeStamp += timestamp - this.timeAtPause;
-            this.timeAtPause = null;
+         timestamp /= 1000;
+
+         // Set startTime if we are commencing animation
+         if (this.state.startTime === null) 
+            this.state.startTime = timestamp - this.state.currentOffset;
+
+         // Stop animation at end of movie
+         if (this.state.currentOffset > this.state.duration) {
+            this.pause();
          }
 
-         //After scrubbing is done and it is started to play again, shift firstTimeStamp and clear startedScrubbing
-         if(this.startedScrubbing && !this.state.scrubbing){
-            this.firstTimeStamp -= this.state.currentOffset - this.startedScrubbing;
-            this.startedScrubbing = undefined;
-         }
-         if (!this.firstTimeStamp) {
-            this.firstTimeStamp = timestamp; 
-         }
-         if (this.state.currentOffset > this.state.duration) {
-            //this.firstTimeStamp = undefined; //ask CAS if he wants play to default to replay if at the end of movie
-            this.setState({playing: false});
-         }
-         this.setState({ currentOffset: timestamp - this.firstTimeStamp }, 
-            () => {
-            requestAnimationFrame(this.animate);
-         });
+         this.setState({currentOffset: timestamp - this.state.startTime}, 
+            () => requestAnimationFrame(this.animate));
       }
    };
 
@@ -107,12 +100,9 @@ export class MovieController extends Component {
                   step={0.001*this.state.duration}
                   tooltip={true}
                   onChange={(value) => {
-                     //as value shifts current offset changes and 
-                     //state scrubbing is active iff value < currentOffset
-                     this.startedScrubbing = this.startedScrubbing ? this.startedScrubbing : this.state.currentOffset;
                      this.setState({
-                        scrubbing: value < this.state.currentOffset,
                         currentOffset: value,
+                        startTime: null
                      })
                   }}
                />

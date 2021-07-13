@@ -22,18 +22,18 @@ public class BounceEvaluator implements Evaluator {
    // Constants
    public static final double WORLD_LENGTH = 10.0;
    public static final double STARTING_HEIGHT = 10.0;
-   public static final double GRAVITY = -9.80665;
+   public static final double GRAVITY = -9.81;
    public static final double RADIUS = .1;
    public static final double EPS = 0.00000001;
-   public static final double ERROR_FACTOR = 0.99;
-   public static final double SBM_ATTEMPT = 3;  
-   public static final double SCORE_DIVIDE = 2;
+   public static final double ERR_FACTOR = 0.01;
+   public static final int SBM_LIMIT = 5;  
+   public static final double SBM_PENALTY = .09;
    
    // Represent one Collision, including its type, its time, the location of
    // circle center as of the collision, and the index of the struck obstacle.
    private static class Collision {
       public enum HitType {
-         CORNER, HORIZONTAL, VERTICAL // Hit a corner, or top/bottom side, or left/right side
+         CORNER, HORIZONTAL, VERTICAL // Hit corner, top/bottom, or left/right
       };
 
       public HitType hType;
@@ -52,7 +52,7 @@ public class BounceEvaluator implements Evaluator {
       }
    }
 
-   // Represent one rectangular obstacle.
+   // One rectangular obstacle, either barrier or target
    private static class Obstacle {
       public int id;
       public double loX;
@@ -64,9 +64,9 @@ public class BounceEvaluator implements Evaluator {
 
    // Competition parameters
    private static class Parameters {
-      public double targetTime;       // Total time (in s) that earns 100% credit
-      public Obstacle[] targets;      // Obstacles to hit
-      public Obstacle[] barriers;     // Obstacles to avoid
+      public double targetTime;      // Total time (in s) that earns 100% credit
+      public Obstacle[] targets;     // Obstacles to hit
+      public Obstacle[] barriers;    // Obstacles to avoid
    }
    
    private static class BallEquations {
@@ -79,8 +79,8 @@ public class BounceEvaluator implements Evaluator {
       public UnivariateFunction xVelocity;
       public UnivariateFunction yVelocity;
       
-      // Equations for computation of parameters given a starting point expressed
-      // as a BounceEvent.
+      // Create equations to compute X/Y position and velocity components given
+      // a starting point expressed as a BounceEvent.
       public BallEquations(BounceEvent current) {
          xPos = t -> (t) * current.velocityX + current.posX;
          xVelocity = t  -> current.velocityX;
@@ -123,10 +123,12 @@ public class BounceEvaluator implements Evaluator {
          time = 0.0;
       }
 
-      // Create new BounceEvent representing the situation that exists |time| 
-      // seconds after |current|.  
+      // Create a BounceEvent representing the situation that exists |time|
+      // seconds after |current|.
       public BounceEvent(BounceEvent current, double time) {
          // Get all equations.
+         // CAS: Why is ballFunctions not a member created on construction?
+         // Indeed, why is it a separate class at all?  
          BallEquations ballFunctions = new BallEquations(current);
 
          obstacleIdx = -1;
@@ -138,8 +140,9 @@ public class BounceEvaluator implements Evaluator {
       }
    }
 
-   public class bounceResults {
-      public int obstaclesHit;
+   public class BounceResults {
+      public boolean valid;
+      public Double sbmPenalty;
       public BounceEvaluator.BounceEvent[][] events;
    }
 
@@ -165,14 +168,14 @@ public class BounceEvaluator implements Evaluator {
       int numBalls = sbmData.length;
       int targetCount = prms.targets.length;
       int barrierCount = prms.barriers.length;
-      double score;
+      Double score = null;
       int idx;
 
       // Assign all targets ID numbers based on their index.
       for (idx = 0; idx < targetCount; idx++)
          prms.targets[idx].id = idx;
       
-      // Assign all obstacles ID numbers based on their index.
+      // Assign all barriers ID numbers based on their index.
       for (idx = 0; idx < barrierCount; idx++) {
          prms.barriers[idx].id = idx + targetCount;
          prms.barriers[idx].barrier = true;
@@ -183,7 +186,7 @@ public class BounceEvaluator implements Evaluator {
             (Arrays.asList(prms.targets));
       obstacles.addAll(Arrays.asList(prms.barriers));
 
-      bounceResults rspB = new bounceResults();
+      BounceResults rspB = new BounceResults();
 
       // Double array of events, one array per ball
       rspB.events = new BounceEvent[numBalls][];
@@ -200,16 +203,17 @@ public class BounceEvaluator implements Evaluator {
          totalTime += rspB.events[i][rspB.events[i].length - 1].time;
       }
 
-      rspB.obstaclesHit = targetCount - obstacles.size();
+      rspB.valid = isGoodAnswer(obstacles, prms, rspB.events, sbmData);
 
-      if (isGoodAnswer(obstacles, prms, rspB.events, sbmData)) {
-         score = Math.round(prms.targetTime * 10000.0
-               / (totalTime + 10.0 * (numBalls - 1.0))) / 100.0;
-         if (SBM_ATTEMPT <= sbm.numSubmits)
-            score = score / Math.pow(SCORE_DIVIDE, sbm.numSubmits - SBM_ATTEMPT);
+      if (rspB.valid) {
+         score = (double) Math.round(100.0 * prms.targetTime 
+               / (totalTime + (numBalls - 1.0)));
+         if (sbm.numSubmits > SBM_LIMIT) {
+            rspB.sbmPenalty = score
+                  * (1.0 - Math.pow(SBM_PENALTY, sbm.numSubmits - SBM_LIMIT));
+            score -= rspB.sbmPenalty;
+         }
       }
-      else
-         score = 0.0;
       
       EvlPut eval = new EvlPut(sbm.cmpId, sbm.teamId, sbm.id, new Evl(
             mapper.writeValueAsString(rspB), score));
@@ -228,25 +232,22 @@ public class BounceEvaluator implements Evaluator {
       BounceEvent[] ball;
       
       //checks all balls for the correct predictions
-      for (int i = 0; i < res.length; i++){//(BounceEvent[] ball : res) {
+      for (int i = 0; i < res.length; i++) {
          ball = res[i];
          
-         if (ball.length < 2)
+         if (ball.length < 2)  // One collision plus an exit event
             return false;
          
-         testEvent = ball[ball.length - 2];
+         testEvent = ball[ball.length - 2];  // Collision prior to exit event
          testSpec = sbm[i];
          
-         if (!(GenUtil.inBounds(testEvent.time * ERROR_FACTOR, testSpec.finalTime, 
-               testEvent.time * (1/ERROR_FACTOR)) && 
-               GenUtil.inBounds(testEvent.posX * ERROR_FACTOR, testSpec.finalX, 
-               testEvent.posX * (1/ERROR_FACTOR)) && 
-               GenUtil.inBounds(testEvent.posY * ERROR_FACTOR, testSpec.finalY, 
-               testEvent.posY * (1/ERROR_FACTOR))))
+         if (
+            !(GenUtil.looseEqual(testEvent.time, testSpec.finalTime, ERR_FACTOR) 
+            && GenUtil.looseEqual(testEvent.posX, testSpec.finalX, ERR_FACTOR)
+            && GenUtil.looseEqual(testEvent.posY, testSpec.finalY, ERR_FACTOR)))
+            
             return false;
-         
       }
-         
       
       for (Obstacle temp : obs) 
          if (!temp.barrier)
@@ -255,7 +256,7 @@ public class BounceEvaluator implements Evaluator {
       return obs.size() == prm.barriers.length;
    }
 
-/* CAS Comments:  I stopped here, and would invite you to do a review of the rest, paying attentiion to:
+/* CAS Comments:  I stopped here, and would invite you to do a review of the rest, paying attention to:
  1. Careful naming.  You had "obstacle" meaning both a general rectangle, and a target to hit, while "block"
     meant an obstacle to avoid.  I renamed this to "targets" and "barriers", leaving obstacle to describe the
     general case.  I considered keeping "block" for barrier, but the rectangles are all "blocks" geometrically
@@ -349,7 +350,8 @@ public class BounceEvaluator implements Evaluator {
       if (current.velocityX < 0.0)
          xOutOfBounds = (-RADIUS - current.posX) / current.velocityX;
       else if (current.velocityX > 0.0)
-         xOutOfBounds = (WORLD_LENGTH + RADIUS - current.posX) / current.velocityX;
+         xOutOfBounds = (WORLD_LENGTH + RADIUS - current.posX)
+          / current.velocityX;
       else
          xOutOfBounds = Double.MAX_VALUE;
 
@@ -374,8 +376,7 @@ public class BounceEvaluator implements Evaluator {
    
    // Calculates and return the first Collision of the ball with |obstacle|,
    // or null if there is no collision.
-   private Collision getObstacleCollision(Obstacle obs,
-         BounceEvent evt) {
+   private Collision getObstacleCollision(Obstacle obs, BounceEvent evt) {
       
       Optional<Collision> rtn = Stream.of(
          getHorizontalEdgeCollision(obs.loX, obs.hiX, obs.hiY + RADIUS, evt),
