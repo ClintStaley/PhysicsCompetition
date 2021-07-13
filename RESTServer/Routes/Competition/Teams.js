@@ -25,10 +25,13 @@ router.post('/', (req, res) => {
    var curTeam;
    var rules;
 
+   var teamNameLimit = 30;
+
    async.waterfall([
    (cb) => {
       //check for required field teamName
-      if (vld.hasFields(body, ["teamName", "leaderId"], cb)) {
+      if (vld.hasFields(body, ["teamName", "leaderId"], cb) &&
+       vld.checkFieldLengths(body,["teamName"],[teamNameLimit])) {
          body.cmpId = req.params.cmpId;
          //Check teamName availability
          cnn.chkQry('select * from Team where teamName = ? and cmpId = ?',
