@@ -34,6 +34,9 @@ export class MovieController extends Component {
       console.log("in getDerivedState");
 
       if (newProps !== oldState.props){ // Reset for new movie
+         console.log(newProps);
+         console.log("^ new props, \\/ old state");
+         console.log(oldState.props);
          console.log("movie controller get init state");
          rtn = MovieController.getInitState(newProps);
       }
@@ -44,7 +47,7 @@ export class MovieController extends Component {
       if (this.state.currentOffset < this.state.duration)
          this.setState({playing: true}, 
           () => requestAnimationFrame(this.animate));
-      else
+      else //play functions as replay when movie ends
          this.setState({playing: true, startTime: null, currentOffset: 0},
           () => requestAnimationFrame(this.animate));
    };
@@ -52,12 +55,7 @@ export class MovieController extends Component {
    pause = () => {
       this.setState({playing: false, startTime: null});
    };
-/*
-   replay = () => {
-      this.setState({playing: true, startTime: null, currentOffset: 0},
-         () => requestAnimationFrame(this.animate));
-   };
-*/
+
    // RequestAnimationFrame is the only source of time.  This provides better
    // consistency than use of window.performance.now().  State.currentOffset
    // is the number of seconds into the movie at the current animation point.
@@ -71,7 +69,8 @@ export class MovieController extends Component {
 
          // Set startTime if we are commencing animation
          if (this.state.startTime === null) 
-            this.state.startTime = timestamp - this.state.currentOffset;
+            //this.state.startTime = timestamp - this.state.currentOffset;
+            this.setState({startTime : timestamp - this.state.currentOffset});
 
          // Stop animation at end of movie
          if (this.state.currentOffset > this.state.duration) {
