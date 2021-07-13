@@ -95,6 +95,8 @@ export class SVGUtil{
 
     //simple circle with text set to center, might need changing later
     static makeLabeledCircle(evt, cls, yTop) {
+        if (evt.r == 0)
+            return <g></g> //if radius is zero return no circle and no text
         return <g>
             <circle key={"Circ" + evt.id} cx={evt.x} cy={yTop-evt.y} r={evt.r} className={cls}/>
             <text key={"txt" + evt.id} x={evt.x} y={yTop-evt.y} className="LLText">
