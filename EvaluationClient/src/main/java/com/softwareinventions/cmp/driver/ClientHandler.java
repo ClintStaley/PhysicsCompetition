@@ -102,17 +102,20 @@ public class ClientHandler {
    public <T> T checkAndRead(ClientResponse response, Class<T> type)
          throws EVCException {
       T result = null;
+      String errorDescr;
 
       try {
          if (response.getStatus() == 200)
             result = type == null ? null : response.getEntity(type);
          else {
-            lgr.info(response.getEntity(String.class));
+            errorDescr = String.format("Error code %d with body %s",
+                  response.getStatus(), response.getEntity(String.class));
 
-            throw new EVCException(String.format("Error code %d on resource %s",
-                  response.getStatus(), response.getLocation()));
+            lgr.info(errorDescr);
+            throw new EVCException(errorDescr);
          }
-      } finally {
+      } 
+      finally {
          response.close();
       }
 
@@ -138,7 +141,7 @@ public class ClientHandler {
 
       ClientResponse response = client
             .resource(String.format("%s/Cmps/%d/Teams/%d/Sbms/%d", url,
-                  res.cmpId, res.teamId, res.sbmId))
+            res.cmpId, res.teamId, res.sbmId))
             .type("application/json").put(ClientResponse.class, tempRes);
 
       checkAndClose(response);
