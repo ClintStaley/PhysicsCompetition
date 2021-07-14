@@ -27,7 +27,7 @@ public class BounceEvaluator implements Evaluator {
    public static final double EPS = 0.00000001;
    public static final double ERR_FACTOR = 0.01;
    public static final int SBM_LIMIT = 5;  
-   public static final double SBM_PENALTY = .09;
+   public static final double SBM_PENALTY = .9;
    
    // Represent one Collision, including its type, its time, the location of
    // circle center as of the collision, and the index of the struck obstacle.
@@ -112,6 +112,7 @@ public class BounceEvaluator implements Evaluator {
       public double posX;
       public double posY;
       public int obstacleIdx;
+      public boolean corner;
 
       // Create a starting bounce event.
       public BounceEvent(double startingHeight, double speed) {
@@ -322,6 +323,7 @@ public class BounceEvaluator implements Evaluator {
                + (-2.0 * magnitude * dy);
 
          newBallEvent.obstacleIdx = collision.obstacleIdx;
+         newBallEvent.corner = true;
          break;
       default:
          // should never happen
@@ -329,7 +331,6 @@ public class BounceEvaluator implements Evaluator {
 
       }
       
-      lgr.info("Obstacle Hit is: " + newBallEvent.obstacleIdx);
       return newBallEvent;
    }
 

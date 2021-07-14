@@ -130,7 +130,7 @@ export default class SbmPage extends Component {
           submitFn={this.state.sbmFunction}/>);
       }
       else if (ctpName === "Bounce") {
-         prbDiagram = (<Bounce className="clearfix"
+         prbDiagram = (<Bounce
           prms={cmp.prms} sbm={sbm}/>);
          
           sbmDialog = (<BSubmitModal prms={cmp.prms}

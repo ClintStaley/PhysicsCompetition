@@ -20,19 +20,27 @@ export class Bounce extends Component {
    constructor(props) {
       super(props);
 
-      this.state = {}
+      this.state = Bounce.getDerivedStateFromProps(props, {});
    }
 
-   static getDerivedStateFromProps(props, state) {
-      return {movie: new BounceMovie(60, props.prms, props.sbm)};
+   static getDerivedStateFromProps(newProps, oldState) {
+      if (!oldState.props || newProps.prms !== oldState.props.prms
+       || newProps.sbm !== oldState.props.sbm) {
+         return {
+            props: newProps, 
+            movie: new BounceMovie(60, newProps.prms, newProps.sbm)
+         };
+      }
+      else
+         return oldState;
    }
 
    // Build table on bottom of page showing detailed info about each hit,
    // after that hit is shown on the animation.
    getSummary = (testResult, score) => {
       var hits = [];
-      var totalTime = 0;
-      var ballEvents = [];
+      var totalTime = -1;  // Predecrement to compensate for extra totalTime add
+      var ballEvents;
       var colors = Bounce.ballColors;
       var numColors = colors.length;
 
@@ -41,22 +49,24 @@ export class Bounce extends Component {
             hits.push(<h4 key={"Ball #" + ballNum}
              className={colors[ballNum % numColors]}>Ball #{ballNum+1}</h4>)
 
-            //creates rows on table, 4 sig figs on values
+            ballEvents = [];
+
+            // Add one table row per event to |ballEvents|
             ballArray.forEach((event, evtNum) => {
                ballEvents.push(
                   <tr key={"tableSummary" + evtNum}>
                      <th>{evtNum === 0 ? "Launch" : event.obstacleIdx >= 0 ?
                       `Bounce off target ${event.obstacleIdx}` : "Exit"}
                      </th>
-                     <th>{parseFloat(event.time.toFixed(4))}</th>
-                     <th>{parseFloat(event.posX.toFixed(4))}</th>
-                     <th>{parseFloat(event.posY.toFixed(4))}</th>
-                     <th>{parseFloat(event.velocityX.toFixed(4))}</th>
-                     <th>{parseFloat(event.velocityY.toFixed(4))}</th>
+                     <th>{parseFloat(event.time.toFixed(3))}</th>
+                     <th>{parseFloat(event.posX.toFixed(3))}</th>
+                     <th>{parseFloat(event.posY.toFixed(3))}</th>
+                     <th>{parseFloat(event.velocityX.toFixed(3))}</th>
+                     <th>{parseFloat(event.velocityY.toFixed(3))}</th>
                   </tr>);
             });
 
-            totalTime += ballArray[ballArray.length-1].time;
+            totalTime += ballArray[ballArray.length-1].time + 1;
 
             hits.push(
                <table key={"Summary" + ballNum++}>
@@ -94,6 +104,7 @@ export class Bounce extends Component {
       let sbm = this.props.sbm;
       let summary = '';
       
+      //sbm.score = 50.0;
       if (sbm && sbm.testResult && sbm.score !== null) {
          summary = this.getSummary(sbm.testResult, sbm.score);
       }
