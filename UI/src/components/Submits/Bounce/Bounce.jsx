@@ -100,6 +100,9 @@ export class Bounce extends Component {
          return "";
    }
 
+   // Create array once to avoid appearance of prop changes.
+   static views = [BounceSVGView, Bounce3DView];
+
    render() {
       let sbm = this.props.sbm;
       let summary = '';
@@ -113,7 +116,7 @@ export class Bounce extends Component {
          <h2>Problem Diagram</h2>
          <MovieController
             movie={this.state.movie}
-            views={[BounceSVGView, Bounce3DView]}
+            views={Bounce.views}
          />               
          {summary}
       </section>);

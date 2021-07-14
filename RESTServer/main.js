@@ -85,7 +85,7 @@ var configApp = (port, corsDomain, testFlag) => {
 }
 
 var addDebugRoutes = app => {
-   console.log('Settng test routes');
+   console.log('Setting test routes');
    app.delete('/Server', function(req, res) {process.exit(0);});
 
    // Debugging tool. Clear all table contents, reset all auto_increment
