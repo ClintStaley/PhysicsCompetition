@@ -3,7 +3,7 @@ import { Button } from 'react-bootstrap';
 import { Bounce } from './Bounce/Bounce';
 import { BSubmitModal } from './Bounce/BounceSubmitModal';
 import { LandGrab} from './LandGrab/LandGrab';
-import { LGSubmitModal } from './LandGrab/LGSubmitModal';
+import { LGSubmitModal } from './LandGrab/LandGrabSubmitModal';
 // import { Ricochet, RSubmitModal } from './Ricochet'
 
 // Set up a page managing submissions for a competition and team.  This includes
