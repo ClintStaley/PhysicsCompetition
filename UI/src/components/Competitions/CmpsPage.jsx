@@ -52,7 +52,7 @@ class CmpsPage extends Component {
       return (
       <section className="container">
       <ConfDialog
-        show={this.state.showDeleteConfirmation  != null }bit
+        show={this.state.showDeleteConfirmation != null}
         title="Delete Competition"
         body={`Are you sure you want to delete the Competition
          '${this.state.showDeleteConfirmation}'`}
@@ -98,6 +98,7 @@ const CompetitionItem = function (props) {
    return (
       <ListGroupItem className="clearfix">
          <div className='cmpItem'>{props.title}</div>
+         <div>{props.description}</div>
          {props.joiningCmp ?
             props.joined ? 
                <div>(already joined)</div>
@@ -108,8 +109,6 @@ const CompetitionItem = function (props) {
                <Link to = {props.link}>Competition Status</Link>
             </div>
          }
-
-         <div>{props.description}</div>
       </ListGroupItem>
    )
 }

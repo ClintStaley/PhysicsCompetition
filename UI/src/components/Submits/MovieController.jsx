@@ -28,8 +28,8 @@ export class MovieController extends Component {
  
    static getDerivedStateFromProps(newProps, oldState) {
       let rtn = oldState;
-
-      if (newProps !== oldState.props) // Reset for new movie
+      
+      if (newProps.movie !== oldState.props.movie) // Reset for new movie
          rtn = MovieController.getInitState(newProps);
 
       return rtn;

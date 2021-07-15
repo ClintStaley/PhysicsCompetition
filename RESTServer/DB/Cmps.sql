@@ -40,7 +40,8 @@ insert into Competition (title, ctpId, ownerId, description, prms)
 # 12 m/s 1.08s 1.0 4.24 
 insert into Competition (title, ctpId, ownerId, description, prms)
    VALUES ('Bounce Challenge 3', 2, 1,
-    'This competition requires ping-ponging betweeen two columns of targets',
+    'This competition requires 2 balls ping-ponging between
+     two columns of targets',
     '{
        "targetTime": 3.87, 
        "targets": [ 
@@ -59,7 +60,7 @@ insert into Competition (title, ctpId, ownerId, description, prms)
    VALUES ('Bounce Challenge 4', 2, 1, 
     'A challenging Bounce competition, though still doable with two balls',
     '{
-        "targetTime": 5.53, 
+        "targetTime": 6.53, 
         "targets": [
            {"loX": 1.0, "hiX": 2.0, "hiY": 7.9, "loY": 7.6},
            {"loX": 4.8, "hiX": 5.3, "hiY": 9.0, "loY": 8.7},
@@ -67,7 +68,7 @@ insert into Competition (title, ctpId, ownerId, description, prms)
            {"loX": 1.9, "hiX": 2.9, "hiY": 4.9, "loY": 4.6},
            {"loX": 1.1, "hiX": 2.2, "hiY": 0.9, "loY": 0.6}], 
         "barriers": [
-           {"loX": 4.8, "hiX": 7.5, "hiY": 8.3, "loY": 8}
+           {"loX": 2.5, "hiX": 7.5, "hiY": 8.3, "loY": 8}
         ]
      }');
             
