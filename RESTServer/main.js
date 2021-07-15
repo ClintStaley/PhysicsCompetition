@@ -85,7 +85,7 @@ var configApp = (port, corsDomain, testFlag) => {
 }
 
 var addDebugRoutes = app => {
-   console.log('Settng test routes');
+   console.log('Setting test routes');
    app.delete('/Server', function(req, res) {process.exit(0);});
 
    // Debugging tool. Clear all table contents, reset all auto_increment
@@ -124,9 +124,6 @@ var addDebugRoutes = app => {
             require("crypto").createHash('sha1').update("password").digest('hex') +
             '", NOW(), 1);', cb);
       });
-
-      // Callback to reinsert Bounce CompetitionType TEST
-
 
       // Callback to reinsert Land Grab CompetitionType
       cbs.push(function (cb) {

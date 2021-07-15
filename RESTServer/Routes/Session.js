@@ -62,8 +62,6 @@ Session.resetAll = () => {Session.ssnsById = []; Session.ssnsByCookie = {}; Sess
 Session.router = function(req, res, next) {
    var cookie = req.cookies[cookieName];
    var session = cookie && Session.ssnsByCookie[cookie];
-
-   console.log('Session.router');
    
    if (session) {
       // If the session was last used more than |duration| mS ago..

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {FormGroup, FormControl, HelpBlock, Button }
   from 'react-bootstrap';
-import DragModal from '../../Util/DraggableModal.js';
+import DragModal from '../../Util/DraggableModal.jsx';
 
 /* Expected Properties
  * prms-- parameter of the LandGrab competition to which to submit

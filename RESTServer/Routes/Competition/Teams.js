@@ -22,7 +22,7 @@ router.post('/', (req, res) => {
    var body = req.body;
    var cnn = req.cnn;
    var memberData = [];
-   var curTeam;
+   var curTeamId;
    var rules;
 
    var teamNameLimit = 30;
@@ -49,7 +49,7 @@ router.post('/', (req, res) => {
       //create new team
       if (vld.check(cmp && cmp.length, Tags.notFound, cb)) {
          rules = cmp[0].rules;
-         curTeam = cmp[0].curTeam;
+         curTeamId = cmp[0].curTeamId;
          cnn.chkQry('insert into Team set ?', body, cb);
       }
    },
@@ -69,12 +69,12 @@ router.post('/', (req, res) => {
          async.waterfall([
          (cb) => {
             //checks if there is a team that is ok to go
-            if (curTeam) {
+            if (curTeamId) {
                //makes the recently created team the last team to go
-               nextTeam = curTeam;
+               nextTeam = curTeamId;
                canSubmit = false;
                cnn.chkQry('update Team set nextTeam = ? where nextTeam = ?',
-                [result.insertId, curTeam], cb);
+                [result.insertId, curTeamId], cb);
             }
             else {
                //makes the team just created the current team
@@ -183,7 +183,7 @@ router.delete('/:id', (req, res) => {
       cnn.chkQry('select * from Team where id = ?', [req.params.id], cb);
    },
    (team, fields, cb) => {
-      //checks teh team exists
+      //checks that the team exists
       if (vld.check(team && team.length, Tags.notFound, cb))
          if (vld.checkPrsOK(team[0].leaderId, cb)) {
             nextTeam = team[0].nextTeam;
@@ -193,10 +193,10 @@ router.delete('/:id', (req, res) => {
          }
    },
    (cmp, fields, cb) => {
-      //checks the competition rules, or if the cutTeam pointer needs to change
-      if (!cmp[0].rules || !(cmp[0].curTeam == req.params.id))
+      //checks the competition rules, or if the curTeamId pointer needs to change
+      if (!cmp[0].rules || !(cmp[0].curTeamId == req.params.id))
          cb(null, null, cb);
-      else if (!otherTeams) //checks if the curTeam needs to be null
+      else if (!otherTeams) //checks if the curTeamId needs to be null
          cnn.chkQry('update Competition set curTeamId = ? where id = ?',
           [null, cmp[0].id], cb);
       else

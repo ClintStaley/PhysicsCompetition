@@ -3,7 +3,6 @@
 var addTeamToState = (st, team) => {
    var cmpId = team.cmpId;
 
-
    return Object.assign({}, st, {
       myTeams: st.myTeams.concat([team.id]),
       myCmps: st.myCmps.includes(cmpId) ? st.myCmps : st.myCmps.concat([cmpId])
@@ -31,7 +30,7 @@ export default function prs(state = {}, action) {
          return {} // Clear user state
       case 'GET_PRS_TEAMS':
          var newState = state;
-         //clearing myTeams and myCmps in case they have been deleted
+         // Clear myTeams and myCmps in case they have been deleted
          newState.myTeams = [];
          newState.myCmps = [];
 

@@ -43,7 +43,7 @@ export function getAllCmps( cb) {
       api.getCmps()
       .then((cmps) => {
          Object.keys(cmps).forEach(key => {cmps[key].cmpTeams = []});
-         dispatch({ type: 'GET_CMPS', cmps });
+         dispatch({ type: 'GET_CMPS', cmps});
       })
       .then(() => {if (cb) cb()})
    }
@@ -68,7 +68,7 @@ export function getTeamsByPrs(prsId, cb) {
 
 export function getCmpsByPrs(id, cb) {
    return ((dispatch, getState) => {
-      api.getCmpsByPerson(id)
+      api.getCmpsByPrs(id)
       .then((cmps) => {
          Object.keys(cmps).forEach(key => {cmps[key].cmpTeams = []});
          dispatch({type: 'GET_PRS_CMPS', cmps});

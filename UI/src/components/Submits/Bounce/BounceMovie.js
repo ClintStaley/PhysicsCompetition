@@ -11,12 +11,14 @@ export class BounceMovie {
    static cBallLaunch = 5;
    static cBallExit = 6;
 
-   // Construct with background as indicated, and events drawn from prms and sbm
+   // Construct with background as indicated, and events drawn from prms and 
+   // optional sbm.  (Generate only barrier/target creation events w/o sbm)
    constructor(frameRate, prms, sbm) {
-      const cG = 9.80665;               // Gravity in m/s^2
-      const bkgSize = 10.0;             // Standard field size
-      let tracks = sbm.testResult.events;  
+      const cG = 9.81;               // Gravity in m/s^2
+      const bkgSize = 10.0;          // Standard field size
+      let tracks = sbm && sbm.testResult ? sbm.testResult.events : [];  
       
+      console.log("Make Bounce Movie");
       this.background = {};
       this.background.frameRate = frameRate;
       this.background.height = bkgSize;
@@ -41,10 +43,10 @@ export class BounceMovie {
             else if (arc.obstacleIdx >= 0) {      // If bouncing off something
                if (arc.obstacleIdx < prms.targets.length)
                   this.addHitTargetEvt(time, arc.posX, arc.posY, ballId,
-                   arc.obstacleIdx)
+                   arc.obstacleIdx, arc.corner)
                else
                   this.addHitBarrierEvt(time, arc.posX, arc.posY, ballId,
-                   arc.obstacleIdx)
+                   arc.obstacleIdx, arc.corner)
             }
             else                                  // Exit "arc"
                this.addBallExitEvt(time, arc.posX, arc.posY, ballId);
@@ -80,14 +82,14 @@ export class BounceMovie {
        {type: BounceMovie.cMakeTarget, time, id, loX, loY, hiX, hiY});
    }
 
-   addHitBarrierEvt(time, x, y, ballNumber, barrierId) {
-      this.evts.push(
-       {type: BounceMovie.cHitBarrier, time, x, y, ballNumber, barrierId});
+   addHitBarrierEvt(time, x, y, ballNumber, barrierId, corner) {
+      this.evts.push({type: BounceMovie.cHitBarrier, time, x, y,
+       ballNumber, barrierId, corner});
    }
 
-   addHitTargetEvt(time, x, y, ballNumber, targetId) {
-      this.evts.push(
-       {type: BounceMovie.cHitTarget, time, x, y, ballNumber, targetId});
+   addHitTargetEvt(time, x, y, ballNumber, targetId, corner) {
+      this.evts.push({type: BounceMovie.cHitTarget, time, x, y,
+       ballNumber, targetId, corner});
    }
 
    addBallLaunchEvt(time, ballNumber) {

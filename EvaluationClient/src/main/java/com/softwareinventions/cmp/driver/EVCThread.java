@@ -254,8 +254,9 @@ public class EVCThread extends Thread  {
                evaluations = evaluator.evaluateSbms(
                      handler.getWaitingSubmissions(cmps[i].id));
 
-               for (int c = 0; c < evaluations.length; c++) 
+               for (int c = 0; c < evaluations.length; c++) {
                   handler.response(evaluations[c]);
+               }
                
             }
             TimeUnit.SECONDS.sleep(1);
@@ -283,12 +284,9 @@ public class EVCThread extends Thread  {
       else if (ctpName.equals("Ricochet"))
          evl = new RicochetEvaluator();
       else
-         throw new
-               Exception("Competition Type: " + ctpName + " does not exist");
+         throw new Exception("Unknown Competition Type: " + ctpName);
 
       evl.setPrms(cmp.prms);
       return evl;
    }
-   
-   
 }

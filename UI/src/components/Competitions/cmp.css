@@ -3,8 +3,9 @@
   text-align: center;
 }
 
-.comp-item {
+.cmpItem {
   color: black !important;
+  font-size: large;
 }
 
 .grid {
@@ -25,21 +26,22 @@
   margin: 5px;
 }
 
-.cmpDescription-body {
-  padding: 5px;
-}
-
 .cmpDescription-header {
   background-color: lightgrey;
   border-radius: 1px;
-  font-size: 15pt;
+  font-size: 20pt;
   padding: 4px;
   text-align: center;
 }
 
 .instructionLink {
   text-align: right;
+  font-size: 14pt;
   margin: 5px;
+}
+
+.cmpDescription-body {
+  padding: 5px;
 }
 
 .rightButton {

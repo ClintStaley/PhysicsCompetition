@@ -20,6 +20,14 @@ class TeamsPage extends Component {
       }
    }
 
+   //enter still has problems, will automatically reopen window, different key works fine
+   handleKeyPress = (target) => {
+      if (target.keyCode === 13){
+         target.preventDefault();
+         this.close("OK");
+      }
+   }
+
    componentDidMount = () => {
       var props = this.props;
 
@@ -76,9 +84,14 @@ class TeamsPage extends Component {
 
    openAddMmb = (teamId) => {
       var props = this.props;
+      var expanded = this.state.expanded;
+      expanded[teamId] = true;
 
-      this.setState({addMmbFunc: (mmbEmail) =>
-       props.addMmb(mmbEmail, props.teams[teamId].cmpId, teamId)});
+      this.setState({
+         expanded,
+         addMmbFunc: (mmbEmail) =>
+          props.addMmb(mmbEmail, props.teams[teamId].cmpId, teamId)
+      });
    }
 
    closeAddMmb = (result) => {
@@ -169,18 +182,16 @@ class TeamsPage extends Component {
 }
 
 const TeamLine = function(props) {
-   const addTip = (
-      <Popover id="TeamsPage-addTip">Add a new team member</Popover>
-   )
-   const delTip = (
-      <Popover id="TeamsPage-delTip">Remove this team</Popover>
-   )
+   const addTip = <Popover id="Teams-addTip">Add a team member</Popover>;
+   const editTip = <Popover id="Teams-editTip">Change name or leader</Popover>;
+   const delTip = <Popover id="Teams-delTip">Remove this team</Popover>;
+   
    var isLeader = props.leaderId === props.prsId;
    return (
 
    <ListGroupItem className="clearfix">
      {isLeader ?
-       <Button onClick={props.toggle}><mark>{props.teamName}</mark></Button>
+       <Button onClick={props.toggle}>{props.teamName + " (leader)"}</Button>
        :
        <Button onClick={props.toggle}>{props.teamName}</Button>
      }
@@ -195,9 +206,12 @@ const TeamLine = function(props) {
            </Button>
          </OverlayTrigger>
 
-         <Button bsSize="small" onClick={props.edit}>
-            <span className="fa fa-edit"/>
-         </Button>
+         <OverlayTrigger trigger={["focus", "hover"]}
+          placement="bottom" overlay={editTip}>
+            <Button bsSize="small" onClick={props.edit}>
+               <span className="fa fa-edit"/>
+            </Button>
+          </OverlayTrigger>
 
          <OverlayTrigger trigger={["focus", "hover"]}
          placement="bottom" overlay={delTip}>
