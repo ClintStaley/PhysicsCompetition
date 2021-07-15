@@ -29,11 +29,9 @@ router.post('/', (req, res) => {
    // First make sure the team exists
    async.waterfall([
       (cb) => {
-         if (vld.hasOnlyFields(body, ["content"], cb)) {
-            if (vld.check(!body.testResult || vld.checkAdmin())) {
-               cnn.chkQry('select * from Team where id = ? && cmpId = ?',
-                  [req.params.teamId, req.params.cmpId], cb);
-            }
+         if (vld.hasOnlyFields(body, ["content"], cb).check(true, null, cb)) {
+            cnn.chkQry('select * from Team where id = ? && cmpId = ?',
+               [req.params.teamId, req.params.cmpId], cb);
          }
       },
       (team, err, cb) => {
@@ -87,9 +85,9 @@ router.put('/:id', (req, res) => {
    async.waterfall([
       (cb) => {
          if (vld.checkAdmin(cb) && vld.hasOnlyFields(body,
-               ["testResult", "errorResult", "score", "canSubmit"], cb)) {
+            ["testResult", "errorResult", "score", "canSubmit"], cb).check(true, null, cb)) {
             cnn.chkQry('select * from Team where id = ? && cmpId = ?',
-                  [teamId, cmpId], cb);
+               [teamId, cmpId], cb);
          }
       },
       (team, err, cb) => {
@@ -97,9 +95,15 @@ router.put('/:id', (req, res) => {
          if (vld.check(team && team.length, Tags.notFound, cb)) {
             if (body.score != null && team[0].bestScore < body.score)
                teamBody.bestScore = body.score;
-            if ("canSubmit" in body)
+            if ("canSubmit" in body) {
                teamBody.canSubmit = body.canSubmit;
-            cnn.chkQry("update Team set ? where id = ?", [teamBody, teamId], cb);
+            }
+            if ((body.score > team[0].bestScore && body.canSubmit) ||
+               body.score > team[0].bestScore && !body.canSubmit)
+               cnn.chkQry("update Team set ? where id = ?", [teamBody, teamId], cb);
+            else {
+               cnn.chkQry("select * from Team where id = ?", teamId, cb)
+            }
          }
       },
       (result, err, cb) => {

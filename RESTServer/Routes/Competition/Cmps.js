@@ -57,7 +57,7 @@ router.post('/', (req, res) => {
          (cb) => {
             //Get dupTitles if they exist
             if (vld.hasOnlyFields(body, ["title", "ctpId", "prms", "rules",
-               "description"], cb) && vld.checkFieldLengths(body, ["title"], [titleLimit])) {
+               "description"], cb).check(true,null,cb) && vld.checkFieldLengths(body, ["title"], [titleLimit])) {
                body.ownerId = ssn.prsId;
                cnn.chkQry(
                   'select * from Competition where title = ? and ownerId = ?',
@@ -174,17 +174,18 @@ router.put('/:id', (req, res) => {
 
 router.delete('/:id', (req, res) => {
    var vld = req.validator;
+   var cnn = req.cnn;
 
    if (vld.checkAdmin()) {
-      req.cnn.query('delete from Competition where id = ?', [req.params.id],
+      cnn.chkQry('delete from Competition where id = ?', [req.params.id],
          (err, result) => {
             if (!err && vld.check(result.affectedRows, Tags.notFound))
                res.status(200).end();
-            req.cnn.release();
+            cnn.release();
          });
    }
    else {
-      req.cnn.release();
+      cnn.release();
    }
 });
 
@@ -194,13 +195,11 @@ router.get('/:id/WaitingSbms', (req, res) => {
    var num = req.query.num;
 
    if (vld.checkAdmin()) {
-      cnn.query('select s.*, t.numSubmits, t.lastSubmit, t.bestScore from ' +
+      cnn.chkQry('select s.*, t.numSubmits, t.lastSubmit, t.bestScore from ' +
          'Submit s, Team t where t.id = s.teamId and s.cmpId = ? and ' +
          '( testResult is null or not errorResult is null) order by sbmTime DESC',
          [req.params.id],
          (err, result) => {
-            if (err)
-               console.log(err);
             if (result.length)
                if (num || num == 0)
                   result = result.slice(0, num);
