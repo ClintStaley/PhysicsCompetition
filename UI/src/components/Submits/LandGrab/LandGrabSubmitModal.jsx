@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Button } from 'react-bootstrap';
+import {Form, Button } from 'react-bootstrap';
 import DraggableModal from '../../Util/DraggableModal';
 
 export class LGSubmitModal extends Component {
@@ -34,15 +34,15 @@ export class LGSubmitModal extends Component {
    // Handle a change event from field with id field:bIdx where field is
    // posX, poxY, and Radius, and bIdx is 0-based circle number
    handleChange(ev) {
-      var bIdx, field;
+      var cIdx, field;
 
-      [field, bIdx] = ev.target.id.split(":");
+      [field, cIdx] = ev.target.id.split(":");
 
       // Either empty, or a nonnegative number
       if (!ev.target.value || parseFloat(ev.target.value) >= 0.0)
          this.setState({
-            "cSpec": this.state.launchSpec.map((spec, i) => {
-               return "" + i !== bIdx ? spec :
+            "cSpec": this.state.cSpec.map((spec, i) => {
+               return "" + i !== cIdx ? spec :
                   Object.assign({}, spec, { [field]: ev.target.value });
             })
          });
@@ -50,8 +50,7 @@ export class LGSubmitModal extends Component {
 
    // valid iff circle centers are in range and 0 <= radius <= 50
     getValidationState = () => {
-      console.log(this.state.cSpec);
-       
+      /* 
       this.state.cSpec.forEach(circle => {
          if (!(Number.parseFloat(circle.centerX) >= 0
              && Number.parseFloat(circle.centerX) <= 100
@@ -61,8 +60,8 @@ export class LGSubmitModal extends Component {
              && Number.parseFloat(circle.radius) <= 50))
                return false;
         });
-      
-        return true;
+      */
+        return false;
    }
 
    // Add an aditional text box to enter another circle
@@ -102,59 +101,55 @@ export class LGSubmitModal extends Component {
 
          lines.push(<div classname="container" key={idx}>
             <div className="row">
-               <div className="col-sm-1"><h5>Circle {idx}</h5></div>
-               <div className="col-sm-2">
-                  <Form.Group controlId={idX}>
-                     <Form.Label>
-                        Center X
-                     </Form.Label>
-                     <Form.Control
-                      type="text"
-                      id={idR}
-                      value={this.state.cSpec[idx].centerX}
-                      required={true}
-                      onChange={this.handleChange} />
-                  </Form.Group>
-               </div>
+            <div className="col-sm-1"><h5>Circle {idx}</h5></div>
+                <div className="col-sm-3">
+                   <Form.Group controlId={idR}>
+                      <Form.Label>
+                         Radius
+                      </Form.Label>
+                      <Form.Control
+                         type="text"
+                         id={idR}
+                         value={this.state.cSpec[idx].radius}
+                         required={true}
+                         onChange={this.handleChange} />
+                      <Form.Text muted>At most 50</Form.Text>
+                   </Form.Group>
+                </div>
+                <div className="col-sm-2">
+                   <Form.Group controlId={idX}>
+                      <Form.Label>X</Form.Label>
+                      <Form.Control
+                         type="text"
+                         id={idX}
+                         value={this.state.cSpec[idx].centerX}
+                         required={true}
+                         onChange={this.handleChange}
+                      />
+                      <Form.Control.Feedback />
+                   </Form.Group>
+                </div>
+ 
+                <div className="col-sm-2">
+                   <Form.Group controlId={idY}>
+                      <Form.Label>Y</Form.Label>
+                      <Form.Control
+                         type="text"
+                         id={idY}
+                         value={this.state.cSpec[idx].centerY}
+                         required={true}
+                         onChange={this.handleChange}
+                      />
+                      <Form.Control.Feedback />
+                   </Form.Group>
+                </div>
 
-               <div className="col-sm-2">
-                  <Form.group controlId={idY}>
-                     <Form.Label>
-                        Center Y
-                     </Form.Label>
-                     <Form.Control
-                      type="text"
-                      id={idY}
-                      value={this.state.cSpec[idx].centerY}
-                      required={true}
-                      onChange={this.handleChange} />
-                  <Form.Control.Feeback />
-                  </Form.group>
-               </div>
-
-               <div className="col-sm-2">
-                  <Form.group controlId={idR}>
-                     <Form.Label>
-                        Radius
-                     </Form.Label>
-                     <Form.Control
-                      type="text"
-                      id={idR}
-                      value={this.state.cSpec[idx].radius}
-                      required={true}
-                      onChange={this.handleChange} />
-                  <Form.Control.Feeback />
-                  </Form.group>
-               </div>
-
-
-
-            </div>
-         </div>)
-      }
-
+             </div>
+          </div>)
+       }
+      
       var buttons = [
-         <Button key={0} onClick={() => { this.addBall() }}>Add Circle</Button>,
+         <Button key={0} onClick={() => { this.addCircle() }}>Add Circle</Button>,
 
          <Button key={1} disabled={this.state.cSpec.length === 1}
             onClick={() => {this.removeCircle() }}>Remove Circle</Button>,
