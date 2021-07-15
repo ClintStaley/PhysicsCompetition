@@ -17,13 +17,12 @@ export default class SbmPage extends Component {
    constructor(props) {
       super(props);
 
-      this.cRefreshDelay = 4000; // Every 4 s
-      this.cNoteDelay = 333;     // Show notice for 1/3 s
+      this.cRefreshDelay = 2000; // Every 2s
 
       this.state = {
-         sbmFunction: null,                // Function to support submit dialog
-         refreshNote: "No results yet...", // Refresh state
-         ctpName: null,                    // Type of page to load
+         sbmFunction: null,    // Function to support submit dialog
+         refreshNote: "",      // Refresh update message
+         ctpName: null,        // Type of page to load
          cmp: this.props.team && this.props.cmps[this.props.team.cmpId]
       }
    }
@@ -60,23 +59,21 @@ export default class SbmPage extends Component {
       if (submit)
          this.props.postSbm(this.state.cmp.id, this.props.team.id, submit,
           () => this.startTimer());
-      this.setState({sbmFunction : null});
+      this.setState({sbmFunction : null, refreshNote: "Checking for results"});
    }
 
    refreshSbm = () => {
       var current = this.props.sbms && this.props.sbms.current;
 
       if (current)
-         if (current.testResult && this.timerId) {
+         if (current.testResult) {
+            this.setState({refreshNote: ""});
             this.stopTimer();
          }
          else {
-            this.setState({refreshNote: "Checking for results..."});
             this.props.refreshSbms(() => {
-            if (current)  // CAS FIX: How is this ever false?
                this.props.getTeamById(current.cmpId, current.teamId);
-            else
-               this.setState({refreshNote: "No results yet.."});
+               this.setState({refreshNote: this.state.refreshNote + ".."})
             });
          }
    }
@@ -85,8 +82,13 @@ export default class SbmPage extends Component {
       var sbm, sbmTime, dateStr, timeStr,  sbmDialog;
       var cmp = this.state.cmp;
       var ctpName = this.state.ctpName;
-      var sbmStatus = null;
+      var bestScore;
+      var sbmStatus;
       var prbDiagram = null;
+
+      bestScore = this.props.team.bestScore !== -1 ?
+       `Best score: ${this.props.team.bestScore.toFixed(2)}` :
+       'Best score: N/A';
 
       if (this.props.sbms.current) {
          sbm = this.props.sbms.current;
@@ -96,24 +98,22 @@ export default class SbmPage extends Component {
          timeStr = sbmTime.toLocaleTimeString();
 
          sbmStatus = (<div className="panel container">
-           <h2>Status of your last submission</h2>
+           <h3>Status of your last submission</h3>
            <div className="row">
              <div className="col-sm-9">
                <h4>Submission received at {timeStr} on {dateStr}</h4>
-               <h4>{this.props.team.bestScore !== -1 ?
-                `Best score: ${this.props.team.bestScore}` :
-                'Best score: N/A'}</h4>
-               <h4>{sbm.score != null ? `This score: ${sbm.score}` :
-                this.state.refreshNote}</h4>
+               <h4>{!sbm.testResult ? this.state.refreshNote : 
+                sbm.score !== null ? `Score: ${sbm.score.toFixed(2)}`
+                : "Not valid solution"}</h4>
              </div>
            </div>
          </div>);
       }
       else
          sbmStatus 
-          = <div><h3>Your team has made no design submissions yet.</h3></div>;
+          = <div><h2>Your team has made no design submissions yet.</h2></div>;
 
-      var sbmButton = (<div className="col-sm-3">
+      var sbmButton = (<div className="col-sm-3 float-right">
         <Button disabled={!this.props.team.canSubmit ||
          this.props.sbms.current && !this.props.sbms.current.testResult}
          onClick={() => this.setState({sbmFunction: this.doSubmit})}>
@@ -147,10 +147,11 @@ export default class SbmPage extends Component {
       }*/
 
       return (<div className="container">
-        <h1>{cmp.title}</h1>
+        <h1>{cmp.title}<span className="float-right">{bestScore}</span></h1>
+        {sbmButton}
         <br/>
         {sbmStatus}
-        {sbmButton}
+        <br/>
         {prbDiagram}
         {sbmDialog}
       </div>);

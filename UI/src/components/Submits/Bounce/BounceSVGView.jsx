@@ -52,6 +52,8 @@ export class BounceSVGView extends React.Component {
       let {trgEvts, ballEvt, evtIdx, svgElms} = state;
       let yTop = movie.background.height;
       let evt;
+      let hitClass;
+      const radius = BounceSVGView.ballRadius;
 
       // While the event after evtIdx exists and needs adding to svgElms
       while (evtIdx+1 < evts.length && evts[evtIdx+1].time <= timeStamp) {
@@ -71,10 +73,15 @@ export class BounceSVGView extends React.Component {
          }
          else if (evt.type === BounceMovie.cHitBarrier
           || evt.type === BounceMovie.cHitTarget) {
-            svgElms.push(<circle key={"Hit" + evt.time} cx={evt.x}
-             cy={yTop - evt.y} r={BounceSVGView.ballRadius}
-             className={"ball faded "
-              + BounceSVGView.ballColors[evt.ballNumber]} />)
+            hitClass = "ball faded " + BounceSVGView.ballColors[evt.ballNumber];
+
+            if (evt.corner)
+               svgElms.push(<rect key={"Hit" + evt.time} x={evt.x - radius}
+                y={yTop - evt.y - radius} width={2*radius} height={2*radius}
+                className={hitClass}/>)
+            else
+               svgElms.push(<circle key={"Hit" + evt.time} cx={evt.x}
+                cy={yTop - evt.y} r={radius} className={hitClass}/>)
 
             if (evt.type === BounceMovie.cHitTarget) {
                let trgEvt = trgEvts[evt.targetId];

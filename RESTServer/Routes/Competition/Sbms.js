@@ -86,27 +86,20 @@ router.put('/:id', (req, res) => {
 
    async.waterfall([
       (cb) => {
-         if (vld.hasOnlyFields(body,
-            ["testResult", "errorResult", "score", "canSubmit"], cb)) {
-            if (vld.checkAdmin(cb)) {
-               cnn.chkQry('select * from Team where id = ? && cmpId = ?',
+         if (vld.checkAdmin(cb) && vld.hasOnlyFields(body,
+               ["testResult", "errorResult", "score", "canSubmit"], cb)) {
+            cnn.chkQry('select * from Team where id = ? && cmpId = ?',
                   [teamId, cmpId], cb);
-            }
          }
       },
       (team, err, cb) => {
          var teamBody = {};
          if (vld.check(team && team.length, Tags.notFound, cb)) {
-            if (team[0].bestScore < body.score)
+            if (body.score != null && team[0].bestScore < body.score)
                teamBody.bestScore = body.score;
-            if (body.canSubmit)
+            if ("canSubmit" in body)
                teamBody.canSubmit = body.canSubmit;
-            if (teamBody.bestScore)
-               cnn.chkQry("update Team set ? where id = ?",
-                  [teamBody, teamId], cb);
-            else {
-               cb(null, null, cb);
-            }
+            cnn.chkQry("update Team set ? where id = ?", [teamBody, teamId], cb);
          }
       },
       (result, err, cb) => {
@@ -114,8 +107,7 @@ router.put('/:id', (req, res) => {
          body.cmpId = cmpId;
          body.teamId = teamId;
          cnn.chkQry('select * from Submit where id = ? && cmpId = ? && ' +
-            'teamId = ?',
-            [smbId, cmpId, teamId], cb);
+            'teamId = ?', [smbId, cmpId, teamId], cb);
       },
       (submission, err, cb) => {
          if (vld.check(submission && submission.length, Tags.notFound, cb))
@@ -123,12 +115,10 @@ router.put('/:id', (req, res) => {
                [req.body, req.params.id], cb);
       },
       (result, fields, cb) => {
-         // Return location of inserted Submissions
-         res.location(router.baseURL + '/' + result.insertId).end();
+         res.status(200).end();
          cb();
       }],
       () => {
-         res.status(200);
          cnn.release();
       });
 });

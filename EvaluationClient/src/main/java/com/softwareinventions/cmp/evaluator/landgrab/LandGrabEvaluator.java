@@ -85,6 +85,7 @@ public class LandGrabEvaluator implements Evaluator {
       // names easily, right?)
       LandGrabTR rspLG = new LandGrabTR();  
       SbmCircle[] sbmCircles = mapper.readValue(sbm.content, SbmCircle[].class);
+      double score;
       
       // CAS: one-space continuation indent, right?
       // And, "LG" suffix is needless and extra space.  Obviously we're in the
@@ -97,9 +98,9 @@ public class LandGrabEvaluator implements Evaluator {
          rspLG.circleData[i] = evaluateCircle(sbmCircles, i, rspLG.circleData); //return new circleTR for each sbmCircle
       }
       
+      score = Math.round(rspLG.areaCovered * 100.0 / prms.goalArea);
       EvlPut eval = new EvlPut(sbm.cmpId, sbm.teamId, sbm.id,
-            new Evl(mapper.writeValueAsString(rspLG),
-            Math.round(rspLG.areaCovered * 100.0 / prms.goalArea)));
+            new Evl(mapper.writeValueAsString(rspLG), score));
       
       lgr.info("Graded Land Grab Submission# " + eval.sbmId);
       return eval;

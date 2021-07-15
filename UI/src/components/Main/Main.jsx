@@ -59,8 +59,8 @@ class Main extends Component {
         <Nav>
           {this.signedIn() ?
             [
-              <LinkContainer key={0} to="/MyCmpsPage" >
-                <Nav.Link>My Competitions</Nav.Link>
+              <LinkContainer key={0} to="/ActiveCmpsPage" >
+                <Nav.Link>Active Competitions</Nav.Link>
               </LinkContainer>,
               <LinkContainer key={1} to="/AllCmpsPage">
                 <Nav.Link>Join Competitions</Nav.Link>
@@ -96,7 +96,7 @@ class Main extends Component {
       <Switch className='page-col'>
         <Route exact path='/' children={Home} />
 
-        <ProtectedRoute path='/MyCmpsPage' {...this.props}
+        <ProtectedRoute path='/ActiveCmpsPage' {...this.props}
          component = {CmpsPage} showAll = {false}/>
 
         <ProtectedRoute path='/AllCmpsPage' {...this.props}

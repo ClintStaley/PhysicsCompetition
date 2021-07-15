@@ -80,7 +80,7 @@ export default class CmpPage extends Component {
       this.props.history.push(`/SbmPage/${team.id}`);
    }
 
-   openInstrictions = () => {
+   openInstructions = () => {
      var props = this.props;
      var link = '/Docs/Cmps/';
      var ctpId = props.cmps[props.cmpId].ctpId;
