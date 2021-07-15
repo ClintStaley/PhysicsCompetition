@@ -15,7 +15,6 @@ export class MovieController extends Component {
 
    // duration indicates length, and by being nonzero, the need for movie play
    static getInitState(props) {
-
       return {
          props,
          currentViewIdx: 0, // Selected type of view
@@ -28,22 +27,26 @@ export class MovieController extends Component {
  
    static getDerivedStateFromProps(newProps, oldState) {
       let rtn = oldState;
-      
+
       if (newProps.movie !== oldState.props.movie) // Reset for new movie
          rtn = MovieController.getInitState(newProps);
 
       return rtn;
    }
-   //set reset if else
+
+   // Set state.playing to true, and reset to movie start if we're at end.
+   // In either case start a requestAnimatinoFrame sequence once state is set.
    play = () => {
       if (this.state.currentOffset < this.state.duration)
          this.setState({playing: true}, 
           () => requestAnimationFrame(this.animate));
-      else //play functions as replay when movie ends
+      else 
          this.setState({playing: true, startTime: null, currentOffset: 0},
           () => requestAnimationFrame(this.animate));
    };
 
+   // Set state.playing to false, and invalidate startTime so it will be reset
+   // on next playing period.
    pause = () => {
       this.setState({playing: false, startTime: null});
    };
