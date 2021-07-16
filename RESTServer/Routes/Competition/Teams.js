@@ -44,7 +44,7 @@ router.post('/', (req, res) => {
    (cmp, fields, cb) => {
       // save rules and the current team for future use
       //create new team
-      if (vld.check(cmp && cmp.length, Tags.notFound, cb)) {
+      if (vld.check(cmp.length, Tags.notFound, cb)) {
          rules = cmp[0].rules;
          curTeamId = cmp[0].curTeamId;
          cnn.chkQry('insert into Team set ?', body, cb);
