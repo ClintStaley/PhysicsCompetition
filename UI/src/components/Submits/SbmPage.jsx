@@ -4,7 +4,8 @@ import { Bounce } from './Bounce/Bounce';
 import { BSubmitModal } from './Bounce/BounceSubmitModal';
 import { LandGrab} from './LandGrab/LandGrab';
 import { LGSubmitModal } from './LandGrab/LGSubmitModal';
-// import { Ricochet, RSubmitModal } from './Ricochet'
+import {Rebound} from './Rebound/Rebound';
+import {ReboundSubmitDlg} from './Rebound/';
 
 // Set up a page managing submissions for a competition and team.  This includes
 // a submission dialog, automatic polling for a test result on any standing
@@ -137,11 +138,11 @@ export default class SbmPage extends Component {
           submitFn={this.state.sbmFunction}/>);
       }
       /* Install later
-      else if (ctpName === "Ricochet") {
-         prbDiagram = (<Ricochet className="clearfix"
+      else if (ctpName === "Rebound") {
+         prbDiagram = (<Rebound className="clearfix"
           prms={cmp.prms} sbm={sbm}/>);
          
-         sbmDialog = (<RSubmitModal prms={cmp.prms}
+         sbmDialog = (<ReboundSubmitDlg prms={cmp.prms}
           submitFn={this.state.sbmFunction}/>);
       }*/
 
