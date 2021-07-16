@@ -23,7 +23,7 @@ export class LandGrabMovie {
         let circlesResults = sbm && sbm.testResult ? 
         sbm.testResult.circleData : [];
         //contains location and order of circles
-        let circleContent = sbm.content;
+        let circleContent =  sbm && sbm.content ? sbm.content : [];
 
         this.background = {};
         this.background.frameRate = frameRate;
