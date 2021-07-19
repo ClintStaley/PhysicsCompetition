@@ -91,11 +91,9 @@ var addDebugRoutes = app => {
    // Debugging tool. Clear all table contents, reset all auto_increment
    // keys to 1, and reinsert one admin user.
    app.delete('/DB', function (req, res) {
-
-      console.log('here again');
-
       var resetTables = ["Person", "CompetitionType", "Competition",
          "Team", "Submit", "Membership"];
+         
       if (!req.session.isAdmin()) {
          req.cnn.release();
          res.status(403).end();
