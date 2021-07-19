@@ -4,7 +4,7 @@ import {BounceSVGView} from "./BounceSVGView";
 import { BounceMovie } from './BounceMovie';
 import { MovieController } from '../MovieController';
 
-import './Bounce.css'
+import style from './Bounce.module.css'
 
 // Expected props are, exactly:
 //  prms -- the parameters for the displayed competition
@@ -47,7 +47,7 @@ export class Bounce extends Component {
       if (score !== null) {
          testResult.events.forEach((ballArray, ballNum) => {
             hits.push(<h4 key={"Ball #" + ballNum}
-             className={colors[ballNum % numColors]}>Ball #{ballNum+1}</h4>)
+             className={style[colors[ballNum % numColors]]}>Ball #{ballNum+1}</h4>)
 
             ballEvents = [];
 
