@@ -22,8 +22,8 @@ export class SVGUtil{
 
             for (var smallOffset = bigOffset + smallGap;
             smallOffset < bigOffset + bigGap; smallOffset += smallGap)
-                bkgElms.push(<line key={"VL" + smallOffset} x1={smallOffset} y1="0"
-                x2={smallOffset} y2={height} className="lightLine" />);
+                bkgElms.push(<line key={"VL" + smallOffset} x1={smallOffset}
+                y1="0" x2={smallOffset} y2={height} className="lightLine" />);
         }
     
         // Horizontal lines
