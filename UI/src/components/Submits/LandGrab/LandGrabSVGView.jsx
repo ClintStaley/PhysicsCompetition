@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { LandGrabMovie } from "./LandGrabMovie";
 import {SVGUtil} from '../SVGUtil';
-import './LandGrab.css';
+import styles from './LandGrabSVGView.module.css';
 
 export class LandGrabSVGView extends React.Component {
     
@@ -13,7 +13,7 @@ export class LandGrabSVGView extends React.Component {
     }
 
     static getInitState(movie){
-        var bkgElms = SVGUtil.getbkgElms(movie);
+        var bkgElms = SVGUtil.getGraphGrid(movie, styles);
         return {
             growthEvts : [],  // array of all growth events (including invalid)
             evtIdx: -1,       // Index within movie of last event shown in svgElms
@@ -54,17 +54,17 @@ export class LandGrabSVGView extends React.Component {
                     svgElms.pop();
                 
             if (evt.type === LandGrabMovie.cMakeObstacle) {
-                svgElms.push(SVGUtil.makeLabeledRect(evt, "obstacle", yTop));
+                svgElms.push(SVGUtil.makeLabeledRect(evt, "obstacle", yTop, styles, 1.7));
             }
             else if (evt.type === LandGrabMovie.cInvalidCircle) {
-                svgElms.push(SVGUtil.makeLabeledCircle(evt, "badCircle", yTop));
+                svgElms.push(SVGUtil.makeLabeledCircle(evt, "badCircle", yTop, styles));
             }
             else if (evt.type === LandGrabMovie.cValidCircle){
-                svgElms.push(SVGUtil.makeLabeledCircle(evt, "goodCircle", yTop));
+                svgElms.push(SVGUtil.makeLabeledCircle(evt, "goodCircle", yTop, styles));
 
             }
             else if (evt.type === LandGrabMovie.cCircleGrowth){
-                growthEvts[evtIdx] = SVGUtil.makeLabeledCircle(evt, "openCircle", yTop);
+                growthEvts[evtIdx] = SVGUtil.makeLabeledCircle(evt, "openCircle", yTop, styles);
                 svgElms.push(growthEvts[evtIdx]);
             }
             //add indexing to remove circle growth
@@ -77,7 +77,7 @@ export class LandGrabSVGView extends React.Component {
             // expansion.  You can keep the old elements around in a list, without
             // adding them to the SVG view, and move back to them when rewinding.
             else if (evt.type === LandGrabMovie.cInvalidCircleGrowth){
-               growthEvts[evtIdx] = SVGUtil.makeLabeledCircle(evt, "badCircle", yTop);
+               growthEvts[evtIdx] = SVGUtil.makeLabeledCircle(evt, "badCircle", yTop, styles);
                svgElms.push(growthEvts[evtIdx]);
             }
         }
