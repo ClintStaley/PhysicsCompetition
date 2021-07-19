@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "e88873c9-fe32-4be7-98a1-d5257ba2a465",
+		"_postman_id": "47aa9e20-4de5-42c9-8a9b-286d89bc6cab",
 		"name": "PhysicsCompetitionREST Test",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -124,6 +124,88 @@
 							]
 						},
 						"description": "\n"
+					},
+					"response": []
+				},
+				{
+					"name": "Login as Student A w/ no password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"checkStatus(pm,400)"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"email\": \"userA@domainA\"}"
+						},
+						"url": {
+							"raw": "{{url}}/Ssns",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Ssns"
+							]
+						},
+						"description": "Good Login\n"
+					},
+					"response": []
+				},
+				{
+					"name": "Login as Student A w/ wrong email",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"checkStatus(pm,400);\r",
+									"\r",
+									"pm.test('Bad Login', ()=>{\r",
+									"    var jsonData = pm.response.json();\r",
+									"\r",
+									"    pm.expect(jsonData[0].tag).to.eql('badLogin');\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"email\": \"userA@domainC\", \"password\": \"passwordA\"}"
+						},
+						"url": {
+							"raw": "{{url}}/Ssns",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Ssns"
+							]
+						},
+						"description": "Good Login\n"
 					},
 					"response": []
 				},
@@ -716,6 +798,35 @@
 					"response": []
 				},
 				{
+					"name": "Get non existent session",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"checkStatus(pm, 404);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/Ssns/100",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Ssns",
+								"100"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Admin Logout Std A",
 					"event": [
 						{
@@ -743,6 +854,39 @@
 							"path": [
 								"Ssns",
 								"{{StdALoginId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Admin Logout non existent session",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"checkStatus(pm, 404);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/Ssns/100",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Ssns",
+								"100"
 							]
 						}
 					},
@@ -840,6 +984,49 @@
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"email\": \"UserB@domainC\",\n    \"lastName\" : \"LastC\",\n    \"role\"     : 2\n}"
+						},
+						"url": {
+							"raw": "{{url}}/Prss",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Prss"
+							]
+						},
+						"description": "\n"
+					},
+					"response": []
+				},
+				{
+					"name": "Register Student w/ exceeding firstName length",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"checkStatus(pm, 400);\r",
+									"\r",
+									"pm.test('Expected Content',() =>{\r",
+									"    var jsonData = JSON.parse(responseBody);    \r",
+									"    pm.expect(jsonData.length).to.equal(4)\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n    \"firstName\": \"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n    \"lastName\": \"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n    \"password\": \"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n    \"role\": 0,\n    \"termsAccepted\": true\n}"
 						},
 						"url": {
 							"raw": "{{url}}/Prss",
@@ -1844,6 +2031,123 @@
 					"response": []
 				},
 				{
+					"name": "Edit Competition Type w/ wrong fields",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"checkStatus(pm,400);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Land Grab Po\",\n    \"description\": \"Building Bridges\",\n    \"codeName\": \"Solar Car?\",\n    \"tutorial\": \"Bridge Maker instructions...\",\n    \"prmSchema\": \"{   \\\"title\\\": \\\"Route Strategy\\\",   \\\"description\\\": \\\"A solar car route strategy\\\",   \\\"type\\\": \\\"object\\\",   \\\"properties\\\": {     \\\"Altitude Profiles\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"array\\\",         \\\"items\\\": {           \\\"type\\\": \\\"number\\\"         },         \\\"maxItems\\\": 2,         \\\"minItems\\\": 2       },       \\\"minItems\\\": 2     },     \\\"Cell Output profile\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"array\\\",         \\\"items\\\": {           \\\"type\\\": \\\"number\\\"         },         \\\"maxItems\\\": 2,         \\\"minItems\\\": 2       },       \\\"minItems\\\": 2     },     \\\"Friction\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"number\\\",         \\\"minimum\\\": 0,         \\\"exclusiveMinimum\\\": true       },       \\\"maxItems\\\": 2,       \\\"minItems\\\": 1     },     \\\"Energy /m alt\\\": {       \\\"type\\\": \\\"number\\\",       \\\"minimum\\\": 0,       \\\"exclusiveMinimum\\\": true     },     \\\"Battery I/o\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"array\\\",         \\\"items\\\": {           \\\"type\\\": \\\"number\\\",           \\\"default\\\": 1000         },         \\\"maxItems\\\": 2,         \\\"minItems\\\": 2       },       \\\"minItems\\\": 2     },     \\\"Regen Efficiency\\\": {       \\\"type\\\": \\\"number\\\",       \\\"minimum\\\": 0,       \\\"default\\\": 100,       \\\"exclusiveMinimum\\\": true     },     \\\"Initial Battery\\\": {       \\\"type\\\": \\\"number\\\",       \\\"minimum\\\": 0,       \\\"default\\\": 10,       \\\"exclusiveMinimum\\\": true     }   },   \\\"required\\\": [     \\\"Altitude Profiles\\\",     \\\"Cell Output profile\\\",     \\\"Friction\\\",     \\\"Energy /m alt\\\",     \\\"Battery I/o\\\",     \\\"Regen Efficiency\\\",     \\\"Initial Battery\\\"   ] }\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/Ctps/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Ctps",
+								"1"
+							]
+						},
+						"description": "\n"
+					},
+					"response": []
+				},
+				{
+					"name": "Edit Competition Type w/ invalid id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"checkStatus(pm,404);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Land Grab Po\",\n    \"description\": \"Building Bridges\",\n    \"tutorial\": \"Bridge Maker instructions...\",\n    \"prmSchema\": \"{   \\\"title\\\": \\\"Route Strategy\\\",   \\\"description\\\": \\\"A solar car route strategy\\\",   \\\"type\\\": \\\"object\\\",   \\\"properties\\\": {     \\\"Altitude Profiles\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"array\\\",         \\\"items\\\": {           \\\"type\\\": \\\"number\\\"         },         \\\"maxItems\\\": 2,         \\\"minItems\\\": 2       },       \\\"minItems\\\": 2     },     \\\"Cell Output profile\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"array\\\",         \\\"items\\\": {           \\\"type\\\": \\\"number\\\"         },         \\\"maxItems\\\": 2,         \\\"minItems\\\": 2       },       \\\"minItems\\\": 2     },     \\\"Friction\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"number\\\",         \\\"minimum\\\": 0,         \\\"exclusiveMinimum\\\": true       },       \\\"maxItems\\\": 2,       \\\"minItems\\\": 1     },     \\\"Energy /m alt\\\": {       \\\"type\\\": \\\"number\\\",       \\\"minimum\\\": 0,       \\\"exclusiveMinimum\\\": true     },     \\\"Battery I/o\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"array\\\",         \\\"items\\\": {           \\\"type\\\": \\\"number\\\",           \\\"default\\\": 1000         },         \\\"maxItems\\\": 2,         \\\"minItems\\\": 2       },       \\\"minItems\\\": 2     },     \\\"Regen Efficiency\\\": {       \\\"type\\\": \\\"number\\\",       \\\"minimum\\\": 0,       \\\"default\\\": 100,       \\\"exclusiveMinimum\\\": true     },     \\\"Initial Battery\\\": {       \\\"type\\\": \\\"number\\\",       \\\"minimum\\\": 0,       \\\"default\\\": 10,       \\\"exclusiveMinimum\\\": true     }   },   \\\"required\\\": [     \\\"Altitude Profiles\\\",     \\\"Cell Output profile\\\",     \\\"Friction\\\",     \\\"Energy /m alt\\\",     \\\"Battery I/o\\\",     \\\"Regen Efficiency\\\",     \\\"Initial Battery\\\"   ] }\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/Ctps/10",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Ctps",
+								"10"
+							]
+						},
+						"description": "\n"
+					},
+					"response": []
+				},
+				{
+					"name": "Edit Competition Type w/ dupe title",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"checkStatus(pm,400);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"title2\",\n    \"description\": \"Building Bridges\",\n    \"tutorial\": \"Bridge Maker instructions...\",\n    \"prmSchema\": \"{   \\\"title\\\": \\\"Route Strategy\\\",   \\\"description\\\": \\\"A solar car route strategy\\\",   \\\"type\\\": \\\"object\\\",   \\\"properties\\\": {     \\\"Altitude Profiles\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"array\\\",         \\\"items\\\": {           \\\"type\\\": \\\"number\\\"         },         \\\"maxItems\\\": 2,         \\\"minItems\\\": 2       },       \\\"minItems\\\": 2     },     \\\"Cell Output profile\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"array\\\",         \\\"items\\\": {           \\\"type\\\": \\\"number\\\"         },         \\\"maxItems\\\": 2,         \\\"minItems\\\": 2       },       \\\"minItems\\\": 2     },     \\\"Friction\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"number\\\",         \\\"minimum\\\": 0,         \\\"exclusiveMinimum\\\": true       },       \\\"maxItems\\\": 2,       \\\"minItems\\\": 1     },     \\\"Energy /m alt\\\": {       \\\"type\\\": \\\"number\\\",       \\\"minimum\\\": 0,       \\\"exclusiveMinimum\\\": true     },     \\\"Battery I/o\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"array\\\",         \\\"items\\\": {           \\\"type\\\": \\\"number\\\",           \\\"default\\\": 1000         },         \\\"maxItems\\\": 2,         \\\"minItems\\\": 2       },       \\\"minItems\\\": 2     },     \\\"Regen Efficiency\\\": {       \\\"type\\\": \\\"number\\\",       \\\"minimum\\\": 0,       \\\"default\\\": 100,       \\\"exclusiveMinimum\\\": true     },     \\\"Initial Battery\\\": {       \\\"type\\\": \\\"number\\\",       \\\"minimum\\\": 0,       \\\"default\\\": 10,       \\\"exclusiveMinimum\\\": true     }   },   \\\"required\\\": [     \\\"Altitude Profiles\\\",     \\\"Cell Output profile\\\",     \\\"Friction\\\",     \\\"Energy /m alt\\\",     \\\"Battery I/o\\\",     \\\"Regen Efficiency\\\",     \\\"Initial Battery\\\"   ] }\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/Ctps/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Ctps",
+								"1"
+							]
+						},
+						"description": "\n"
+					},
+					"response": []
+				},
+				{
 					"name": "Check description change",
 					"event": [
 						{
@@ -2278,6 +2582,95 @@
 					"response": []
 				},
 				{
+					"name": "Post LandGrap Cmp w/ Invalid Prms",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"checkStatus(pm,400)\r",
+									"\r",
+									"pm.test('Invalid Prms', ()=>{\r",
+									"    var jsonData = pm.response.json()\r",
+									"    pm.expect(jsonData[0].tag).to.eql(\"invalidPrms\")\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"ctpId\": {{CmpTypeA}},\n    \"title\": \"Land Grab Fail\",\n    \"prms\": \"{     \\\"nummCircles\\\": 3, }\",\n    \"rules\": 1,\n    \"description\": \"description of Land Grab .....\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/Cmps",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Cmps"
+							]
+						},
+						"description": "\n"
+					},
+					"response": []
+				},
+				{
+					"name": "Post Competition w/ exceeding title",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"checkStatus(pm,400);\r",
+									"\r",
+									"pm.test(\"Expected body\", ()=>{\r",
+									"    var jsonData = pm.response.json();\r",
+									"\r",
+									"    pm.expect(jsonData[0].tag).to.eql(\"badValue\");\r",
+									"    pm.expect(jsonData[0].params[0]).to.eql(\"title\")\r",
+									"})\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"ctpId\": {{CmpTypeA}},\n    \"title\": \"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n    \"prms\": \"{     \\\"numCircles\\\": 3,     \\\"goalArea\\\": 5000.0,    \\\"obstacles\\\": [        {          \\\"loX\\\": 0,          \\\"hiX\\\": 40.2,          \\\"loY\\\": 0,          \\\"hiY\\\": 28.7        },        {          \\\"loX\\\": 0,          \\\"hiX\\\": 50,          \\\"loY\\\": 85,          \\\"hiY\\\": 100        },         {          \\\"loX\\\": 80,          \\\"hiX\\\": 100,          \\\"loY\\\": 0,          \\\"hiY\\\": 12        }      ]    }\",\n    \"rules\": 1,\n    \"description\": \"description of Land Grab .....\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/Cmps",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Cmps"
+							]
+						},
+						"description": "\n"
+					},
+					"response": []
+				},
+				{
 					"name": "Post LandGrab B Cmp",
 					"event": [
 						{
@@ -2438,6 +2831,50 @@
 					"response": []
 				},
 				{
+					"name": "Get all Competitions by owner and cptId",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"checkStatus(pm, 200);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/Cmps?email={{curLoginEmail}}&CompetitionType=1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Cmps"
+							],
+							"query": [
+								{
+									"key": "email",
+									"value": "{{curLoginEmail}}"
+								},
+								{
+									"key": "CompetitionType",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Get Info on Admin\n"
+					},
+					"response": []
+				},
+				{
 					"name": "Get all Competitions by Type",
 					"event": [
 						{
@@ -2522,6 +2959,44 @@
 					"response": []
 				},
 				{
+					"name": "Edit Competition w/o Params",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"checkStatus(pm, 200);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"description\": \"Land Grab change\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/Cmps/{{LandGrabBId}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Cmps",
+								"{{LandGrabBId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Edit Competition Params Only",
 					"event": [
 						{
@@ -2545,6 +3020,50 @@
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"prms\": \"{      \\\"numCircles\\\": 3,    \\\"goalArea\\\": 5000.0,        \\\"obstacles\\\": [        {          \\\"loX\\\": 0,          \\\"hiX\\\": 40.2,          \\\"loY\\\": 0,          \\\"hiY\\\": 28.7        },        {          \\\"loX\\\": 0,          \\\"hiX\\\": 50,          \\\"loY\\\": 80,          \\\"hiY\\\": 100        },         {          \\\"loX\\\": 80,          \\\"hiX\\\": 100,          \\\"loY\\\": 0,          \\\"hiY\\\": 12        }      ]    }\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Cmps",
+								"{{LandGrabAId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit Competition w/ Invalid Params",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"checkStatus(pm, 400);\r",
+									"\r",
+									"pm.test('Invalid Params', ()=>{\r",
+									"    var jsonData = pm.response.json();\r",
+									"\r",
+									"    pm.expect(jsonData[0].tag).to.eql('badBodyFormat')\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"prms\": \"{     \\\"nummCircles\\\": 3, }\"\n}"
 						},
 						"url": {
 							"raw": "{{url}}/Cmps/{{LandGrabAId}}",
@@ -3075,6 +3594,42 @@
 					"response": []
 				},
 				{
+					"name": "Get Student Competitions as student",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"checkStatus(pm, 403);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/Prss/2/Cmps",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Prss",
+								"2",
+								"Cmps"
+							]
+						},
+						"description": "Get Info on Admin\n"
+					},
+					"response": []
+				},
+				{
 					"name": "Get all Competitions",
 					"event": [
 						{
@@ -3237,6 +3792,133 @@
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"teamName\": \"Team A\",\n  \"leaderId\": \"1\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Cmps",
+								"{{LandGrabAId}}",
+								"Teams"
+							]
+						},
+						"description": "\n"
+					},
+					"response": []
+				},
+				{
+					"name": "Register Team A with missingField",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"checkStatus(pm,400);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"teamName\": \"Team A\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Cmps",
+								"{{LandGrabAId}}",
+								"Teams"
+							]
+						},
+						"description": "\n"
+					},
+					"response": []
+				},
+				{
+					"name": "Register Team A in missing Competition",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"checkStatus(pm,404);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"teamName\": \"Team A\",\n  \"leaderId\": \"1\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/Cmps/100/Teams",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Cmps",
+								"100",
+								"Teams"
+							]
+						},
+						"description": "\n"
+					},
+					"response": []
+				},
+				{
+					"name": "Register Team w/ exceeding title",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"checkStatus(pm, 400);\r",
+									"\r",
+									"pm.test('Expected content', () => {\r",
+									"    var jsonData = pm.response.json();\r",
+									"\r",
+									"    pm.expect(jsonData[0].tag).to.eql(\"badValue\");\r",
+									"    pm.expect(jsonData[0].params[0]).to.eql(\"teamName\");\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"teamName\": \"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n  \"leaderId\": \"1\"\n}"
 						},
 						"url": {
 							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams",
@@ -3773,6 +4455,48 @@
 					"response": []
 				},
 				{
+					"name": "Get one Competition by id copy Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonBody = pm.response.json();",
+									"",
+									"checkStatus(pm, 200);",
+									"",
+									"pm.test('Expected Content', ()=>{",
+									"    pm.expect(jsonBody.title).to.eql(\"Land Grab A\")",
+									"})",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Cmps",
+								"{{LandGrabAId}}"
+							]
+						},
+						"description": "Get Info on Admin\n"
+					},
+					"response": []
+				},
+				{
 					"name": "Get team info",
 					"event": [
 						{
@@ -4011,6 +4735,98 @@
 					"response": []
 				},
 				{
+					"name": "Edit Team 3 w/ excess fields",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"checkStatus(pm, 400);\r",
+									"\r",
+									"pm.test('To many fields', () => {\r",
+									"    var jsonData = pm.response.json();\r",
+									"\r",
+									"    pm.expect(jsonData[0].tag).to.eql(\"forbiddenField\");\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"teamName\": \"Team 3\",\n  \"leaderId\": \"4\",\n  \"excessField\": \"fillerText\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/{{Team3Id}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Cmps",
+								"{{LandGrabAId}}",
+								"Teams",
+								"{{Team3Id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit Team 3 w/ dup title",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"checkStatus(pm, 400);\r",
+									"\r",
+									"pm.test('dup Title', () => {\r",
+									"    var jsonData = pm.response.json();\r",
+									"\r",
+									"    pm.expect(jsonData[0].tag).to.eql(\"dupTitle\");\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"teamName\": \"Team A\",\n  \"leaderId\": \"4\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/{{Team3Id}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Cmps",
+								"{{LandGrabAId}}",
+								"Teams",
+								"{{Team3Id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Get one Team",
 					"event": [
 						{
@@ -4057,6 +4873,82 @@
 					"response": []
 				},
 				{
+					"name": "Get one Team w/ invalid id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"checkStatus(pm,404);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/teams/100",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Cmps",
+								"{{LandGrabAId}}",
+								"teams",
+								"100"
+							]
+						},
+						"description": "Get Info on Admin\n"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Student A Teams",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"checkStatus(pm, 403);",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/Prss/1/Teams",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Prss",
+								"1",
+								"Teams"
+							]
+						},
+						"description": "Get Info on Admin\n"
+					},
+					"response": []
+				},
+				{
 					"name": "Remove Team 3",
 					"event": [
 						{
@@ -4086,6 +4978,42 @@
 								"{{LandGrabAId}}",
 								"Teams",
 								"{{Team3Id}}"
+							]
+						},
+						"description": "\n"
+					},
+					"response": []
+				},
+				{
+					"name": "Remove non existent team",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"checkStatus(pm, 404);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/100",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Cmps",
+								"{{LandGrabAId}}",
+								"Teams",
+								"100"
 							]
 						},
 						"description": "\n"
@@ -4434,6 +5362,48 @@
 					"response": []
 				},
 				{
+					"name": "Register Member D w/ missing field",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"checkStatus(pm,400);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"badField\": 4\n}"
+						},
+						"url": {
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/{{TeamCId}}/Mmbs",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Cmps",
+								"{{LandGrabAId}}",
+								"Teams",
+								"{{TeamCId}}",
+								"Mmbs"
+							]
+						},
+						"description": "\n"
+					},
+					"response": []
+				},
+				{
 					"name": "Get all Members of Team 1",
 					"event": [
 						{
@@ -4520,6 +5490,44 @@
 					"response": []
 				},
 				{
+					"name": "Get Student Competitions as student",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonBody = pm.response.json();",
+									"checkStatus(pm, 200);",
+									"pm.test(\"No Cmps\", pm.expect(jsonBody.length).equals(2));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/Prss/1/Cmps",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Prss",
+								"1",
+								"Cmps"
+							]
+						},
+						"description": "Get Info on Admin\n"
+					},
+					"response": []
+				},
+				{
 					"name": "Remove Team Leader",
 					"event": [
 						{
@@ -4549,6 +5557,44 @@
 								"{{LandGrabAId}}",
 								"Teams",
 								"{{TeamAId}}",
+								"Mmbs",
+								"1"
+							]
+						},
+						"description": "\n"
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Member w/ invalid id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"checkStatus(pm, 404);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/1/Mmbs/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Cmps",
+								"{{LandGrabAId}}",
+								"Teams",
+								"1",
 								"Mmbs",
 								"1"
 							]
@@ -5261,6 +6307,48 @@
 					"response": []
 				},
 				{
+					"name": "Register Submission D w/ excess fields",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"checkStatus(pm, 400);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"excessField\": \"fillerText\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/{{TeamDId}}/Sbms",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Cmps",
+								"{{LandGrabAId}}",
+								"Teams",
+								"{{TeamDId}}",
+								"Sbms"
+							]
+						},
+						"description": "\n"
+					},
+					"response": []
+				},
+				{
 					"name": "Get all Submissions",
 					"event": [
 						{
@@ -5315,7 +6403,7 @@
 									"",
 									"checkStatus(pm, 200);",
 									"",
-									"pm.test('One Submission', ()=>{",
+									"pm.test('One Submissions', ()=>{",
 									"    pm.expect(jsonBody.length).to.eql(1);",
 									"});"
 								],
@@ -5490,7 +6578,7 @@
 					"response": []
 				},
 				{
-					"name": "Get one Submission",
+					"name": "Get Submission by id",
 					"event": [
 						{
 							"listen": "test",
@@ -5529,6 +6617,47 @@
 								"{{TeamAId}}",
 								"Sbms",
 								"1"
+							]
+						},
+						"description": "Get Info on Admin\n"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Submission w/ invalid id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"checkStatus(pm, 404);",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/{{TeamAId}}/Sbms/100",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Cmps",
+								"{{LandGrabAId}}",
+								"Teams",
+								"{{TeamAId}}",
+								"Sbms",
+								"100"
 							]
 						},
 						"description": "Get Info on Admin\n"
@@ -5578,7 +6707,49 @@
 					"response": []
 				},
 				{
-					"name": "Give a response Copy",
+					"name": "Give a response with invalid ids",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"checkStatus(pm, 404);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"testResult\": \"{     \\\"circleStatus\\\": [true, false, true],     \\\"areaCovered\\\": 4200.2 }\",\n    \"score\": 1,\n    \"canSubmit\": true\n}"
+						},
+						"url": {
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/100/Sbms/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Cmps",
+								"{{LandGrabAId}}",
+								"Teams",
+								"100",
+								"Sbms",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Give a response with null score",
 					"event": [
 						{
 							"listen": "test",
@@ -5600,7 +6771,175 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \n}"
+							"raw": "{\n    \"testResult\": \"{     \\\"circleStatus\\\": [true, false, true],     \\\"areaCovered\\\": 4200.2 }\",\n    \"score\": 1,\n    \"canSubmit\": true\n}"
+						},
+						"url": {
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/{{TeamAId}}/Sbms/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Cmps",
+								"{{LandGrabAId}}",
+								"Teams",
+								"{{TeamAId}}",
+								"Sbms",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Give a response with invalid sumbission id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"checkStatus(pm, 404);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"testResult\": \"{     \\\"circleStatus\\\": [true, false, true],     \\\"areaCovered\\\": 4200.2 }\",\n    \"score\": 1,\n    \"canSubmit\": true\n}"
+						},
+						"url": {
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/{{TeamAId}}/Sbms/100",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Cmps",
+								"{{LandGrabAId}}",
+								"Teams",
+								"{{TeamAId}}",
+								"Sbms",
+								"100"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Give a response with missing canSubmit",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"checkStatus(pm, 200);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"testResult\": \"{     \\\"circleStatus\\\": [true, false, true],     \\\"areaCovered\\\": 4200.2 }\",\n    \"score\": 1\n}"
+						},
+						"url": {
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/{{TeamAId}}/Sbms/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Cmps",
+								"{{LandGrabAId}}",
+								"Teams",
+								"{{TeamAId}}",
+								"Sbms",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Give a response with improved score w/ no canSubmit",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"checkStatus(pm, 200);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"testResult\": \"{     \\\"circleStatus\\\": [true, false, true],     \\\"areaCovered\\\": 4200.2 }\",\n    \"score\": 2\n}"
+						},
+						"url": {
+							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/{{TeamAId}}/Sbms/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Cmps",
+								"{{LandGrabAId}}",
+								"Teams",
+								"{{TeamAId}}",
+								"Sbms",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Give a response with excess fields",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"checkStatus(pm, 400);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"testResult\": \"{     \\\"circleStatus\\\": [true, false, true],     \\\"areaCovered\\\": 4200.2 }\",\n    \"score\": 1,\n    \"canSubmit\": true,\n    \"excessField\": \"fillerText\"\n}"
 						},
 						"url": {
 							"raw": "{{url}}/Cmps/{{LandGrabAId}}/Teams/{{TeamAId}}/Sbms/1",
@@ -5771,6 +7110,42 @@
 								"Teams",
 								"{{TeamAId}}",
 								"Sbms"
+							]
+						},
+						"description": "Get Info on Admin\n"
+					},
+					"response": []
+				},
+				{
+					"name": "Get all waiting Submissions as Student A",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"checkStatus(pm,403);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/Cmps/1/WaitingSbms",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Cmps",
+								"1",
+								"WaitingSbms"
 							]
 						},
 						"description": "Get Info on Admin\n"

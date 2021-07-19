@@ -4,6 +4,11 @@ var router = express.Router({caseSensitive: true});
 var async = require('async');
 var crypto = require("crypto");
 
+var firstLimit = 30;
+var lastLimit = 50;
+var passLimit = 50
+var emailLimit = 150;
+
 router.baseURL = '/Prss';
 
 router.get('/', (req, res) => {
@@ -38,7 +43,8 @@ router.post('/', (req, res) => {
    async.waterfall([
    (cb) => { // Check properties and search for Email duplicates
       if (vld.hasFields(body, ["email","firstName", "lastName", "password",
-       "role"], cb) &&
+       "role"], cb) && vld.checkFieldLengths(body,["email","firstName",
+       "lastName","password"],[emailLimit,firstLimit,lastLimit,passLimit]) &&
        vld.chain(body.role === 0 || admin, Tags.noPermission)
        .chain(body.termsAccepted || admin, Tags.noTerms)
        .check(body.role === 0 || body.role === 1, [Tags.badValue, "role"], cb)){
@@ -101,7 +107,9 @@ router.put('/:id', (req, res) => {
       if (
        (vld.checkPrsOK(req.params.id, cb)) &&
        vld.hasOnlyFields(body,
-       ["firstName", "lastName", "password", "oldPassword", "role"])
+       ["firstName", "lastName", "password", "oldPassword", "role"]) &&
+       vld.checkFieldLengths(body,["firstName","lastName","password","oldPassword",],
+       [firstLimit,lastLimit,passLimit,passLimit])
        .chain(!("password" in body) || body.password, [Tags.badValue,"password"])
        .chain(!body.role || admin && body.role === 1, [Tags.badValue,"role"])
        .check(!body.password || body.oldPassword || admin, Tags.noOldPwd, cb))
