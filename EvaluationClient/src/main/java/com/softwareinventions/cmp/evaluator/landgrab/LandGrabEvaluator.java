@@ -54,7 +54,6 @@ public class LandGrabEvaluator implements Evaluator {
    
    // contains collisions of a given circle
    static class Collisions {
-      public int[] AllCircles; // id's of circles collided with in order
       public Collision[] barriers; // id's of barriers collided with in order
       public Double boundary; // radius of boundary collision || null
       public Collision[] pastCircles; //
@@ -98,8 +97,6 @@ public class LandGrabEvaluator implements Evaluator {
       for (int i = 0; i < rsp.circleData.length; i++) {
          rsp.circleData[i] = evaluateCircle(sbmCircles, i, rsp.circleData);
       }
-      //create allCircles array for every circle
-      setAllCirclesProp(rsp.circleData);
       
       score = Math.round(rsp.areaCovered * 100.0 / prms.goalArea);
       EvlPut eval = new EvlPut(sbm.cmpId, sbm.teamId, sbm.id,
@@ -109,12 +106,11 @@ public class LandGrabEvaluator implements Evaluator {
       return eval;
    }
    
-   // CAS FIX: Blank line between block of declarations and rest of code
-   // Evaluate a given circle and update old circles accordingly
+   // Evaluate a given circle
    private Circle evaluateCircle(SbmCircle[] circles, int i,
-   Circle[] circleData) {
+    Circle[] circleData) {
       SbmCircle circle = circles[i]; // setting CircleTR props
-      Circle ctr = new Circle(circle);
+      Circle ctr = new Circle(circle); // create circle to return in circleData
       
       // evaluate for boundary, barrier collisions
       ctr.collisions.boundary = distanceToBounds(circle);
@@ -131,13 +127,14 @@ public class LandGrabEvaluator implements Evaluator {
       Double badRadius = ctr.collisions.boundary;
       double impossibleRadius = 51; // assumes background size = 100
       double temp = impossibleRadius;
+      
       for (int i = 0; i < ctr.collisions.barriers.length; i++) {
          temp = temp < ctr.collisions.barriers[i].radius ? temp
-         : ctr.collisions.barriers[i].radius;
+          : ctr.collisions.barriers[i].radius;
       }
       for (int i = 0; i < ctr.collisions.pastCircles.length; i++) {
          temp = temp < ctr.collisions.pastCircles[i].radius ? temp
-         : ctr.collisions.pastCircles[i].radius;
+          : ctr.collisions.pastCircles[i].radius;
       }
       
       if (temp == impossibleRadius) // CAS FIX: Magic number ??
@@ -164,14 +161,14 @@ public class LandGrabEvaluator implements Evaluator {
          
          // Check for center of circle in obstacle
          if (GenUtil.inBounds(obs.loX + EPS, circle.centerX, obs.hiX - EPS)
-         && GenUtil.inBounds(obs.loY + EPS, circle.centerY, obs.hiY - EPS)) {
+          && GenUtil.inBounds(obs.loY + EPS, circle.centerY, obs.hiY - EPS)) {
             d = EPS; // distance = EPS so it is nearly zero but still true in JS
          }
          
          // Overlap with horizontal sides
          else if (GenUtil.inBounds(obs.loX + EPS, circle.centerX, obs.hiX - EPS)
-         && GenUtil.inBounds(obs.loY - circle.radius - EPS, circle.centerY,
-         obs.hiY + circle.radius + EPS)) {
+          && GenUtil.inBounds(obs.loY - circle.radius - EPS, circle.centerY,
+          obs.hiY + circle.radius + EPS)) {
             tempDist = Point2D.distance(circle.centerX, circle.centerY, obs.loX,
             circle.centerY);
             d = d < tempDist ? d : tempDist;
@@ -181,15 +178,14 @@ public class LandGrabEvaluator implements Evaluator {
          }
          
          // Overlap with vertical sides
-         // CAS FIX: indentation
          else if (GenUtil.inBounds(obs.loY + EPS, circle.centerY, obs.hiY - EPS)
-         && GenUtil.inBounds(obs.loX - circle.radius - EPS, circle.centerX,
-         obs.hiX + circle.radius - EPS)) {
+          && GenUtil.inBounds(obs.loX - circle.radius - EPS, circle.centerX,
+          obs.hiX + circle.radius - EPS)) {
             tempDist = Point2D.distance(circle.centerX, circle.centerY,
-            circle.centerX, obs.loY);
+             circle.centerX, obs.loY);
             d = d < tempDist ? d : tempDist;
             tempDist = Point2D.distance(circle.centerX, circle.centerY,
-            circle.centerX, obs.hiY);
+             circle.centerX, obs.hiY);
             d = d < tempDist ? d : tempDist;
          }
          
@@ -226,7 +222,7 @@ public class LandGrabEvaluator implements Evaluator {
       for (int idx = 0; idx < i; idx++) {
          SbmCircle temp = circles[idx];
          double d = Point2D.distance(circle.centerX, circle.centerY,
-         temp.centerX, temp.centerY) - temp.radius;
+          temp.centerX, temp.centerY) - temp.radius;
          if (d < circle.radius - EPS)
             tempCollisions.add(new Collision(idx, d));
       }
@@ -254,28 +250,5 @@ public class LandGrabEvaluator implements Evaluator {
       return d < circle.radius - EPS ? d : Double.POSITIVE_INFINITY;
    }
    
-   // set AllCircles property to every circle, so that
-   // circles that get hit show which circle hit them
-   private void setAllCirclesProp(Circle[] circleData) {
-      // For each circle in circle data
-      for (int i = 0; i < circleData.length; i++) {
-         Circle ctr = circleData[i];
-         Collision[] collisions = ctr.collisions.pastCircles;
-         // for each of its circle collisions
-         for (int j = 0; j < collisions.length; j++) {
-            int circleIdx = collisions[j].cId;
-            int[] pAllCircles = circleData[circleIdx].collisions.AllCircles;
-            // Update the hit circle's AllCircles to include i
-            if (pAllCircles == null) {
-               circleData[circleIdx].collisions.AllCircles = new int[1];
-               circleData[circleIdx].collisions.AllCircles[0] = i;
-            } else {
-               circleData[circleIdx].collisions.AllCircles = Arrays
-               .copyOf(pAllCircles, pAllCircles.length + 1);
-               circleData[circleIdx].collisions.AllCircles[pAllCircles.length] = i;
-            }
-         }
-      }
-   }
    
 }
