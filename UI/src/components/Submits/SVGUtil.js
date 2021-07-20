@@ -59,23 +59,33 @@ export class SVGUtil{
     // dimensions as indicated by |evt| and with corner coordinates drawn in
     // text form, inside the rectangle if room suffices, otherwise outside.
 
-    //evt must be an object with an id, and coordinates in hiX, loX format
-    static makeLabeledRect(evt, cls, yTop, style, tSize){ //pass style as css module (css files must be named as {name}.module.css)
-        const textSize = tSize;
-        let LHratio = 9.25; // approximate length to height ratio for text
-        const textHeight = tSize / LHratio; 
-        const minHeight = textHeight * 2.1; // Minimum height to fit 2 text lines
-        const minWidth = textSize * 2.1;
-        console.log(style)
-        let elms = [];        // Returned SVG elements
+    // evt must be an object with an id, and coordinates in hiX, loX format
+    // pass style as css module (css files must be named as {name}.module.css)
+    static makeLabeledRect(evt, cls, yTop, style, textSize){ 
+        //textSize is more accurately the height of one line
+        const minHeight = textSize * 2.1; // Minimum height to fit 2 text lines
+        let elms = [];        // SVG elements to add to and return
         let width = evt.hiX - evt.loX;
         let height = evt.hiY - evt.loY;
 
+        // Left and Right coords lengths (not including outer parenthesis)
+        //textSize is the height of one line, letter width being ~1/2 its height
+        const leftCoordLength = `${evt.loX.toFixed(2)}, ${evt.hiY.toFixed(2)})`
+        .length * textSize / 2;
+        const rightCoordLength = `(${evt.hiX.toFixed(2)}, ${evt.hiY.toFixed(2)}`
+        .length * textSize / 2;
+          
+        const minWidth = leftCoordLength + rightCoordLength; 
+       
         // Values to put text inside or outside the rectangle, in both dimensions
-        let classLeft = width > minWidth ? "text" : "rhsText";
-        let classRight = width > minWidth ? "rhsText" : "text";
-        let topYAdjust = height > minHeight ? textHeight : 0;
-        let btmYAdjust = height > minHeight ? 0 : textHeight;
+        // If rect is on the edge of view, it will default to place text inside the rect
+        // instead of placing it out of bounds. (assumes xTop = yTop)
+        let classLeft = width > minWidth || evt.loX < leftCoordLength 
+        ? "text" : "rhsText";
+        let classRight = width > minWidth || evt.hiX > yTop - rightCoordLength
+        ? "rhsText" : "text";
+        let topYAdjust = height > minHeight || evt.hiY > yTop - textSize ? textSize : 0;
+        let btmYAdjust = height > minHeight || evt.loY < textSize ? 0 : textSize;
 
         // Main rectangle
         elms.push(<rect key={"Blk" + evt.id} x={evt.loX} y={yTop - evt.hiY}

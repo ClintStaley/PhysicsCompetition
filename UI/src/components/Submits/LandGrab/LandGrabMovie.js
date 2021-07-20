@@ -32,7 +32,7 @@ export class LandGrabMovie {
         this.evts = [];
 
 
-
+        if (circlesResults) console.log(circlesResults);
         // obstacles numbered from 0
         prms.obstacles.forEach((brr, idx) => 
           this.addMakeObstacleEvt(-1, idx, brr.loX, brr.loY, brr.hiX, brr.hiY));
@@ -40,7 +40,6 @@ export class LandGrabMovie {
         let time = 0;
         circlesResults.forEach((circleResult, circleId) => {
             var circle = circleContent[circleId];
-
             // Get total growth time (based on radius length) and
             // valid growth time for when the circle may turn red
             var growthRate = 2/25; //set standard growth rate to : a circle with radius 25 will take 2 seconds to expand (time/length)
