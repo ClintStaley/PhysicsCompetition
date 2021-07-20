@@ -7,8 +7,6 @@ import com.softwareinventions.cmp.evaluator.EvlPut;
 import com.softwareinventions.cmp.util.GenUtil;
 
 import java.util.LinkedList;
-import java.util.Arrays;
-
 import org.apache.log4j.Logger;
 import java.awt.geom.Point2D;
 
@@ -137,7 +135,7 @@ public class LandGrabEvaluator implements Evaluator {
           : ctr.collisions.pastCircles[i].radius;
       }
       
-      if (temp == impossibleRadius) // CAS FIX: Magic number ??
+      if (temp == impossibleRadius)
          return badRadius;
       
       if (badRadius == null)
@@ -207,7 +205,6 @@ public class LandGrabEvaluator implements Evaluator {
          }
       }
       
-      // CAS Fix: space after keywords: for (...)
       Collision[] c = new Collision[tempCollisions.size()];
       for (int x = 0; x < tempCollisions.size(); x++) {
          c[x] = tempCollisions.get(x);
