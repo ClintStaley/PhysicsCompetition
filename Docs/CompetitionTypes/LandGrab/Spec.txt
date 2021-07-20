@@ -168,10 +168,6 @@ Submission Response schema
                "collisions": {
                   "type": "object",
                   "properties":{
-                     "allCircles": {
-                        "type": "array"
-                        "items": {"type": "integer"}
-                        
                      },
                      "barriers": {
                         "type": "object",
@@ -217,7 +213,6 @@ Example Submission Response:
          badRadius: null,
          area: 2000,
          collisions: {
-            allCircles: [4],
             barriers: [],
             boundary: null,
             pastCircles: []
@@ -227,7 +222,6 @@ Example Submission Response:
          badRadius: 11,
          area: 2000,
          collisions: {
-            allCircles: [2],
             barriers: [
                {
                   id: 1,
@@ -242,7 +236,6 @@ Example Submission Response:
          badRadius: 16,
          area:2000
          collisions: {
-            allCircles: [1],
             barriers: [],
             boundary: 24,
             pastCircles:[
@@ -257,7 +250,6 @@ Example Submission Response:
          badRadius: null,
          area: 2200.2,  
          collisions: {
-            allCircles: [],
             barriers: [],
             boundary: null:
             pastCircles: []
@@ -266,7 +258,6 @@ Example Submission Response:
          badRadius: 21,
          area: 2000,
          collisions: {
-            allCircles: [0]
             barriers: [],
             boundary: null,
             pastCircles: [
