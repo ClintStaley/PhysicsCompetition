@@ -101,6 +101,19 @@ class CmpsPage extends Component {
       var cmps = props.showAll ? Object.keys(props.cmps) : props.prs.myCmps;
       var ctps =  Object.keys(props.ctps);
 
+      // Create an array called cmpsByCtp, indexed by ctp.id, with values
+      // that are themselves arrays of cmps.
+      // Pass through all cmps, assigning every one of them into the relevant
+      // eleemnt of cmpsByCtp.
+      // Now, loop through cmpsByCtp to create one CompetitionItem per ctp,
+      // passing the array of cmps as one of the properties, so the 
+      // CompetitionItem can display (or not, depending on expanded) the
+      // cmps under it.
+      // Toggle does not do this work; it just changes the state.expanded
+      // flags to control the appearance of the CompetitionItems.  Each
+      // CompetitionItem always has a full list of its cmps, whether it
+      // shows it or not.
+      
       return (
       <section className="container"> 
        {props.showAll ?
