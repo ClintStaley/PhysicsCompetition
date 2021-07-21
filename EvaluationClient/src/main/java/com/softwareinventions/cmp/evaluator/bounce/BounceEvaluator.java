@@ -340,7 +340,7 @@ public class BounceEvaluator implements Evaluator {
       double xOutOfBounds;
 
       // Solve for y, as the ball goes one radius below the lower bound.
-      double[] possibleYOutOfBounds = quadraticSolution
+      double[] possibleYOutOfBounds = GenUtil.quadraticSolution
             (GRAVITY / 2.0, current.velocityY, current.posY + RADIUS);
       
       double yOutOfBounds = possibleYOutOfBounds[0] >= 0.0 ? 
@@ -409,8 +409,8 @@ public class BounceEvaluator implements Evaluator {
       BallEquations equations = new BallEquations(current);
       
       // Get time when y value will be lined up with edge.
-      double[] yHitTimes = quadraticSolution(GRAVITY / 2.0, current.velocityY,
-            current.posY - y);
+      double[] yHitTimes = GenUtil.quadraticSolution(GRAVITY / 2.0,
+       current.velocityY, current.posY - y);
       
       if (yHitTimes == null)
          return null;
@@ -550,26 +550,6 @@ public class BounceEvaluator implements Evaluator {
       coef[4] = GenUtil.sqr(GRAVITY / 2.0);
 
       return new PolynomialFunction(coef);
-   }
-
-   // Return solutions to the quadratic equation as an array of doubles, in 
-   // ascending order, if no solutions exist returns null.
-   public static double[] quadraticSolution(double a, double b, double c) {
-      double d = b * b - 4 * a * c;
-      double root1;
-      double root2;
-      double[] solution = null;
-
-      if (d >= 0) {
-         root1 = (-b + Math.sqrt(d)) / (2 * a);
-         root2 = (-b - Math.sqrt(d)) / (2 * a);
-         
-         solution = new double[2];
-         solution[0] = Math.min(root1, root2);
-         solution[1] = Math.max(root1, root2);
-      }
-
-      return solution;
    }
 
    // Tester main, used only to test functions

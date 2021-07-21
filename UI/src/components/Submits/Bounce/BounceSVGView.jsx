@@ -92,10 +92,10 @@ export class BounceSVGView extends React.Component {
          // Ball launch and ball exit require no action here.
       }
 
-      // Undo events to move backward in time. (Note that this and the prior
-      // while condition are mutually exclusive.) Assume that barrier and
-      // target creation occur at negative time and thus will not be "backed
-      // over"
+      // Undo events to move backward in time. (Note that this and the 
+      // prior while condition are mutually exclusive.) Assume that
+      // barrier and target creation occur at negative time and thus 
+      // will not be "backed over"
       while (evtIdx > 0 && timeStamp < evts[evtIdx].time) {
          evt = evts[evtIdx--];
          if (evt.type === BounceMovie.cBallPosition
@@ -110,8 +110,8 @@ export class BounceSVGView extends React.Component {
          }
       }
 
-      // Loop from current evtIdx backward to find most recent event that draws
-      // a full ball, or null if most recent is a ballExit.
+      // Loop from current evtIdx backward to find most recent event 
+      // that draws a full ball, or null if most recent is a ballExit.
       ballEvt = null;
       for (let searchIdx = evtIdx; searchIdx >= 0; searchIdx--) {
          let testEvt = evts[searchIdx];
