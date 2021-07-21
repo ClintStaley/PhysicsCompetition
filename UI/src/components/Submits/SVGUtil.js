@@ -44,8 +44,8 @@ export class SVGUtil{
     // Return an svg <g> object representing a rectangle of class |cls| with
     // dimensions as indicated by |evt| and with corner coordinates drawn in
     // text form, inside the rectangle if room suffices, otherwise outside.
-
-    //evt must be an object with an id, and coordinates in hiX, loX format
+    // evt must be an object with a unique id, and coordinates in hiX, loX 
+    // format
     static makeLabeledRect(evt, cls, yTop, fontSize){
         
         const textSize = 1.2;  // Minimum width of rect to fit text inside
@@ -90,12 +90,12 @@ export class SVGUtil{
         {`(${evt.hiX.toFixed(2)}, ${evt.loY.toFixed(2)})`}
         </text>);
 
-        return <g>{elms}</g>;
+        return <g key={"g" + evt.id}>{elms}</g>;
     }
 
     //simple circle with text set to center, might need changing later
     static makeLabeledCircle(evt, cls, yTop) {
-        return <g>
+        return <g key={"g" + evt.id}>
             <circle key={"Circ" + evt.id} cx={evt.x} cy={yTop-evt.y} r={evt.r} className={cls}/>
             <text key={"txt" + evt.id} x={evt.x} y={yTop-evt.y} className="LLText">
               {`(${evt.x}, ${evt.y})`}
