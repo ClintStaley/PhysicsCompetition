@@ -22,10 +22,10 @@ export class SVGUtil{
         let width = movie.background.width;
         let height = movie.background.height;
         let longDim = Math.max(width, height);
-        let bigGap = longDim/10;  // Gap between heavy graph lines
-        let smallGap = bigGap/5;  // Gap between light graph lines
+        let bigGap = longDim / 10;  // Gap between heavy graph lines
+        let smallGap = bigGap / 5;  // Gap between light graph lines
     
-        bkgElms.push(<rect x="0" y="0" width={width} height={height}
+        bkgElms.push(<rect key={"gBkg"} x="0" y="0" width={width} height={height}
         className={style.graphBkg}/>);
 
         // Vertical lines
@@ -46,7 +46,7 @@ export class SVGUtil{
             bkgElms.push(<line key={"HL" + bigOffset} x1="0" y1={bigOffset}
                 x2={width} y2={bigOffset} className={style.heavyLine} />);
 
-            for (var smallOffset = bigOffset + smallGap;
+         for (var smallOffset = bigOffset + smallGap;
             smallOffset < bigOffset + bigGap; smallOffset += smallGap)
                 bkgElms.push(<line key={"HL" + smallOffset} x1="0" y1={smallOffset}
                 x2={width} y2={smallOffset} className={style.lightLine} />);
@@ -81,9 +81,9 @@ export class SVGUtil{
         // If rect is on the edge of view, it will default to place text inside the rect
         // instead of placing it out of bounds. (assumes xTop = yTop)
         let classLeft = width > minWidth || evt.loX < leftCoordLength 
-        ? "text" : "rhsText";
+         ? "text" : "rhsText";
         let classRight = width > minWidth || evt.hiX > yTop - rightCoordLength
-        ? "rhsText" : "text";
+         ? "rhsText" : "text";
         let topYAdjust = height > minHeight || evt.hiY > yTop - textSize ? textSize : 0;
         let btmYAdjust = height > minHeight || evt.loY < textSize ? 0 : textSize;
 
@@ -115,14 +115,14 @@ export class SVGUtil{
         {`(${evt.hiX.toFixed(2)}, ${evt.loY.toFixed(2)})`}
         </text>);
 
-        return <g>{elms}</g>;
+        return <g>key={"rectangleG" + evt.id}{elms}</g>;
     }
 
     //simple circle with text set to center, might need changing later
     static makeLabeledCircle(evt, cls, yTop, style) {
         if (evt.r == 0)
-            return <g></g> //if radius is zero return no circle and no text
-        return <g>
+            return <g>key={"emptyG"+evt.id}</g> //if radius is zero return no circle and no text
+        return <g> key={"labeledCirc"}
             <circle key={"Circ" + evt.id} cx={evt.x} cy={yTop-evt.y} r={evt.r} className={style[cls]}/>
             <text key={"txt" + evt.id} x={evt.x} y={yTop-evt.y} className={style.LLText}>
               {`(${evt.x}, ${evt.y})`}

@@ -67,15 +67,7 @@ export class LandGrabSVGView extends React.Component {
                 growthEvts[evtIdx] = SVGUtil.makeLabeledCircle(evt, "openCircle", yTop, styles);
                 svgElms.push(growthEvts[evtIdx]);
             }
-            //add indexing to remove circle growth
-            // CAS: This approach actually keeps *all* the circles, though smaller
-            // and earlier growth events will be hidden by the larger ones.  We
-            // should instead keep only the current largest.  This 
-            // permits alpha < 1, which we need for this to look right.
-            // It might be convenient for each circle event to simply have a member
-            // pointing to the one before it, or null if it's the start of an
-            // expansion.  You can keep the old elements around in a list, without
-            // adding them to the SVG view, and move back to them when rewinding.
+            
             else if (evt.type === LandGrabMovie.cInvalidCircleGrowth){
                growthEvts[evtIdx] = SVGUtil.makeLabeledCircle(evt, "badCircle", yTop, styles);
                svgElms.push(growthEvts[evtIdx]);
@@ -103,9 +95,9 @@ export class LandGrabSVGView extends React.Component {
         let height = this.state.movie.background.height;
 
       return  ( 
-         <svg viewBox={`-.1 -.1 ${width + .1} ${height + .1}`} width="100%"
+         <svg key={"svgOuter"} viewBox={`-.1 -.1 ${width + .1} ${height + .1}`} width="100%"
           className="panel">
-            <g>{this.state.svgElms}</g>
+            <g> key={"svgElms"} {this.state.svgElms}</g>
          </svg>);
         
     }

@@ -38,6 +38,7 @@ export class LGSubmitModal extends Component {
 
       [field, cIdx] = ev.target.id.split(":");
 
+      //cIdx = Number.parseInt(cIdx, 10);
       // Either empty, or a nonnegative number
       if (!ev.target.value || parseFloat(ev.target.value) >= 0.0)
          this.setState({
@@ -101,7 +102,7 @@ export class LGSubmitModal extends Component {
 
          lines.push(<div classname="container" key={idx}>
             <div className="row">
-            <div className="col-sm-1"><h5>Circle {idx}</h5></div>
+            <div className="col-sm-1"><h5>Circle { idx +1 }</h5></div>
                 <div className="col-sm-3">
                    <Form.Group controlId={idR}>
                       <Form.Label>
@@ -151,10 +152,10 @@ export class LGSubmitModal extends Component {
       var buttons = [
          <Button key={0} onClick={() => { this.addCircle() }}>Add Circle</Button>,
 
-         <Button key={1} disabled={this.state.cSpec.length === 1}
+         <Button key={1} disabled = {this.state.cSpec.length === 1}
             onClick={() => {this.removeCircle() }}>Remove Circle</Button>,
 
-         <Button key={2} disabled={this.getValidationState()}
+         <Button key={2} disabled = {this.getValidationState()}
             onClick={() => this.close('OK')}>OK</Button>,
          
          <Button key={3} onClick={() => this.close('Cancel')}>Cancel</Button>
