@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as actionCreators from '../../actions/actionCreators';
-import { ListGroup, ListGroupItem, Button, FormText} from 'react-bootstrap';
+import { ListGroup, ListGroupItem, Button, FormText } from 'react-bootstrap';
 import { ConfDialog } from '../concentrator';
 import './cmp.css';
 
@@ -13,18 +13,52 @@ class CmpsPage extends Component {
 
       this.state = {
          showDeleteConfirmation: null,
-         expanded: {}
+         expanded: {},
+         cmps: {},
+         ctps: {}
       }
    }
 
+   static getDerivedStateFromProps(newProps, oldState) {
+      console.log("GDSFP")
+      let rtn = oldState;
+      var cmpsByCtp = [];
+      var ctps = newProps.ctps
+
+
+      if (newProps.cmps !== oldState.cmps) {
+         if (newProps.cmps.length === undefined) {
+            console.log('Hello')
+            rtn.cmps = {}
+            return rtn
+         }
+         else {
+
+            var cmpIds = Object.keys(newProps.cmps);
+
+            ctps.forEach(id => {
+               rtn.cmpsByCtp[id] = []
+            })
+            cmpIds.forEach(id => {
+
+               rtn.cmpsByCtp[newProps.cmps[id].ctpId - 1].push(newProps.cmps[id]);
+            })
+            console.log(cmpsByCtp);
+
+         }
+      }
+      return rtn;
+   }
+
    componentDidMount = () => {
+      console.log("CompDidMount")
       var props = this.props;
 
       //if (!(props.updateTimes && props.updateTimes.myTeams))
       //   this.props.getTeamsByPrs(this.props.prs.id);
 
       if (props.showAll) {
-         if (!props.updateTimes.cmps){
+         if (!props.updateTimes.cmps) {
             this.props.getAllCmps();
             this.props.getAllCtps();
 
@@ -42,11 +76,11 @@ class CmpsPage extends Component {
       if (res === 'Yes') {
          this.props.deleteCmp(this.props.cmps[cmpId].cmpId, cmpId);
       }
-      this.setState({showDeleteConfirmation: null})
+      this.setState({ showDeleteConfirmation: null })
    }
 
    openConfirmation = (cmpId) => {
-      this.setState({showDeleteConfirmation: cmpId })
+      this.setState({ showDeleteConfirmation: cmpId })
    }
 
    // toggleView = (ctpId) =>{
@@ -55,7 +89,7 @@ class CmpsPage extends Component {
 
    //    var cmpIds = Object.keys(this.props.cmps)
    //    console.log(cmpIds)
-      
+
    //    //Check CompetitionType data; update if no Competition data is available
    //    if(Object.keys(this.props.ctps[ctpId].cmps).length===0){
    //       console.log("HERE")
@@ -74,32 +108,20 @@ class CmpsPage extends Component {
    // }
 
 
-   toggleView = (ctpId =>{
+   toggleView = (ctpId => {
       var expanded = this.state.expanded;
-      var ctps = this.props.ctps;
-      var cmps = this.props.cmps;
+      console.log(ctpId)
       expanded[ctpId] = !expanded[ctpId];
 
-      var cmpIds = Object.keys(this.props.cmps);
-      console.log(cmpIds)
-      console.log(cmpIds.length)
+      this.setState({ expanded });
 
-      if(this.props.ctps[ctpId].cmps.length===0){
-         for(var i = 0; i<cmpIds.length;i++){
-            console.log(ctps[cmps[cmpIds[i].ctpId]])
-            ctps[cmps[cmpIds[i].ctpId-1]].cmps[cmpIds[i]] = cmps[cmpIds[i]]
-         }
-         this.setState({expanded});
-      }
-      else
-         this.setState({expanded});
    })
 
    render() {
       var props = this.props;
       console.log(props);
       var cmps = props.showAll ? Object.keys(props.cmps) : props.prs.myCmps;
-      var ctps =  Object.keys(props.ctps);
+      var ctps = Object.keys(props.ctps);
 
       // Create an array called cmpsByCtp, indexed by ctp.id, with values
       // that are themselves arrays of cmps.
@@ -113,40 +135,53 @@ class CmpsPage extends Component {
       // flags to control the appearance of the CompetitionItems.  Each
       // CompetitionItem always has a full list of its cmps, whether it
       // shows it or not.
-      
+
       return (
-      <section className="container"> 
-       {props.showAll ?
-       <div className='grid'>
-          {ctps && ctps.map((ctpId, i)=>{
-             var ctp = Object.assign({},props.ctps[ctpId]);
+         <section className="container">
+            {props.showAll ?
+               <div className='grid'>
+                  {cmps && cmps.length} ?
+                     {ctps && ctps.map((ctpId, i) => {
+                        var ctp = Object.assign({}, props.ctps[ctpId]);
+   
+                        return <CompetitionTypeItem
+                           key={i}
+                           expanded={this.state.expanded[ctpId]}
+                           toggle={() => this.toggleView(ctpId)}
+                           {...ctp} />
+                     })}
+                  
+                  :
+                  {ctps && ctps.map((ctpId, i) => {
+                     var ctp = Object.assign({}, props.ctps[ctpId]);
 
-             return<CompetitionTypeItem
-              key={i}
-              expanded = {this.state.expanded[ctpId]}
-              toggle = {()=>this.toggleView(ctpId)}
-             {...ctp}/>
-          })}
-       </div>
-       :
-       cmps && cmps.length ?
-       <div className='grid'>
-       {cmps.map((cmpId, i) => {
-          var cmp = Object.assign({}, props.cmps[cmpId]);
+                     return <CompetitionTypeItem
+                        key={i}
+                        cmpsByCtp={cmpsByCtp}
+                        expanded={this.state.expanded[ctpId]}
+                        toggle={() => this.toggleView(ctpId)}
+                        {...ctp} />
+                  })}
+               </div>
+               :
+               cmps && cmps.length ?
+                  <div className='grid'>
+                     {cmps.map((cmpId, i) => {
+                        var cmp = Object.assign({}, props.cmps[cmpId]);
 
-          cmp.link = '/MyCmpPage/' + cmp.id;
-          cmp.joiningCmp = props.showAll;
-          cmp.joined = false;
+                        cmp.link = '/MyCmpPage/' + cmp.id;
+                        cmp.joiningCmp = props.showAll;
+                        cmp.joined = false;
 
-          return <CompetitionItem key={i} {...cmp}/>
-        })}
-        </div>
-        :
-        <h4>You are not in any competitions, see Join Competitions to join one</h4>
-      }
-      </section>
+                        return <CompetitionItem key={i} {...cmp} />
+                     })}
+                  </div>
+                  :
+                  <h4>You are not in any competitions, see Join Competitions to join one</h4>
+            }
+         </section>
       )
-  }
+   }
 }
 
 const CompetitionItem = function (props) {
@@ -155,43 +190,46 @@ const CompetitionItem = function (props) {
          <div className='cmpItem'>{props.title}</div>
          <div>{props.description}</div>
          {props.joiningCmp ?
-            props.joined ? 
+            props.joined ?
                <div>(already joined)</div>
                :
-               <Link to = {props.link} >Join this Competition</Link>
-            : 
+               <Link to={props.link} >Join this Competition</Link>
+            :
             <div>
-               <Link to = {props.link}>Competition Status</Link>
+               <Link to={props.link}>Competition Status</Link>
             </div>
          }
       </ListGroupItem>
    )
 }
 
-const CompetitionTypeItem = function(props){
-   console.log(props.expanded)
-   return(
+const CompetitionTypeItem = function (props) {
+   // console.log(props)
+   // console.log(props.id-1)
+   // console.log(props.cmpsByCtp[props.id-1])
+   return (
       <ListGroupItem className="clearfix">
          <div className='ctpItem'>{props.title}</div>
          <div>{props.description}</div>
          <Button onClick={props.toggle}>Show Competitions</Button>
-         {/* {props.expanded ?
-         // <ListGroup>
-         //    {Object.keys(props.cmps).map((cmpId,i)=>{
-         //       var cmp = props.cmp [cmpId];
+         {props.expanded ?
+            <ListGroup>
+               {Object.keys(props.cmpsByCtp[props.id - 1]).map((cmpId, i) => {
+                  var cmp = props.cmpsByCtp[props.id - 1][cmpId];
+                  console.log(cmp)
 
-         //       return <CmpItem key={i} title={cmp.title} />
-         //    })}
-         // </ListGroup>
-         :"" */}
-         {/* } */}
+                  return <CmpItem key={i} title={cmp.title} />
+               })}
+            </ListGroup>
+            : ""
+         }
       </ListGroupItem>
    )
 }
 
 const CmpItem = function (props) {
-   return(
-      <ListGroupItem className ="clearfix">
+   return (
+      <ListGroupItem className="clearfix">
          {props.title}
       </ListGroupItem>
    )
