@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as actionCreators from '../../actions/actionCreators';
-import { ListGroup, ListGroupItem} from 'react-bootstrap';
+import { ListGroup, ListGroupItem, Button, FormText} from 'react-bootstrap';
 import { ConfDialog } from '../concentrator';
 import './cmp.css';
 
@@ -12,7 +12,8 @@ class CmpsPage extends Component {
       super(props);
 
       this.state = {
-         showDeleteConfirmation: null
+         showDeleteConfirmation: null,
+         expanded: {}
       }
    }
 
@@ -23,8 +24,11 @@ class CmpsPage extends Component {
       //   this.props.getTeamsByPrs(this.props.prs.id);
 
       if (props.showAll) {
-         if (!props.updateTimes.cmps)
+         if (!props.updateTimes.cmps){
             this.props.getAllCmps();
+            this.props.getAllCtps();
+
+         }
       }
       else
          if (!props.updateTimes.myCmps)
@@ -45,50 +49,88 @@ class CmpsPage extends Component {
       this.setState({showDeleteConfirmation: cmpId })
    }
 
+   // toggleView = (ctpId) =>{
+   //    var expanded = this.state.expanded;
+   //    expanded[ctpId] = !expanded[ctpId];
+
+   //    var cmpIds = Object.keys(this.props.cmps)
+   //    console.log(cmpIds)
+      
+   //    //Check CompetitionType data; update if no Competition data is available
+   //    if(Object.keys(this.props.ctps[ctpId].cmps).length===0){
+   //       console.log("HERE")
+   //       cmpIds.forEach(cmpId =>{
+   //          console.log(cmpId);
+   //          console.log(this.props.cmps[cmpId])
+   //          console.log(this.props.ctps[ctpId])
+   //          console.log(this.props.ctps[ctpId])
+   //          this.props.ctps[ctpId]
+   //          this.props.ctps[ctpId].cmps[cmpId] = this.props.cmps[cmpId];
+   //          console.log(this.props.ctps[ctpId].cmps)
+   //       })
+   //    }
+   //    else
+   //       this.setState({expanded});
+   // }
+
+
+   toggleView = (ctpId =>{
+      var expanded = this.state.expanded;
+      var ctps = this.props.ctps;
+      var cmps = this.props.cmps;
+      expanded[ctpId] = !expanded[ctpId];
+
+      var cmpIds = Object.keys(this.props.cmps);
+      console.log(cmpIds)
+      console.log(cmpIds.length)
+
+      if(this.props.ctps[ctpId].cmps.length===0){
+         for(var i = 0; i<cmpIds.length;i++){
+            console.log(ctps[cmps[cmpIds[i].ctpId]])
+            ctps[cmps[cmpIds[i].ctpId-1]].cmps[cmpIds[i]] = cmps[cmpIds[i]]
+         }
+         this.setState({expanded});
+      }
+      else
+         this.setState({expanded});
+   })
+
    render() {
       var props = this.props;
+      console.log(props);
       var cmps = props.showAll ? Object.keys(props.cmps) : props.prs.myCmps;
+      var ctps =  Object.keys(props.ctps);
 
       return (
-      <section className="container">
-      <ConfDialog
-        show={this.state.showDeleteConfirmation != null}
-        title="Delete Competition"
-        body={`Are you sure you want to delete the Competition
-         '${this.state.showDeleteConfirmation}'`}
-        buttons={['Yes', 'Abort']}
-        onClose={(res) =>
-        this.closeConfirmation(res, this.state.showDeleteConfirmation)} />
-        <h1>{props.showAll ? 'Join Competition' :  'My Competitions' }</h1>
+      <section className="container"> 
+       {props.showAll ?
+       <div className='grid'>
+          {ctps && ctps.map((ctpId, i)=>{
+             var ctp = Object.assign({},props.ctps[ctpId]);
 
-        {props.showAll ?
-           <div className='grid'>
-              {cmps && cmps.map((cmpId, i) => {
-                var cmp = Object.assign({}, props.cmps[cmpId]);
+             return<CompetitionTypeItem
+              key={i}
+              expanded = {this.state.expanded[ctpId]}
+              toggle = {()=>this.toggleView(ctpId)}
+             {...ctp}/>
+          })}
+       </div>
+       :
+       cmps && cmps.length ?
+       <div className='grid'>
+       {cmps.map((cmpId, i) => {
+          var cmp = Object.assign({}, props.cmps[cmpId]);
 
-                cmp.link = '/JoinCmpPage/' + cmp.id;
-                cmp.joiningCmp = props.showAll;
-                cmp.joined = props.prs.myCmps.includes(parseInt(cmpId, 10));
+          cmp.link = '/MyCmpPage/' + cmp.id;
+          cmp.joiningCmp = props.showAll;
+          cmp.joined = false;
 
-                return <CompetitionItem key={i} {...cmp}/>
-              })}
-           </div>
-          :
-          cmps && cmps.length ?
-          <div className='grid'>
-          {cmps.map((cmpId, i) => {
-             var cmp = Object.assign({}, props.cmps[cmpId]);
-
-             cmp.link = '/MyCmpPage/' + cmp.id;
-             cmp.joiningCmp = props.showAll;
-             cmp.joined = false;
-
-             return <CompetitionItem key={i} {...cmp}/>
-           })}
-           </div>
-           :
-           <h4>You are not in any competitions, see Join Competitions to join one</h4>
-       }
+          return <CompetitionItem key={i} {...cmp}/>
+        })}
+        </div>
+        :
+        <h4>You are not in any competitions, see Join Competitions to join one</h4>
+      }
       </section>
       )
   }
@@ -109,6 +151,35 @@ const CompetitionItem = function (props) {
                <Link to = {props.link}>Competition Status</Link>
             </div>
          }
+      </ListGroupItem>
+   )
+}
+
+const CompetitionTypeItem = function(props){
+   console.log(props.expanded)
+   return(
+      <ListGroupItem className="clearfix">
+         <div className='ctpItem'>{props.title}</div>
+         <div>{props.description}</div>
+         <Button onClick={props.toggle}>Show Competitions</Button>
+         {/* {props.expanded ?
+         // <ListGroup>
+         //    {Object.keys(props.cmps).map((cmpId,i)=>{
+         //       var cmp = props.cmp [cmpId];
+
+         //       return <CmpItem key={i} title={cmp.title} />
+         //    })}
+         // </ListGroup>
+         :"" */}
+         {/* } */}
+      </ListGroupItem>
+   )
+}
+
+const CmpItem = function (props) {
+   return(
+      <ListGroupItem className ="clearfix">
+         {props.title}
       </ListGroupItem>
    )
 }
