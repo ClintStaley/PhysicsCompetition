@@ -9,6 +9,7 @@ import com.softwareinventions.cmp.util.GenUtil;
 import java.util.LinkedList;
 import org.apache.log4j.Logger;
 import java.awt.geom.Point2D;
+import java.lang.Math;
 
 public class LandGrabEvaluator implements Evaluator {
    
@@ -42,7 +43,7 @@ public class LandGrabEvaluator implements Evaluator {
    // data to be returned in response for each circle
    static class Circle {
       public double area;
-      public Double badRadius; // radius of earliest collision || null
+      public Double badAngle; // Angle of earliest collision || null
       public Collisions collisions;
       public Circle(SbmCircle c) {
          this.area = GenUtil.sqr(c.radius) * Math.PI;
@@ -53,7 +54,7 @@ public class LandGrabEvaluator implements Evaluator {
    // contains collisions of a given circle
    static class Collisions {
       public Collision[] barriers; // id's of barriers collided with in order
-      public Double boundary; // radius of boundary collision || null
+      public Double boundary; // Angle of boundary collision || null
       public Collision[] pastCircles; //
       
    }
@@ -61,11 +62,11 @@ public class LandGrabEvaluator implements Evaluator {
    static class Collision {
       public Collision(int i, double r) {
          this.cId = i;
-         this.radius = r;
+         this.angle = r;
       }
       
       public int cId; // circle id
-      public double radius; // radius at collision
+      public double angle; // Angle at collision
    }
    
    Parameters prms;
@@ -115,96 +116,120 @@ public class LandGrabEvaluator implements Evaluator {
       ctr.collisions.barriers = getBarrierCollisions(circles, i);
       ctr.collisions.pastCircles = getCircleCollisions(circles, i);
       
-      // find radius of circle's first collision (or set to null)
-      ctr.badRadius = findBadRadius(ctr);
+      // find Angle of circle's first collision (or set to null)
+      ctr.badAngle = findBadAngle(ctr);
       return ctr;
    }
    
-   // returns radius of first collision for a given circle
-   private Double findBadRadius(Circle ctr) {
-      Double badRadius = ctr.collisions.boundary;
-      double impossibleRadius = 51; // assumes background size = 100
-      double temp = impossibleRadius;
+   // returns Angle of first collision for a given circle
+   private Double findBadAngle(Circle ctr) {
+      Double badAngle = ctr.collisions.boundary;
+      double impossibleAngle = 361; // assumes background size = 100
+      double temp = impossibleAngle;
       
       for (int i = 0; i < ctr.collisions.barriers.length; i++) {
-         temp = temp < ctr.collisions.barriers[i].radius ? temp
-          : ctr.collisions.barriers[i].radius;
+         temp = temp < ctr.collisions.barriers[i].angle ? temp
+          : ctr.collisions.barriers[i].angle;
       }
       for (int i = 0; i < ctr.collisions.pastCircles.length; i++) {
-         temp = temp < ctr.collisions.pastCircles[i].radius ? temp
-          : ctr.collisions.pastCircles[i].radius;
+         temp = temp < ctr.collisions.pastCircles[i].angle ? temp
+          : ctr.collisions.pastCircles[i].angle;
       }
       
-      if (temp == impossibleRadius)
-         return badRadius;
+      if (temp == impossibleAngle)
+         return badAngle;
       
-      if (badRadius == null)
+      if (badAngle == null)
          return (Double) temp;
       
-      badRadius = badRadius < temp ? badRadius : temp;
+      badAngle = badAngle < temp ? badAngle : temp;
       
-      return badRadius;
+      return badAngle;
       
    }
    
    private Collision[] getBarrierCollisions(SbmCircle[] circles, int i) {
       SbmCircle circle = circles[i];
       LinkedList<Collision> tempCollisions = new LinkedList<Collision>();
+      final double cImpossibleAngle = 7;
       
-      // Check for noncorner obstacle collision
+      
+      // Add one possible collision per obstacle
       for (int idx = 0; idx < prms.obstacles.length; idx++) {
          BlockedRectangle obs = prms.obstacles[idx];
-         double d = Double.POSITIVE_INFINITY;
-         double tempDist;
-         
-         // Check for center of circle in obstacle
-         if (GenUtil.inBounds(obs.loX + EPS, circle.centerX, obs.hiX - EPS)
-          && GenUtil.inBounds(obs.loY + EPS, circle.centerY, obs.hiY - EPS)) {
-            d = EPS; // distance = EPS so it is nearly zero but still true in JS
+         double edgeIntersection;
+         double badAngle = cImpossibleAngle;
+         // Check for "terminal edge" in circle
+         if (GenUtil.inBounds(obs.loY + EPS, circle.centerY, obs.hiY - EPS) &&
+          (obs.loX < circle.centerX + circle.radius && circle.centerX < obs.hiX)
+          ) {
+            // badAngle nearly zero so it still appears as a shape
+            badAngle = EPS;
+         }
+         // possible collisions by Quadrants first checking that at least 
+         // the nearest corner is within range of the circle. The process is 
+         // nearly the same for each quadrant so only quadrant 1 has comments.
+         // The angle is also shifted depending on quadrant because arctan range
+         // Quadrant 1
+         else if (obs.loY > circle.centerY && obs.hiX > circle.centerX && 
+          Point2D.distance(circle.centerX, circle.centerY, obs.loX, obs.loY) 
+          < circle.radius) {    
+            // Use Pythagorean Theorem to find x coordinate where the radius
+            // would intersect with the edge if the edge were infinitely long
+            edgeIntersection = Math.sqrt( GenUtil.sqr(circle.radius) - 
+             GenUtil.sqr(obs.loY - circle.centerY)) + circle.centerX;
+            // If edgeIntersection is in range of where the edge actually is,
+            // it remains the same. If it would intersect past the rectangle,
+            // the point of intersection will be the far corner instead.
+            edgeIntersection = edgeIntersection < obs.hiX ? edgeIntersection:
+             obs.hiX;
+            // Get angle of intersection using trig
+            badAngle = Math.atan((obs.loY-circle.centerY)
+             /(edgeIntersection-circle.centerX));
+         }
+         // Quadrant 2
+         else if (obs.hiX < circle.centerX && obs.hiY > circle.centerY && 
+          Point2D.distance(circle.centerX, circle.centerY, obs.hiX, obs.loY)
+          < circle.radius) {
+            edgeIntersection = Math.sqrt( GenUtil.sqr(circle.radius) - 
+             GenUtil.sqr(obs.hiX - circle.centerX)) + circle.centerY;
+            edgeIntersection = edgeIntersection < obs.hiY ? edgeIntersection:
+             obs.hiY;
+            badAngle = Math.atan((edgeIntersection-circle.centerY)
+             /(obs.hiX-circle.centerX)) + Math.PI;
+            
+         }
+         // Quadrant 3
+         else if (obs.hiY < circle.centerY && obs.loX < circle.centerX &&
+          Point2D.distance(circle.centerX, circle.centerY, obs.hiX, obs.hiY)
+          < circle.radius) {
+            edgeIntersection = -Math.sqrt( GenUtil.sqr(circle.radius) - 
+             GenUtil.sqr(obs.hiY - circle.centerY)) + circle.centerX;
+            edgeIntersection = edgeIntersection > obs.loX ? edgeIntersection:
+             obs.loX;
+            badAngle = Math.atan((obs.hiX-circle.centerX)
+             /(edgeIntersection-circle.centerX)) + Math.PI;
+            
+         }
+         // Quadrant 4
+         else if (obs.loX > circle.centerX && Point2D.distance
+          (circle.centerX, circle.centerY, obs.loX, obs.hiY) < circle.radius) {
+            edgeIntersection = -Math.sqrt( GenUtil.sqr(circle.radius) - 
+             GenUtil.sqr(obs.loX - circle.centerX)) + circle.centerY;
+            edgeIntersection = edgeIntersection > obs.loY ? edgeIntersection:
+             obs.loY;
+            badAngle = Math.atan((edgeIntersection-circle.centerY)
+             /(obs.loX-circle.centerX)) + 2 * Math.PI;
          }
          
-         // Overlap with horizontal sides
-         else if (GenUtil.inBounds(obs.loX + EPS, circle.centerX, obs.hiX - EPS)
-          && GenUtil.inBounds(obs.loY - circle.radius - EPS, circle.centerY,
-          obs.hiY + circle.radius + EPS)) {
-            tempDist = Point2D.distance(circle.centerX, circle.centerY, obs.loX,
-            circle.centerY);
-            d = d < tempDist ? d : tempDist;
-            tempDist = Point2D.distance(circle.centerX, circle.centerY, obs.hiX,
-            circle.centerY);
-            d = d < tempDist ? d : tempDist;
+        
+         if (badAngle != cImpossibleAngle) {
+            tempCollisions.add(new Collision(idx, badAngle));
          }
-         
-         // Overlap with vertical sides
-         else if (GenUtil.inBounds(obs.loY + EPS, circle.centerY, obs.hiY - EPS)
-          && GenUtil.inBounds(obs.loX - circle.radius - EPS, circle.centerX,
-          obs.hiX + circle.radius - EPS)) {
-            tempDist = Point2D.distance(circle.centerX, circle.centerY,
-             circle.centerX, obs.loY);
-            d = d < tempDist ? d : tempDist;
-            tempDist = Point2D.distance(circle.centerX, circle.centerY,
-             circle.centerX, obs.hiY);
-            d = d < tempDist ? d : tempDist;
-         }
-         
-         // overlap with corners
-         tempDist = cornerHit(circle, obs.hiX, obs.hiY);
-         d = d < tempDist ? d : tempDist;
-         
-         tempDist = cornerHit(circle, obs.hiX, obs.loY);
-         d = d < tempDist ? d : tempDist;
-         
-         tempDist = cornerHit(circle, obs.loX, obs.hiY);
-         d = d < tempDist ? d : tempDist;
-         
-         tempDist = cornerHit(circle, obs.loX, obs.loY);
-         d = d < tempDist ? d : tempDist;
-         
-         if (d != Double.POSITIVE_INFINITY) {
-            tempCollisions.add(new Collision(idx, d));
-         }
+      
       }
       
+      //Copies collisions into regular array
       Collision[] c = new Collision[tempCollisions.size()];
       for (int x = 0; x < tempCollisions.size(); x++) {
          c[x] = tempCollisions.get(x);
@@ -213,20 +238,63 @@ public class LandGrabEvaluator implements Evaluator {
    }
    
    private Collision[] getCircleCollisions(SbmCircle[] circles, int i) {
-      SbmCircle circle = circles[i];
+      //SbmCircle circle = circles[i];
       // Check for circle collision
       LinkedList<Collision> tempCollisions = new LinkedList<Collision>();
       for (int idx = 0; idx < i; idx++) {
-         SbmCircle temp = circles[idx];
-         double d = Point2D.distance(circle.centerX, circle.centerY,
-          temp.centerX, temp.centerY) - temp.radius;
-         if (d < circle.radius - EPS)
-            tempCollisions.add(new Collision(idx, d));
+         Double angle = circleIntersection(circles[i], circles[idx]);
+         if(angle != null)
+            tempCollisions.add(new Collision(idx, (double)angle));
+         
       }
       Collision[] c = {};
       c = tempCollisions.toArray(c);
       
       return c;
+   }
+   
+   // Pure Math Function: Use the following for more info on some of the math
+   // https://mathworld.wolfram.com/Circle-CircleIntersection.html
+   private Double circleIntersection(SbmCircle a, SbmCircle b) {
+      
+      Double d = Point2D.distance(a.centerX, a.centerY,
+            b.centerX, b.centerY);
+      // Circles do intersect
+      if (d < a.radius + b.radius - EPS) {
+         if (d < a.radius || d < b.radius) {
+            //Overlap at centers
+            return (Double)EPS;
+         }
+         else {
+            double adjacentLeg = (GenUtil.sqr(d) - GenUtil.sqr(b.radius) + 
+             GenUtil.sqr(a.radius)) / (2 * d);
+            // Relative angle of intersection to circles' angle to each other
+            // Additionally we take the opposite of the arc cos value because we
+            // want the angle of the first intersection not the second
+            double relativeAngle = -Math.acos(adjacentLeg/a.radius);
+            double circlesAngle = Math.atan((b.centerY - a.centerY)/
+             (b.centerX - a.centerX));
+            // Shift to correct quadrant based on arctan domain and range
+            if (circlesAngle < 0) {
+               circlesAngle = a.centerX < b.centerX ? circlesAngle + 2*Math.PI :
+                circlesAngle + Math.PI;
+            }
+            else {
+               circlesAngle = a.centerY <= b.centerY ? circlesAngle : 
+                circlesAngle + Math.PI;
+            }
+            Double actualAngle = circlesAngle + relativeAngle;
+            // Check if "terminal edge" starts in other circle
+            actualAngle = actualAngle < EPS ? EPS : actualAngle;
+            return actualAngle;
+         }
+         
+      }
+      // Circles do not intersect
+      else { 
+         d = null;
+         return d;
+      }
    }
    
    // Return distance to boundary if within radius, otherwise return null
@@ -239,13 +307,5 @@ public class LandGrabEvaluator implements Evaluator {
       if (dist + EPS < crc.radius)
          return (Double) dist;
       return (Double) null;
-   }
-   
-   // Return non infinity iff circle overlaps {x,y}, then returns distance to it
-   private double cornerHit(SbmCircle circle, double x, double y) {
-      double d = Point2D.distance(circle.centerX, circle.centerY, x, y);
-      return d < circle.radius - EPS ? d : Double.POSITIVE_INFINITY;
-   }
-   
-   
+   }  
 }

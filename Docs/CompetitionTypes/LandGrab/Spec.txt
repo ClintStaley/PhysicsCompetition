@@ -158,7 +158,7 @@ Submission Response schema
          "items": {
             "type" : "object",
             "properties": {
-               "badRadius": {
+               "badAngle": {
                   "type": "number",
                }
                "area": 
@@ -173,7 +173,7 @@ Submission Response schema
                         "type": "object",
                         "properties": {
                            "id": {"type": "integer"},
-                           "radius": {"type": "number"}
+                           "angle": {"type": "number"}
                         }
                      },
                      "boundary": {
@@ -183,7 +183,7 @@ Submission Response schema
                         "type": "object",
                         "properties": {
                            "id": {"type": "integer"},
-                           "radius": {"type": "number"}
+                           "angle": {"type": "number"}
                         }
                      }
                   },
@@ -225,7 +225,7 @@ Example Submission Response:
             barriers: [
                {
                   id: 1,
-                  radius: 11
+                  angle: 3.4
                }
             ],
             boundary: null,
@@ -241,7 +241,7 @@ Example Submission Response:
             pastCircles:[
                {
                   cId: 1,
-                  radius: 16
+                  angle: .632
                }
             ]
          }
@@ -263,7 +263,7 @@ Example Submission Response:
             pastCircles: [
                {
                   cId: 0,
-                  radius: 21
+                  angle: 1.632
                }
             ],
          },
