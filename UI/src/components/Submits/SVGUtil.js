@@ -122,12 +122,25 @@ export class SVGUtil{
     static makeLabeledCircle(evt, cls, yTop, style) {
         if (evt.r == 0)
             return <g>key={"emptyG"+evt.id}</g> //if radius is zero return no circle and no text
-        return <g> key={"labeledCirc"}
+        return <g> key={"labeledCirc" + evt.id}
             <circle key={"Circ" + evt.id} cx={evt.x} cy={yTop-evt.y} r={evt.r} className={style[cls]}/>
             <text key={"txt" + evt.id} x={evt.x} y={yTop-evt.y} className={style.LLText}>
               {`(${evt.x}, ${evt.y})`}
             </text>
         </g>
+    }
+
+   static makeCircleSlice(evt, cls, yTop, style) {
+      if (evt.r == 0)
+         return <g>key={"emptyG"+evt.id}</g> //if radius is zero return no circle and no text
+
+      return <g> key={"labeledCirc" + evt.id}
+         <path key={"Circ" + evt.id} 
+         d={`M${evt.x},${yTop-evt.y} h${evt.radius} a${-evt.radius},0  `} r={evt.r} className={style[cls]}/>
+         <text key={"txt" + evt.id} x={evt.x} y={yTop-evt.y} className={style.LLText}>
+        {`(${evt.x}, ${evt.y})`}
+      </text>
+  </g>
     }
 
 }

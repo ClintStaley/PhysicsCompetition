@@ -266,6 +266,7 @@ public class LandGrabEvaluator implements Evaluator {
             return (Double)EPS;
          }
          else {
+            // the following expression is from the website sited above
             double adjacentLeg = (GenUtil.sqr(d) - GenUtil.sqr(b.radius) + 
              GenUtil.sqr(a.radius)) / (2 * d);
             // Relative angle of intersection to circles' angle to each other
