@@ -4,16 +4,13 @@ import com.softwareinventions.cmp.dto.Submit;
 import com.softwareinventions.cmp.evaluator.Evaluator;
 import com.softwareinventions.cmp.evaluator.Evl;
 import com.softwareinventions.cmp.evaluator.EvlPut;
-import com.softwareinventions.cmp.evaluator.bounce.BounceEvaluator.BounceEvent;
 import com.softwareinventions.cmp.util.GenUtil;
 
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.OptionalDouble;
-import java.util.function.UnaryOperator;
 
-import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
 import org.apache.commons.math3.analysis.solvers.LaguerreSolver;
 import org.apache.commons.math3.complex.Complex;
 import org.apache.log4j.Logger;
@@ -34,6 +31,7 @@ public class ReboundEvaluator implements Evaluator {
       public double[] balls;
    }
    
+   // Ball position and speed in the chute.
    private static class BallSpec {
       public int id;
       public double pos;
@@ -41,16 +39,17 @@ public class ReboundEvaluator implements Evaluator {
    }
    
    private static class RbnSpec {
-      public double gateTime; // Time in s at which gate opens
-      public double jumpLength;
-      public BallSpec[] ballStarts;
+      public double gateTime;       // Time in s at which gate opens
+      public double jumpLength;     // Predicted length of jump
+      public BallSpec[] ballStarts; // Initial ball pos and speed.
    }
    
+   // One in-chute collision between two balls or a ball and a chute side
    private static class Rebound {
-      int idLeft;         // Id of left ball or -1 (right is one greater)
+      int idLeft;         // Id of left ball or -1 for left chute side
       double time;        // Time in sec of rebound
-      double speedLeft;   // New speed of left ball
-      double speedRight;  // New speed of right ball
+      double speedLeft;   // New speed of left ball or 0.0 for chute side
+      double speedRight;  // New speed of right ball or 0.0 for chute side
 
       public Rebound(int idLeft, double time, double speedLeft,
        double speedRight) {
@@ -63,17 +62,16 @@ public class ReboundEvaluator implements Evaluator {
    }
    
    public static class RbnResults {
-      public boolean valid;
-      public Double sbmPenalty;
-      public Rebound[] rebounds;
-      public double launchTime;
-      public BallArc[] launchArcs;
+      public boolean valid;        // Good init config and correct jumpLength
+      public Double sbmPenalty;    // Score penalty for excess submits or null
+      public Rebound[] rebounds;   // Rebounds in time order
+      public double launchTime;    // Time of right ball launch
+      public BallArc[] launchArcs; // Arcs taken by right ball
    }
 
    static Logger lgr = Logger.getLogger(ReboundEvaluator.class);
    
    Parameters prms;
-   int score;
 
    @Override
    public void setPrms(String prms) {
@@ -87,28 +85,32 @@ public class ReboundEvaluator implements Evaluator {
    // Represent one arc of a gravitationally freefalling ball, starting with
    // given position and velocity
    public static class BallArc {
+      public double baseTime;  // Starting time
       public double xPos;      // Starting position
       public double yPos;
       public double xVlc;      // Starting velocity
       public double yVlc;
       
-      public double xPosFn(double time) {return xPos + time * xVlc;}
-      public double yPosFn(double time) {return yPos + time * yVlc;}
-      public double xVlcFn(double time) {return xVlc;}
-      public double yVlcFn(double time) {return yPos + time * yVlc
-       + time*time*cGravity/2.0;}
+      // Positions at relative time from baseTime
+      public double xPosFn(double relTime) {return xPos + relTime * xVlc;}
+      public double yPosFn(double relTime) {return yPos + relTime * yVlc;}
+      public double xVlcFn(double relTime) {return xVlc;}
+      public double yVlcFn(double relTime) {return yPos + relTime * yVlc
+       + relTime*relTime*cGravity/2.0;}
       
-      public BallArc(double xPos, double yPos, double xVlc, double yVlc) {
+      public BallArc(double baseTime, double xPos, double yPos, double xVlc,
+       double yVlc) {
+         this.baseTime = baseTime;
          this.xPos = xPos;
          this.yPos = yPos;
          this.xVlc = xVlc;
          this.yVlc = yVlc;
       }
 
-      // Return new BallArc based on position and velocity at |time|
-      public BallArc atTime(double time) {
-         return new BallArc(xPosFn(time), yPosFn(time), xVlcFn(time),
-          yVlcFn(time));
+      // Return new BallArc based on position and velocity at |relTime|
+      public BallArc atTime(double relTime) {
+         return new BallArc(baseTime + relTime, xPosFn(relTime),
+          yPosFn(relTime), xVlcFn(relTime), yVlcFn(relTime));
       }
       
       // Return new BallArc based on hit against a vertical wall at |x| with
@@ -145,19 +147,19 @@ public class ReboundEvaluator implements Evaluator {
          return rtn;
       }
       
-      /* Create a PolynomialFunction whose real roots give the times at which the
-       * distance between a moving circle center and a point (e.g. an obstacle
-       * corner) is exactly equal to the radius of the circle.  Such times
-       * correspond to circle/point collisions.
+      /* Generate a new BallArc representing the result of the current BallArc
+       * colliding with a corner at (x,y), or null if no collision would occur.
+       * Do this by solving a polynomial whose real roots give the times at
+       * which the the ball position and point (x,y) equals the ball radius.  
        * 
        * Given:
-       * r = Radius of the circle
-       * Px, Py = Position of circle center at time 0
-       * Vx, Vy = Velocity of circle center at time 0
+       * r = Radius of the ball
+       * Px, Py = Position of ball center at time 0
+       * Vx, Vy = Velocity of ball center at time 0
        * 
        * Cx, Cy = location of target point (obstacle corner)
        * Dx, Dy = (Px - Cx), (Py - Cy) the vector from target point to 
-       * circle center at time 0, 
+       * ball center at time 0, 
        * G = gravitational acceleration (as a negative, downward value)
        * 
        * The equation for squared circle center to point distance is:
@@ -188,11 +190,12 @@ public class ReboundEvaluator implements Evaluator {
 
          Complex[] solutions = new LaguerreSolver().solveAllComplex(coef, 0);
          
+         // Find earliest nonnegative real solution
          firstHit = Arrays.stream(solutions).filter
           (s -> Math.abs(s.getImaginary()) < cEps && s.getReal() > 0)
           .mapToDouble(s -> s.getReal()).min();
 
-         // We hit a corner.  Subtract 2x our velocity component toward corner
+         // We hit the point.  Subtract 2x our velocity component toward corner
          if (firstHit.isPresent()) {
             rtn = atTime(firstHit.getAsDouble());        
             
@@ -216,56 +219,60 @@ public class ReboundEvaluator implements Evaluator {
       RbnSpec spec = mapper.readValue(sbm.content, RbnSpec.class);
       BallSpec[] balls = spec.ballStarts;
       List<Rebound> rebounds = new LinkedList<Rebound>();
+      List<BallArc> launchArcs = new LinkedList<BallArc>();
       RbnResults rtn = new RbnResults();
-      int minHit = -1, hit, leftId, rightId;
+      int minIdx, ballIdx, leftId, rightId;
       double minTime, closingTime, elapsedTime = 0.0;
       double finalTime = Double.MAX_VALUE;
       double closingSpeed, leftSpeed, rightSpeed;
       double leftMass, rightMass, totalMass;
       
       while (elapsedTime < finalTime) {
-         minTime = balls[0].speed >= 0 ? Double.MAX_VALUE // Left ball vs border
+         // Find next collision, described by minIdx (ball index) and minTime.
+         minIdx = -1;
+         minTime = balls[0].speed >= 0 ? Double.MAX_VALUE  // Left ball vs side
           : -balls[0].pos / balls[0].speed;
          
-         for (hit = 0; hit < balls.length; hit++) {
-            if (hit < balls.length-1)                    // Ball vs next ball
-               closingTime = (balls[hit+1].pos - balls[hit].pos) / 
-                (balls[hit].speed - balls[hit+1].speed);
-            else                                         // Right ball vs border
-               closingTime = (cChuteLength - balls[hit].pos) / balls[hit].speed;
+         for (ballIdx = 0; ballIdx < balls.length; ballIdx++) {
+            if (ballIdx < balls.length-1)                  // Ball vs next ball
+               closingTime = (balls[ballIdx+1].pos - balls[ballIdx].pos) / 
+                (balls[ballIdx].speed - balls[ballIdx+1].speed);
+            else                                           // Right ball vs side
+               closingTime = (cChuteLength - balls[ballIdx].pos) / balls[ballIdx].speed;
             
             if (closingTime > 0.0 && closingTime < minTime) {
                minTime = closingTime;
-               minHit = hit;
+               minIdx = ballIdx;
             }
          }
    
+         // Adjust elapsed time and ball positions to time of next hit.
          elapsedTime += minTime;
          for (BallSpec ball: balls)
             ball.pos += minTime * ball.speed;
                
-         if (minHit == balls.length-1 && spec.gateTime <= elapsedTime &&
+         // If right ball hits right side after gateTime, launch it.
+         if (minIdx == balls.length-1 && spec.gateTime <= elapsedTime &&
           rtn.launchArcs == null) { // Launch
-            rtn.launchTime = elapsedTime + cRadius / balls[minHit].speed;
-            rtn.launchArcs = new BallArc[3];
+            rtn.launchTime = elapsedTime + cRadius / balls[minIdx].speed;
+            launchArcs.add(new BallArc())
             
-            // Stopped here Add launch arcs.
-            
+            rtn.launchArcs = launchArcs.toArray(new BallArc[0]);
             balls = Arrays.copyOf(balls, balls.length-1); // Lose right ball
          } 
-         else if (minHit < 0) // Left bounce
-            rebounds.add(new Rebound(minHit, elapsedTime, 0.0,
-             -balls[minHit+1].speed));
-         else if (minHit == balls.length-1) // Right bounce
-            rebounds.add(new Rebound(minHit, elapsedTime, -balls[minHit].speed,
+         else if (minIdx < 0) // Left bounce
+            rebounds.add(new Rebound(minIdx, elapsedTime, 0.0,
+             -balls[minIdx+1].speed));
+         else if (minIdx == balls.length-1) // Right bounce
+            rebounds.add(new Rebound(minIdx, elapsedTime, -balls[minIdx].speed,
              0.0));
          else {
-            leftSpeed = balls[minHit].speed;
-            rightSpeed = balls[minHit+1].speed;
-            leftMass = prms.balls[balls[minHit].id];
-            rightMass = prms.balls[balls[minHit+1].id];
+            leftSpeed = balls[minIdx].speed;
+            rightSpeed = balls[minIdx+1].speed;
+            leftMass = prms.balls[balls[minIdx].id];
+            rightMass = prms.balls[balls[minIdx+1].id];
             totalMass = leftMass + rightMass;
-            rebounds.add(new Rebound(minHit, elapsedTime,
+            rebounds.add(new Rebound(minIdx, elapsedTime,
                (leftMass - rightMass)/totalMass * leftSpeed
                 + 2*rightMass/totalMass * rightSpeed,
                
