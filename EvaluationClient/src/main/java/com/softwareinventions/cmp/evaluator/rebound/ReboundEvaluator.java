@@ -65,7 +65,6 @@ public class ReboundEvaluator implements Evaluator {
       public boolean valid;        // Good init config and correct jumpLength
       public Double sbmPenalty;    // Score penalty for excess submits or null
       public Rebound[] rebounds;   // Rebounds in time order
-      public double launchTime;    // Time of right ball launch
       public BallArc[] launchArcs; // Arcs taken by right ball
    }
 
@@ -116,7 +115,6 @@ public class ReboundEvaluator implements Evaluator {
       // Return new BallArc based on hit against a vertical wall at |x| with
       // y-range [loY, hiY], or return null if no such hit will occur.
       public BallArc fromVerticalHit(double loY, double hiY, double x) {
-         // Get time when x value will be lined up with edge.
          double xHitTime = (x - xPos) / xVlc;
          double yValue = yPosFn(xHitTime);
          BallArc rtn = null;
@@ -212,6 +210,8 @@ public class ReboundEvaluator implements Evaluator {
          return rtn;
       }
    }
+   
+   
       
    // Evaluate a single submission
    @Override
@@ -226,6 +226,7 @@ public class ReboundEvaluator implements Evaluator {
       double finalTime = Double.MAX_VALUE;
       double closingSpeed, leftSpeed, rightSpeed;
       double leftMass, rightMass, totalMass;
+      BallArc lastArc, nextArc;
       
       while (elapsedTime < finalTime) {
          // Find next collision, described by minIdx (ball index) and minTime.
@@ -251,12 +252,19 @@ public class ReboundEvaluator implements Evaluator {
          for (BallSpec ball: balls)
             ball.pos += minTime * ball.speed;
                
-         // If right ball hits right side after gateTime, launch it.
-         if (minIdx == balls.length-1 && spec.gateTime <= elapsedTime &&
+         // If right ball hits right side at or after gateTime, launch it.
+         if (minIdx == balls.length-1 && spec.gateTime-cEps <= elapsedTime &&
           rtn.launchArcs == null) { // Launch
-            rtn.launchTime = elapsedTime + cRadius / balls[minIdx].speed;
-            launchArcs.add(new BallArc())
-            
+            launchArcs.add(lastArc = new BallArc(
+               elapsedTime + cRadius / balls[minIdx].speed,
+               cChuteLength, cStartingHeight,
+               balls[minIdx].speed, 0.0));
+            nextArc = lastArc.fromHorizontalHit(0.0, spec.jumpLength, 0.0);
+            if (nextArc == null)
+               
+            // Stopped here.  Decide on exact structure of area.  Write
+            // general collider.  Run three times.  Finaltime is when fourth
+            // BallArc would start.
             rtn.launchArcs = launchArcs.toArray(new BallArc[0]);
             balls = Arrays.copyOf(balls, balls.length-1); // Lose right ball
          } 
