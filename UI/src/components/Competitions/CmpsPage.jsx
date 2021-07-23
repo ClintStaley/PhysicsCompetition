@@ -15,42 +15,28 @@ class CmpsPage extends Component {
          showDeleteConfirmation: null,
          expanded: {},
          cmps: {},
-         ctps: {}
+         ctps: [],
+         cmpsByCtp: []
       }
    }
 
    static getDerivedStateFromProps(newProps, oldState) {
-      console.log("GDSFP")
       let rtn = oldState;
-      var cmpsByCtp = [];
-      var ctps = newProps.ctps
 
       if (newProps.cmps !== oldState.cmps) {
-         if (newProps.cmps.length === undefined) { //CAS: Drop the "if"
-            console.log('Hello')
-            rtn.cmps = {}
-            return rtn
-         }
-         else {
-// CAS: Use semicolon consistently
             var cmpIds = Object.keys(newProps.cmps);
-
-            ctps.forEach(id => {
-               rtn.cmpsByCtp[id] = []
+            var ctpIds = Object.keys(newProps.ctps);
+            ctpIds.forEach(id => {
+               rtn.cmpsByCtp[newProps.ctps[id].id] = []
             })
             cmpIds.forEach(id => {
-// CAS: May as well drop the -1.  JS doesn't "waste the zero spot".
-               rtn.cmpsByCtp[newProps.cmps[id].ctpId - 1].push(newProps.cmps[id]);
+               rtn.cmpsByCtp[newProps.cmps[id].ctpId].push(newProps.cmps[id]);
             })
-            console.log(cmpsByCtp);
-
-         }
       }
       return rtn;
    }
 
    componentDidMount = () => {
-      console.log("CompDidMount")
       var props = this.props;
 
       //if (!(props.updateTimes && props.updateTimes.myTeams))
@@ -82,34 +68,8 @@ class CmpsPage extends Component {
       this.setState({ showDeleteConfirmation: cmpId })
    }
 
-   // toggleView = (ctpId) =>{
-   //    var expanded = this.state.expanded;
-   //    expanded[ctpId] = !expanded[ctpId];
-
-   //    var cmpIds = Object.keys(this.props.cmps)
-   //    console.log(cmpIds)
-
-   //    //Check CompetitionType data; update if no Competition data is available
-   //    if(Object.keys(this.props.ctps[ctpId].cmps).length===0){
-   //       console.log("HERE")
-   //       cmpIds.forEach(cmpId =>{
-   //          console.log(cmpId);
-   //          console.log(this.props.cmps[cmpId])
-   //          console.log(this.props.ctps[ctpId])
-   //          console.log(this.props.ctps[ctpId])
-   //          this.props.ctps[ctpId]
-   //          this.props.ctps[ctpId].cmps[cmpId] = this.props.cmps[cmpId];
-   //          console.log(this.props.ctps[ctpId].cmps)
-   //       })
-   //    }
-   //    else
-   //       this.setState({expanded});
-   // }
-
-
    toggleView = (ctpId => {
       var expanded = this.state.expanded;
-      console.log(ctpId)
       expanded[ctpId] = !expanded[ctpId];
 
       this.setState({ expanded });
@@ -118,7 +78,6 @@ class CmpsPage extends Component {
 
    render() {
       var props = this.props;
-      console.log(props);
       var cmps = props.showAll ? Object.keys(props.cmps) : props.prs.myCmps;
       var ctps = Object.keys(props.ctps);
 
@@ -135,32 +94,19 @@ class CmpsPage extends Component {
       // CompetitionItem always has a full list of its cmps, whether it
       // shows it or not.
 
+      // CAS still not seeing why we need both these branches...
+      // There should be just **one** loop making a set of
+      // CompetitionTypeItems, one per index of 
       return (
          <section className="container">
             {props.showAll ?
                <div className='grid'>
-                  // CAS still not seeing why we need both these branches...
-                  // There should be just **one** loop making a set of
-                  // CompetitionTypeItems, one per index of 
-                  {cmps && cmps.length} ?
-                     {ctps && ctps.map((ctpId, i) => {
-                        // CAS: Why this odd assign, again?
-                        var ctp = Object.assign({}, props.ctps[ctpId]);
-   
-                        return <CompetitionTypeItem
-                           key={i}
-                           expanded={this.state.expanded[ctpId]}
-                           toggle={() => this.toggleView(ctpId)}
-                           {...ctp} />
-                     })}
-                  
-                  :
                   {ctps && ctps.map((ctpId, i) => {
                      var ctp = Object.assign({}, props.ctps[ctpId]);
 
                      return <CompetitionTypeItem
                         key={i}
-                        cmpsByCtp={cmpsByCtp}
+                        cmpsByCtp={this.state.cmpsByCtp}
                         expanded={this.state.expanded[ctpId]}
                         toggle={() => this.toggleView(ctpId)}
                         {...ctp} />
@@ -212,9 +158,6 @@ const CompetitionItem = function (props) {
 // *always* be there in render, and do one CompetitionTypeItem per element.
 // Fill it in GDSFP.  The code above should be half as complex as it is.
 const CompetitionTypeItem = function (props) {
-   // console.log(props)
-   // console.log(props.id-1)
-   // console.log(props.cmpsByCtp[props.id-1])
    return (
       <ListGroupItem className="clearfix">
          <div className='ctpItem'>{props.title}</div>
@@ -222,9 +165,8 @@ const CompetitionTypeItem = function (props) {
          <Button onClick={props.toggle}>Show Competitions</Button>
          {props.expanded ?
             <ListGroup>
-               {Object.keys(props.cmpsByCtp[props.id - 1]).map((cmpId, i) => {
-                  var cmp = props.cmpsByCtp[props.id - 1][cmpId];
-                  console.log(cmp)
+               {Object.keys(props.cmpsByCtp[props.id]).map((cmpId, i) => {
+                  var cmp = props.cmpsByCtp[props.id ][cmpId];
 
                   return <CmpItem key={i} title={cmp.title} />
                })}
