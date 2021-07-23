@@ -25,22 +25,21 @@ class CmpsPage extends Component {
       var cmpsByCtp = [];
       var ctps = newProps.ctps
 
-
       if (newProps.cmps !== oldState.cmps) {
-         if (newProps.cmps.length === undefined) {
+         if (newProps.cmps.length === undefined) { //CAS: Drop the "if"
             console.log('Hello')
             rtn.cmps = {}
             return rtn
          }
          else {
-
+// CAS: Use semicolon consistently
             var cmpIds = Object.keys(newProps.cmps);
 
             ctps.forEach(id => {
                rtn.cmpsByCtp[id] = []
             })
             cmpIds.forEach(id => {
-
+// CAS: May as well drop the -1.  JS doesn't "waste the zero spot".
                rtn.cmpsByCtp[newProps.cmps[id].ctpId - 1].push(newProps.cmps[id]);
             })
             console.log(cmpsByCtp);
@@ -140,8 +139,12 @@ class CmpsPage extends Component {
          <section className="container">
             {props.showAll ?
                <div className='grid'>
+                  // CAS still not seeing why we need both these branches...
+                  // There should be just **one** loop making a set of
+                  // CompetitionTypeItems, one per index of 
                   {cmps && cmps.length} ?
                      {ctps && ctps.map((ctpId, i) => {
+                        // CAS: Why this odd assign, again?
                         var ctp = Object.assign({}, props.ctps[ctpId]);
    
                         return <CompetitionTypeItem
@@ -203,6 +206,11 @@ const CompetitionItem = function (props) {
    )
 }
 
+//CAS: This looks basically fine, though ditch the -1 per comments above.
+// But, I don't understand why we need special cases above.  *Always* have
+// this.state.cmpsByCtp, always an array, initially empty.  Assume it will
+// *always* be there in render, and do one CompetitionTypeItem per element.
+// Fill it in GDSFP.  The code above should be half as complex as it is.
 const CompetitionTypeItem = function (props) {
    // console.log(props)
    // console.log(props.id-1)
