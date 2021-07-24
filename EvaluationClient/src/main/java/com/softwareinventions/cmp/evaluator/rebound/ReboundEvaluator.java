@@ -9,6 +9,7 @@ import com.softwareinventions.cmp.util.GenUtil;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.OptionalDouble;
 
 import org.apache.commons.math3.analysis.solvers.LaguerreSolver;
@@ -16,7 +17,8 @@ import org.apache.commons.math3.complex.Complex;
 import org.apache.log4j.Logger;
 
 public class ReboundEvaluator implements Evaluator {
-   public static final double cStartingHeight = 1.0;
+   public static final double cChuteHeight = 1.0;  // Height of chute floors
+   public static final double cFullHeight = 1.5;   // Height of full area
    public static final double cChuteLength = 1.0;
    public static final double cGravity = -9.81;
    public static final double cRadius = .05;       // 10cm diameter
@@ -211,9 +213,36 @@ public class ReboundEvaluator implements Evaluator {
       }
    }
    
-   
+   // Starting with |arc|, assumed to not hit the target chute, compute the
+   // next arc based on rebounds within the flight area
+   //
+   // #1 Add possibly null arcs resulting from |arc| collisions with, in order:
+   // left side, bottom, right side below exit chute, lower chute corner, upper
+   // chute corner, right side above chute, top.  At least one should not be
+   // null due to assumption of not hitting target
+   BallArc getNextArc(BallArc arc, double rightX) {
+      BallArc cndArc, rtn = null;
+      List<BallArc> cndArcs = new LinkedList<BallArc>();
+      Optional<BallArc> minArc;
+      
+      cndArcs.add(arc.fromVerticalHit(0, cFullHeight, cChuteLength)); // #1
+      cndArcs.add(arc.fromHorizontalHit(cChuteLength, rightX, 0.0));
+      cndArcs.add(arc.fromVerticalHit(0, cChuteHeight, rightX));
+      cndArcs.add(arc.fromCornerHit(rightX, cChuteHeight));
+      cndArcs.add(arc.fromCornerHit(rightX, cChuteHeight + 2*cRadius));
+      cndArcs.add(arc.fromVerticalHit(cChuteHeight + 2*cRadius, cFullHeight,
+       rightX));
+      
+      return cndArcs.stream().filter(a -> a != null)
+       .min((x, y) -> x.baseTime < y.baseTime ? -1 : 1).get();
+   }
       
    // Evaluate a single submission
+   //
+   // #1 We hit exactly the spot on the floor needed to jump into the exit
+   // chute.  Imagine a small gate 1/2 radius in on that chute and create a new
+   // BallArch by hitting it.  This gets the right time and starting location,
+   // but the x velocity needs reversal to remain forward.
    @Override
    public EvlPut evaluate(Submit sbm) throws Exception {
       RbnSpec spec = mapper.readValue(sbm.content, RbnSpec.class);
@@ -226,7 +255,7 @@ public class ReboundEvaluator implements Evaluator {
       double finalTime = Double.MAX_VALUE;
       double closingSpeed, leftSpeed, rightSpeed;
       double leftMass, rightMass, totalMass;
-      BallArc lastArc, nextArc;
+      BallArc lastArc, rightArc;
       
       while (elapsedTime < finalTime) {
          // Find next collision, described by minIdx (ball index) and minTime.
@@ -257,10 +286,35 @@ public class ReboundEvaluator implements Evaluator {
           rtn.launchArcs == null) { // Launch
             launchArcs.add(lastArc = new BallArc(
                elapsedTime + cRadius / balls[minIdx].speed,
-               cChuteLength, cStartingHeight,
+               cChuteLength, cChuteHeight,
                balls[minIdx].speed, 0.0));
-            nextArc = lastArc.fromHorizontalHit(0.0, spec.jumpLength, 0.0);
-            if (nextArc == null)
+            
+            rightArc = lastArc.fromHorizontalHit(
+               cChuteLength + spec.jumpLength/2.0 - cErrMargin,
+               cChuteLength + spec.jumpLength/2.0 + cErrMargin, 0.0);
+            
+            if (rightArc != null) { // Bullseye! #1
+               rtn.valid = true;
+               lastArc = rightArc.fromVerticalHit(cChuteHeight,
+                  cChuteHeight + 2*cRadius,
+                  cChuteLength + spec.jumpLength + cRadius/2.0);
+               assert(lastArc != null);
+               lastArc.xVlc = -lastArc.xVlc;
+               launchArcs.add(lastArc);
+            }
+            else { // Not bullseye
+               launchArcs.add(getNextArc(lastArc, )) // Stopped here.
+            }
+            
+            launchArcs.add(lastArc = getNextArc(lastArc,
+              cChuteLength + spec.jumpLength));
+             
+            spec.jumpLength + cRadius, 0.0);
+            
+            if (nextArc != null && nextArc.yPos == cChuteHeight) { // Bullseye!
+               launchArcs.add(nextArc);
+               launchArcs.add(newBallArc())
+            }
                
             // Stopped here.  Decide on exact structure of area.  Write
             // general collider.  Run three times.  Finaltime is when fourth
