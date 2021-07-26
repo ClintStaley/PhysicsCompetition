@@ -118,30 +118,32 @@ export class SVGUtil{
         {`(${evt.hiX.toFixed(2)}, ${evt.loY.toFixed(2)})`}
         </text>);
 
-        return <React.Fragment key={"rectangleG" + evt.id}>
+        return <g key={"rectangleG" + evt.id}>
            ...{elms}
-        </React.Fragment>
+        </g>
     }
 
     //simple circle with text set to center, might need changing later
     static makeLabeledCircle(evt, cls, yTop, style) {
         if (evt.r == 0)
-            return <React.Fragment key={"emptyG"+evt.id}></React.Fragment> //if radius is zero return no circle and no text
-        return <React.Fragment key={"labeledCirc" + evt.id}>
+            return <g key={"emptyG"+evt.id}></g> //if radius is zero return no circle and no text
+        return <g key={"labeledCirc" + evt.id}>
             <circle key={"Circ" + evt.id} cx={evt.x} cy={yTop-evt.y} r={evt.r} className={style[cls]}/>
             <text key={"txt" + evt.id} x={evt.x} y={yTop-evt.y} className={style.LLText}>
               {`(${evt.x}, ${evt.y})`}
             </text>
-        </React.Fragment>
+        </g>
     }
 
    static makeCircleSlice(evt, cls, yTop, style) {
-      return [<path key={"Circ" + evt.time} d={`M ${evt.x},${yTop-evt.y} 
+      return <g key={"CircleSlice" +evt.id}>
+       <path key={"Circ" + evt.time} d={`M ${evt.x},${yTop-evt.y} 
        h${evt.r} a${evt.r},${evt.r} 0 ${1 * (evt.angle > Math.PI)},0  
        ${evt.r * Math.cos(evt.angle) - evt.r},${-evt.r * Math.sin(evt.angle)}`}
-       className={style[cls]}/>,
+       className={style[cls]}/>
        <text key={"txt" + evt.time} x={evt.x} y={yTop-evt.y} 
-       className={style.LLText}>{`(${evt.x}, ${evt.y})`}</text>]
+       className={style.LLText}>{`(${evt.x}, ${evt.y})`}</text>
+       </g>
     }
 
 }
