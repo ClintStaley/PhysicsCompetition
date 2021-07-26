@@ -95,7 +95,12 @@ public class LandGrabEvaluator implements Evaluator {
       //evaluate each circle
       for (int i = 0; i < rsp.circleData.length; i++) {
          rsp.circleData[i] = evaluateCircle(sbmCircles, i, rsp.circleData);
+         if (rsp.circleData[i].badAngle == null)
+            rsp.areaCovered += rsp.circleData[i].area;
+         
       }
+      
+      
       
       score = Math.round(rsp.areaCovered * 100.0 / prms.goalArea);
       EvlPut eval = new EvlPut(sbm.cmpId, sbm.teamId, sbm.id,
