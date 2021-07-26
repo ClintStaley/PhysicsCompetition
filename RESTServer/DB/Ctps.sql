@@ -150,11 +150,11 @@ insert into CompetitionType (title, codeName, description, prmSchema)
 insert into CompetitionType (title, codeName, description, prmSchema)
    VALUES ("Rebound", "Rebound", "Arrange ball collisions for max speed", '{
       "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "Ricochet",
+      "title": "Rebound",
       "type": "object",
       "properties": {
-         "targetGap": {
-            "title": "Rebound distance resulting in 100% credit",
+         "targetLength": {
+            "title": "Jump length resulting in 100% credit",
             "type": "number"
          },
          "maxBalls": {
