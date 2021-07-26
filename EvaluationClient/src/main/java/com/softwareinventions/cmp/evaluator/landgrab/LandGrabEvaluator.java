@@ -1,11 +1,9 @@
 package com.softwareinventions.cmp.evaluator.landgrab;
-
 import com.softwareinventions.cmp.dto.Submit;
 import com.softwareinventions.cmp.evaluator.Evaluator;
 import com.softwareinventions.cmp.evaluator.Evl;
 import com.softwareinventions.cmp.evaluator.EvlPut;
 import com.softwareinventions.cmp.util.GenUtil;
-
 import java.util.LinkedList;
 import org.apache.log4j.Logger;
 import java.awt.geom.Point2D;
@@ -88,8 +86,7 @@ public class LandGrabEvaluator implements Evaluator {
       Response rsp = new Response();
       double score;
       SbmCircle[] sbmCircles = mapper.readValue(sbm.content, SbmCircle[].class);
-      
-      
+
       rsp.circleData = new Circle[Math.min(sbmCircles.length, prms.numCircles)];
       
       //evaluate each circle
@@ -99,8 +96,6 @@ public class LandGrabEvaluator implements Evaluator {
             rsp.areaCovered += rsp.circleData[i].area;
          
       }
-      
-      
       
       score = Math.round(rsp.areaCovered * 100.0 / prms.goalArea);
       EvlPut eval = new EvlPut(sbm.cmpId, sbm.teamId, sbm.id,
@@ -157,8 +152,6 @@ public class LandGrabEvaluator implements Evaluator {
       SbmCircle circle = circles[i];
       LinkedList<Collision> tempCollisions = new LinkedList<Collision>();
       final double cImpossibleAngle = 7;
-      
-      
       // Add one possible collision per obstacle
       for (int idx = 0; idx < prms.obstacles.length; idx++) {
          BlockedRectangle obs = prms.obstacles[idx];
@@ -201,8 +194,7 @@ public class LandGrabEvaluator implements Evaluator {
             edgeIntersection = edgeIntersection < obs.hiY ? edgeIntersection:
              obs.hiY;
             badAngle = Math.atan((edgeIntersection-circle.centerY)
-             /(obs.hiX-circle.centerX)) + Math.PI;
-            
+             /(obs.hiX-circle.centerX)) + Math.PI; 
          }
          // Quadrant 3
          else if (obs.hiY < circle.centerY && obs.loX < circle.centerX &&
@@ -213,8 +205,7 @@ public class LandGrabEvaluator implements Evaluator {
             edgeIntersection = edgeIntersection > obs.loX ? edgeIntersection:
              obs.loX;
             badAngle = Math.atan((obs.hiX-circle.centerX)
-             /(edgeIntersection-circle.centerX)) + Math.PI;
-            
+             /(edgeIntersection-circle.centerX)) + Math.PI;  
          }
          // Quadrant 4
          else if (obs.loX > circle.centerX && Point2D.distance
@@ -226,14 +217,10 @@ public class LandGrabEvaluator implements Evaluator {
             badAngle = Math.atan((edgeIntersection-circle.centerY)
              /(obs.loX-circle.centerX)) + 2 * Math.PI;
          }
-         
-        
          if (badAngle != cImpossibleAngle) {
             tempCollisions.add(new Collision(idx, badAngle));
          }
-      
       }
-      
       //Copies collisions into regular array
       Collision[] c = new Collision[tempCollisions.size()];
       for (int x = 0; x < tempCollisions.size(); x++) {
@@ -248,17 +235,17 @@ public class LandGrabEvaluator implements Evaluator {
       LinkedList<Collision> tempCollisions = new LinkedList<Collision>();
       for (int idx = 0; idx < i; idx++) {
          Double angle = circleIntersection(circles[i], circles[idx]);
-         if(angle != null)
+         if (angle != null)
             tempCollisions.add(new Collision(idx, (double)angle));
-         
       }
       Collision[] c = {};
       c = tempCollisions.toArray(c);
-      
       return c;
    }
    
    // Pure Math Function: Use the following for more info on some of the math
+   // returns null if no Circle intersection, returns double value of earliest
+   // intersection otherwise.
    // https://mathworld.wolfram.com/Circle-CircleIntersection.html
    private Double circleIntersection(SbmCircle a, SbmCircle b) {
       
@@ -294,7 +281,6 @@ public class LandGrabEvaluator implements Evaluator {
             actualAngle = actualAngle < EPS ? EPS : actualAngle;
             return actualAngle;
          }
-         
       }
       // Circles do not intersect
       else { 
