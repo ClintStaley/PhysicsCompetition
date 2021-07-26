@@ -15,6 +15,7 @@ class CmpsPage extends Component {
          showDeleteConfirmation: null,
          expanded: {},
          cmps: {},
+         ctps:[],
          cmpsByCtp: []
       }
    }
@@ -79,8 +80,10 @@ class CmpsPage extends Component {
       var props = this.props;
       var cmps = props.showAll ? Object.keys(props.cmps) : props.prs.myCmps;
       var ctps = Object.keys(props.ctps);
+      var userCtps = []
       var prs = props.prs
-      console.log(this.state)
+      var testArray = [];
+      console.log(this.props)
 
       if (Object.keys(props.cmps).length === 0) {
          return <div>
@@ -104,23 +107,27 @@ class CmpsPage extends Component {
                      })}
                   </div>
                   :
-                  prs.myCmps && prs.myCmps.length ?
+                  cmps && cmps.length ?
                      <div className='grid'>
                         {prs.myCmps.map((cmpId, i) => {
                            var cmp = props.cmps[cmpId];
                            var ctp = props.ctps[cmp.ctpId - 1];
+                           var ctps = [];
+                           ctps.push(ctp)
                            var cmpsByCtp = [...this.state.cmpsByCtp[ctp.id]];
-
+                           
+                           
                            //Eliminate cmps of type ctp.id from cmpsByCtp if the 
                            //user is not in the competition
-                           cmpsByCtp.forEach((element,index)=>{
-                              if(props.prs.myCmps.includes(element.id)){}
-                              else{cmpsByCtp.splice(index,1)}})
-
-                           return <ActiveCompetitionItem key={i}
+                           cmpsByCtp.forEach((element,i)=>{
+                              if(props.prs.myCmps.includes(element.id)){this.state.cmpsByCtp[ctp.id]=cmpsByCtp}
+                              else{cmpsByCtp.splice(i,1)}})
+                                 console.log(this.state.cmpsByCtp)
+                                 
+                           return <ActiveCompetitionItem key={'1'}
                            {...ctp}
                            cmps={cmps}
-                           cmpsByCtp ={cmpsByCtp} 
+                           cmpsByCtp ={this.state.cmpsByCtp[ctp.id]} 
                            expanded= {this.state.expanded[ctp.id]}
                            toggle={()=>this.toggleView(ctp.id)}/>
                         })}
@@ -135,6 +142,7 @@ class CmpsPage extends Component {
 }
 
 const ActiveCompetitionItem = function (props) {
+   console.log(props)
    return (
       <ListGroupItem className="clearfix">
          <div className='cmpItem'>{props.title}</div>
