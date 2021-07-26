@@ -30,11 +30,11 @@ export class LandGrabMovie {
       this.background.height = bkgSize;
       this.background.width = bkgSize;
       this.evts = [];
-
+      this.id = 1;
       // obstacles numbered from 0
       prms.obstacles.forEach((brr, idx) => 
-       this.addMakeObstacleEvt(-1, idx, brr.loX, brr.loY, brr.hiX, brr.hiY));
-
+       this.addMakeObstacleEvt(-1, this.id++, brr.loX, brr.loY, brr.hiX, brr.hiY));
+      
       let time = 0;
       circlesResults.forEach((circleResult, circleId) => {
          var circle = circleContent[circleId];
@@ -50,21 +50,21 @@ export class LandGrabMovie {
 
          // Grow steadily from terminal angle as valid circle.
          for (let t = 0; t < validGrowthTime; t += 1.0/frameRate)
-            this.addCircleGrowthEvt(time + t, circleId, circle.centerX,
+            this.addCircleGrowthEvt(time + t, this.id++, circle.centerX,
              circle.centerY, circle.radius, (t/growthTime) * 2 *PI);            
 
          time += validGrowthTime;
 
-         this.addMakeCircleEvt(time, circleId, circle.centerX,
+         this.addMakeCircleEvt(time, this.id++, circle.centerX,
           circle.centerY, circle.radius, circle.badAngle);
 
          time += validationPause;
       });
    }
 
-   addCircleGrowthEvt(time, circleNumber, x, y, r, angle){
+   addCircleGrowthEvt(time, id, x, y, r, angle){
       this.evts.push(
-       {type: LandGrabMovie.cCircleGrowth, time, circleNumber, x, y, r, angle});
+       {type: LandGrabMovie.cCircleGrowth, time, id, x, y, r, angle});
    }
 
    addMakeObstacleEvt(time, id, loX, loY, hiX, hiY) {

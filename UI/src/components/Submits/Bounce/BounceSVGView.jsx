@@ -20,7 +20,8 @@ export class BounceSVGView extends React.Component {
    }
 
    static getInitState(movie){
-      var bkgElms = SVGUtil.getGraphGrid(movie, style); //gets background and graph lines
+      var bkgElms = []
+      bkgElms.push(SVGUtil.getGraphGrid(movie, style)); //gets background and graph lines
       return {
          trgEvts: [],      // Target creation events (each w/index into svgElms)
          ballEvt: null,    // Most recent ball position or hit event

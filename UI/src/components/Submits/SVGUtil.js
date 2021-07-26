@@ -15,6 +15,7 @@ export class SVGUtil{
 
 
         // Creates standard graph lines which will be the background
+        // Which is then wrapped in a g tag to reduce number of elms in svgElms
     static getGraphGrid(movie, style) { 
         
 
@@ -51,7 +52,7 @@ export class SVGUtil{
                 bkgElms.push(<line key={"HL" + smallOffset} x1="0" y1={smallOffset}
                 x2={width} y2={smallOffset} className={style.lightLine} />);
         }
-        return bkgElms;
+        return <g>id={"bkgElms"}{bkgElms}</g>;
     
     }
 
@@ -115,14 +116,14 @@ export class SVGUtil{
         {`(${evt.hiX.toFixed(2)}, ${evt.loY.toFixed(2)})`}
         </text>);
 
-        return <g>key={"rectangleG" + evt.id}{elms}</g>;
+        return <g>id={"rectangleG" + evt.id}{elms}</g>;
     }
 
     //simple circle with text set to center, might need changing later
     static makeLabeledCircle(evt, cls, yTop, style) {
         if (evt.r == 0)
-            return <g>key={"emptyG"+evt.id}</g> //if radius is zero return no circle and no text
-        return <g> key={"labeledCirc" + evt.id}
+            return <g>id={"emptyG"+evt.id}</g> //if radius is zero return no circle and no text
+        return <g> id={"labeledCirc" + evt.id}
             <circle key={"Circ" + evt.id} cx={evt.x} cy={yTop-evt.y} r={evt.r} className={style[cls]}/>
             <text key={"txt" + evt.id} x={evt.x} y={yTop-evt.y} className={style.LLText}>
               {`(${evt.x}, ${evt.y})`}
@@ -131,16 +132,23 @@ export class SVGUtil{
     }
 
    static makeCircleSlice(evt, cls, yTop, style) {
-      if (evt.r == 0)
-         return <g>key={"emptyG"+evt.id}</g> //if radius is zero return no circle and no text
+// d key:
+/*
+sx,y = start xy
+hx = horizontal line x
+rx y = radius x y
+LAF Large arc flag (a > pi -> true)
+SF = sweep flag (we will always have false)
+mx, y = move x , y. End of arc will have relative points from start
+<path d="M sx,sy h=hx a=rx,ry LAF SF mx my"
+eg d="M 50,50 h10 a10,10 0 0,0  -17.8,-6.3"
 
-      return <g> key={"labeledCirc" + evt.id}
-         <path key={"Circ" + evt.id} 
-         d={`M${evt.x},${yTop-evt.y} h${evt.radius} a${-evt.radius},0  `} r={evt.r} className={style[cls]}/>
-         <text key={"txt" + evt.id} x={evt.x} y={yTop-evt.y} className={style.LLText}>
-        {`(${evt.x}, ${evt.y})`}
-      </text>
-  </g>
+*/
+     // console.log({x: evt.r * Math.cos(evt.angle), y:evt.r * Math.sin(evt.angle)});
+
+     
+      return <g>id={"circleSlice" + evt.id}<path key={"Circ" + evt.id} d={`M ${evt.x},${yTop-evt.y} h${evt.r} a${evt.r},${evt.r} 0 ${1 * (evt.angle > Math.PI)},0  ${evt.r * Math.cos(evt.angle) - evt.r},${-evt.r * Math.sin(evt.angle)}`} className={style[cls]}/>)
+      <text key={"txt" + evt.id} x={evt.x} y={yTop-evt.y} className={style.LLText}>{`(${evt.x}, ${evt.y})`}</text></g>
     }
 
 }

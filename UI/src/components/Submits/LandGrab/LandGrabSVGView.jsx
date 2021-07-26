@@ -12,7 +12,8 @@ export class LandGrabSVGView extends React.Component {
     }
 
    static getInitState(movie){
-      var bkgElms = SVGUtil.getGraphGrid(movie, styles);
+      var bkgElms = []
+      bkgElms.push(SVGUtil.getGraphGrid(movie, styles));
       return {
          growthEvts : [],  // array of all growth events (including invalid)
          evtIdx: -1,       // Index within movie of last event shown in svgElms
@@ -29,7 +30,7 @@ export class LandGrabSVGView extends React.Component {
       let rtn = oldState;
 
       if (newProps.movie !== oldState.movie) //Complete reset
-       rtn = LandGrabSVGView.getInitState(newProps.movie);
+         rtn = LandGrabSVGView.getInitState(newProps.movie);
       return LandGrabSVGView.setOffset(rtn, newProps.offset);
    }
 
@@ -43,7 +44,6 @@ export class LandGrabSVGView extends React.Component {
       let {growthEvts, evtIdx, svgElms} = state;
       let yTop = movie.background.height;
       let evt;
-
       // While the event after evtIdx exists and needs adding to svgElms
       while (evtIdx+1 < evts.length && evts[evtIdx+1].time <= timeStamp) {
          evt = evts[++evtIdx];
@@ -57,39 +57,42 @@ export class LandGrabSVGView extends React.Component {
          }
          else if (evt.type === LandGrabMovie.cValidCircle){
                svgElms.push(SVGUtil.makeLabeledCircle(evt, "goodCircle", yTop, styles));
-
          }
          else if (evt.type === LandGrabMovie.cCircleGrowth){
-               growthEvts[evtIdx] = SVGUtil.makeLabeledCircle(evt, "openCircle", yTop, styles);
-               svgElms.push(growthEvts[evtIdx]);
+               growthEvts[evtIdx] = SVGUtil.makeCircleSlice(evt, "openCircle", yTop, styles);
+               svgElms[evts[evtIdx].id] = (growthEvts[evtIdx]);
          }
       }
 
-   // Undo events to move backward in time. (Note that this and the prior
-   // while condition are mutually exclusive.) Assume that barrier and
-   // target creation occur at negative time and thus will not be "backed
-   // over"
-   while (evtIdx > 0 && timeStamp < evts[evtIdx].time) {
-      evt = evts[evtIdx--];
-      svgElms.pop();
+      // Undo events to move backward in time. (Note that this and the prior
+      // while condition are mutually exclusive.) Assume that barrier and
+      // target creation occur at negative time and thus will not be "backed
+      // over"
+      while (evtIdx > 0 && timeStamp < evts[evtIdx].time) {
+         evt = evts[evtIdx--];
+         svgElms.pop();
 
-      if(growthEvts[evtIdx])
-         svgElms.push(growthEvts[evtIdx]);
-   }
-   
+         if(growthEvts[evtIdx])
+            svgElms.push(growthEvts[evtIdx]);
+      }
 
       return {growthEvts, evtIdx, svgElms, movie};
    }
 
    render() { 
-      let width = this.state.movie.background.width;
+      let width = this.state.movie.background.width; 
       let height = this.state.movie.background.height;
-
+      //console.log(this.state.svgElms[this.state.svgElms.length-1].props.children);
+      
+      //console.log(this.state.svgElms[this.state.svgElms.length-2].props.children);
    return  ( 
       <svg key={"svgOuter"} viewBox={`-.1 -.1 ${width + .1} ${height + .1}`} width="100%"
          className="panel">
-         <g> key={"svgElms"} {this.state.svgElms}</g>
+         <g>...{this.state.svgElms}</g>  
       </svg>);
+      // <g> key={"lastElm"} {this.state.svgElms[this.state.svgElms.length-1]}</g>
+      
+      
       
    }
 
