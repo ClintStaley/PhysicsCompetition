@@ -52,7 +52,7 @@ class CmpsPage extends Component {
       return (
       <section className="container">
       <ConfDialog
-        show={this.state.showDeleteConfirmation  != null }bit
+        show={this.state.showDeleteConfirmation != null}
         title="Delete Competition"
         body={`Are you sure you want to delete the Competition
          '${this.state.showDeleteConfirmation}'`}
@@ -68,11 +68,9 @@ class CmpsPage extends Component {
 
                 cmp.link = '/JoinCmpPage/' + cmp.id;
                 cmp.joiningCmp = props.showAll;
-                cmp.joined = props.prs.myCmps &&
-                 props.prs.myCmps.includes(parseInt(cmpId, 10));
+                cmp.joined = props.prs.myCmps.includes(parseInt(cmpId, 10));
 
-                return <CompetitionItem
-                  key={i} {...cmp}/>
+                return <CompetitionItem key={i} {...cmp}/>
               })}
            </div>
           :
@@ -90,7 +88,6 @@ class CmpsPage extends Component {
            </div>
            :
            <h4>You are not in any competitions, see Join Competitions to join one</h4>
-
        }
       </section>
       )
@@ -100,20 +97,18 @@ class CmpsPage extends Component {
 const CompetitionItem = function (props) {
    return (
       <ListGroupItem className="clearfix">
-         <Link className='comp-item'to = {props.link} >{props.title}</Link>
-          {props.joined ? '(already joined)' : ''}
-
-          {props.joiningCmp ?
-          <div className="pull-right">
-            <Link to = {props.link} >See Teams</Link>
-          </div>
-          : ''}
-
-          {props.joiningCmp ?
-          <div>
-           <div>{props.description}</div>
-         </div>
-         : ''}
+         <div className='cmpItem'>{props.title}</div>
+         <div>{props.description}</div>
+         {props.joiningCmp ?
+            props.joined ? 
+               <div>(already joined)</div>
+               :
+               <Link to = {props.link} >Join this Competition</Link>
+            : 
+            <div>
+               <Link to = {props.link}>Competition Status</Link>
+            </div>
+         }
       </ListGroupItem>
    )
 }

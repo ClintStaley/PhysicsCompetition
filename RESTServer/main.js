@@ -11,6 +11,8 @@ var CnnPool = require('./Routes/CnnPool.js');
 var async = require('async');
 var schemas = require('./schemas.json');
 
+let server;  // Global server object
+
 var configApp = (port, corsDomain, testFlag) => {
    var app = express();
 
@@ -83,14 +85,15 @@ var configApp = (port, corsDomain, testFlag) => {
 }
 
 var addDebugRoutes = app => {
+   console.log('Setting test routes');
+   app.delete('/Server', function(req, res) {process.exit(0);});
+
    // Debugging tool. Clear all table contents, reset all auto_increment
    // keys to 1, and reinsert one admin user.
    app.delete('/DB', function (req, res) {
-
-      console.log('here again');
-
       var resetTables = ["Person", "CompetitionType", "Competition",
          "Team", "Submit", "Membership"];
+         
       if (!req.session.isAdmin()) {
          req.cnn.release();
          res.status(403).end();
@@ -200,7 +203,7 @@ var addDebugRoutes = app => {
    }
    app = configApp(httpPort, corsDomain, process.argv.indexOf('-test') !== -1);
 
-   http.createServer(app)
+   server = http.createServer(app)
     .listen(httpPort, () => console.log(`Http listening on ${httpPort}`));
 
    // If not HttpOnly
@@ -215,7 +218,7 @@ var addDebugRoutes = app => {
          httpsPort = parseInt(argv[portFlag + 2]);
 
 
-      https.createServer(certOptions, app)
+      server = https.createServer(certOptions, app)
        .listen(httpsPort, () => console.log(`Https listening on ${httpsPort}`));
    }
 })(process.argv);

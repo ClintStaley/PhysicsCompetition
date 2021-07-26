@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {Form, Button } from 'react-bootstrap';
-import DraggableModal from '../Util/DraggableModal.js';
+import DraggableModal from '../../Util/DraggableModal';
 
 export class BSubmitModal extends Component {
     constructor(props) {
@@ -110,7 +110,6 @@ export class BSubmitModal extends Component {
                       </Form.Label>
                       <Form.Control
                          type="text"
-                         id={idS}
                          value={this.state.launchSpec[idx].speed}
                          required={true}
                          onChange={this.handleChange} />
@@ -123,7 +122,6 @@ export class BSubmitModal extends Component {
                       <Form.Label>Time</Form.Label>
                       <Form.Control
                          type="text"
-                         id={idT}
                          value={this.state.launchSpec[idx].finalTime}
                          required={true}
                          onChange={this.handleChange}
@@ -137,7 +135,6 @@ export class BSubmitModal extends Component {
                       <Form.Label>X</Form.Label>
                       <Form.Control
                          type="text"
-                         id={idX}
                          value={this.state.launchSpec[idx].finalX}
                          required={true}
                          onChange={this.handleChange}
@@ -151,7 +148,6 @@ export class BSubmitModal extends Component {
                       <Form.Label>Y</Form.Label>
                       <Form.Control
                          type="text"
-                         id={idY}
                          value={this.state.launchSpec[idx].finalY}
                          required={true}
                          onChange={this.handleChange}

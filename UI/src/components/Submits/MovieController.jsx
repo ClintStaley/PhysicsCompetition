@@ -1,78 +1,112 @@
 import React, {Component} from "react";
-import "./MovieBarController.css";
-import {Bounce3DView}  from "./Bounce3DView";
-import {BounceSVGView} from "./BounceSVGView";
+import "./MovieController.css";
+import "react-rangeslider/lib/index.css"
 import Slider from 'react-rangeslider';
 
+// Props are {movie, views}.  Sets up a display of the movie, allowing choice
+// of one of the views.  Runs movie up to just prior to offset 0, and enables
+// play/replay/pause buttons if there is more to show in the movie.  (A movie
+// displaying just the initial setup may have nothing more to show.)
 export class MovieController extends Component {
    constructor(props) {
       super(props);
-      this.state = {
-         currentViewIdx: 0,
-         currentOffset: 0,
-         playing: false,
-         childEventIdx: 0,
-         scrubbing: false
-      };
-      this.duration = this.props.jsonMovie.evts
-       [this.props.jsonMovie.evts.length - 2].time;
-      this.currentView = props.views[this.state.currentViewIdx];
+      this.state = MovieController.getInitState(props);
    }
 
-   // CAS FIX: Are this method and the childEventIdx even used?  Pls remove
-   // them unless they're needed.
-   updateEventIdx(eventIdx) {
-      this.setState({childEventIdx: eventIdx});
+   // duration indicates length, and by being nonzero, the need for movie play
+   static getInitState(props) {
+      return {
+         props,
+         currentViewIdx: 0, // Selected type of view
+         startTime: null,   // Time at which movie began; null if not playing
+         currentOffset: 0,  // Number of seconds into movie play
+         playing: false,    // Are we currently playing or stopped?
+         duration: props.movie.evts[props.movie.evts.length - 1].time
+      }
+   }
+ 
+   static getDerivedStateFromProps(newProps, oldState) {
+      let rtn = oldState;
+
+      if (newProps.movie !== oldState.props.movie) // Reset for new movie
+         rtn = MovieController.getInitState(newProps);
+
+      return rtn;
    }
 
+   // Set state.playing to true, and reset to movie start if we're at end.
+   // In either case start a requestAnimatinoFrame sequence once state is set.
    play = () => {
-      this.setState({playing: true}, this.animate);
+      if (this.state.currentOffset < this.state.duration)
+         this.setState({playing: true}, 
+          () => requestAnimationFrame(this.animate));
+      else 
+         this.setState({playing: true, startTime: null, currentOffset: 0},
+          () => requestAnimationFrame(this.animate));
    };
 
+   // Set state.playing to false, and invalidate startTime so it will be reset
+   // on next playing period.
    pause = () => {
-      //console.log()
-      this.setState({playing: false});
+      this.setState({playing: false, startTime: null});
    };
 
-   replay = () => {
-      this.firstTimeStamp = undefined;
-      this.setState({playing: true}, this.animate);
-   };
-
+   // RequestAnimationFrame is the only source of time.  This provides better
+   // consistency than use of window.performance.now().  State.currentOffset
+   // is the number of seconds into the movie at the current animation point.
+   // State.startTime is the time of the first frame assuming the movie has 
+   // been continuously animated to the current point.  It gets reset anytime 
+   // we pause or scrub.  To reset state.startTime, set it null, and the next
+   // |animate| will reassign it appropriately.
    animate = (timestamp) => {
-      timestamp /= 1000;
       if (this.state.playing) {
-         if (!this.firstTimeStamp) {
-            this.firstTimeStamp = timestamp
-         }
-         if (this.state.currentOffset > this.duration) {
-            this.firstTimeStamp = undefined;
+         timestamp /= 1000;
+
+         // Set startTime if we are commencing animation
+         if (this.state.startTime === null) 
+            //this.state.startTime = timestamp - this.state.currentOffset;
+            this.setState({startTime : timestamp - this.state.currentOffset});
+
+         // Stop animation at end of movie
+         if (this.state.currentOffset > this.state.duration) {
             this.pause();
          }
-         this.setState({ currentOffset: timestamp - this.firstTimeStamp }, 
-            () => {
-            requestAnimationFrame(this.animate);
-         });
+
+         this.setState({currentOffset: timestamp - this.state.startTime}, 
+            () => requestAnimationFrame(this.animate));
       }
    };
 
    render() {
-      // console.log("Rendering MC with props ", this.props, this.state);
       return (
-         <div>
-            <div>
-               <button className="bar-button" onClick={this.play}>
-                  Play
-               </button>
-               <button className="bar-button" onClick={this.pause}>
-                  Pause
-               </button>
-               <button className="bar-button" onClick={this.replay}>
-                  Replay
-               </button>
-            </div>
+         <div className="container">
+            {this.state.duration > 0 ? 
+            (<div>
+               <div>
+                  <button className="bar-button" onClick={this.play}>
+                     Play
+                  </button>
+                  <button className="bar-button" onClick={this.pause}>
+                     Pause
+                  </button>
+               </div>
+               <Slider
+                  value={this.state.currentOffset}
+                  max={this.state.duration}
+                  step={0.001*this.state.duration}
+                  tooltip={true}
+                  onChange={(value) => {
+                     this.setState({
+                        currentOffset: value,
+                        startTime: null,
+                        playing: null
+                     })
+                  }}
+               />
+            </div>)
+            : ''}
+
             {this.props.views.map((view, idx) => (
-               
                <button
                   key={idx}
                   onClick={() => this.setState({currentViewIdx: idx})}
@@ -81,23 +115,9 @@ export class MovieController extends Component {
                </button>
             ))}
             {React.createElement(this.props.views[this.state.currentViewIdx], {
-               offset: this.state.currentOffset || 0.01,
-               movie: this.props.jsonMovie,
-               scrubbing: this.state.scrubbing
+               movie: this.props.movie,
+               offset: this.state.currentOffset || 0.001
             })}
-            <Slider
-               value={this.state.currentOffset}
-               max={this.duration}
-               step={0.001*this.duration}
-               tooltip={false}
-               onChange={(value) => {
-                  //if(value < this.state.currentOffset)
-                  this.setState({
-                     scrubbing: value < this.state.currentOffset,
-                     currentOffset: value,
-                  })
-               }}
-            />
          </div>
       );
    }

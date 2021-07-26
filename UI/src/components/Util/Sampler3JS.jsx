@@ -35,21 +35,16 @@ export class Sampler3JS extends React.Component {
       var scene = new THREE.Scene();
       var renderer = new THREE.WebGLRenderer();
       var camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
-      var mat = new THREE.MeshBasicMaterial({
-         color: 0x121212,
-         roughnessMap: this.loadTexture(`${path}/simple_metal.jpg`),
-         metalness: 0.5,
-         side: THREE.BackSide});
 
       const ambLight = new THREE.AmbientLight(0x808080);
-      const pntLight = new THREE.PointLight(0xFFFFFF, .8, 0, 2);
+      const pntLight = new THREE.PointLight(0xff0000, 100, 0, 2);
 
       camera.position.set(0, 10, 5);
-      pntLight.position.set(5, 5, 10);
+      pntLight.position.set(20, 20, 20);
 
       scene.add(ambLight);
       scene.add(pntLight);
-      scene.add(new THREE.Mesh(new THREE.BoxGeometry(10, 10, 10),mat));
+      scene.add(new THREE.Mesh(new THREE.BoxGeometry(10, 10, 10)));
       console.log(scene)
       console.log(camera.position)
 
@@ -63,28 +58,6 @@ export class Sampler3JS extends React.Component {
       }
    }
 
-   static createMaterial() {
-      let path = `${window.location.origin}/textures/steelplate1-ue/`;
-
-      let material = new THREE.MeshStandardMaterial({
-         color: 0x121212,
-         roughnessMap: this.loadTexture(`${path}/simple_metal.jpg`),
-         metalness: 0.5,
-      });
-      return material;
-   }
-
-   static loadTexture(path) {
-      // load Threejs as loader
-      let loader = new THREE.TextureLoader();
-      
-      let texture = loader.load(path, (texture) => {
-         texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-         texture.repeat.set(5, 5);
-      });
-
-      return texture;
-   }
 
    // Do state setup dependent on this.mount, including:
    //

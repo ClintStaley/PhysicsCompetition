@@ -1,31 +1,45 @@
 .graph5 {
    stroke: #E0E0E0;
-   stroke-width:.1;
+   stroke-width:1;
 }
 
 .graph10 {
    stroke:#C8C8C8;
-   stroke-width:.1;
+   stroke-width:1;
 }
 
 .graphBkg {
    fill:#F0F0FF;
    stroke:"gray";
-   stroke-width:.1;
+   stroke-width:1;
+}
+
+.lightLine {
+   stroke: #E0E0E0;
+   stroke-width: .1;
+}
+
+.heavyLine {
+   stroke:#C8C8C8;
+   stroke-width: .2;
 }
 
 .obstacle {
    stroke: black;
-   stroke-width:.1;
-   fill:#A0A0FF;
+   stroke-width:.2;
+   fill:#a0a0ffc0;
 }
 
 .goodCircle {
    fill:#80FF8040;
+   stroke: #80ff80fd;
+   stroke-width: .2
 }
 
 .badCircle {
    fill:#FF808040;
+   stroke:#ff8080f6;
+   stroke-width:.1;
 }
 
 .openCircle {
@@ -33,11 +47,11 @@
 }
 
 .URText, .ULText, .LRText, .LLText {
-   font-size:1.8px;
+   font-size:2px;
 }
 
 .text, .rhsText {
-   font-size:.13px;
+   font-size:2px;
 }
 
 .rhsText {

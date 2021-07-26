@@ -88,7 +88,6 @@ export function loadAsset(url) {
          model.castShadow = true;
          this.scene.add(modelFile.scene);
          this.render();
-
       },
       undefined,
       (err) => console.log(err)
