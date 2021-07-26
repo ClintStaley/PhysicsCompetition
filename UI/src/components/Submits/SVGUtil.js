@@ -1,5 +1,7 @@
 //Utility object to reduce repetitiveness of .*SVG.jsx files
 
+import React from "react";
+
 export class SVGUtil{
 
         // For all SVG creating functions:
@@ -116,39 +118,30 @@ export class SVGUtil{
         {`(${evt.hiX.toFixed(2)}, ${evt.loY.toFixed(2)})`}
         </text>);
 
-        return <g>id={"rectangleG" + evt.id}{elms}</g>;
+        return <React.Fragment key={"rectangleG" + evt.id}>
+           ...{elms}
+        </React.Fragment>
     }
 
     //simple circle with text set to center, might need changing later
     static makeLabeledCircle(evt, cls, yTop, style) {
         if (evt.r == 0)
-            return <g>id={"emptyG"+evt.id}</g> //if radius is zero return no circle and no text
-        return <g> id={"labeledCirc" + evt.id}
+            return <React.Fragment key={"emptyG"+evt.id}></React.Fragment> //if radius is zero return no circle and no text
+        return <React.Fragment key={"labeledCirc" + evt.id}>
             <circle key={"Circ" + evt.id} cx={evt.x} cy={yTop-evt.y} r={evt.r} className={style[cls]}/>
             <text key={"txt" + evt.id} x={evt.x} y={yTop-evt.y} className={style.LLText}>
               {`(${evt.x}, ${evt.y})`}
             </text>
-        </g>
+        </React.Fragment>
     }
 
    static makeCircleSlice(evt, cls, yTop, style) {
-// d key:
-/*
-sx,y = start xy
-hx = horizontal line x
-rx y = radius x y
-LAF Large arc flag (a > pi -> true)
-SF = sweep flag (we will always have false)
-mx, y = move x , y. End of arc will have relative points from start
-<path d="M sx,sy h=hx a=rx,ry LAF SF mx my"
-eg d="M 50,50 h10 a10,10 0 0,0  -17.8,-6.3"
-
-*/
-     // console.log({x: evt.r * Math.cos(evt.angle), y:evt.r * Math.sin(evt.angle)});
-
-     
-      return [<path key={"Circ" + evt.time} d={`M ${evt.x},${yTop-evt.y} h${evt.r} a${evt.r},${evt.r} 0 ${1 * (evt.angle > Math.PI)},0  ${evt.r * Math.cos(evt.angle) - evt.r},${-evt.r * Math.sin(evt.angle)}`} className={style[cls]}/>
-      ,<text key={"txt" + evt.time} x={evt.x} y={yTop-evt.y} className={style.LLText}>{`(${evt.x}, ${evt.y})`}</text>]
+      return [<path key={"Circ" + evt.time} d={`M ${evt.x},${yTop-evt.y} 
+       h${evt.r} a${evt.r},${evt.r} 0 ${1 * (evt.angle > Math.PI)},0  
+       ${evt.r * Math.cos(evt.angle) - evt.r},${-evt.r * Math.sin(evt.angle)}`}
+       className={style[cls]}/>,
+       <text key={"txt" + evt.time} x={evt.x} y={yTop-evt.y} 
+       className={style.LLText}>{`(${evt.x}, ${evt.y})`}</text>]
     }
 
 }

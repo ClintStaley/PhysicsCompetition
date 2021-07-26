@@ -73,6 +73,7 @@ export class LandGrabSVGView extends React.Component {
       // while condition are mutually exclusive.) Assume that barrier and
       // target creation occur at negative time and thus will not be "backed
       // over"
+      /*
       while (evtIdx > 0 && timeStamp < evts[evtIdx].time) {
          evt = evts[evtIdx--];
          svgElms.pop();
@@ -80,16 +81,13 @@ export class LandGrabSVGView extends React.Component {
          if(growthEvts[evtIdx])
             svgElms.push(growthEvts[evtIdx]);
       }
-
+*/
       return {growthEvts, evtIdx, bkgElms, addedSVGs, topLayerSVGs, movie};
    }
 
    render() { 
       let width = this.state.movie.background.width; 
       let height = this.state.movie.background.height;
-      //console.log(this.state.svgElms[this.state.svgElms.length-1].props.children);
-      
-      //console.log(this.state.svgElms[this.state.svgElms.length-2].props.children);
       // I have isolated the issue to addedSVGs list
       return  ( 
       <svg key={"svgOuter"} viewBox={`-.1 -.1 ${width + .1} ${height + .1}`} width="100%"
