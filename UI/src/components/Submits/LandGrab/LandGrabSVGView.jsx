@@ -12,12 +12,14 @@ export class LandGrabSVGView extends React.Component {
     }
 
    static getInitState(movie){
-      var bkgElms = []
-      bkgElms.push(SVGUtil.getGraphGrid(movie, styles));
+      var bkgElms = SVGUtil.getGraphGrid(movie, styles);
       return {
          growthEvts : [],  // array of all growth events (including invalid)
          evtIdx: -1,       // Index within movie of last event shown in svgElms
-         svgElms: bkgElms, // SVG elements to render at this point
+         bkgElms, // SVG elements to render at this point. Permanant, no appends
+         addedSVGs: [], // SVG elms that are progressively added (no removal)
+         topLayerSVGs: [], //svg elms that can change on new frame, These 
+         // elements will be replaced and rerendered for each frame
          movie             // Pointer to current movie
       }
    }
@@ -41,29 +43,32 @@ export class LandGrabSVGView extends React.Component {
       let movie = state.movie;
       let evts = movie.evts;
       
-      let {growthEvts, evtIdx, svgElms} = state;
+      let {growthEvts, evtIdx, bkgElms, addedSVGs, topLayerSVGs} = state;
       let yTop = movie.background.height;
       let evt;
       // While the event after evtIdx exists and needs adding to svgElms
       while (evtIdx+1 < evts.length && evts[evtIdx+1].time <= timeStamp) {
          evt = evts[++evtIdx];
-         if (growthEvts[evtIdx-1])
-            svgElms.pop();
          if (evt.type === LandGrabMovie.cMakeObstacle) {
-               svgElms.push(SVGUtil.makeLabeledRect(evt, "obstacle", yTop, styles, 1.7));
+               addedSVGs.push(SVGUtil.makeLabeledRect(evt, "obstacle", yTop, styles, 1.7));
          }
          else if (evt.type === LandGrabMovie.cInvalidCircle) {
-               svgElms.push(SVGUtil.makeLabeledCircle(evt, "badCircle", yTop, styles));
+               addedSVGs.push(SVGUtil.makeLabeledCircle(evt, "badCircle", yTop, styles));
          }
          else if (evt.type === LandGrabMovie.cValidCircle){
-               svgElms.push(SVGUtil.makeLabeledCircle(evt, "goodCircle", yTop, styles));
+               addedSVGs.push(SVGUtil.makeLabeledCircle(evt, "goodCircle", yTop, styles));
          }
          else if (evt.type === LandGrabMovie.cCircleGrowth){
-               growthEvts[evtIdx] = SVGUtil.makeCircleSlice(evt, "openCircle", yTop, styles);
-               svgElms[evts[evtIdx].id] = (growthEvts[evtIdx]);
+               topLayerSVGs = SVGUtil.makeCircleSlice(evt, "openCircle", yTop, styles);
          }
       }
 
+      if (evts[evtIdx].type !== LandGrabMovie.cCircleGrowth)
+         topLayerSVGs = [];
+
+      // THIS NEEDS TO BE REFACTORED FOR NEW SVG ORGANIZATION 
+      // conditionally pop if it is any of the addedSVG evts
+      // and always use the last available 
       // Undo events to move backward in time. (Note that this and the prior
       // while condition are mutually exclusive.) Assume that barrier and
       // target creation occur at negative time and thus will not be "backed
@@ -76,7 +81,7 @@ export class LandGrabSVGView extends React.Component {
             svgElms.push(growthEvts[evtIdx]);
       }
 
-      return {growthEvts, evtIdx, svgElms, movie};
+      return {growthEvts, evtIdx, bkgElms, addedSVGs, topLayerSVGs, movie};
    }
 
    render() { 
@@ -85,10 +90,15 @@ export class LandGrabSVGView extends React.Component {
       //console.log(this.state.svgElms[this.state.svgElms.length-1].props.children);
       
       //console.log(this.state.svgElms[this.state.svgElms.length-2].props.children);
-   return  ( 
+      // I have isolated the issue to addedSVGs list
+      return  ( 
       <svg key={"svgOuter"} viewBox={`-.1 -.1 ${width + .1} ${height + .1}`} width="100%"
          className="panel">
-         <g>...{this.state.svgElms}</g>  
+
+         <g>{this.state.bkgElms}</g>
+         <g>{this.state.addedSVGs}</g>
+         <g>{this.state.topLayerSVGs}</g> 
+          
       </svg>);
       // <g> key={"lastElm"} {this.state.svgElms[this.state.svgElms.length-1]}</g>
       

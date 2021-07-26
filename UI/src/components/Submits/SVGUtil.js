@@ -52,7 +52,7 @@ export class SVGUtil{
                 bkgElms.push(<line key={"HL" + smallOffset} x1="0" y1={smallOffset}
                 x2={width} y2={smallOffset} className={style.lightLine} />);
         }
-        return <g>id={"bkgElms"}{bkgElms}</g>;
+        return bkgElms;
     
     }
 
@@ -147,8 +147,8 @@ eg d="M 50,50 h10 a10,10 0 0,0  -17.8,-6.3"
      // console.log({x: evt.r * Math.cos(evt.angle), y:evt.r * Math.sin(evt.angle)});
 
      
-      return <g>id={"circleSlice" + evt.id}<path key={"Circ" + evt.id} d={`M ${evt.x},${yTop-evt.y} h${evt.r} a${evt.r},${evt.r} 0 ${1 * (evt.angle > Math.PI)},0  ${evt.r * Math.cos(evt.angle) - evt.r},${-evt.r * Math.sin(evt.angle)}`} className={style[cls]}/>)
-      <text key={"txt" + evt.id} x={evt.x} y={yTop-evt.y} className={style.LLText}>{`(${evt.x}, ${evt.y})`}</text></g>
+      return [<path key={"Circ" + evt.time} d={`M ${evt.x},${yTop-evt.y} h${evt.r} a${evt.r},${evt.r} 0 ${1 * (evt.angle > Math.PI)},0  ${evt.r * Math.cos(evt.angle) - evt.r},${-evt.r * Math.sin(evt.angle)}`} className={style[cls]}/>
+      ,<text key={"txt" + evt.time} x={evt.x} y={yTop-evt.y} className={style.LLText}>{`(${evt.x}, ${evt.y})`}</text>]
     }
 
 }
