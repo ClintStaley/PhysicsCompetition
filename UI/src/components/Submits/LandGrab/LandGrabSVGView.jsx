@@ -49,19 +49,22 @@ export class LandGrabSVGView extends React.Component {
          evt = evts[++evtIdx];
          if (growthEvts[evtIdx-1])
             svgElms.pop();
-         if (evt.type === LandGrabMovie.cMakeObstacle) {
-               svgElms.push(SVGUtil.makeLabeledRect(evt, "obstacle", yTop, styles, 1.7));
-         }
-         else if (evt.type === LandGrabMovie.cInvalidCircle) {
-               svgElms.push(SVGUtil.makeCircleSlice(evt, "badCircle", yTop, styles));
-         }
-         else if (evt.type === LandGrabMovie.cValidCircle){
-               svgElms.push(SVGUtil.makeLabeledCircle(evt, "goodCircle", yTop, styles));
-         }
-         else if (evt.type === LandGrabMovie.cCircleGrowth){
-               growthEvts[evtIdx] = SVGUtil.makeCircleSlice(evt, "openCircle", yTop, styles);
-               svgElms[evts[evtIdx].id] = (growthEvts[evtIdx]);
-         }
+         if (evt.type === LandGrabMovie.cMakeObstacle)
+            svgElms.push(SVGUtil.makeLabeledRect(evt, "obstacle", yTop, styles,
+             1.7));
+         
+         else if (evt.type === LandGrabMovie.cInvalidCircle)
+            svgElms.push(SVGUtil.makeCircleSlice(evt, "badCircle", yTop, styles)
+             );
+         
+         else if (evt.type === LandGrabMovie.cValidCircle)
+            svgElms.push(SVGUtil.makeLabeledCircle(evt, "goodCircle", yTop, 
+             styles));
+         
+         else if (evt.type === LandGrabMovie.cCircleGrowth)
+            growthEvts[evtIdx] = SVGUtil.makeCircleSlice(evt, "openCircle", 
+             yTop, styles);
+            svgElms[evts[evtIdx].id] = (growthEvts[evtIdx]);
       }
 
       // Undo events to move backward in time. (Note that this and the prior
@@ -71,8 +74,7 @@ export class LandGrabSVGView extends React.Component {
       while (evtIdx > 0 && timeStamp < evts[evtIdx].time) {
          evt = evts[evtIdx--];
          svgElms.pop();
-
-         if(growthEvts[evtIdx])
+         if (growthEvts[evtIdx])
             svgElms.push(growthEvts[evtIdx]);
       }
       return {growthEvts, evtIdx, svgElms, movie};
