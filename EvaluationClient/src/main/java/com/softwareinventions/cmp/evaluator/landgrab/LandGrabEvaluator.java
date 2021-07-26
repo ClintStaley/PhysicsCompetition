@@ -26,6 +26,8 @@ public class LandGrabEvaluator implements Evaluator {
       public BlockedRectangle[] obstacles;
    }
    
+   // CAS: Declare classes in dependent order (this goes before Parameters)
+   // And, why are these ints?
    static class BlockedRectangle {
       public int loX;
       public int hiX;
@@ -43,6 +45,7 @@ public class LandGrabEvaluator implements Evaluator {
       public double area;
       public Double badAngle; // Angle of earliest collision || null
       public Collisions collisions;
+      
       public Circle(SbmCircle c) {
          this.area = GenUtil.sqr(c.radius) * Math.PI;
          this.collisions = new Collisions();
@@ -51,10 +54,9 @@ public class LandGrabEvaluator implements Evaluator {
    
    // contains collisions of a given circle
    static class Collisions {
-      public Collision[] barriers; // id's of barriers collided with in order
-      public Double boundary; // Angle of boundary collision || null
-      public Collision[] pastCircles; //
-      
+      public Collision[] barriers; // Barriers collided with in order
+      public Double boundary;      // Angle of boundary collision || null
+      public Collision[] pastCircles; // CAS: This is???
    }
    
    static class Collision {
@@ -89,7 +91,9 @@ public class LandGrabEvaluator implements Evaluator {
 
       rsp.circleData = new Circle[Math.min(sbmCircles.length, prms.numCircles)];
       
-      //evaluate each circle
+      //evaluate each circle 
+      // CAS: Make only nonobvious comments.  It's pretty clear this evaluates
+      // each circle.
       for (int i = 0; i < rsp.circleData.length; i++) {
          rsp.circleData[i] = evaluateCircle(sbmCircles, i, rsp.circleData);
          if (rsp.circleData[i].badAngle == null)
@@ -108,7 +112,7 @@ public class LandGrabEvaluator implements Evaluator {
    // Evaluate a given circle
    private Circle evaluateCircle(SbmCircle[] circles, int i,
     Circle[] circleData) {
-      SbmCircle circle = circles[i]; // setting CircleTR props
+      SbmCircle circle = circles[i];   // setting CircleTR props CAS: Obvious?
       Circle ctr = new Circle(circle); // create circle to return in circleData
       
       // evaluate for boundary, barrier collisions
@@ -152,6 +156,7 @@ public class LandGrabEvaluator implements Evaluator {
       SbmCircle circle = circles[i];
       LinkedList<Collision> tempCollisions = new LinkedList<Collision>();
       final double cImpossibleAngle = 7;
+      
       // Add one possible collision per obstacle
       for (int idx = 0; idx < prms.obstacles.length; idx++) {
          BlockedRectangle obs = prms.obstacles[idx];
@@ -238,7 +243,8 @@ public class LandGrabEvaluator implements Evaluator {
          if (angle != null)
             tempCollisions.add(new Collision(idx, (double)angle));
       }
-      Collision[] c = {};
+      Collision[] c = {}; // CAS: Style says all locals at top of function.
+      
       c = tempCollisions.toArray(c);
       return c;
    }
@@ -247,6 +253,12 @@ public class LandGrabEvaluator implements Evaluator {
    // returns null if no Circle intersection, returns double value of earliest
    // intersection otherwise.
    // https://mathworld.wolfram.com/Circle-CircleIntersection.html
+   // 
+   // CAS: Comments need work. It's obviously pure math.  More important is how
+   // a double represents an intersection, for instance.  And frankly Wolfram
+   // is always accurate, and occasionally clear.  I think this needs more help.
+   // At least my math degree didn't make this code obvious to me even with 
+   // Wolfram's reference.
    private Double circleIntersection(SbmCircle a, SbmCircle b) {
       
       Double d = Point2D.distance(a.centerX, a.centerY,
@@ -255,10 +267,13 @@ public class LandGrabEvaluator implements Evaluator {
       if (d < a.radius + b.radius - EPS) {
          if (d < a.radius || d < b.radius) {
             //Overlap at centers
+            // CAS: Again clarity:  "At least one center is inside other circle"
             return (Double)EPS;
          }
          else {
             // the following expression is from the website sited above
+            // CAS: I actually find "sqr" is less clear than e.g. d*d for small
+            // expressions.
             double adjacentLeg = (GenUtil.sqr(d) - GenUtil.sqr(b.radius) + 
              GenUtil.sqr(a.radius)) / (2 * d);
             // Relative angle of intersection to circles' angle to each other
@@ -284,18 +299,19 @@ public class LandGrabEvaluator implements Evaluator {
       }
       // Circles do not intersect
       else { 
-         d = null;
-         return d;
+         return null;
       }
    }
    
    // Return distance to boundary if within radius, otherwise return null
    private Double distanceToBounds(SbmCircle crc) {
+      // CAS: Use Math.min for clarity.
       double dist = crc.centerX;
       dist = dist < cGridSize - crc.centerX ? dist : cGridSize - crc.centerX;
       dist = dist < crc.centerY ? dist : crc.centerY;
       dist = dist < cGridSize - crc.centerY ? dist : cGridSize - crc.centerY;
       
+      // CAS: return dist + EPS < crc.radius ? dist : null;
       if (dist + EPS < crc.radius)
          return (Double) dist;
       return (Double) null;
