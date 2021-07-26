@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Bounce3DView } from './Bounce3DView2';
+import { Bounce3DView } from './Bounce3DView';
 import {BounceSVGView} from "./BounceSVGView"; 
 import { BounceMovie } from './BounceMovie';
 import { MovieController } from './MovieController';
