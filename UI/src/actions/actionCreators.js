@@ -42,9 +42,6 @@ export function getAllCtps(cb){
    return(dispatch, getState)=>{
       api.getCtps()
       .then((ctps)=>{
-         Object.keys(ctps).forEach(key=>{
-            ctps[key].cmps=[];
-         });
          dispatch({type: 'GET_CTPS', ctps});
       })
       .then(()=>{if (cb) cb()})

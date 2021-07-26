@@ -15,7 +15,6 @@ class CmpsPage extends Component {
          showDeleteConfirmation: null,
          expanded: {},
          cmps: {},
-         ctps: [],
          cmpsByCtp: []
       }
    }
@@ -24,34 +23,34 @@ class CmpsPage extends Component {
       let rtn = oldState;
 
       if (newProps.cmps !== oldState.cmps) {
-            var cmpIds = Object.keys(newProps.cmps);
-            var ctpIds = Object.keys(newProps.ctps);
-            ctpIds.forEach(id => {
-               rtn.cmpsByCtp[newProps.ctps[id].id] = []
-            })
-            cmpIds.forEach(id => {
-               rtn.cmpsByCtp[newProps.cmps[id].ctpId].push(newProps.cmps[id]);
-            })
+         var cmpIds = Object.keys(newProps.cmps);
+         var ctpIds = Object.keys(newProps.ctps);
+
+         ctpIds.forEach(id => { rtn.cmpsByCtp[newProps.ctps[id].id] = [] })
+
+         for (var i = 0; i < cmpIds.length; i++) {
+            var id = parseInt(cmpIds[i]);
+            rtn.cmpsByCtp[newProps.cmps[id].ctpId].push(newProps.cmps[id]);
+         }
       }
+      rtn.cmps = newProps.cmps
       return rtn;
    }
 
    componentDidMount = () => {
       var props = this.props;
-
-      //if (!(props.updateTimes && props.updateTimes.myTeams))
-      //   this.props.getTeamsByPrs(this.props.prs.id);
-
       if (props.showAll) {
          if (!props.updateTimes.cmps) {
             this.props.getAllCmps();
             this.props.getAllCtps();
-
          }
       }
-      else
-         if (!props.updateTimes.myCmps)
+      else {
+         if (!props.updateTimes.myCmps){
+            this.props.getAllCtps();
             this.props.getCmpsByPrs(this.props.prs.id);
+         }
+      }
    }
 
    componentDidUpdate = this.componentDidMount;
@@ -80,74 +79,86 @@ class CmpsPage extends Component {
       var props = this.props;
       var cmps = props.showAll ? Object.keys(props.cmps) : props.prs.myCmps;
       var ctps = Object.keys(props.ctps);
+      var prs = props.prs
+      console.log(this.state)
 
-      // Create an array called cmpsByCtp, indexed by ctp.id, with values
-      // that are themselves arrays of cmps.
-      // Pass through all cmps, assigning every one of them into the relevant
-      // eleemnt of cmpsByCtp.
-      // Now, loop through cmpsByCtp to create one CompetitionItem per ctp,
-      // passing the array of cmps as one of the properties, so the 
-      // CompetitionItem can display (or not, depending on expanded) the
-      // cmps under it.
-      // Toggle does not do this work; it just changes the state.expanded
-      // flags to control the appearance of the CompetitionItems.  Each
-      // CompetitionItem always has a full list of its cmps, whether it
-      // shows it or not.
-
-      // CAS still not seeing why we need both these branches...
-      // There should be just **one** loop making a set of
-      // CompetitionTypeItems, one per index of 
-      return (
-         <section className="container">
-            {props.showAll ?
-               <div className='grid'>
-                  {ctps && ctps.map((ctpId, i) => {
-                     var ctp = Object.assign({}, props.ctps[ctpId]);
-
-                     return <CompetitionTypeItem
-                        key={i}
-                        cmpsByCtp={this.state.cmpsByCtp}
-                        expanded={this.state.expanded[ctpId]}
-                        toggle={() => this.toggleView(ctpId)}
-                        {...ctp} />
-                  })}
-               </div>
-               :
-               cmps && cmps.length ?
+      if (Object.keys(props.cmps).length === 0) {
+         return <div>
+            ...Loading
+         </div>
+      }
+      else {
+         return (
+            <section className="container">
+               {props.showAll ?
                   <div className='grid'>
-                     {cmps.map((cmpId, i) => {
-                        var cmp = Object.assign({}, props.cmps[cmpId]);
+                     {ctps && ctps.map((ctpId, i) => {
+                        var ctp = Object.assign({}, props.ctps[ctpId]);
 
-                        cmp.link = '/MyCmpPage/' + cmp.id;
-                        cmp.joiningCmp = props.showAll;
-                        cmp.joined = false;
-
-                        return <CompetitionItem key={i} {...cmp} />
+                        return <JoinCompetitionItem
+                           key={i}
+                           cmpsByCtp={this.state.cmpsByCtp[ctp.id]}
+                           expanded={this.state.expanded[ctpId]}
+                           toggle={() => this.toggleView(ctpId)}
+                           {...ctp} />
                      })}
                   </div>
                   :
-                  <h4>You are not in any competitions, see Join Competitions to join one</h4>
-            }
-         </section>
-      )
+                  prs.myCmps && prs.myCmps.length ?
+                     <div className='grid'>
+                        {prs.myCmps.map((cmpId, i) => {
+                           var cmp = props.cmps[cmpId];
+                           var ctp = props.ctps[cmp.ctpId - 1];
+                           var cmpsByCtp = [...this.state.cmpsByCtp[ctp.id]];
+
+                           //Eliminate cmps of type ctp.id from cmpsByCtp if the 
+                           //user is not in the competition
+                           cmpsByCtp.forEach((element,index)=>{
+                              if(props.prs.myCmps.includes(element.id)){}
+                              else{cmpsByCtp.splice(index,1)}})
+
+                           return <ActiveCompetitionItem key={i}
+                           {...ctp}
+                           cmps={cmps}
+                           cmpsByCtp ={cmpsByCtp} 
+                           expanded= {this.state.expanded[ctp.id]}
+                           toggle={()=>this.toggleView(ctp.id)}/>
+                        })}
+                     </div>
+                     :
+                     <h4>You are not in any competitions, see Join Competitions to join one</h4>
+               }
+            </section>
+         )
+      }
    }
 }
 
-const CompetitionItem = function (props) {
+const ActiveCompetitionItem = function (props) {
    return (
       <ListGroupItem className="clearfix">
          <div className='cmpItem'>{props.title}</div>
          <div>{props.description}</div>
-         {props.joiningCmp ?
-            props.joined ?
-               <div>(already joined)</div>
-               :
-               <Link to={props.link} >Join this Competition</Link>
-            :
-            <div>
-               <Link to={props.link}>Competition Status</Link>
-            </div>
+         <Button onClick={props.toggle}>Show My Competitions</Button>
+            {props.expanded ?
+            <ListGroup>
+               {
+                  props.cmpsByCtp.map((cmp,i)=>{
+                     var cmp = cmp;
+
+                     return <CmpItem 
+                     key={i}
+                     link={'MyCmpPage/'+cmp.id}
+                     title={cmp.title}
+                     joined={true}
+                        />
+
+                  })
+               }
+            </ListGroup>
+            : ""
          }
+         
       </ListGroupItem>
    )
 }
@@ -157,30 +168,42 @@ const CompetitionItem = function (props) {
 // this.state.cmpsByCtp, always an array, initially empty.  Assume it will
 // *always* be there in render, and do one CompetitionTypeItem per element.
 // Fill it in GDSFP.  The code above should be half as complex as it is.
-const CompetitionTypeItem = function (props) {
-   return (
-      <ListGroupItem className="clearfix">
-         <div className='ctpItem'>{props.title}</div>
-         <div>{props.description}</div>
-         <Button onClick={props.toggle}>Show Competitions</Button>
-         {props.expanded ?
-            <ListGroup>
-               {Object.keys(props.cmpsByCtp[props.id]).map((cmpId, i) => {
-                  var cmp = props.cmpsByCtp[props.id ][cmpId];
+const JoinCompetitionItem = function (props) {
+      return (
+         <ListGroupItem className="clearfix">
+            <div className='ctpItem'>{props.title}</div>
+            <div>{props.description}</div>
+            <Button onClick={props.toggle}>Show Competitions</Button>
+            {props.expanded ?
+               <ListGroup>
+                  {Object.keys(props.cmpsByCtp).map((cmpId, i) => {
+                     var cmp = props.cmpsByCtp[cmpId];
 
-                  return <CmpItem key={i} title={cmp.title} />
-               })}
-            </ListGroup>
-            : ""
-         }
-      </ListGroupItem>
-   )
-}
+                     return <CmpItem
+                        key={i}
+                        link={'/JoinCmpPage/' + cmp.id}
+                        title={cmp.title} />
+                  })}
+               </ListGroup>
+               : ""
+            }
+         </ListGroupItem>
+      )
+   }
 
 const CmpItem = function (props) {
    return (
       <ListGroupItem className="clearfix">
          {props.title}
+         {props.joined ?
+            <div className="float-right">
+               <Link to={props.link}>Status</Link>
+            </div>
+         :
+         <div className="float-right">
+            <Link to={props.link} >Join </Link>
+         </div>
+         }
       </ListGroupItem>
    )
 }
