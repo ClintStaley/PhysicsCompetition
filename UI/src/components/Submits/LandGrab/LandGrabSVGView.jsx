@@ -53,7 +53,7 @@ export class LandGrabSVGView extends React.Component {
                addedSVGs.push(SVGUtil.makeLabeledRect(evt, "obstacle", yTop, styles, 1.7));
          }
          else if (evt.type === LandGrabMovie.cInvalidCircle) {
-               addedSVGs.push(SVGUtil.makeLabeledCircle(evt, "badCircle", yTop, styles));
+               addedSVGs.push(SVGUtil.makeCircleSlice(evt, "badCircle", yTop, styles));
          }
          else if (evt.type === LandGrabMovie.cValidCircle){
                addedSVGs.push(SVGUtil.makeLabeledCircle(evt, "goodCircle", yTop, styles));

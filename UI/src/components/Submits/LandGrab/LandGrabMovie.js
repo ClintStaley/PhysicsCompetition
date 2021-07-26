@@ -25,6 +25,7 @@ export class LandGrabMovie {
       //contains location and order of circles
       let circleContent =  sbm && sbm.content ? sbm.content : [];
 
+      console.log(circlesResults);
       this.background = {};
       this.background.frameRate = frameRate;
       this.background.height = bkgSize;
@@ -38,6 +39,8 @@ export class LandGrabMovie {
       let time = 0;
       circlesResults.forEach((circleResult, circleId) => {
          var circle = circleContent[circleId];
+         console.log(circleResult);
+         console.log("^circleResult");
          var growthTime = 2 // each circle will take 2 seconds to grow
          /*
          Valid growth time is "shortened" when the badAngle exists 
@@ -56,7 +59,7 @@ export class LandGrabMovie {
          time += validGrowthTime;
 
          this.addMakeCircleEvt(time, this.id++, circle.centerX,
-          circle.centerY, circle.radius, circle.badAngle);
+          circle.centerY, circle.radius, circleResult.badAngle);
 
          time += validationPause;
       });
@@ -73,6 +76,7 @@ export class LandGrabMovie {
    }
 
    addMakeCircleEvt(time, id, x, y, r, badAngle) {
+      console.log(badAngle);
       if (badAngle) 
          this.evts.push(
           {type: LandGrabMovie.cInvalidCircle, time, id, x, y, r, badAngle});
