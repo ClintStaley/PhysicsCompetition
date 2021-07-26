@@ -152,6 +152,21 @@ public class LandGrabEvaluator implements Evaluator {
       
    }
    
+   /*
+    * y, loX, loY
+    * 
+    * angle1 = arcsin((y - centerY) / radius);
+    * angle2 = pi - angle1;   // complementary angle has same sine
+    * Trade angle1 and angle2 to be in increasing order
+    * x = cos(angle) * radius
+    * if (inBounds(loX, cos(angle1)*radius, hiX))
+    *    return angle1;
+    * else if (inBounds(loX, cos(angle1)*radius, hiX)
+    *    return angle2;
+    * else
+    *    return null;
+    */
+   
    private Collision[] getBarrierCollisions(SbmCircle[] circles, int i) {
       SbmCircle circle = circles[i];
       LinkedList<Collision> tempCollisions = new LinkedList<Collision>();
