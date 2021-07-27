@@ -14,27 +14,53 @@ class CmpsPage extends Component {
       this.state = {
          showDeleteConfirmation: null,
          expanded: {},
-         cmps: {},
-         ctps:[],
          cmpsByCtp: []
       }
    }
 
    static getDerivedStateFromProps(newProps, oldState) {
-      let rtn = oldState;
-
-      if (newProps.cmps !== oldState.cmps) {
+      let rtn = {...oldState};
+      
+      if ((newProps.cmps !== oldState.cmps)||(newProps.showAll !== oldState.showAll)) {
+         var cmpsByCtp = [];
          var cmpIds = Object.keys(newProps.cmps);
          var ctpIds = Object.keys(newProps.ctps);
+         
+         if(newProps.showAll===true){
+            ctpIds.forEach(id => {cmpsByCtp[newProps.ctps[id].id] = [] });
 
-         ctpIds.forEach(id => { rtn.cmpsByCtp[newProps.ctps[id].id] = [] })
-
-         for (var i = 0; i < cmpIds.length; i++) {
-            var id = parseInt(cmpIds[i]);
-            rtn.cmpsByCtp[newProps.cmps[id].ctpId].push(newProps.cmps[id]);
+            for (var i = 0; i < cmpIds.length; i++) {
+               var id = parseInt(cmpIds[i]);
+               cmpsByCtp[newProps.cmps[id].ctpId].push(newProps.cmps[id]);
+            }
+            return{
+               showDeleteConfirmation:null,
+               cmpsByCtp: cmpsByCtp
+            }
+            
+         }else{
+            for (var i = 0; i < newProps.prs.myCmps.length; i++) {
+               var currentCmp = newProps.cmps[newProps.prs.myCmps[i]];
+               console.log(currentCmp)
+               if(currentCmp===undefined){
+                  return{
+                     showDeleteConfirmation:null,
+                     cmpsByCtp:cmpsByCtp
+                  }
+               }
+               if(currentCmp && typeof(cmpsByCtp[currentCmp.ctpId])!==Array)
+                  cmpsByCtp[currentCmp.ctpId] = [currentCmp]
+               else
+                  cmpsByCtp[currentCmp.ctpId].push(currentCmp)
+            }
+         }
+         return{
+            showDeleteConfirmation:null,
+            cmpsByCtp:cmpsByCtp
          }
       }
       rtn.cmps = newProps.cmps
+      console.log(rtn)
       return rtn;
    }
 
@@ -47,7 +73,7 @@ class CmpsPage extends Component {
          }
       }
       else {
-         if (!props.updateTimes.myCmps){
+         if (!props.updateTimes.myCmps) {
             this.props.getAllCtps();
             this.props.getCmpsByPrs(this.props.prs.id);
          }
@@ -77,14 +103,11 @@ class CmpsPage extends Component {
    })
 
    render() {
+      console.log(this.state.expanded)
       var props = this.props;
-      var cmps = props.showAll ? Object.keys(props.cmps) : props.prs.myCmps;
       var ctps = Object.keys(props.ctps);
-      var userCtps = []
-      var prs = props.prs
-      var testArray = [];
-      console.log(this.props)
-
+      var cmpsByCtpIds = Object.keys(this.state.cmpsByCtp)
+      var cmpsByCtp=[...this.state.cmpsByCtp]
       if (Object.keys(props.cmps).length === 0) {
          return <div>
             ...Loading
@@ -96,7 +119,8 @@ class CmpsPage extends Component {
                {props.showAll ?
                   <div className='grid'>
                      {ctps && ctps.map((ctpId, i) => {
-                        var ctp = Object.assign({}, props.ctps[ctpId]);
+                        var ctp =props.ctps[ctpId];
+                        console.log(ctpId)
 
                         return <JoinCompetitionItem
                            key={i}
@@ -107,29 +131,18 @@ class CmpsPage extends Component {
                      })}
                   </div>
                   :
-                  cmps && cmps.length ?
+                  cmpsByCtpIds && cmpsByCtpIds.length ?
                      <div className='grid'>
-                        {prs.myCmps.map((cmpId, i) => {
-                           var cmp = props.cmps[cmpId];
-                           var ctp = props.ctps[cmp.ctpId - 1];
-                           var ctps = [];
-                           ctps.push(ctp)
-                           var cmpsByCtp = [...this.state.cmpsByCtp[ctp.id]];
-                           
-                           
-                           //Eliminate cmps of type ctp.id from cmpsByCtp if the 
-                           //user is not in the competition
-                           cmpsByCtp.forEach((element,i)=>{
-                              if(props.prs.myCmps.includes(element.id)){this.state.cmpsByCtp[ctp.id]=cmpsByCtp}
-                              else{cmpsByCtp.splice(i,1)}})
-                                 console.log(this.state.cmpsByCtp)
-                                 
-                           return <ActiveCompetitionItem key={'1'}
-                           {...ctp}
-                           cmps={cmps}
-                           cmpsByCtp ={this.state.cmpsByCtp[ctp.id]} 
-                           expanded= {this.state.expanded[ctp.id]}
-                           toggle={()=>this.toggleView(ctp.id)}/>
+                        {cmpsByCtpIds && cmpsByCtpIds.map((ctpId, i) => {
+                           var ctp = props.ctps[ctpId-1]
+                           var cmps = cmpsByCtp[ctpId]
+                           console.log(ctpId-1)
+                           return <ActiveCompetitionItem
+                              key={i}
+                              cmps={cmps}
+                              {...ctp}
+                              expanded={this.state.expanded[ctpId-1]}
+                              toggle={() => this.toggleView(ctpId-1)} />
                         })}
                      </div>
                      :
@@ -142,31 +155,27 @@ class CmpsPage extends Component {
 }
 
 const ActiveCompetitionItem = function (props) {
-   console.log(props)
    return (
       <ListGroupItem className="clearfix">
          <div className='cmpItem'>{props.title}</div>
          <div>{props.description}</div>
          <Button onClick={props.toggle}>Show My Competitions</Button>
-            {props.expanded ?
-            <ListGroup>
-               {
-                  props.cmpsByCtp.map((cmp,i)=>{
-                     var cmp = cmp;
+         {props.expanded ?
+            props.cmps.map((cmp, i) => {
+               var cmpItem = cmp;
 
-                     return <CmpItem 
-                     key={i}
-                     link={'MyCmpPage/'+cmp.id}
-                     title={cmp.title}
-                     joined={true}
-                        />
+               return <CmpItem
+                  key={i}
+                  link={'MyCmpPage/' + cmp.id}
+                  title={cmpItem.title}
+                  joined={true}
+               />
 
-                  })
-               }
-            </ListGroup>
+            })
+
             : ""
          }
-         
+
       </ListGroupItem>
    )
 }
@@ -177,27 +186,27 @@ const ActiveCompetitionItem = function (props) {
 // *always* be there in render, and do one CompetitionTypeItem per element.
 // Fill it in GDSFP.  The code above should be half as complex as it is.
 const JoinCompetitionItem = function (props) {
-      return (
-         <ListGroupItem className="clearfix">
-            <div className='ctpItem'>{props.title}</div>
-            <div>{props.description}</div>
-            <Button onClick={props.toggle}>Show Competitions</Button>
-            {props.expanded ?
-               <ListGroup>
-                  {Object.keys(props.cmpsByCtp).map((cmpId, i) => {
-                     var cmp = props.cmpsByCtp[cmpId];
+   return (
+      <ListGroupItem className="clearfix">
+         <div className='ctpItem'>{props.title}</div>
+         <div>{props.description}</div>
+         <Button onClick={props.toggle}>Show Competitions</Button>
+         {props.expanded ?
+            <ListGroup>
+               {Object.keys(props.cmpsByCtp).map((cmpId, i) => {
+                  var cmp = props.cmpsByCtp[cmpId];
 
-                     return <CmpItem
-                        key={i}
-                        link={'/JoinCmpPage/' + cmp.id}
-                        title={cmp.title} />
-                  })}
-               </ListGroup>
-               : ""
-            }
-         </ListGroupItem>
-      )
-   }
+                  return <CmpItem
+                     key={i}
+                     link={'/JoinCmpPage/' + cmp.id}
+                     title={cmp.title} />
+               })}
+            </ListGroup>
+            : ""
+         }
+      </ListGroupItem>
+   )
+}
 
 const CmpItem = function (props) {
    return (
@@ -207,10 +216,10 @@ const CmpItem = function (props) {
             <div className="float-right">
                <Link to={props.link}>Status</Link>
             </div>
-         :
-         <div className="float-right">
-            <Link to={props.link} >Join </Link>
-         </div>
+            :
+            <div className="float-right">
+               <Link to={props.link} >Join </Link>
+            </div>
          }
       </ListGroupItem>
    )
