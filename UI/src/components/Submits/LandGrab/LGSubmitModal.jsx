@@ -51,18 +51,18 @@ export class LGSubmitModal extends Component {
 
    // valid iff circle centers are in range and 0 <= radius <= 50
     getValidationState = () => {
-      /* 
+      let rtn = true;
       this.state.cSpec.forEach(circle => {
-         if (!(Number.parseFloat(circle.centerX) >= 0
-             && Number.parseFloat(circle.centerX) <= 100
-             && Number.parseFloat(circle.centerY) >= 0
-             && Number.parseFloat(circle.centerY) <= 100
-             && Number.parseFloat(circle.radius) >= 0
+         if (!(Number.parseFloat(circle.centerX) > 0
+             && Number.parseFloat(circle.centerX) < 100
+             && Number.parseFloat(circle.centerY) > 0
+             && Number.parseFloat(circle.centerY) < 100
+             && Number.parseFloat(circle.radius) > 0
              && Number.parseFloat(circle.radius) <= 50))
-               return false;
+               rtn = false;
         });
-      */
-        return false;
+      
+        return rtn;
    }
 
    // Add an aditional text box to enter another circle
@@ -100,11 +100,11 @@ export class LGSubmitModal extends Component {
          idY = `centerY:${idx}`;
          idR = `radius:${idx}`;
 
-         lines.push(<div classname="container" key={idx}>
+         lines.push(<div className="container" key={idx}>
             <div className="row">
             <div className="col-sm-1"><h5>Circle { idx +1 }</h5></div>
                 <div className="col-sm-3">
-                   <Form.Group controlId={idR}>
+                   <Form.Group>
                       <Form.Label>
                          Radius
                       </Form.Label>
@@ -114,11 +114,11 @@ export class LGSubmitModal extends Component {
                          value={this.state.cSpec[idx].radius}
                          required={true}
                          onChange={this.handleChange} />
-                      <Form.Text muted>At most 50</Form.Text>
+                      <Form.Text muted>Less than 50</Form.Text>
                    </Form.Group>
                 </div>
                 <div className="col-sm-2">
-                   <Form.Group controlId={idX}>
+                   <Form.Group>
                       <Form.Label>X</Form.Label>
                       <Form.Control
                          type="text"
@@ -132,7 +132,7 @@ export class LGSubmitModal extends Component {
                 </div>
  
                 <div className="col-sm-2">
-                   <Form.Group controlId={idY}>
+                   <Form.Group>
                       <Form.Label>Y</Form.Label>
                       <Form.Control
                          type="text"
@@ -150,12 +150,11 @@ export class LGSubmitModal extends Component {
        }
       
       var buttons = [
-         <Button key={0} onClick={() => { this.addCircle() }}>Add Circle</Button>,
-
+         <Button key={0} onClick={() => {this.addCircle()}}>Add Circle</Button>,
          <Button key={1} disabled = {this.state.cSpec.length === 1}
             onClick={() => {this.removeCircle() }}>Remove Circle</Button>,
 
-         <Button key={2} disabled = {this.getValidationState()}
+         <Button key={2} disabled = {!this.getValidationState()}
             onClick={() => this.close('OK')}>OK</Button>,
          
          <Button key={3} onClick={() => this.close('Cancel')}>Cancel</Button>
