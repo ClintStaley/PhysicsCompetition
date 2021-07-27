@@ -185,9 +185,11 @@ export class Bounce3DView extends React.Component {
       this.state.camera.updateProjectionMatrix();
       this.mount.appendChild(this.state.renderer.domElement);
 
-      var testBox = new THREE.Box3(
-       new THREE.Vector3(rigSize-24, rigSize-19, rigSize-8),
-       new THREE.Vector3(rigSize+4,rigSize+4,rigSize+5));
+      var testBox = new THREE.Box3(new THREE.Vector3(rigSize-24, rigSize-19, rigSize-8), new THREE.Vector3(rigSize+4,rigSize+4,rigSize+5))
+
+
+
+
 
       cameraControls = new CameraControls(
          this.state.camera,
@@ -198,6 +200,7 @@ export class Bounce3DView extends React.Component {
       cameraControls.boundaryEnclosesCamera=true;
       
       cameraControls.addEventListener("control", () => {
+         console.log(this.state.camera.position);
          cameraControls.update(1);   // Needed w/nonzero param
          this.state.renderer.render(this.state.scene, this.state.camera);
       });
