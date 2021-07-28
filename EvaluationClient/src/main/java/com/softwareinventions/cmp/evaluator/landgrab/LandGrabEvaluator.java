@@ -14,10 +14,11 @@ public class LandGrabEvaluator implements Evaluator {
    static final double cGridSize = 100.0;
    public static final double EPS = 0.00000001;
    
-   static class SbmCircle {
-      public double centerX;
-      public double centerY;
-      public double radius;
+   static class BlockedRectangle {
+      public double loX;
+      public double hiX;
+      public double loY;
+      public double hiY;
    }
    
    static class Parameters {
@@ -26,37 +27,10 @@ public class LandGrabEvaluator implements Evaluator {
       public BlockedRectangle[] obstacles;
    }
    
-   // CAS: Declare classes in dependent order (this goes before Parameters)
-   // And, why are these ints?
-   static class BlockedRectangle {
-      public int loX;
-      public int hiX;
-      public int loY;
-      public int hiY;
-   }
-   
-   static class Response {
-      public Circle[] circleData;
-      public double areaCovered; // sum of valid circles' areas
-   }
-   
-   // data to be returned in response for each circle
-   static class Circle {
-      public double area;
-      public Double badAngle; // Angle of earliest collision || null
-      public Collisions collisions;
-      
-      public Circle(SbmCircle c) {
-         this.area = GenUtil.sqr(c.radius) * Math.PI;
-         this.collisions = new Collisions();
-      }
-   }
-   
-   // contains collisions of a given circle
-   static class Collisions {
-      public Collision[] barriers; // Barriers collided with in order
-      public Double boundary;      // Angle of boundary collision || null
-      public Collision[] pastCircles; // CAS: This is???
+   static class SbmCircle {
+      public double centerX;
+      public double centerY;
+      public double radius;
    }
    
    static class Collision {
@@ -69,7 +43,31 @@ public class LandGrabEvaluator implements Evaluator {
       public double angle; // Angle at collision
    }
    
-   Parameters prms;
+   // contains collisions of a given circle
+   static class Collisions {
+      public Collision[] barriers; // Barriers collided with in order
+      public Double boundary;      // Angle of boundary collision || null
+      public Collision[] pastCircles; // Collisions with past circles 
+   }
+  
+   // data to be returned in response for each circle
+   static class Circle {
+      public double area;
+      public Double badAngle; // Angle of earliest collision || null
+      public Collisions collisions;
+      
+      public Circle(SbmCircle c) {
+         this.area = GenUtil.sqr(c.radius) * Math.PI;
+         this.collisions = new Collisions();
+      }
+   }
+   
+   static class Response { // This is the object returned
+      public Circle[] circleData;
+      public double areaCovered; // sum of valid circles' areas
+   }
+   
+   Parameters prms; // This will be a limiting factor for multithreaded
    int score;
    static Logger lgr = Logger.getLogger(LandGrabEvaluator.class);
    
@@ -91,11 +89,10 @@ public class LandGrabEvaluator implements Evaluator {
 
       rsp.circleData = new Circle[Math.min(sbmCircles.length, prms.numCircles)];
       
-      //evaluate each circle 
-      // CAS: Make only nonobvious comments.  It's pretty clear this evaluates
-      // each circle.
+      
       for (int i = 0; i < rsp.circleData.length; i++) {
          rsp.circleData[i] = evaluateCircle(sbmCircles, i, rsp.circleData);
+         // add circle area to total area if it is valid
          if (rsp.circleData[i].badAngle == null)
             rsp.areaCovered += rsp.circleData[i].area;
          
@@ -112,10 +109,10 @@ public class LandGrabEvaluator implements Evaluator {
    // Evaluate a given circle
    private Circle evaluateCircle(SbmCircle[] circles, int i,
     Circle[] circleData) {
-      SbmCircle circle = circles[i];   // setting CircleTR props CAS: Obvious?
+      SbmCircle circle = circles[i]; 
       Circle ctr = new Circle(circle); // create circle to return in circleData
       
-      // evaluate for boundary, barrier collisions
+      // evaluate for 3 types of collisions
       ctr.collisions.boundary = distanceToBounds(circle);
       ctr.collisions.barriers = getBarrierCollisions(circles, i);
       ctr.collisions.pastCircles = getCircleCollisions(circles, i);
@@ -152,7 +149,8 @@ public class LandGrabEvaluator implements Evaluator {
       
    }
    
-   /*
+   /* Possible simplified barrier collision checker:
+    * check all horizontal edges, and get use lowest angle, then with vertical
     * y, loX, loY
     * 
     * angle1 = arcsin((y - centerY) / radius);
@@ -177,33 +175,60 @@ public class LandGrabEvaluator implements Evaluator {
          BlockedRectangle obs = prms.obstacles[idx];
          double edgeIntersection;
          double badAngle = cImpossibleAngle;
-         // Check for "terminal edge" in circle
+         // Check if the "terminal edge" of circle starts in a rect
          if (GenUtil.inBounds(obs.loY + EPS, circle.centerY, obs.hiY - EPS) &&
           (obs.loX < circle.centerX + circle.radius && circle.centerX < obs.hiX)
           ) {
-            // badAngle nearly zero so it still appears as a shape
+            // badAngle is nearly zero so it still appears as a shape and 
+            // evaluates to true in JS
             badAngle = EPS;
          }
-         // possible collisions by Quadrants first checking that at least 
-         // the nearest corner is within range of the circle. The process is 
-         // nearly the same for each quadrant so only quadrant 1 has comments.
-         // The angle is also shifted depending on quadrant because arctan range
+         /* 
+          * For each graphical quadrant, check for possible collisions.
+          * As a radius turns about a quadrant, it will always collide with
+          * a certain edge. In quadrant 1, this edge is the bottom edge, in 
+          * quadrant 2 the right edge, in quadrant 3 the top edge, and in
+          * quadrant 4 the left edge. This decides which coordinates we use
+          * for our if statements. The first part of the if else statements
+          * checks if this specific edge for a rectangle is in the given
+          * quadrant. The second part of the if statement checks if 
+          * the rectangle is in range of the circle, so the distance from the
+          * center of the circle to the nearest corner must be less than the 
+          * radius. If these two conditions are met, there would be a collision
+          * with the circle. Only the first quadrant is heavily commented
+          * because the process is nearly the same in each quadrant, with the
+          * only changes being swapped coordinates or appropriate trig functions
+          */
          // Quadrant 1
          else if (obs.loY > circle.centerY && obs.hiX > circle.centerX && 
           Point2D.distance(circle.centerX, circle.centerY, obs.loX, obs.loY) 
-          < circle.radius) {    
-            // Use Pythagorean Theorem to find x coordinate where the radius
-            // would intersect with the edge if the edge were infinitely long
+          < circle.radius) {
+            /*
+             * There is guaranteed to be an intersection along the edge
+             * (obs.loX, obs.loY) -> (obs.hiX, obs.loY).
+             * The intersection will occur at the farthest point on that edge
+             * that is also inside the circle.
+             * Temporarily assume the edge extends outside the circle
+             */
+            /* Use the pythagorean theorem to find the missing leg of the
+             * triangle defined by the circle center, the radius, and the one
+             * known coordinate of the collision. (For Quadrant 1 this is loY).
+             * Then use this leg length and the circle center to get the
+             * correct coordinate of the collision.
+             */
             edgeIntersection = Math.sqrt( GenUtil.sqr(circle.radius) - 
              GenUtil.sqr(obs.loY - circle.centerY)) + circle.centerX;
-            // If edgeIntersection is in range of where the edge actually is,
-            // it remains the same. If it would intersect past the rectangle,
-            // the point of intersection will be the far corner instead.
+            /* edge intersection is only correct if the rectangle extends 
+             * outside the circle, so if its far coordinate is closer to the 
+             * center than edgeIntersection, then collision occurred at the 
+             * point of the rectangle, inside the circle, so change 
+             * edgeIntersection to the value of the rectangle corner.
+            */
             edgeIntersection = edgeIntersection < obs.hiX ? edgeIntersection:
              obs.hiX;
-            // Get angle of intersection using trig
+            // Use edgeIntersection to find the angle of the intersection.
             badAngle = Math.atan((obs.loY-circle.centerY)
-             /(edgeIntersection-circle.centerX));
+             /(edgeIntersection - circle.centerX));
          }
          // Quadrant 2
          else if (obs.hiX < circle.centerX && obs.hiY > circle.centerY && 
@@ -264,52 +289,83 @@ public class LandGrabEvaluator implements Evaluator {
       return c;
    }
    
-   // Pure Math Function: Use the following for more info on some of the math
-   // returns null if no Circle intersection, returns double value of earliest
-   // intersection otherwise.
-   // https://mathworld.wolfram.com/Circle-CircleIntersection.html
-   // 
+   // source: http://paulbourke.net/geometry/circlesphere/
+   //  go to intersection of two circles section
    // CAS: Comments need work. It's obviously pure math.  More important is how
    // a double represents an intersection, for instance.  And frankly Wolfram
    // is always accurate, and occasionally clear.  I think this needs more help.
    // At least my math degree didn't make this code obvious to me even with 
    // Wolfram's reference.
-   private Double circleIntersection(SbmCircle a, SbmCircle b) {
-      
-      Double d = Point2D.distance(a.centerX, a.centerY,
-            b.centerX, b.centerY);
-      // Circles do intersect
-      if (d < a.radius + b.radius - EPS) {
-         if (d < a.radius || d < b.radius) {
-            //Overlap at centers
-            // CAS: Again clarity:  "At least one center is inside other circle"
+   private Double circleIntersection(SbmCircle c1, SbmCircle c2) {
+      Double d = Point2D.distance(c1.centerX, c2.centerY,
+            c1.centerX, c2.centerY);
+      // Any intersections?
+      if (d < c1.radius + c2.radius - EPS) {
+         if (d < c1.radius || d < c2.radius) {
+            // One circle's center is inside another, so return EPS
+            // so it resolves to true in JS
             return (Double)EPS;
          }
          else {
-            // the following expression is from the website sited above
-            // CAS: I actually find "sqr" is less clear than e.g. d*d for small
-            // expressions.
-            double adjacentLeg = (GenUtil.sqr(d) - GenUtil.sqr(b.radius) + 
-             GenUtil.sqr(a.radius)) / (2 * d);
-            // Relative angle of intersection to circles' angle to each other
-            // Additionally we take the opposite of the arc cos value because we
-            // want the angle of the first intersection not the second
-            double relativeAngle = -Math.acos(adjacentLeg/a.radius);
-            double circlesAngle = Math.atan((b.centerY - a.centerY)/
-             (b.centerX - a.centerX));
-            // Shift to correct quadrant based on arctan domain and range
-            if (circlesAngle < 0) {
-               circlesAngle = a.centerX < b.centerX ? circlesAngle + 2*Math.PI :
-                circlesAngle + Math.PI;
-            }
-            else {
-               circlesAngle = a.centerY <= b.centerY ? circlesAngle : 
-                circlesAngle + Math.PI;
-            }
-            Double actualAngle = circlesAngle + relativeAngle;
-            // Check if "terminal edge" starts in other circle
-            actualAngle = actualAngle < EPS ? EPS : actualAngle;
-            return actualAngle;
+            /*
+             * a is the distance from the line that connects the points at which
+             * the circles intersect. 
+             */
+            double a = (d * d - c2.radius * c2.radius + 
+             c1.radius * c1.radius) / (2 * d);
+            
+            // coords for "point 2" used by source. Point 2 is the intersection
+            // of the line that connects circle centers and the line that
+            // connects circle intersections.
+            /*
+             * If d is the distance from circle centers, and a is the
+             * distance from circle center 1 to the line that connects circle
+             * intersections, then a/d is the proportion of these lengths.
+             * Point 2's coords will be circle1's center shifted by the
+             * difference of circle centers  * proportion for needed shift.
+             * NOTE: the proportions used here and later in the code can be
+             * derived by making diagrams and finding similar triangles with 
+             * properties of parallel lines (similar triangles have proportional
+             * edge lengths). 
+             */
+            double p2X = c1.centerX + a / d * (c2.centerX - c1.centerX);
+            double p2Y = c1.centerY + a / d * (c2.centerY - c1.centerY);
+            
+            // h is the distance from the line connecting the circle centers
+            // to the intersection points
+            // Use of pythagorean theorem to find the second leg
+            double h = Math.sqrt(c1.radius * c1.radius - a * a);
+            
+            /*
+             * Coords for one of the two intersections of the circles.
+             * 
+             * The Math: Use similar triangles to get the proportion from
+             * center x and y offsets, height, and center distances to find
+             * offset from p2 to intersection points, then use offsets.
+             */
+            double intersectionX = p2X + h  * (c2.centerY - c1.centerY) / d;
+            double intersectionY = p2Y - h * (c2.centerX - c1.centerX) / d;
+            System.out.println(intersectionX + ", " + intersectionY);
+            //use arctan2 to find angle of intersection 
+            double badAngle = Math.atan2(c1.centerY-intersectionY,
+             c1.centerX-intersectionX);
+            
+            // Check second intersection. reverse offset to find other
+            // intersection
+            intersectionX = p2X - h  * (c2.centerY - c1.centerY) / d;
+            intersectionY = p2Y + h * (c2.centerX - c1.centerX) / d;
+            System.out.println(intersectionX + ", " + intersectionY);
+            // use arctan2 to find second angle
+            double tempAngle = Math.atan2(c1.centerY-intersectionY,
+             c1.centerX-intersectionX);
+            //User lesser angle and set it as the bad angle
+            badAngle = badAngle < tempAngle ? badAngle : tempAngle;
+            
+            // Check if "terminal edge" starts in other circle. If it does,
+            // we want the bad angle to be zero, but evaluate to true in JS,
+            // so use EPS
+            badAngle = badAngle < EPS ? EPS : badAngle;
+            return badAngle;
          }
       }
       // Circles do not intersect
