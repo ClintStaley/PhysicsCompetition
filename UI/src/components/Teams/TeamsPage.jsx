@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ListGroup, ListGroupItem, Button, Popover, OverlayTrigger }
- from 'react-bootstrap';
+   from 'react-bootstrap';
 import { ConfDialog, EntryDialog } from '../concentrator';
 import * as actionCreators from '../../actions/actionCreators';
 import TeamModal from './TeamModal'
@@ -18,29 +18,36 @@ class TeamsPage extends Component {
          delMmbFunc: null,         // Function to do deletion of member
          expanded: {}              // expanded state, per teamId
       }
-   }
 
-   //enter still has problems, will automatically reopen window, different key works fine
-   handleKeyPress = (target) => {
-      if (target.keyCode === 13){
-         target.preventDefault();
-         this.close("OK");
-      }
-   }
-
-   componentDidMount = () => {
-      var props = this.props;
-
+      var teamIds = Object.keys(this.props.teams)
+      var props= this.props
+      
       if (!(props.updateTimes && props.updateTimes.myTeams))
          this.props.getTeamsByPrs(this.props.prs.id);
 
       if (!(props.updateTimes && props.updateTimes.cmps))
          this.props.getAllCmps();
+
+      for (var i = 0; i < teamIds.length; i++) {
+         if (Object.keys(this.props.teams[teamIds[i]].mmbs.length === 0))
+            this.props.getTeamMmbs(this.props.teams[teamIds[i]].cmpId,
+               parseInt(teamIds[i]))
+      }
+   }
+
+   //enter still has problems, will automatically reopen window, different key works fine
+   handleKeyPress = (target) => {
+      if (target.keyCode === 13) {
+         target.preventDefault();
+         this.close("OK");
+      }
    }
 
    openDelConfirm = (teamId) => {
-      this.setState({delConfirmTeamId: teamId,
-       delConfirmTeamName: this.props.teams[teamId].name});
+      this.setState({
+         delConfirmTeamId: teamId,
+         delConfirmTeamName: this.props.teams[teamId].name
+      });
    }
 
    // Thus far the only confirmation is for a delete.
@@ -48,38 +55,25 @@ class TeamsPage extends Component {
       if (res === 'Yes') {
          this.props.delTeam(this.props.teams[teamId].cmpId, teamId);
       }
-      this.setState({delConfirmTeamId: null})
+      this.setState({ delConfirmTeamId: null })
    }
 
    openEdit = (teamId) => {
       if (Object.keys(this.props.teams[teamId].mmbs).length === 0) {
          this.props.getTeamMmbs(this.props.teams[teamId].cmpId, teamId,
-          () => this.setState({editTeamId: teamId}));
+            () => this.setState({ editTeamId: teamId }));
       }
       else {
-         this.setState({editTeamId: teamId});
+         this.setState({ editTeamId: teamId });
       }
    }
 
    closeEdit = (teamId, result) => {
       if (result.status === "OK") {
          this.props.putTeam(this.props.teams[teamId].cmpId, teamId,
-          result.updatedTeam);
+            result.updatedTeam);
       }
-      this.setState({editTeamId: null});
-   }
-
-   toggleView = (teamId) => {
-      var expanded = this.state.expanded;
-      expanded[teamId] = !expanded[teamId];
-
-      // Check membership data; update if no membership data is available
-      if (Object.keys(this.props.teams[teamId].mmbs).length === 0) {
-         this.props.getTeamMmbs(this.props.teams[teamId].cmpId, teamId,
-          () => this.setState(expanded));
-      }
-      else
-         this.setState({expanded});
+      this.setState({ editTeamId: null });
    }
 
    openAddMmb = (teamId) => {
@@ -90,14 +84,14 @@ class TeamsPage extends Component {
       this.setState({
          expanded,
          addMmbFunc: (mmbEmail) =>
-          props.addMmb(mmbEmail, props.teams[teamId].cmpId, teamId)
+            props.addMmb(mmbEmail, props.teams[teamId].cmpId, teamId)
       });
    }
 
    closeAddMmb = (result) => {
       if (result.status === "OK")
          this.state.addMmbFunc(result.entry)
-      this.setState({addMmbFunc: null});
+      this.setState({ addMmbFunc: null });
    }
 
    openDelMmbConfirm = (teamId, prsId) => {
@@ -112,136 +106,145 @@ class TeamsPage extends Component {
    closeDelMmbConfirm = (res) => {
       if (res === 'Yes')
          this.state.delMmbFunc();
-      this.setState({delMmbFunc: null});
+      this.setState({ delMmbFunc: null });
    }
 
    render() {
       var props = this.props;
+      console.log(this.state)
       return (
-      <section className="container">
+         <section className="container">
 
-        {this.state.editTeamId ?
-        <TeamModal
-          showModal={this.state.editTeamId}
-          title={"Edit Team"}
-          team = {props.teams[this.state.editTeamId]}
-          onDismiss={(teamData) => this.closeEdit(this.state.editTeamId, teamData)} />
-        : ''}
+            {this.state.editTeamId ?
+               <TeamModal
+                  showModal={this.state.editTeamId}
+                  title={"Edit Team"}
+                  team={props.teams[this.state.editTeamId]}
+                  onDismiss={(teamData) => this.closeEdit(this.state.editTeamId,
+                      teamData)} />
+               : ''}
 
-        <ConfDialog
-          show={this.state.delConfirmTeamId !== null }
-          title="Delete Team"
-          body={this.state.delConfirmTeamId ?
-           `Delete ${props.teams[this.state.delConfirmTeamId].teamName}` : ''}
-          buttons={['Yes', 'No']}
-          onClose={(res) => this.closeDelConfirm(res,
-           this.state.delConfirmTeamId)} />
+            <ConfDialog
+               show={this.state.delConfirmTeamId !== null}
+               title="Delete Team"
+               body={this.state.delConfirmTeamId ?
+                  `Delete ${props.teams[this.state.delConfirmTeamId].teamName}`
+                   : ''}
+               buttons={['Yes', 'No']}
+               onClose={(res) => this.closeDelConfirm(res,
+                  this.state.delConfirmTeamId)} />
 
-        <ConfDialog
-          show={this.state.delMmbFunc !== null }
-          title="Delete Member"
-          body={this.state.delMmbFunc ?
-           `Delete ${this.state.delMmbName}?` : ''}
-          buttons={['Yes', 'No']}
-          onClose={(res) => this.closeDelMmbConfirm(res)} />
+            <ConfDialog
+               show={this.state.delMmbFunc !== null}
+               title="Delete Member"
+               body={this.state.delMmbFunc ?
+                  `Delete ${this.state.delMmbName}?` : ''}
+               buttons={['Yes', 'No']}
+               onClose={(res) => this.closeDelMmbConfirm(res)} />
 
-         <EntryDialog
-            show={this.state.addMmbFunc !== null }
-            title="Add Team Member"
-            label="New member's Email:"
-            onClose={(res) => this.closeAddMmb(res)} />
+            <EntryDialog
+               show={this.state.addMmbFunc !== null}
+               title="Add Team Member"
+               label="New member's Email:"
+               onClose={(res) => this.closeAddMmb(res)} />
 
-        <h1>Team Overview</h1>
-        <ListGroup>
-          {props.prs.myTeams && props.prs.myTeams.length ?
-           props.prs.myTeams.map((teamId, i) => {
-            var team = props.teams[teamId];
-
-            return <TeamLine
-              key={i}
-              prsId = {props.prs.id}
-              mmbs = {team.mmbs}
-              teamId = {team.id}
-              leaderId = {team.leaderId}
-              teamName = {team.teamName}
-              cmpName = {this.props.cmps[team.cmpId].title}
-              expanded = {this.state.expanded[teamId]}
-              toggle = {() => this.toggleView(teamId)}
-              addMmb = {() => this.openAddMmb(teamId)}
-              edit = {() => this.openEdit(teamId)}
-              del = {() => this.openDelConfirm(teamId)}
-              delMmb = {(prsId) => this.openDelMmbConfirm(teamId, prsId)}/>
-          })
-          :
-           <h4>You do not have any teams, see Join Competitions to create one</h4>
-          }
-        </ListGroup>
-      </section>
+            <h1>Team Overview</h1>
+            <ListGroup>
+               {props.prs.myTeams && props.prs.myTeams.length ?
+                  props.prs.myTeams.map((teamId, i) => {
+                     var team = props.teams[teamId];
+                     return <TeamLine
+                        key={i}
+                        prsId={props.prs.id}
+                        mmbs={team.mmbs}
+                        teamId={team.id}
+                        leaderId={team.leaderId}
+                        teamName={team.teamName}
+                        cmpName={this.props.cmps[team.cmpId].title}
+                        cmpId={this.props.cmps[team.cmpId].id}
+                        addMmb={() => this.openAddMmb(teamId)}
+                        edit={() => this.openEdit(teamId)}
+                        del={() => this.openDelConfirm(teamId)}
+                        delMmb={(prsId) => this.openDelMmbConfirm(teamId,
+                         prsId)} />
+                  })
+                  :
+                  <h4>You do not have any teams, see Join Competitions to create
+                      one</h4>
+               }
+            </ListGroup>
+         </section>
       )
    }
 }
 
+<<<<<<< HEAD
 const TeamLine = function(props) {
+   console.log(props)
+=======
+const TeamLine = function (props) {
+   const [expanded, setExpanded] = React.useState(false)
+   var toggleView = (() => setExpanded(!expanded));
+
+>>>>>>> 610cb0075f6c399511201af93c3ce514ac2a3dc7
    const addTip = <Popover id="Teams-addTip">Add a team member</Popover>;
    const editTip = <Popover id="Teams-editTip">Change name or leader</Popover>;
    const delTip = <Popover id="Teams-delTip">Remove this team</Popover>;
-   
    var isLeader = props.leaderId === props.prsId;
+
    return (
+      <ListGroupItem className="clearfix">
+         <Button onClick={toggleView}>{isLeader ? props.teamName +
+          " ( Leader )":props.teamName}</Button>
+         {' -- ' + props.cmpName}
 
-   <ListGroupItem className="clearfix">
-     {isLeader ?
-       <Button onClick={props.toggle}>{props.teamName + " (leader)"}</Button>
-       :
-       <Button onClick={props.toggle}>{props.teamName}</Button>
-     }
-       {' -- ' + props.cmpName}
+         {isLeader ?
+            <div className="float-right">
+               <OverlayTrigger trigger={["focus", "hover"]}
+                  placement="bottom" overlay={addTip}>
+                  <Button bsSize="small" onClick={props.addMmb}>
+                     <span className="fa fa-plus" />
+                  </Button>
+               </OverlayTrigger>
 
-     {isLeader ?
-       <div className="float-right">
-         <OverlayTrigger trigger={["focus", "hover"]}
-         placement="bottom" overlay={addTip}>
-           <Button bsSize="small" onClick={props.addMmb}>
-              <span className="fa fa-plus"/>
-           </Button>
-         </OverlayTrigger>
+               <OverlayTrigger trigger={["focus", "hover"]}
+                  placement="bottom" overlay={editTip}>
+                  <Button bsSize="small" onClick={props.edit}>
+                     <span className="fa fa-edit" />
+                  </Button>
+               </OverlayTrigger>
 
-         <OverlayTrigger trigger={["focus", "hover"]}
-          placement="bottom" overlay={editTip}>
-            <Button bsSize="small" onClick={props.edit}>
-               <span className="fa fa-edit"/>
-            </Button>
-          </OverlayTrigger>
+               <OverlayTrigger trigger={["focus", "hover"]}
+                  placement="bottom" overlay={delTip}>
+                  <Button bsSize="small" onClick={props.del}>
+                     <span className="fa fa-trash" />
+                  </Button>
+               </OverlayTrigger>
+            </div>
+            : ''
+         }
+         {expanded ?
+            <ListGroup>
+               {Object.keys(props.mmbs).map((mmbId, i) => {
+                  var mmb = props.mmbs[mmbId];
+                  var weAreLeader = props.prsId === props.leaderId;
 
-         <OverlayTrigger trigger={["focus", "hover"]}
-         placement="bottom" overlay={delTip}>
-           <Button bsSize="small" onClick={props.del}>
-              <span className="fa fa-trash"/>
-           </Button>
-         </OverlayTrigger>
-       </div>
-       : ''
-    }
-    {props.expanded ?
-    <ListGroup>
-      {Object.keys(props.mmbs).map((mmbId, i) => {
-         var mmb = props.mmbs[mmbId];
-         var weAreLeader = props.prsId === props.leaderId;
-
-         return <MmbItem
-           key={i}
-           name={mmb.firstName}
-           contact={mmb.email}
-           isLeader = {mmb.id === props.leaderId}
-           del = {
-             // If it's us, or we are leader, and if we're not dropping leader..
-             (weAreLeader || mmb.id === props.prsId) && mmb.id !== props.leaderId ? () => props.delMmb(mmbId) : null
-           }
-         />
-       })}
-     </ListGroup>
-     : ''}
-   </ListGroupItem>
+                  return <MmbItem
+                     key={i}
+                     name={mmb.firstName}
+                     contact={mmb.email}
+                     isLeader={mmb.id === props.leaderId}
+                     del={
+                        // If it's us, or we are leader, and if we're not
+                        // dropping leader..
+                        (weAreLeader || mmb.id === props.prsId) && mmb.id 
+                        !== props.leaderId ? () => props.delMmb(mmbId) : null
+                     }
+                  />
+               })}
+            </ListGroup>
+            : ''}
+      </ListGroupItem>
    )
 }
 
@@ -252,20 +255,20 @@ const MmbItem = function (props) {
    )
 
    return (
-   <ListGroupItem className="clearfix">
-     {props.name}
-     {props.isLeader ? ` -- lead (${props.contact})` : ''}
-     {props.del ?
-        <div className="float-right">
-          <OverlayTrigger trigger={["focus", "hover"]}
-          placement="bottom" overlay={delTip}>
-            <Button bsSize="small" onClick={props.del}>
-               <span className="fa fa-trash"/>
-            </Button>
-          </OverlayTrigger>
-        </div>
-      : ''}
-   </ListGroupItem>
+      <ListGroupItem className="clearfix">
+         {props.name}
+         {props.isLeader ? ` -- lead (${props.contact})` : ''}
+         {props.del ?
+            <div className="float-right">
+               <OverlayTrigger trigger={["focus", "hover"]}
+                  placement="bottom" overlay={delTip}>
+                  <Button bsSize="small" onClick={props.del}>
+                     <span className="fa fa-trash" />
+                  </Button>
+               </OverlayTrigger>
+            </div>
+            : ''}
+      </ListGroupItem>
    )
 }
 
