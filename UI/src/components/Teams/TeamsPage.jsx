@@ -117,6 +117,7 @@ class TeamsPage extends Component {
 
    render() {
       var props = this.props;
+      console.log(this.state)
       return (
       <section className="container">
 
@@ -182,6 +183,7 @@ class TeamsPage extends Component {
 }
 
 const TeamLine = function(props) {
+   console.log(props)
    const addTip = <Popover id="Teams-addTip">Add a team member</Popover>;
    const editTip = <Popover id="Teams-editTip">Change name or leader</Popover>;
    const delTip = <Popover id="Teams-delTip">Remove this team</Popover>;
