@@ -43,6 +43,8 @@ import com.softwareinventions.cmp.evaluator.Evaluator;
 import com.softwareinventions.cmp.evaluator.EvlPut;
 import com.softwareinventions.cmp.evaluator.bounce.BounceEvaluator;
 import com.softwareinventions.cmp.evaluator.landgrab.LandGrabEvaluator;
+import com.softwareinventions.cmp.evaluator.rebound.ReboundEvaluator;
+
 import com.softwareinventions.cmp.util.EVCException;
 
 import RESTProxy.SessionResource;
@@ -280,7 +282,8 @@ public class EVCThread extends Thread  {
          evl = new LandGrabEvaluator();
       else if (ctpName.equals("Bounce"))
          evl = new BounceEvaluator();
-
+      else if (ctpName.equals("Rebound"))
+         evl = new ReboundEvaluator();
       else
          throw new Exception("Unknown Competition Type: " + ctpName);
 
