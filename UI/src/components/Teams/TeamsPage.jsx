@@ -181,12 +181,15 @@ class TeamsPage extends Component {
 <<<<<<< HEAD
 const TeamLine = function(props) {
    console.log(props)
+<<<<<<< HEAD
 =======
 const TeamLine = function (props) {
    const [expanded, setExpanded] = React.useState(false)
    var toggleView = (() => setExpanded(!expanded));
 
 >>>>>>> 610cb0075f6c399511201af93c3ce514ac2a3dc7
+=======
+>>>>>>> 6e4498fb183bd93f46ea2c5008668ab2c571c0c1
    const addTip = <Popover id="Teams-addTip">Add a team member</Popover>;
    const editTip = <Popover id="Teams-editTip">Change name or leader</Popover>;
    const delTip = <Popover id="Teams-delTip">Remove this team</Popover>;
