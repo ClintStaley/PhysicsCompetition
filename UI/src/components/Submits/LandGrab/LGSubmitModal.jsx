@@ -164,7 +164,6 @@ export class LGSubmitModal extends Component {
       return (<DraggableModal
          show={this.props.submitFn !== null}
          onHide={() => this.close('Cancel')}
-         bsSize="lg"
          title="Submit LandGrab Solution"
          body={<form>{lines}</form>}
          footer={buttons}
