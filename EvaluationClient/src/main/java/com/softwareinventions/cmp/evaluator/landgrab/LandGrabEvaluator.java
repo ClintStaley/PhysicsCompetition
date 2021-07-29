@@ -125,7 +125,7 @@ public class LandGrabEvaluator implements Evaluator {
    // returns Angle of first collision for a given circle
    private Double findBadAngle(Circle ctr) {
       Double badAngle = ctr.collisions.boundary;
-      double impossibleAngle = 361; // assumes background size = 100
+      double impossibleAngle = 42; // an angle that is too big to be possible
       double temp = impossibleAngle;
       
       for (int i = 0; i < ctr.collisions.barriers.length; i++) {
@@ -203,7 +203,7 @@ public class LandGrabEvaluator implements Evaluator {
          // Quadrant 1
          else if (obs.loY > circle.centerY && obs.hiX > circle.centerX && 
           Point2D.distance(circle.centerX, circle.centerY, obs.loX, obs.loY) 
-          < circle.radius) {
+          < circle.radius - EPS) {
             /*
              * There is guaranteed to be an intersection along the edge
              * (obs.loX, obs.loY) -> (obs.hiX, obs.loY).
@@ -234,7 +234,7 @@ public class LandGrabEvaluator implements Evaluator {
          // Quadrant 2
          else if (obs.hiX < circle.centerX && obs.hiY > circle.centerY && 
           Point2D.distance(circle.centerX, circle.centerY, obs.hiX, obs.loY)
-          < circle.radius) {
+          < circle.radius - EPS) {
             edgeIntersection = Math.sqrt( GenUtil.sqr(circle.radius) - 
              GenUtil.sqr(obs.hiX - circle.centerX)) + circle.centerY;
             edgeIntersection = edgeIntersection < obs.hiY ? edgeIntersection:
@@ -245,7 +245,7 @@ public class LandGrabEvaluator implements Evaluator {
          // Quadrant 3
          else if (obs.hiY < circle.centerY && obs.loX < circle.centerX &&
           Point2D.distance(circle.centerX, circle.centerY, obs.hiX, obs.hiY)
-          < circle.radius) {
+          < circle.radius - EPS) {
             edgeIntersection = -Math.sqrt( GenUtil.sqr(circle.radius) - 
              GenUtil.sqr(obs.hiY - circle.centerY)) + circle.centerX;
             edgeIntersection = edgeIntersection > obs.loX ? edgeIntersection:
@@ -254,8 +254,8 @@ public class LandGrabEvaluator implements Evaluator {
              /(edgeIntersection-circle.centerX)) + Math.PI;  
          }
          // Quadrant 4
-         else if (obs.loX > circle.centerX && Point2D.distance
-          (circle.centerX, circle.centerY, obs.loX, obs.hiY) < circle.radius) {
+         else if (obs.loX > circle.centerX && Point2D.distance(circle.centerX, 
+            circle.centerY, obs.loX, obs.hiY) < circle.radius - EPS) {
             edgeIntersection = -Math.sqrt( GenUtil.sqr(circle.radius) - 
              GenUtil.sqr(obs.loX - circle.centerX)) + circle.centerY;
             edgeIntersection = edgeIntersection > obs.loY ? edgeIntersection:
@@ -407,13 +407,13 @@ public class LandGrabEvaluator implements Evaluator {
          return (Double)Math.atan(opposite / adjacent); 
       }
       // check left collision
-      if (crc.centerX -crc.radius < EPS) {
+      if (crc.centerX -crc.radius < -EPS) {
          double opposite = Math.sqrt(crc.radius * crc.radius 
           - crc.centerX * crc.centerX);
          return (Double)(Math.atan(opposite / -crc.centerX) + Math.PI);   
       }
       // check bottom collision
-      if (crc.centerY - crc.radius < EPS) {
+      if (crc.centerY - crc.radius < -EPS) {
          double adjacent =  Math.sqrt(crc.radius * crc.radius 
           - crc.centerY * crc.centerY);
          return (Double) (Math.atan(crc.centerY / adjacent) + Math.PI);
