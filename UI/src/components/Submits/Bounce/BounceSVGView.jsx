@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {BounceMovie} from './BounceMovie';
 import {SVGUtil} from '../SVGUtil';
-import './BounceSVGView.css'
+import style from './BounceSVGView.module.css'
 
 export class BounceSVGView extends React.Component {
    static ballColors = ["red", "green", "orange", "purple", "cyan", "blue"];
@@ -20,7 +20,8 @@ export class BounceSVGView extends React.Component {
    }
 
    static getInitState(movie){
-      var bkgElms = SVGUtil.getbkgElms(movie); //gets background and graph lines
+      var bkgElms = []
+      bkgElms.push(SVGUtil.getGraphGrid(movie, style)); //gets background and graph lines
       return {
          trgEvts: [],      // Target creation events (each w/index into svgElms)
          ballEvt: null,    // Most recent ball position or hit event
@@ -59,34 +60,35 @@ export class BounceSVGView extends React.Component {
       while (evtIdx+1 < evts.length && evts[evtIdx+1].time <= timeStamp) {
          evt = evts[++evtIdx];
          if (evt.type === BounceMovie.cMakeBarrier) {
-            svgElms.push(SVGUtil.makeLabeledRect(evt, "barrier", yTop));
+            svgElms.push(SVGUtil.makeLabeledRect(evt, "barrier", yTop, style, .13));
          }
          else if (evt.type === BounceMovie.cMakeTarget) {
             evt.svgIdx = svgElms.length;
             trgEvts[evt.id] = evt;  // Save event for redrawing if hit
-            svgElms.push(SVGUtil.makeLabeledRect(evt, "target", yTop));
+            svgElms.push(SVGUtil.makeLabeledRect(evt, "target", yTop, style, .13));
          }
          else if (evt.type === BounceMovie.cBallPosition) {
             svgElms.push(<circle key={"ballPos" + evt.time} cx={evt.x}
              cy={yTop - evt.y} r={BounceSVGView.ballPosRadius} 
-             className={BounceSVGView.ballColors[evt.ballNumber]}/>);
+             className={style[BounceSVGView.ballColors[evt.ballNumber]]}/>);
          }
          else if (evt.type === BounceMovie.cHitBarrier
           || evt.type === BounceMovie.cHitTarget) {
-            hitClass = "ball faded " + BounceSVGView.ballColors[evt.ballNumber];
+            //hitClass = "ball faded " + BounceSVGView.ballColors[evt.ballNumber];
+            hitClass = BounceSVGView.ballColors[evt.ballNumber];
 
             if (evt.corner)
                svgElms.push(<rect key={"Hit" + evt.time} x={evt.x - radius}
                 y={yTop - evt.y - radius} width={2*radius} height={2*radius}
-                className={hitClass}/>)
+                className={style.faded + " " + style[hitClass]}/>)
             else
                svgElms.push(<circle key={"Hit" + evt.time} cx={evt.x}
-                cy={yTop - evt.y} r={radius} className={hitClass}/>)
+                cy={yTop - evt.y} r={radius} className={style.faded + " " +style[hitClass]}/>)
 
             if (evt.type === BounceMovie.cHitTarget) {
                let trgEvt = trgEvts[evt.targetId];
                svgElms[trgEvt.svgIdx]
-                = SVGUtil.makeLabeledRect(trgEvt, "hitTarget", yTop)
+                = SVGUtil.makeLabeledRect(trgEvt, "hitTarget", yTop, style, .13)
             }
          }
          // Ball launch and ball exit require no action here.
@@ -106,7 +108,7 @@ export class BounceSVGView extends React.Component {
          if (evt.type === BounceMovie.cHitTarget) {
             let trgEvt = trgEvts[evt.targetId];
             svgElms[trgEvt.svgIdx]
-             = SVGUtil.makeLabeledRect(trgEvt, "target", yTop)
+             = SVGUtil.makeLabeledRect(trgEvt, "target", yTop, style, .13)
          }
       }
 
@@ -129,7 +131,7 @@ export class BounceSVGView extends React.Component {
 
    render() {
       let ballEvt = this.state.ballEvt;
-      let width = this.state.movie.background.width;
+      let width = this.state.movie.background.width; 
       let height = this.state.movie.background.height;
 
       return  ( 
@@ -138,7 +140,7 @@ export class BounceSVGView extends React.Component {
             <g>{this.state.svgElms}</g>
             {ballEvt ? <circle key={"BallLoc"} cx={ballEvt.x}
              cy={height - ballEvt.y} r={BounceSVGView.ballRadius} 
-             className={BounceSVGView.ballColors[ballEvt.ballNumber]}/>: ""}
+             className={style[BounceSVGView.ballColors[ballEvt.ballNumber]]}/>: ""}
          </svg>);
    }
 }

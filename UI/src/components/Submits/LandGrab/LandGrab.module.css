@@ -1,0 +1,19 @@
+.controlButton {
+   padding: .5px;
+ }
+ 
+ table {
+   width: 50%;
+   margin-left: 10%;
+ }
+ 
+ table, th, tr  {
+   border: 1px solid black;
+   border-collapse: collapse;
+ }
+ 
+ th, td {
+     padding: 9px;
+ }
+ 
+ tr:nth-child(even) {background-color: #f2f2f2;}

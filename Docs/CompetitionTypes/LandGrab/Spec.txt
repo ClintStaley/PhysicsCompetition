@@ -158,7 +158,7 @@ Submission Response schema
          "items": {
             "type" : "object",
             "properties": {
-               "badRadius": {
+               "badAngle": {
                   "type": "number",
                }
                "area": 
@@ -168,16 +168,12 @@ Submission Response schema
                "collisions": {
                   "type": "object",
                   "properties":{
-                     "allCircles": {
-                        "type": "array"
-                        "items": {"type": "integer"}
-                        
                      },
                      "barriers": {
                         "type": "object",
                         "properties": {
                            "id": {"type": "integer"},
-                           "radius": {"type": "number"}
+                           "angle": {"type": "number"}
                         }
                      },
                      "boundary": {
@@ -187,7 +183,7 @@ Submission Response schema
                         "type": "object",
                         "properties": {
                            "id": {"type": "integer"},
-                           "radius": {"type": "number"}
+                           "angle": {"type": "number"}
                         }
                      }
                   },
@@ -217,7 +213,6 @@ Example Submission Response:
          badRadius: null,
          area: 2000,
          collisions: {
-            allCircles: [4],
             barriers: [],
             boundary: null,
             pastCircles: []
@@ -227,11 +222,10 @@ Example Submission Response:
          badRadius: 11,
          area: 2000,
          collisions: {
-            allCircles: [2],
             barriers: [
                {
                   id: 1,
-                  radius: 11
+                  angle: 3.4
                }
             ],
             boundary: null,
@@ -242,13 +236,12 @@ Example Submission Response:
          badRadius: 16,
          area:2000
          collisions: {
-            allCircles: [1],
             barriers: [],
             boundary: 24,
             pastCircles:[
                {
                   cId: 1,
-                  radius: 16
+                  angle: .632
                }
             ]
          }
@@ -257,7 +250,6 @@ Example Submission Response:
          badRadius: null,
          area: 2200.2,  
          collisions: {
-            allCircles: [],
             barriers: [],
             boundary: null:
             pastCircles: []
@@ -266,13 +258,12 @@ Example Submission Response:
          badRadius: 21,
          area: 2000,
          collisions: {
-            allCircles: [0]
             barriers: [],
             boundary: null,
             pastCircles: [
                {
                   cId: 0,
-                  radius: 21
+                  angle: 1.632
                }
             ],
          },

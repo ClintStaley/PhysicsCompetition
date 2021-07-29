@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import './LandGrab.css';
 import { LandGrabSVGView } from './LandGrabSVGView';
 import { LandGrabMovie } from './LandGrabMovie';
 import { MovieController } from '../MovieController';
@@ -22,8 +21,16 @@ export class LandGrab extends Component {
 		}
    }
 
-   static getDerivedStateFromProps(props, state) {
-      return {movie: new LandGrabMovie(60, props.prms, props.sbm)};
+   static getDerivedStateFromProps(newProps, oldState) {
+      if (!oldState.props || newProps.prms !== oldState.props.prms
+       || newProps.sbm !== oldState.props.sbm) {
+         return {
+            props: newProps, 
+            movie: new LandGrabMovie(60, newProps.prms, newProps.sbm)
+         };
+      }
+      else
+         return oldState; 
    }
 
     //to be implemented later
