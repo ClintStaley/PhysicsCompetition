@@ -25,13 +25,16 @@ class SignIn extends Component {
 
    //calls signIn updates history
    signIn(event) {
-      this.props.getAllCtps();
+      //Get all competition types to ensure proper rendering on Join Competition
+      //page and Active Competition page.
+      //Sign in after competions are retrieved
+      this.props.getAllCtps(
       this.props.signIn(this.state, () => {
         if (Object.keys(this.props.prs).length !== 0){
            this.props.getTeamsByPrs(this.props.prs.id);
            this.props.history.push("/MyCmpsPage");
         }
-      });
+      }));
 
       event.preventDefault(); //otherwise parent will respond
    }
