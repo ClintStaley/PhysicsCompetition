@@ -181,7 +181,6 @@ export class Bounce3DView extends React.Component {
       const width = this.mount.clientWidth;
       const height = this.mount.clientHeight;
       var rigSize = Bounce3DView.rigSize;
-      console.log(rigSize);
       var cameraControls;
       var room = this.state.scene.getObjectByName('room');
 
