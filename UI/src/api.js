@@ -141,7 +141,6 @@ export function getCtps(){
    return get("Ctps")
    .then((ctpsData)=>ctpsData.json())
    .then((ctpsData)=>{
-      console.log(ctpsData);
       return ctpsData
    })
 }

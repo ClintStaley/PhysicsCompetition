@@ -6,6 +6,7 @@ import { ListGroup, ListGroupItem, Button, Popover, OverlayTrigger }
 import { ConfDialog, EntryDialog } from '../concentrator';
 import * as actionCreators from '../../actions/actionCreators';
 import TeamModal from './TeamModal'
+import { propTypes } from 'react-bootstrap/esm/Image';
 
 class TeamsPage extends Component {
    constructor(props) {
@@ -16,21 +17,20 @@ class TeamsPage extends Component {
          editTeamId: null,         // ID of team to edit
          addMmbFunc: null,         // Function to add member to team
          delMmbFunc: null,         // Function to do deletion of member
-         expanded: {}              // expanded state, per teamId
+         expanded: {},              // expanded state, per teamId
       }
 
-      var teamIds = Object.keys(this.props.teams)
-      var props= this.props
-      
-      if (!(props.updateTimes && props.updateTimes.myTeams))
-         this.props.getTeamsByPrs(this.props.prs.id);
+      var teamIds = Object.keys(props.teams)
 
-      if (!(props.updateTimes && props.updateTimes.cmps))
-         this.props.getAllCmps();
+      if (!(props.updateTimes && props.updateTimes.cmps)) {
+         props.getAllCmps(props.getTeamsByPrs(props.prs.id));
+      }
+
+
 
       for (var i = 0; i < teamIds.length; i++) {
-         if (Object.keys(this.props.teams[teamIds[i]].mmbs.length === 0))
-            this.props.getTeamMmbs(this.props.teams[teamIds[i]].cmpId,
+         if (Object.keys(props.teams[teamIds[i]].mmbs.length === 0))
+            props.getTeamMmbs(props.teams[teamIds[i]].cmpId,
                parseInt(teamIds[i]))
       }
    }
@@ -111,7 +111,6 @@ class TeamsPage extends Component {
 
    render() {
       var props = this.props;
-      console.log(this.state)
       return (
          <section className="container">
 
@@ -121,7 +120,7 @@ class TeamsPage extends Component {
                   title={"Edit Team"}
                   team={props.teams[this.state.editTeamId]}
                   onDismiss={(teamData) => this.closeEdit(this.state.editTeamId,
-                      teamData)} />
+                     teamData)} />
                : ''}
 
             <ConfDialog
@@ -129,7 +128,7 @@ class TeamsPage extends Component {
                title="Delete Team"
                body={this.state.delConfirmTeamId ?
                   `Delete ${props.teams[this.state.delConfirmTeamId].teamName}`
-                   : ''}
+                  : ''}
                buttons={['Yes', 'No']}
                onClose={(res) => this.closeDelConfirm(res,
                   this.state.delConfirmTeamId)} />
@@ -153,6 +152,11 @@ class TeamsPage extends Component {
                {props.prs.myTeams && props.prs.myTeams.length ?
                   props.prs.myTeams.map((teamId, i) => {
                      var team = props.teams[teamId];
+                     var cmpName;
+
+                     if(Object.keys(props.cmps).length){
+                         cmpName = props.cmps[team.cmpId].title}
+                     else{cmpName=""}
                      return <TeamLine
                         key={i}
                         prsId={props.prs.id}
@@ -160,17 +164,16 @@ class TeamsPage extends Component {
                         teamId={team.id}
                         leaderId={team.leaderId}
                         teamName={team.teamName}
-                        cmpName={this.props.cmps[team.cmpId].title}
-                        cmpId={this.props.cmps[team.cmpId].id}
+                        cmpName={cmpName}
                         addMmb={() => this.openAddMmb(teamId)}
                         edit={() => this.openEdit(teamId)}
                         del={() => this.openDelConfirm(teamId)}
                         delMmb={(prsId) => this.openDelMmbConfirm(teamId,
-                         prsId)} />
+                           prsId)} />
                   })
                   :
                   <h4>You do not have any teams, see Join Competitions to create
-                      one</h4>
+                     one</h4>
                }
             </ListGroup>
          </section>
@@ -190,7 +193,7 @@ const TeamLine = function (props) {
    return (
       <ListGroupItem className="clearfix">
          <Button onClick={toggleView}>{isLeader ? props.teamName +
-          " ( Leader )":props.teamName}</Button>
+            " ( Leader )" : props.teamName}</Button>
          {' -- ' + props.cmpName}
 
          {isLeader ?
@@ -232,8 +235,8 @@ const TeamLine = function (props) {
                      del={
                         // If it's us, or we are leader, and if we're not
                         // dropping leader..
-                        (weAreLeader || mmb.id === props.prsId) && mmb.id 
-                        !== props.leaderId ? () => props.delMmb(mmbId) : null
+                        (weAreLeader || mmb.id === props.prsId) && mmb.id
+                           !== props.leaderId ? () => props.delMmb(mmbId) : null
                      }
                   />
                })}

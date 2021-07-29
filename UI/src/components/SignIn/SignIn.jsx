@@ -9,8 +9,9 @@ import signin_illustration from '../../images/signin.png';
 class SignIn extends Component {
    constructor(props) {
       super(props);
+      console.log(props)
 
-      //makes loggin in east, temp
+      //makes loggin in easy, temp
       //has admin loggin info already filled out upon load
       this.state = {
          email: 'admin@softwareinventions.com',
@@ -24,6 +25,7 @@ class SignIn extends Component {
 
    //calls signIn updates history
    signIn(event) {
+      this.props.getAllCtps();
       this.props.signIn(this.state, () => {
         if (Object.keys(this.props.prs).length !== 0){
            this.props.getTeamsByPrs(this.props.prs.id);
