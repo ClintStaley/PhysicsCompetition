@@ -7,7 +7,7 @@ Parameter Schema
       "title": "Rebound",
       "type": "object",
       "properties": {
-          "targetGap": {
+          "targetLength": {
             "title": "Rebound distance resulting in 100% credit",
             "type": "number"
           },
@@ -33,7 +33,7 @@ Parameter Schema
 
 Example Parameter
 {
-   "targetGap" : 3.0,
+   "targetLength" : 3.0,
    "maxBalls": 3,
    "balls": [19.0, 10.0, 5.0, 4.0, 3.0, 1.0]
 }
@@ -51,10 +51,10 @@ Submission Schema:
          "minimum": 0.0,
          "maximum": 10.0
       },
-      "transitTime": {
+      "jumpLength": {
          "title": "Predicted rebound distance",
          "type": "number",
-         "minimum", 0.0
+         "minimum", 1.0
       },
       "ballStarts": {
          "title": "Starting configuration of balls",
@@ -74,7 +74,7 @@ Submission Schema:
                   "minimum": -1.0,
                   "maximum": 1.0
                },
-               "position": {
+               "pos": {
                   "title": "Initial position in m",
                   "type": "number",
                   "minimum": 0.15,
