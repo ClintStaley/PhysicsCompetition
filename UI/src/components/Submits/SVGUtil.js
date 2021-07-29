@@ -34,8 +34,9 @@ export class SVGUtil {
 
          for (var smallOffset = bigOffset + smallGap;
             smallOffset < bigOffset + bigGap; smallOffset += smallGap)
-            bkgElms.push(<line key={"HL" + smallOffset} x1="0" y1={smallOffset}
-               x2={width} y2={smallOffset} className="lightLine" />);
+
+         bkgElms.push(<line key={"HL" + smallOffset} x1="0" y1={smallOffset}
+          x2={width} y2={smallOffset} className="lightLine" />);
       }
       return bkgElms;
 
@@ -102,6 +103,5 @@ export class SVGUtil {
          </text>
       </g>
    }
-
 }
 

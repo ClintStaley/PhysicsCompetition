@@ -74,10 +74,10 @@ insert into Competition (title, ctpId, ownerId, description, prms)
             
 # .9kg @.7m 1 m/s, .1kg .9m -1 m/s, gate .09s/.2s, distance 2.85m
 insert into Competition (title, ctpId, ownerId, description, prms)
-   VALUES ('Ricochet 1', 3, 1, 'Basic two-ball problem', 
+   VALUES ('Rebound 1', 3, 1, 'Basic two-ball problem', 
     '{
-       "targetGap" : 2.85,
+       "targetLength" : 2.85,
        "maxBalls": 2,
        "balls": [9.0, 1.0]
      }');
-            
+
