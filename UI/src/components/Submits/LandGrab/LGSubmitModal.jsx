@@ -148,9 +148,10 @@ export class LGSubmitModal extends Component {
              </div>
           </div>)
        }
-      
       var buttons = [
-         <Button key={0} onClick={() => {this.addCircle()}}>Add Circle</Button>,
+         <Button key={0} disabled = {this.state.cSpec.length == 
+            this.props.prms.numCircles} onClick={() => {this.addCircle()}}
+            >Add Circle</Button>,
          <Button key={1} disabled = {this.state.cSpec.length === 1}
             onClick={() => {this.removeCircle() }}>Remove Circle</Button>,
 

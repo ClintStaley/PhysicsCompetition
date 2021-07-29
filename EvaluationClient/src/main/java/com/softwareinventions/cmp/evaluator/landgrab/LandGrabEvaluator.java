@@ -392,11 +392,11 @@ public class LandGrabEvaluator implements Evaluator {
    }
    
    // Return distance to boundary if within radius, otherwise return null
+   // Check All four sides one by one in angle order
+   // reminder: even though in the case of a collision with the boundary,
+   // there is almost guaranteed to be 2 collisions, it is only necessary
+   // to use the one which we know will have a lesser angle
    private Double getBoundaryCollision(SbmCircle crc) {
-      // Check All four sides one by one in angle order
-      // reminder: even though in the case of a collision with the boundary,
-      // there is almost guaranteed to be 2 collisions, it is only necessary
-      // to use the one which we know will have a lesser angle
       // Right side: check if terminal edge starts outside. (use EPS for JS)
       if (crc.centerX + crc.radius > 100 + EPS)
          return (Double)EPS;
@@ -418,7 +418,6 @@ public class LandGrabEvaluator implements Evaluator {
           - crc.centerY * crc.centerY);
          return (Double) (Math.atan(crc.centerY / adjacent) + Math.PI);
       }
-      
       return (Double) null;
       
    }  
