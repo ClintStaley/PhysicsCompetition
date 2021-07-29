@@ -113,7 +113,7 @@ public class LandGrabEvaluator implements Evaluator {
       Circle ctr = new Circle(circle); // create circle to return in circleData
       
       // evaluate for 3 types of collisions
-      ctr.collisions.boundary = distanceToBounds(circle);
+      ctr.collisions.boundary = getBoundaryCollision(circle);
       ctr.collisions.barriers = getBarrierCollisions(circles, i);
       ctr.collisions.pastCircles = getCircleCollisions(circles, i);
       
@@ -149,7 +149,7 @@ public class LandGrabEvaluator implements Evaluator {
       
    }
    
-   /* Possible simplified barrier collision checker:
+   /* Another Possible barrier collision checker:
     * check all horizontal edges, and get use lowest angle, then with vertical
     * y, loX, loY
     * 
@@ -173,6 +173,7 @@ public class LandGrabEvaluator implements Evaluator {
       // Add one possible collision per obstacle
       for (int idx = 0; idx < prms.obstacles.length; idx++) {
          BlockedRectangle obs = prms.obstacles[idx];
+         
          double edgeIntersection;
          double badAngle = cImpossibleAngle;
          // Check if the "terminal edge" of circle starts in a rect
@@ -275,7 +276,7 @@ public class LandGrabEvaluator implements Evaluator {
    }
    
    private Collision[] getCircleCollisions(SbmCircle[] circles, int i) {
-      //SbmCircle circle = circles[i];
+      Collision[] circleCollisions = {};
       // Check for circle collision
       LinkedList<Collision> tempCollisions = new LinkedList<Collision>();
       for (int idx = 0; idx < i; idx++) {
@@ -283,23 +284,20 @@ public class LandGrabEvaluator implements Evaluator {
          if (angle != null)
             tempCollisions.add(new Collision(idx, (double)angle));
       }
-      Collision[] c = {}; // CAS: Style says all locals at top of function.
-      
-      c = tempCollisions.toArray(c);
-      return c;
+      circleCollisions = tempCollisions.toArray(circleCollisions);
+      return circleCollisions;
    }
    
    // source: http://paulbourke.net/geometry/circlesphere/
    //  go to intersection of two circles section
-   // CAS: Comments need work. It's obviously pure math.  More important is how
-   // a double represents an intersection, for instance.  And frankly Wolfram
-   // is always accurate, and occasionally clear.  I think this needs more help.
-   // At least my math degree didn't make this code obvious to me even with 
-   // Wolfram's reference.
+   // The following method uses expressions from the source above, and while
+   // the comments are a best attempt at explaining the math, it important to 
+   // use diagrams, the source, and other visual tools to see the geometry.
+   // c1 must be current circle while c2 is past circle
    private Double circleIntersection(SbmCircle c1, SbmCircle c2) {
-      Double d = Point2D.distance(c1.centerX, c2.centerY,
-            c1.centerX, c2.centerY);
-      // Any intersections?
+      Double d = Point2D.distance(c1.centerX, c1.centerY,
+            c2.centerX, c2.centerY);
+      // The following will guarantee some intersection
       if (d < c1.radius + c2.radius - EPS) {
          if (d < c1.radius || d < c2.radius) {
             // One circle's center is inside another, so return EPS
@@ -308,19 +306,19 @@ public class LandGrabEvaluator implements Evaluator {
          }
          else {
             /*
-             * a is the distance from the line that connects the points at which
-             * the circles intersect. 
+             * a is the distance from c1 center to the line that connects the 
+             * points at which the circles intersect. 
              */
             double a = (d * d - c2.radius * c2.radius + 
              c1.radius * c1.radius) / (2 * d);
             
-            // coords for "point 2" used by source. Point 2 is the intersection
-            // of the line that connects circle centers and the line that
-            // connects circle intersections.
-            /*
+            /* coords for "point 2" used by source. Point 2 is the intersection
+             * of the line that connects circle centers and the line that
+             * connects circle intersections.
+             *
              * If d is the distance from circle centers, and a is the
              * distance from circle center 1 to the line that connects circle
-             * intersections, then a/d is the proportion of these lengths.
+             * intersections, then a/d is scale between similar triangles
              * Point 2's coords will be circle1's center shifted by the
              * difference of circle centers  * proportion for needed shift.
              * NOTE: the proportions used here and later in the code can be
@@ -333,31 +331,50 @@ public class LandGrabEvaluator implements Evaluator {
             
             // h is the distance from the line connecting the circle centers
             // to the intersection points
-            // Use of pythagorean theorem to find the second leg
+            // Use of Pythagorean theorem to find the second leg
             double h = Math.sqrt(c1.radius * c1.radius - a * a);
             
             /*
-             * Coords for one of the two intersections of the circles.
-             * 
-             * The Math: Use similar triangles to get the proportion from
-             * center x and y offsets, height, and center distances to find
-             * offset from p2 to intersection points, then use offsets.
+             * Use more similar triangles, translating between the triangle with
+             * d as a hypotenuse, (legs are the difference in circle centers for
+             * x and y respectively) and the other triangle with a hypotenuse of
+             * h to find find the x and y components that offset point 2 to one 
+             * of the intersections.
              */
-            double intersectionX = p2X + h  * (c2.centerY - c1.centerY) / d;
-            double intersectionY = p2Y - h * (c2.centerX - c1.centerX) / d;
-            System.out.println(intersectionX + ", " + intersectionY);
+            double intersectionX = p2X + h / d * (c2.centerY - c1.centerY);
+            double intersectionY = p2Y - h / d * (c2.centerX - c1.centerX);
             //use arctan2 to find angle of intersection 
-            double badAngle = Math.atan2(c1.centerY-intersectionY,
-             c1.centerX-intersectionX);
+            double badAngle = Math.atan2(intersectionY - c1.centerY,
+             intersectionX - c1.centerX);
             
-            // Check second intersection. reverse offset to find other
+            // Check second intersection. use opposite sign of h to find other
             // intersection
             intersectionX = p2X - h  * (c2.centerY - c1.centerY) / d;
             intersectionY = p2Y + h * (c2.centerX - c1.centerX) / d;
-            System.out.println(intersectionX + ", " + intersectionY);
             // use arctan2 to find second angle
-            double tempAngle = Math.atan2(c1.centerY-intersectionY,
-             c1.centerX-intersectionX);
+            double tempAngle = Math.atan2(intersectionY - c1.centerY,
+             intersectionX - c1.centerX);
+           
+            // Shift angles correct amount because atan2's range is: (-pi,pi)
+            if (badAngle < 0 || tempAngle < 0) {
+               //If they are both negative, then there is no collision at the 
+               // terminal point, the collision will be positive, so shift both
+               // by 2 PI
+               if (badAngle < 0 && tempAngle < 0) {
+                  badAngle += 2 * Math.PI;
+                  tempAngle += 2 * Math.PI;
+               }
+               else { //One of the angles is positive, one is not
+                  // The collisions may take place in quadrants 1 and 4 or
+                  // quadrants 2 and 3, so check which quadrant and then
+                  // shift accordingly
+                  badAngle = badAngle < -Math.PI/2 ? badAngle + 2*Math.PI :
+                   badAngle;
+                  tempAngle = tempAngle < -Math.PI/2 ? tempAngle + 2*Math.PI :
+                   tempAngle;
+               }
+            }
+            
             //User lesser angle and set it as the bad angle
             badAngle = badAngle < tempAngle ? badAngle : tempAngle;
             
@@ -375,16 +392,34 @@ public class LandGrabEvaluator implements Evaluator {
    }
    
    // Return distance to boundary if within radius, otherwise return null
-   private Double distanceToBounds(SbmCircle crc) {
-      // CAS: Use Math.min for clarity.
-      double dist = crc.centerX;
-      dist = dist < cGridSize - crc.centerX ? dist : cGridSize - crc.centerX;
-      dist = dist < crc.centerY ? dist : crc.centerY;
-      dist = dist < cGridSize - crc.centerY ? dist : cGridSize - crc.centerY;
+   private Double getBoundaryCollision(SbmCircle crc) {
+      // Check All four sides one by one in angle order
+      // reminder: even though in the case of a collision with the boundary,
+      // there is almost guaranteed to be 2 collisions, it is only necessary
+      // to use the one which we know will have a lesser angle
+      // Right side: check if terminal edge starts outside. (use EPS for JS)
+      if (crc.centerX + crc.radius > 100 + EPS)
+         return (Double)EPS;
+      // check top collision
+      if (crc.centerY + crc.radius > 100 + EPS) {
+         double opposite = 100 - crc.centerY;
+         double adjacent = Math.sqrt(crc.radius*crc.radius - opposite*opposite);
+         return (Double)Math.atan(opposite / adjacent); 
+      }
+      // check left collision
+      if (crc.centerX -crc.radius < EPS) {
+         double opposite = Math.sqrt(crc.radius * crc.radius 
+          - crc.centerX * crc.centerX);
+         return (Double)(Math.atan(opposite / -crc.centerX) + Math.PI);   
+      }
+      // check bottom collision
+      if (crc.centerY - crc.radius < EPS) {
+         double adjacent =  Math.sqrt(crc.radius * crc.radius 
+          - crc.centerY * crc.centerY);
+         return (Double) (Math.atan(crc.centerY / adjacent) + Math.PI);
+      }
       
-      // CAS: return dist + EPS < crc.radius ? dist : null;
-      if (dist + EPS < crc.radius)
-         return (Double) dist;
       return (Double) null;
+      
    }  
 }
