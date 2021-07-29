@@ -157,21 +157,13 @@ const ActiveCompetitionItem = function (props) {
                   title={cmpItem.title}
                   joined={true}
                />
-
             })
-
             : ""
          }
-
       </ListGroupItem>
    )
 }
 
-//CAS: This looks basically fine, though ditch the -1 per comments above.
-// But, I don't understand why we need special cases above.  *Always* have
-// this.state.cmpsByCtp, always an array, initially empty.  Assume it will
-// *always* be there in render, and do one CompetitionTypeItem per element.
-// Fill it in GDSFP.  The code above should be half as complex as it is.
 const JoinCompetitionItem = function (props) {
    const [expanded, setExpanded] = React.useState(false);
    var toggleView = (() => setExpanded(!expanded));
