@@ -17,17 +17,18 @@ export default class CmpPage extends Component {
       var props = this.props;
 
       if (props.cmps[props.cmpId])
-         props.getCtp(props.cmps[props.cmpId].ctpId);
-      //if (!(props.updateTimes && props.updateTimes.myTeams))
-      //   props.getTeamsByPrs(props.prs.id);
+         //props.getCtp(props.cmps[props.cmpId].ctpId);
 
-      //get all mmbs if linked to join cmps, so that i can display the team
-      //leader and email
-      if (props.myCmpLink)
+         //if (!(props.updateTimes && props.updateTimes.myTeams))
+         //   props.getTeamsByPrs(props.prs.id);
+         
+         //get all mmbs if linked to join cmps, so that i can display the team
+         //leader and email
+         if (props.myCmpLink)
          props.getTeamsByCmp(props.cmpId);
-      else
+         else
          props.getTeamsByCmp(props.cmpId, this.getAllTeamMmbs);
-   }
+      }
 
    getAllTeamMmbs = () => {
       var props = this.props;
@@ -82,9 +83,12 @@ export default class CmpPage extends Component {
 
    openInstructions = () => {
      var props = this.props;
+     console.log(props)
      var link = '/Docs/Cmps/';
-     var ctpId = props.cmps[props.cmpId].ctpId;
+     var ctpId = props.cmps[props.cmpId].ctpId-1;
+     console.log(ctpId)
      var ctpType = props.ctps[ctpId].codeName;
+     console.log(ctpType)
 
      link = link.concat(ctpType + '/Instructions.html');
 

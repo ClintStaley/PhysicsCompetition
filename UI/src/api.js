@@ -137,6 +137,15 @@ export function getCtpById(ctpId){
    .then((ctpData) => ctpData.json())
 }
 
+export function getCtps(){
+   return get("Ctps")
+   .then((ctpsData)=>ctpsData.json())
+   .then((ctpsData)=>{
+      console.log(ctpsData);
+      return ctpsData
+   })
+}
+
 export function getCmps() {
    return get("Cmps")
    .then((cmpsData) => cmpsData.json())

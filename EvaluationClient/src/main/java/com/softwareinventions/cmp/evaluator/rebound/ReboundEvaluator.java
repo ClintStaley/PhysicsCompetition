@@ -23,7 +23,7 @@ public class ReboundEvaluator implements Evaluator {
    public static final double cGravity = -9.81;
    public static final double cRadius = .05, cDiameter = .1; // 10cm diameter
    public static final double cEps = 0.000001;
-   public static final double cMargin = 0.01;
+   public static final double cMargin = 0.001;
    public static final int    cSbmLimit = 5;  
    public static final double cSbmPenalty = .9;
    public static final double cMinJumpLength = .9031; // Length for 1m/s lanuch
@@ -51,10 +51,10 @@ public class ReboundEvaluator implements Evaluator {
    
    // One in-chute collision between two balls or a ball and a chute side
    private static class Rebound {
-      int idLeft;         // Id of left ball or -1 for left chute side
-      double time;        // Time in sec of rebound
-      double speedLeft;   // New speed of left ball or 0.0 for chute side
-      double speedRight;  // New speed of right ball or 0.0 for chute side
+      public int idLeft;        // Id of left ball or -1 for left chute side
+      public double time;       // Time in sec of rebound
+      public double speedLeft;  // New speed of left ball or 0.0 for chute side
+      public double speedRight; // New speed of right ball or 0.0 for chute side
 
       public Rebound(int idLeft, double time, double speedLeft,
        double speedRight) {
@@ -110,6 +110,9 @@ public class ReboundEvaluator implements Evaluator {
          this.yPos = yPos;
          this.xVlc = xVlc;
          this.yVlc = yVlc;
+         
+  System.out.printf("BallArc: %f (%f, %f) going (%f, %f)\n", baseTime,
+   xPos, yPos, xVlc, yVlc);
       }
 
       // Return new BallArc based on position and velocity at |relTime|
@@ -121,9 +124,16 @@ public class ReboundEvaluator implements Evaluator {
       // Return new BallArc based on hit against a vertical wall at |x| with
       // y-range [loY, hiY], or return null if no such hit will occur.
       public BallArc fromVerticalHit(double loY, double hiY, double x) {
-         double xHitTime = (x - xPos) / xVlc;
-         double yValue = yPosFn(xHitTime);
+         double yValue, xHitTime;
          BallArc rtn = null;
+         
+         // No intersection if we already straddle the line
+         if (GenUtil.inBounds(x - cRadius - cEps, xPos, x + cRadius + cEps))
+            return null;
+         
+         x = x > xPos ? x - cRadius : x + cRadius;
+         xHitTime = (x - xPos) / xVlc;
+         yValue = yPosFn(xHitTime);
          
          // Throw out negative times.
          if (xHitTime > 0 && GenUtil.inBounds(loY, yValue, hiY)) {
@@ -136,10 +146,15 @@ public class ReboundEvaluator implements Evaluator {
       
       private BallArc fromHorizontalHit(double loX, double hiX, double y) {
          BallArc rtn = null;
-         double[] yHitTimes = GenUtil.quadraticSolution(cGravity/2.0, yVlc,
-          yPos - y);
+         double[] yHitTimes; 
          double yHitTime, xHit;
+         
+         // No intersection if we already straddle the line
+         if (GenUtil.inBounds(y - cRadius - cEps, yPos, y + cRadius + cEps))
+            return null;
 
+         y = y > yPos ? y - cRadius : y + cRadius;
+         yHitTimes = GenUtil.quadraticSolution(cGravity/2.0, yVlc, yPos - y);
          if (yHitTimes != null && yHitTimes[1] >= 0) {
             yHitTime = yHitTimes[0] >= 0 ? yHitTimes[0] : yHitTimes[1];
             xHit = xPosFn(yHitTime);
@@ -182,17 +197,22 @@ public class ReboundEvaluator implements Evaluator {
        */
       private BallArc fromCornerHit(double x, double y) {
          double[] coef = new double[5];
-         double magnitude, dX = (xPos - x), dY = (yPos - y);
+         double magnitude, dX = (xPos - x), dY = (yPos - y), proximity;
          OptionalDouble firstHit;
          BallArc rtn = null;
-
+         
+         proximity = dX*dX + dY*dY - cRadius*cRadius;
+         if (proximity <= 0.0)  // If the corner is already inside the ball
+            return null;
+         
          // Coefficients from right to left (t^0 to t^4)
-         coef[0] = dX*dX + dY*dY - cRadius*cRadius;
+         coef[0] = proximity;
          coef[1] = 2 * (dX * xVlc + dY * yVlc);
          coef[2] = xVlc*xVlc + yVlc*yVlc + cGravity * dY;
          coef[3] = cGravity * yVlc;
          coef[4] = cGravity*cGravity / 4.0;
 
+         
          Complex[] solutions = new LaguerreSolver().solveAllComplex(coef, 0);
          
          // Find earliest nonnegative real solution
@@ -237,7 +257,7 @@ public class ReboundEvaluator implements Evaluator {
       cndArcs.add(arc.fromVerticalHit(0, cChuteHeight - cMargin, rightX));
       cndArcs.add(arc.fromCornerHit(rightX, cChuteHeight - cMargin));
       cndArcs.add(arc.fromVerticalHit(cChuteHeight - cMargin,
-       cChuteHeight + cDiameter + cMargin, rightX));
+       cChuteHeight + cDiameter + cMargin, rightX + cRadius));
       cndArcs.add(arc.fromCornerHit(rightX, cChuteHeight + cDiameter
        + cMargin));
       cndArcs.add(arc.fromVerticalHit(cChuteHeight + cDiameter + cMargin,
@@ -249,11 +269,10 @@ public class ReboundEvaluator implements Evaluator {
    }
    
    // Return nonnegative time for |gap| to be closed by |speed|, or MAX_VALUE
-   // if time would be negative or infinite.
+   // if time would be negative or infinite.  |gap| must be nonnegative, though
+   // epsilon-negative is OK and interpreted as 0.0.  
    double hitTime(double gap, double speed) {
-      double rtn = speed == 0.0 ? Double.MAX_VALUE : gap / speed;
-      
-      return rtn > -cEps ? rtn : Double.MAX_VALUE;
+      return speed < cEps ? Double.MAX_VALUE : Math.max(gap, 0.0) / speed;
    }
    
    // Is |spec| valid with respect to |this.prms| and general RbnSpec rules?
@@ -273,7 +292,7 @@ public class ReboundEvaluator implements Evaluator {
       // Ball speeds and intergaps in chute
       for (int idx = 0; idx < starts.length; idx++)
          if (!GenUtil.inBounds(-1.0, starts[idx].speed, 1.0)
-          || idx < starts.length
+          || idx < starts.length - 1
           && starts[idx+1].pos - starts[idx].pos < cDiameter + cBallGap)
             return false;
 
@@ -311,9 +330,14 @@ public class ReboundEvaluator implements Evaluator {
       }
       
       while (elapsedTime < finalTime) {
+         
+System.out.printf("Time: %.5f/%.5f\n", elapsedTime, finalTime);
+for (BallSpec b: balls)
+   System.out.printf("p: %f s: %f\n", b.pos, b.speed);
+
          // Find next collision, described by minIdx (ball index) and minTime.
          minIdx = -1;                                     // Left ball vs side
-         minTime = hitTime(-(balls[0].pos - cRadius), balls[0].speed);
+         minTime = hitTime(balls[0].pos - cRadius, -balls[0].speed);
          
          for (ballIdx = 0; ballIdx < balls.length; ballIdx++) {
             if (ballIdx < balls.length-1)                 // Ball vs next ball
@@ -332,13 +356,13 @@ public class ReboundEvaluator implements Evaluator {
          
          // Adjust elapsed time and ball chute positions to time of next hit.
          elapsedTime += minTime;
+         
          for (BallSpec ball: balls)
             ball.pos += minTime * ball.speed;
                
          // If right ball hits right side at or after gateTime, launch it.
          if (minIdx == balls.length-1 && spec.gateTime-cEps <= elapsedTime &&
           rtn.launchArcs == null) {
-            
             // Launch from chute
             launchArcs.add(lastArc = new BallArc(
                elapsedTime + cRadius / balls[minIdx].speed,
@@ -361,8 +385,11 @@ public class ReboundEvaluator implements Evaluator {
                launchArcs.add(lastArc.atTime(cChuteLength / lastArc.xVlc));
             }
             else {
-               // Loop till ball hits top of area
-               while (lastArc.yPos < cFullHeight - cRadius - cMargin) {
+               int limit = 4;
+               // Loop till ball hits top or left of area
+               while (limit-- > 0
+                && lastArc.yPos < cFullHeight - cRadius - cMargin
+                && lastArc.xPos > cChuteLength + cMargin) {
                   launchArcs.add(lastArc);
                   lastArc = getNextArc(lastArc, rightWall);
                }
@@ -372,30 +399,36 @@ public class ReboundEvaluator implements Evaluator {
             finalTime = rtn.launchArcs[rtn.launchArcs.length - 1].baseTime;
             balls = Arrays.copyOf(balls, balls.length-1); // Lose right ball
          } 
-         else if (minIdx < 0) // Left wall bounce
+         else if (minIdx < 0) { // Left wall bounce
             rebounds.add(new Rebound(minIdx, elapsedTime, 0.0,
              -balls[minIdx+1].speed));
-         else if (minIdx == balls.length-1) // Right wall/gate bounce
+            balls[minIdx+1].speed = -balls[minIdx+1].speed;
+         }
+         else if (minIdx == balls.length-1) { // Right wall/gate bounce
             rebounds.add(new Rebound(minIdx, elapsedTime, -balls[minIdx].speed,
              0.0));
+            balls[minIdx].speed = -balls[minIdx].speed;
+         }
          else {
             leftSpeed = balls[minIdx].speed;
             rightSpeed = balls[minIdx+1].speed;
             leftMass = prms.balls[balls[minIdx].id];
             rightMass = prms.balls[balls[minIdx+1].id];
             totalMass = leftMass + rightMass;
-            rebounds.add(new Rebound(minIdx, elapsedTime,
-               (leftMass - rightMass)/totalMass * leftSpeed
-                + 2*rightMass/totalMass * rightSpeed,
-               
-               (rightMass-leftMass/totalMass * rightSpeed
-                * 2*leftMass/totalMass * leftSpeed)
-            ));
+            
+            balls[minIdx].speed = (leftMass-rightMass)/totalMass * leftSpeed
+             + 2*rightMass/totalMass * rightSpeed;
+            
+            balls[minIdx+1].speed = (rightMass-leftMass)/totalMass * rightSpeed
+             + 2*leftMass/totalMass * leftSpeed;
+            
+            rebounds.add(new Rebound(minIdx, elapsedTime, 
+             balls[minIdx].speed, balls[minIdx+1].speed));
          }
       }
       
+      rtn.rebounds = rebounds.toArray(new Rebound[rebounds.size()]);
       if (rtn.valid) {
-         rtn.rebounds = rebounds.toArray(new Rebound[rebounds.size()]);
          score = 100.0 * spec.jumpLength / prms.targetLength;
          if (sbm.numSubmits > cSbmLimit) {
             rtn.sbmPenalty = score
