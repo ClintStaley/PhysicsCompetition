@@ -50,12 +50,17 @@ export function getAllCtps(cb){
 
 export function getAllCmps(cb) {
    return (dispatch, getState) => {
+      console.log("Action Creator");
       api.getCmps()
       .then((cmps) => {
+         console.log("WHEN DO I GET HERE")
          Object.keys(cmps).forEach(key => {cmps[key].cmpTeams = []});
+         console.log(cmps)
          dispatch({ type: 'GET_CMPS', cmps});
       })
-      .then(() => {if (cb) cb()})
+      .then(() => {
+         console.log("HERE")
+         if (cb) cb()})
    }
 }
 
