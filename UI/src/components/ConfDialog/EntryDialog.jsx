@@ -56,9 +56,8 @@ export default class EntryDialog extends PureComponent {
        <Modal.Header closeButton>
          <Modal.Title>{props.title}</Modal.Title>
        </Modal.Header>
-       <Modal.Body>
-         <Form.Group controlId={"val"}
-         validationState={this.getValidationState()}>
+       <Modal.Body  validated={this.getValidationState()}>
+         <Form.Group controlId={"val"}>
            <Form.Label>{props.label}</Form.Label>
            <Form.Control type="text" placeholder={`Enter ${props.label}`}
             value = {this.state.value} onChange={this.handleChange}/>
