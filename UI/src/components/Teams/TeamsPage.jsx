@@ -188,6 +188,7 @@ const TeamLine = function (props) {
    const addTip = <Popover id="Teams-addTip">Add a team member</Popover>;
    const editTip = <Popover id="Teams-editTip">Change name or leader</Popover>;
    const delTip = <Popover id="Teams-delTip">Remove this team</Popover>;
+   const buttonSize = "sm";
    var isLeader = props.leaderId === props.prsId;
 
    return (
@@ -200,21 +201,21 @@ const TeamLine = function (props) {
             <div className="float-right">
                <OverlayTrigger trigger={["focus", "hover"]}
                   placement="bottom" overlay={addTip}>
-                  <Button bsSize="small" onClick={props.addMmb}>
+                  <Button size={buttonSize} onClick={props.addMmb}>
                      <span className="fa fa-plus" />
                   </Button>
                </OverlayTrigger>
 
                <OverlayTrigger trigger={["focus", "hover"]}
                   placement="bottom" overlay={editTip}>
-                  <Button bsSize="small" onClick={props.edit}>
+                  <Button size={buttonSize} onClick={props.edit}>
                      <span className="fa fa-edit" />
                   </Button>
                </OverlayTrigger>
 
                <OverlayTrigger trigger={["focus", "hover"]}
                   placement="bottom" overlay={delTip}>
-                  <Button bsSize="small" onClick={props.del}>
+                  <Button size={buttonSize} onClick={props.del}>
                      <span className="fa fa-trash" />
                   </Button>
                </OverlayTrigger>
@@ -260,7 +261,7 @@ const MmbItem = function (props) {
             <div className="float-right">
                <OverlayTrigger trigger={["focus", "hover"]}
                   placement="bottom" overlay={delTip}>
-                  <Button bsSize="small" onClick={props.del}>
+                  <Button size="small" onClick={props.del}>
                      <span className="fa fa-trash" />
                   </Button>
                </OverlayTrigger>
