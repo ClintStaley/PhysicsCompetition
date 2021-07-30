@@ -175,7 +175,6 @@ export class BSubmitModal extends Component {
        return (<DraggableModal
           show={this.props.submitFn !== null}
           onHide={() => this.close("Cancel")}
-          bsSize="lg"
           title="Submit Bounce Solution"
           body={<form>{lines}</form>}
           footer={buttons}

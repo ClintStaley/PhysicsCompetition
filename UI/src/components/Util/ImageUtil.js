@@ -80,7 +80,6 @@ export function loadAsset(url) {
    loader.load(
       modelUrl,
       (modelFile) => {
-         console.log(modelFile.scene.children)
          let model = modelFile.scene.children[0];
          model.scale.set(0.1, 0.1, 0.1);
          model.rotation.x = Math.PI;

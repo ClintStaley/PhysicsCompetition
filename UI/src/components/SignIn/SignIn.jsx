@@ -9,7 +9,6 @@ import signin_illustration from '../../images/signin.png';
 class SignIn extends Component {
    constructor(props) {
       super(props);
-      console.log(props)
 
       //makes loggin in easy, temp
       //has admin loggin info already filled out upon load

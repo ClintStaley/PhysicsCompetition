@@ -18,7 +18,6 @@ export class BounceMovie {
       const bkgSize = 10.0;          // Standard field size
       let tracks = sbm && sbm.testResult ? sbm.testResult.events : [];  
       
-      console.log("Make Bounce Movie");
       this.background = {};
       this.background.frameRate = frameRate;
       this.background.height = bkgSize;
