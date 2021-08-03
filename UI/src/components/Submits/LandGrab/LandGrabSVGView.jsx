@@ -9,15 +9,16 @@ export class LandGrabSVGView extends React.Component {
 
       this.state = LandGrabSVGView.setOffset(
        LandGrabSVGView.getInitState(props.movie), props.offset);
-    }
+   }
 
-   static getInitState(movie){
-      var bkgElms = []
-      bkgElms.push(SVGUtil.getGraphGrid(movie, styles));
+   static getInitState(movie) {
+      var bkg = movie.background;
+      var svgElms = [SVGUtil.getGraphGrid(bkg.height, bkg.width, styles)];
+
       return {
          growthEvts : [],  // array of all growth events (including invalid)
          evtIdx: -1,       // Index within movie of last event shown in svgElms
-         svgElms: bkgElms, // SVG elements to render at this point
+         svgElms,          // SVG elements for background and grid lines
          movie             // Pointer to current movie
       }
    }

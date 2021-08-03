@@ -1,0 +1,40 @@
+.graphBkg {
+   fill:#F0F0FF;
+   stroke:"gray";
+}
+
+.lightLine {
+   stroke: #E0E0E0;
+   stroke-width: .01;
+}
+
+.heavyLine {
+   stroke:#C8C8C8;
+   stroke-width: .02;
+}
+
+.barrier {
+   stroke: black;
+   stroke-width:.01;
+   fill:#807e7e;
+}
+
+.hitTarget {
+  stroke: #00000040;
+  stroke-width:.01;
+  fill: #80ff8040;
+}
+
+.ball {
+   stroke: black;
+   stroke-width:.01;
+
+}
+
+.label {
+   font-size:.13px;
+}
+
+.faded {
+   opacity:.20;
+}

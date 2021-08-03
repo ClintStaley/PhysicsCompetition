@@ -107,7 +107,6 @@ export class Bounce extends Component {
       let sbm = this.props.sbm;
       let summary = '';
       
-      //sbm.score = 50.0;
       if (sbm && sbm.testResult && sbm.score !== null) {
          summary = this.getSummary(sbm.testResult, sbm.score);
       }
