@@ -7,6 +7,7 @@ import com.softwareinventions.cmp.util.GenUtil;
 import java.util.LinkedList;
 import org.apache.log4j.Logger;
 import java.awt.geom.Point2D;
+import java.io.Console;
 import java.lang.Math;
 
 public class LandGrabEvaluator implements Evaluator {
@@ -168,7 +169,7 @@ public class LandGrabEvaluator implements Evaluator {
    private Collision[] getBarrierCollisions(SbmCircle[] circles, int i) {
       SbmCircle circle = circles[i];
       LinkedList<Collision> tempCollisions = new LinkedList<Collision>();
-      final double cImpossibleAngle = 7;
+      final double cImpossibleAngle = 42;
       
       // Add one possible collision per obstacle
       for (int idx = 0; idx < prms.obstacles.length; idx++) {
@@ -232,7 +233,7 @@ public class LandGrabEvaluator implements Evaluator {
              /(edgeIntersection - circle.centerX));
          }
          // Quadrant 2
-         else if (obs.hiX < circle.centerX && obs.hiY > circle.centerY && 
+         else if (obs.hiX <= circle.centerX && obs.hiY > circle.centerY && 
           Point2D.distance(circle.centerX, circle.centerY, obs.hiX, obs.loY)
           < circle.radius - EPS) {
             edgeIntersection = Math.sqrt( GenUtil.sqr(circle.radius) - 
@@ -240,21 +241,23 @@ public class LandGrabEvaluator implements Evaluator {
             edgeIntersection = edgeIntersection < obs.hiY ? edgeIntersection:
              obs.hiY;
             badAngle = Math.atan((edgeIntersection-circle.centerY)
-             /(obs.hiX-circle.centerX)) + Math.PI; 
+             /(obs.hiX-circle.centerX)) + Math.PI;
+            // check for 90 degrees
+            badAngle = obs.hiX - circle.centerX == 0 ? Math.PI / 2 :badAngle; 
          }
          // Quadrant 3
-         else if (obs.hiY < circle.centerY && obs.loX < circle.centerX &&
+         else if (obs.hiY <= circle.centerY && obs.loX < circle.centerX &&
           Point2D.distance(circle.centerX, circle.centerY, obs.hiX, obs.hiY)
           < circle.radius - EPS) {
             edgeIntersection = -Math.sqrt( GenUtil.sqr(circle.radius) - 
              GenUtil.sqr(obs.hiY - circle.centerY)) + circle.centerX;
             edgeIntersection = edgeIntersection > obs.loX ? edgeIntersection:
              obs.loX;
-            badAngle = Math.atan((obs.hiX-circle.centerX)
-             /(edgeIntersection-circle.centerX)) + Math.PI;  
+            badAngle = Math.atan((obs.hiY-circle.centerY)
+             /(edgeIntersection-circle.centerX)) + Math.PI;
          }
          // Quadrant 4
-         else if (obs.loX > circle.centerX && Point2D.distance(circle.centerX, 
+         else if (obs.loX >= circle.centerX && Point2D.distance(circle.centerX, 
             circle.centerY, obs.loX, obs.hiY) < circle.radius - EPS) {
             edgeIntersection = -Math.sqrt( GenUtil.sqr(circle.radius) - 
              GenUtil.sqr(obs.loX - circle.centerX)) + circle.centerY;
@@ -262,6 +265,8 @@ public class LandGrabEvaluator implements Evaluator {
              obs.loY;
             badAngle = Math.atan((edgeIntersection-circle.centerY)
              /(obs.loX-circle.centerX)) + 2 * Math.PI;
+            // check for 270 degrees
+            badAngle = obs.loX - circle.centerX == 0 ? Math.PI * 3/2 : badAngle;
          }
          if (badAngle != cImpossibleAngle) {
             tempCollisions.add(new Collision(idx, badAngle));
