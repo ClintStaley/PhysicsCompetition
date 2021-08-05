@@ -48,7 +48,7 @@ export function getAllCtps(cb){
    }
 }
 
-export function getAllCmps( cb) {
+export function getAllCmps(cb) {
    return (dispatch, getState) => {
       api.getCmps()
       .then((cmps) => {

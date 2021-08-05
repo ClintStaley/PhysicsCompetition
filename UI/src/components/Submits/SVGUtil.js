@@ -4,28 +4,42 @@ import React from "react";
 
 export class SVGUtil{
    // For all SVG creating functions:
-   // style is a css module, which acts as a dictionary
-   // and is indexed by the generic class names (ie heavyLine)
-   // with corresponding values of unique css class names like
-   // fileName_heavyLine_hash1234 to ensure there are no class
-   // name collisions.
+   // style is a css module: a dictionary indexed by generic class names 
+   // (e.g. heavyLine) with corresponding values of unique css class names like
+   // fileName_heavyLine_hash1234 to ensure there are no class name collisions.
    //
    // scale variable is necessary because the scale is different
    // for different competitions and cannot be read from the 
    // module object that is passed
 
-   // Creates standard graph lines which will be the background
-   // Which is then wrapped in a g tag to reduce number of elms in svgElms
-   static getGraphGrid(movie, style) { 
-        let bkgElms = []; 
-        let width = movie.background.width;
-        let height = movie.background.height;
-        let longDim = Math.max(width, height);
-        let bigGap = longDim / 10;  // Gap between heavy graph lines
-        let smallGap = bigGap / 5;  // Gap between light graph lines
-    
-        bkgElms.push(<rect key={"gBkg"} x="0"y="0" width={width} height={height}
-        className={style.graphBkg}/>);
+   // Return standard |height|x|width| background rectangle of graph lines in
+   // a <g> tag, using |style| to obtain styles graphBkg, heavyLine, and
+   // lightLine for the graph background and line markers.  
+   // 
+   // Optional parameter |options| allows these properties, all optional:
+   // 
+   // bigGap and smallGap: nums Space between heavy and light lines.  Default is
+   // 1/10 and 1/50 of the largest rectangle dimension, respectively.  
+   //
+   // offset: object of form {x: num, y: num} Give the returned <g> an
+   // offset transform so children can be positioned relative to the <g>.
+   // Default is 0,0.
+   //
+   // labels:  Mark x and y axes with numerical labels at bigGaps. Make label
+   // bars immediate children of the returned <g> at negative offsets relative
+   // to <g> parent, so <g> parent retains "origin" status.
+   static getGraphGrid(height, width, style, options) { 
+      let bkgElms = []; 
+      let longDim = Math.max(width, height);
+      
+      // Adjust for default parameters
+      options = options || {};
+      let bigGap = options.bigGap || longDim / 10; 
+      let smallGap = options.smallGap || bigGap / 5;
+      let offset = options.offset || {x:0, y:0};
+   
+      bkgElms.push(<rect key={"gBkg"} x="0"y="0" width={width} height={height}
+       className={style.graphBkg}/>);
 
         // Vertical lines
       for (var bigOffset = 0; bigOffset <= width; bigOffset += bigGap) {
@@ -48,7 +62,10 @@ export class SVGUtil{
             bkgElms.push(<line key={"HL" + smallOffset} x1="0" y1={smallOffset}
              x2={width} y2={smallOffset} className={style.lightLine} />);
       }
-      return <g key={"bkgElms"}>{bkgElms}</g>;
+      
+      return <g key={"gGrid"} transform={`translate(${offset.x} ${offset.y})`}>
+         {bkgElms}
+      </g>;
     }
 
     // Return an svg <g> object representing a rectangle of class |cls| with
@@ -114,7 +131,7 @@ export class SVGUtil{
    // Circle with coordinates listed in center
    static makeLabeledCircle(evt, cls, yTop, style) {
       if (evt.r == 0)
-         return <g key={"emptyG"+evt.id}></g> //if radius is zero return empty g
+         return <g key={"emptyG"+evt.id}></g> // if radius == 0 return empty g
       return <g key={"labeledCirc" + evt.id}>
        <circle key={"Circ" + evt.id} cx={evt.x} cy={yTop-evt.y} r={evt.r} 
        className={style[cls]}/>

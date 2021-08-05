@@ -95,21 +95,23 @@ public class ReboundEvaluator implements Evaluator {
       public double yPos;
       public double xVlc;      // Starting velocity
       public double yVlc;
+      public double g;         // Gravity (or zero)
       
       // Positions and velocities at relative time from baseTime
       public double xPosFn(double relTime) {return xPos + relTime * xVlc;}
       public double yPosFn(double relTime) {return yPos + relTime * yVlc
-       + relTime*relTime*cGravity/2.0;}
+       + relTime*relTime*g/2.0;}
       public double xVlcFn(double relTime) {return xVlc;}
-      public double yVlcFn(double relTime) {return yVlc + relTime * cGravity;}
+      public double yVlcFn(double relTime) {return yVlc + relTime * g;}
       
       public BallArc(double baseTime, double xPos, double yPos, double xVlc,
-       double yVlc) {
+       double yVlc, double g) {
          this.baseTime = baseTime;
          this.xPos = xPos;
          this.yPos = yPos;
          this.xVlc = xVlc;
          this.yVlc = yVlc;
+         this.g = g;
          
   System.out.printf("BallArc: %f (%f, %f) going (%f, %f)\n", baseTime,
    xPos, yPos, xVlc, yVlc);
@@ -118,7 +120,7 @@ public class ReboundEvaluator implements Evaluator {
       // Return new BallArc based on position and velocity at |relTime|
       public BallArc atTime(double relTime) {
          return new BallArc(baseTime + relTime, xPosFn(relTime),
-          yPosFn(relTime), xVlcFn(relTime), yVlcFn(relTime));
+          yPosFn(relTime), xVlcFn(relTime), yVlcFn(relTime), g);
       }
       
       // Return new BallArc based on hit against a vertical wall at |x| with
@@ -154,7 +156,7 @@ public class ReboundEvaluator implements Evaluator {
             return null;
 
          y = y > yPos ? y - cRadius : y + cRadius;
-         yHitTimes = GenUtil.quadraticSolution(cGravity/2.0, yVlc, yPos - y);
+         yHitTimes = GenUtil.quadraticSolution(g/2.0, yVlc, yPos - y);
          if (yHitTimes != null && yHitTimes[1] >= 0) {
             yHitTime = yHitTimes[0] >= 0 ? yHitTimes[0] : yHitTimes[1];
             xHit = xPosFn(yHitTime);
@@ -208,9 +210,9 @@ public class ReboundEvaluator implements Evaluator {
          // Coefficients from right to left (t^0 to t^4)
          coef[0] = proximity;
          coef[1] = 2 * (dX * xVlc + dY * yVlc);
-         coef[2] = xVlc*xVlc + yVlc*yVlc + cGravity * dY;
-         coef[3] = cGravity * yVlc;
-         coef[4] = cGravity*cGravity / 4.0;
+         coef[2] = xVlc*xVlc + yVlc*yVlc + g * dY;
+         coef[3] = g * yVlc;
+         coef[4] = g * g / 4.0;
 
          
          Complex[] solutions = new LaguerreSolver().solveAllComplex(coef, 0);
@@ -367,7 +369,7 @@ for (BallSpec b: balls)
             launchArcs.add(lastArc = new BallArc(
                elapsedTime + cRadius / balls[minIdx].speed,
                cChuteLength, cChuteHeight + cRadius,
-               balls[minIdx].speed, 0.0));
+               balls[minIdx].speed, 0.0, cGravity));
             
             // Bounce off floor or right side
             launchArcs.add(lastArc = getNextArc(lastArc, rightWall));
@@ -379,6 +381,8 @@ for (BallSpec b: balls)
             if (GenUtil.looseEqual(lastArc.xPos, rightWall, cEps)) {
                rtn.valid = true;
                lastArc.xVlc = -lastArc.xVlc; // Switch to right direction
+               lastArc.yVlc = 0;
+               lastArc.g = 0;
                launchArcs.add(lastArc);
                
                // Add final arc coming off right end of exit chute
