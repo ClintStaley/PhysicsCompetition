@@ -22,17 +22,19 @@ export default class SbmPage extends Component {
          sbmFunction: null,    // Function to support submit dialog
          refreshNote: "",      // Refresh update message
          ctpName: null,        // Type of page to load
-         cmp: this.props.team && this.props.cmps[this.props.team.cmpId]
+         cmp: this.props.team && this.props.cmps[this.props.team.cmpId],
+         teamId: this.props.team.id,
       }
    }
 
    // Whenever the component mounts, start the timer, and retrieve
    // the appropriate set of submissions for the current cmp/team
    componentDidMount = () => {
-      this.props.getSbms(this.state.cmp, this.props.team.id,
+      this.props.getSbms(this.state.cmp, this.state.teamId,
        () => {
-          this.setState({ctpName : this.props.sbms.ctpName});
-          this.startTimer(); // CAS FIX: Shouldn't this happen only if there is a pending submit?
+          console.log("component Did mount");
+          this.setState({ctpName : this.props.sbms[this.state.teamId].ctpName});
+          this.startTimer(); // CAS FIX: Shouldn't this happen only if there is a pending submit? No we still need it to update for sbms from other users
        });
    }
 
@@ -43,6 +45,7 @@ export default class SbmPage extends Component {
          this.stopTimer();
    }
 
+   //used to refresh sbm if not present
    startTimer = () => {
       if (this.timerId)
          this.stopTimer();
@@ -56,25 +59,28 @@ export default class SbmPage extends Component {
 
    doSubmit = (submit) => {
       if (submit)
-         this.props.postSbm(this.state.cmp.id, this.props.team.id, submit,
+         this.props.postSbm(this.state.cmp.id, this.state.teamId, submit,
           () => this.startTimer());
       this.setState({sbmFunction : null, refreshNote: "Checking for results"});
    }
 
    refreshSbm = () => {
-      var current = this.props.sbms && this.props.sbms.current;
-
-      if (current)
+      var current = this.props.sbms && 
+       this.props.sbms[this.state.teamId].current; // current is current Sbm
+      if (current){
          if (current.testResult) {
             this.setState({refreshNote: ""});
             this.stopTimer();
          }
-         else {
-            this.props.refreshSbms(() => {
+      
+         
+            this.props.refreshSbms(current.cmpId, current.teamId, () => {
+               console.log("refreshedSbms");
                this.props.getTeamById(current.cmpId, current.teamId);
-               this.setState({refreshNote: this.state.refreshNote + ".."})
+               this.setState({refreshNote: this.state.refreshNote + ".."})   
             });
-         }
+         
+      }
    }
 
    render() {
@@ -84,29 +90,30 @@ export default class SbmPage extends Component {
       var bestScore;
       var sbmStatus;
       var prbDiagram = null;
+      var teamsSbms = this.props.sbms[this.props.team.id];
 
       bestScore = this.props.team.bestScore !== -1 ?
        `Best score: ${this.props.team.bestScore.toFixed(2)}` :
        'Best score: N/A';
-
-      if (this.props.sbms.current) {
-         sbm = this.props.sbms.current;
+      if (teamsSbms && teamsSbms.current) {
+         sbm = teamsSbms.current; // current submission for this team
          sbmTime = new Date(sbm.sbmTime);
          dateStr = sbmTime.toLocaleDateString('en-US',
           {month:"short", day:"numeric"});
          timeStr = sbmTime.toLocaleTimeString();
-
-         sbmStatus = (<div className="panel container">
-           <h3>Status of your last submission</h3>
-           <div className="row">
-             <div className="col-sm-9">
-               <h4>Submission received at {timeStr} on {dateStr}</h4>
-               <h4>{!sbm.testResult ? this.state.refreshNote : 
-                sbm.score !== null ? `Score: ${sbm.score.toFixed(2)}`
-                : "Not valid solution"}</h4>
-             </div>
-           </div>
-         </div>);
+         if (sbm.testResult) // if sbm has been evaluated
+            sbmStatus = (
+             <div className="panel container">
+                <h3>Status of your last submission</h3>
+                <div className="row">
+                   <div className="col-sm-9">
+                      <h4>Submission received at {timeStr} on {dateStr}</h4>
+                      <h4>{!sbm.testResult ? this.state.refreshNote :
+                      sbm.score !== null ? `Score: ${sbm.score.toFixed(2)}`
+                      : "Not valid solution"}</h4> 
+                   </div>
+                </div>
+             </div>);
       }
       else
          sbmStatus 
@@ -114,10 +121,9 @@ export default class SbmPage extends Component {
 
       var sbmButton = (<div className="col-sm-3 float-right">
         <Button disabled={!this.props.team.canSubmit ||
-         this.props.sbms.current && !this.props.sbms.current.testResult}
+         sbm && !sbm.testResult}
          onClick={() => this.setState({sbmFunction: this.doSubmit})}>
-           {this.props.sbms.current 
-            ? "Make Another Attempt" : "Make First Attempt"}
+           {sbm ? "Make Another Attempt" : "Make First Attempt"}
         </Button>
       </div>);
 

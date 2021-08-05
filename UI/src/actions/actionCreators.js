@@ -201,7 +201,7 @@ export function postSbm(cmpId, teamId, submit, cb) {
       addStdHandlers(dispatch, cb,
        api.postSbm(cmpId, teamId, submit)
        .then(() =>  api.getSbms(cmpId, teamId, 1))
-       .then((sbms) => dispatch({type: "POST_SBM", sbm: sbms[0]}))
+       .then((sbms) => dispatch({type: "POST_SBM", sbm: sbms[0], teamId}))
        .then(() => api.getTeamById(cmpId, teamId, cb))
        .then((team) => {
           dispatch({type: "GET_TEAM", newTeamData: team});
@@ -212,23 +212,23 @@ export function postSbm(cmpId, teamId, submit, cb) {
 export function getSbms(cmp, teamId, cb) {
    return (dispatch) => {
       addStdHandlers(dispatch, cb,
-       api.getSbms(cmp.id, teamId, 1)
-       .then(sbm => api.getCtpById(cmp.ctpId) // Subpromise intentional
+       api.getSbms(cmp.id, teamId, 1) // current only retrieves lastest sbm
+       .then(sbms => api.getCtpById(cmp.ctpId) // Subpromise intentional
           .then(ctp => dispatch({
-             type: "GET_SBMS",
-             sbms: {ctpName: ctp.codeName, current: sbm[0], history: []}
+             type: "GET_SBMS", 
+             sbm: sbms[0], 
+             ctpName: ctp.codeName, 
+             teamId
           }))
        ));
    };
 }
 
-export function refreshSbms(cb) {
+export function refreshSbms(cmpId, teamId, cb) {
    return (dispatch, getState) => {
-      var current = getState().sbms.current;
-
       addStdHandlers(dispatch, cb,
-       api.getSbms(current.cmpId, current.teamId, 1)
-       .then(sbms => dispatch({type: "REFRESH_SBM", sbm: sbms[0]})));
+       api.getSbms(cmpId, teamId, 1)
+       .then(sbms => dispatch({type: "REFRESH_SBM", sbm: sbms[0], teamId})));
    }
 }
 
