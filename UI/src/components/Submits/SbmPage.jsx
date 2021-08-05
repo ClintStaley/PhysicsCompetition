@@ -34,7 +34,6 @@ export default class SbmPage extends Component {
    componentDidMount = () => {
       this.props.getSbms(this.state.cmp, this.state.teamId,
        () => {
-          console.log("component Did mount");
           this.setState({ctpName : this.props.sbms[this.state.teamId].ctpName});
           this.startTimer(); // CAS FIX: Shouldn't this happen only if there is a pending submit? No we still need it to update for sbms from other users
        });
@@ -77,7 +76,6 @@ export default class SbmPage extends Component {
       
          
             this.props.refreshSbms(current.cmpId, current.teamId, () => {
-               console.log("refreshedSbms");
                this.props.getTeamById(current.cmpId, current.teamId);
                this.setState({refreshNote: this.state.refreshNote + ".."})   
             });

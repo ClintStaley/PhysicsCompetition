@@ -1,16 +1,5 @@
 /* sbms maintains submission information for multiple teams as GET_SBMS is 
 called when we display submission information for each different team.
-*/
-
-/*
-
-Previous state "schema":
-   {
-      ctpName: name
-      current: currentSbm
-      history: anyEarlierSbms
-   }
-
 current state "schema":
    {     
       teamId : {
@@ -20,7 +9,6 @@ current state "schema":
       },
       ...
    }
- 
 */
 export default function sbms(state = {}, action) {
    switch (action.type) {
@@ -55,7 +43,7 @@ export default function sbms(state = {}, action) {
       case 'REFRESH_SBM':  // Replace just testResult and score in current
          if (!action.sbm) 
             return state;
-         if(action.sbm.id != state[action.teamId].current.id) { // Take submissions from other users (and push current into history)
+         if(action.sbm.id != state[action.teamId].current.id) {
             var team = Object.assign({}, state[action.teamId]);
             team.history = [team.current].concat(team.history);
             team.current = action.sbm;
