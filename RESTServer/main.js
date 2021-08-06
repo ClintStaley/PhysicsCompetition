@@ -129,9 +129,8 @@ var addDebugRoutes = app => {
          var schema = JSON.stringify(schemas.LandGrab);
 
          req.cnn.query(`insert into CompetitionType (title, description,
-          codeName, tutorial, prmSchema)  VALUES ("Land Grab", "Claim territory
+          codeName, prmSchema)  VALUES ("Land Grab", "Claim territory
           by placing circles in a field of obstacles", "LandGrab",
-          "Claim territory by placing circles in a field of obstacles...",
           '${schema}');`, cb);
       });
 
@@ -142,9 +141,9 @@ var addDebugRoutes = app => {
 
          req.cnn.query(
             `insert into CompetitionType (title, description, codeName, ` +
-            `tutorial, prmSchema)
+            `prmSchema)
             VALUES ("Bounce", "Bounce a ball across platforms", "Bounce",
-         " a ball across platforms by inputing a speed",'${schema}');`, cb);
+            '${schema}');`, cb);
       });
 
       // Callback to clear sessions, release connection and return result
