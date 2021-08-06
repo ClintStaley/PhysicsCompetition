@@ -6,7 +6,6 @@ import {LandGrab} from './LandGrab/LandGrab';
 import {LGSubmitModal} from './LandGrab/LGSubmitModal';
 import {Rebound} from './Rebound/Rebound';
 import {RbnSubmitModal} from './Rebound/RbnSubmitModal';
-
 // Set up a page managing submissions for a competition and team.  This includes
 // a submission dialog, automatic polling for a test result on any standing
 // submission, and a display of the results.
@@ -65,6 +64,15 @@ export default class SbmPage extends Component {
       this.setState({sbmFunction : null, refreshNote: "Checking for results"});
    }
 
+   openInstructions = () => {
+      var link = '/Docs/Cmps/';
+      var ctpName = this.state.ctpName
+      var cmpType = this.state.cmp.hints //later change to have index for instructions
+      link = link.concat(ctpName + '/Hints/' + cmpType + '/Instructions.html');
+ 
+      window.open(link, "_blank");
+   }
+
    refreshSbm = () => {
       var current = this.props.sbms && 
        this.props.sbms[this.state.teamId].current; // current is current Sbm
@@ -84,7 +92,7 @@ export default class SbmPage extends Component {
    }
 
    render() {
-      var sbm, sbmTime, dateStr, timeStr,  sbmDialog;
+      var sbm, sbmTime, dateStr, timeStr, sbmDialog;
       var cmp = this.state.cmp;
       var ctpName = this.state.ctpName;
       var bestScore;
@@ -152,7 +160,12 @@ export default class SbmPage extends Component {
         <h1>{cmp.title}<span className="float-right">{bestScore}</span></h1>
         {sbmButton}
         <br/>
+        
         {sbmStatus}
+        <br/>
+         <div className = "instructionLink">
+          <a onClick = {this.openInstructions}>Hints</a>
+         </div>
         <br/>
         {prbDiagram}
         {sbmDialog}

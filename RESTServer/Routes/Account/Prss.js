@@ -170,7 +170,7 @@ router.get('/:id/Cmps', (req, res) => {
 
    if (vld.checkPrsOK(req.params.id))
       req.cnn.chkQry('select distinct Competition.id as id, ownerId, ctpId,' +
-       ' title, prms, rules, curTeamId, description from Competition,' +
+       ' title, prms, rules, hints, curTeamId, description from Competition,' +
        ' Team, Membership where prsId = ? and teamId = Team.id and' +
        ' cmpId = Competition.id',
        [req.params.id],

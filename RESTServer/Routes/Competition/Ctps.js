@@ -21,7 +21,7 @@ router.post('/', (req, res) => {
    if (vld.checkAdmin())
       async.waterfall([
       (cb) => {
-         if (vld.hasFields(body, ["title", "description", "tutorial",
+         if (vld.hasFields(body, ["title", "description",
           "prmSchema"], cb)) {
             cnn.chkQry('select * from CompetitionType where title = ?',
              body.title, cb);
@@ -64,7 +64,7 @@ router.put('/:id', (req, res) => {
 
    async.waterfall([
    (cb) => {
-      if (vld.hasOnlyFields(body, ["title", "description", "tutorial", "prmSchema"])
+      if (vld.hasOnlyFields(body, ["title", "description", "prmSchema"])
        .checkAdmin())
          cnn.chkQry('select * from CompetitionType where id = ?',
           req.params.id, cb);

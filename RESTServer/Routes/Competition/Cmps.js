@@ -12,12 +12,12 @@ router.get('/', (req, res) => {
    var email = req.query.email;
    var ctpId = req.query.CompetitionType;
    var cnn = req.cnn;
-   var query = 'select Competition.id, ownerId, ctpId, title, prms, rules,' +
+   var query = 'select Competition.id, ownerId, ctpId, title, prms, rules, hints,' +
       ' description from Competition';
    var fillers = [];
 
    if (email) {
-      query = 'select Competition.id, ownerId, ctpId, title, prms, rules, ' +
+      query = 'select Competition.id, ownerId, ctpId, title, prms, rules, hints, ' +
          'description from Competition,Person where email = ? && ' +
          'Competition.ownerId = Person.id';
       fillers.push(email);
@@ -56,7 +56,7 @@ router.post('/', (req, res) => {
       async.waterfall([
          (cb) => {
             //Get dupTitles if they exist
-            if (vld.hasOnlyFields(body, ["title", "ctpId", "prms", "rules",
+            if (vld.hasOnlyFields(body, ["title", "ctpId", "prms", "rules", "hints",
                "description"], cb).check(true,null,cb) && vld.checkFieldLengths(body, ["title"], [titleLimit])) {
                body.ownerId = ssn.prsId;
                cnn.chkQry(
@@ -101,7 +101,7 @@ router.post('/', (req, res) => {
 router.get('/:id', (req, res) => {
    var vld = req.validator;
 
-   req.cnn.query('select id, ownerId, ctpId, title, prms, rules, ' +
+   req.cnn.query('select id, ownerId, ctpId, title, prms, rules, hints, ' +
       'description from Competition where id = ?', [req.params.id],
       (err, cmp) => {
          if (vld.check(cmp.length, Tags.notFound)) {
@@ -121,7 +121,7 @@ router.put('/:id', (req, res) => {
 
    async.waterfall([
       (cb) => {
-         if (vld.hasOnlyFields(body, ["title", "ctpId", "prms", "rules",
+         if (vld.hasOnlyFields(body, ["title", "ctpId", "prms", "rules", "hints",
             "description"]) && vld.checkFieldLengths(body, ["title"], [titleLimit]))
             cnn.query("select * from Competition where id = ?",
                [req.params.id], cb);
