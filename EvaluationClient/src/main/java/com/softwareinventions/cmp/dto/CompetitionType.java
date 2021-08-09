@@ -5,6 +5,5 @@ public class CompetitionType {
    public String title;
    public String description;
    public String prmSchema;
-   public String tutorial;
    public String codeName;
 }

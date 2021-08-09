@@ -10,6 +10,7 @@ export class LandGrabMovie {
    static cMakeObstacle = 2;
    static cValidCircle = 3;
    static cInvalidCircle = 4;
+   static cEmptyEvt = 5; // required in the case movie has no other events
 
    //Constructor with background as indicated, and events drawn from prms and sbm
    // optional sbm.  (Generate only obstacle creation events w/o sbm)
@@ -35,6 +36,13 @@ export class LandGrabMovie {
       prms.obstacles.forEach((brr, idx) => 
        this.addMakeObstacleEvt(-1, this.id++, brr.loX, brr.loY, brr.hiX, brr.hiY));
       
+       // Evts must always have at least 1 evt for MovieController to work,
+       // so if there are no obstacles or circleResults, put empty evt
+      if(prms.obstacles.length < 1 && circlesResults.length < 1)
+         this.evts.push(
+            {type: LandGrabMovie.cEmptyEvt, time: -1}
+         )
+
       let time = 0;
       circlesResults.forEach((circleResult, circleId) => {
          var circle = circleContent[circleId];

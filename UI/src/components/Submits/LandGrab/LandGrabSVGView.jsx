@@ -45,6 +45,11 @@ export class LandGrabSVGView extends React.Component {
       let {growthEvts, evtIdx, svgElms} = state;
       let yTop = movie.background.height;
       let evt;
+      
+      // Triggered only if there are no evts
+      if (evts[0].type === LandGrabMovie.cEmptyEvt)
+         return {growthEvts, evtIdx, svgElms, movie};
+
       // While the event after evtIdx exists and needs adding to svgElms
       while (evtIdx+1 < evts.length && evts[evtIdx+1].time <= timeStamp) {
          evt = evts[++evtIdx];

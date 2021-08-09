@@ -4,6 +4,7 @@ public class Competition {
    public int id;
    public int ownerId;
    public int ctpId;
+   public String hints;
    public String title;
    public String prms;
    public String description;

@@ -1,7 +1,32 @@
 use CmpDB;  
 
-insert into Competition (title, ctpId, ownerId, description, prms)
-   VALUES ('Land Grab Test 1', 1, 1, 'Example Land Grab', '{
+   insert into Competition (title, ctpId, ownerId, description, hints, prms)
+   VALUES ('Land Grab Tutorial', 1, 1, 'Tutorial Land Grab', 'Bronze', '{
+      "numCircles": 3,
+      "goalArea": 5000.0,
+      "obstacles": [
+         { "loX": 50, "hiX": 100, "loY": 0, "hiY": 50 }
+      ] 
+   }');
+
+   insert into Competition (title, ctpId, ownerId, description, hints, prms)
+   VALUES ('Land Grab 1', 1, 1, 'Empty Field', 'Bronze',  '{
+      "numCircles": 3,
+      "goalArea": 5000.0,
+      "obstacles": [] 
+   }');
+
+   insert into Competition (title, ctpId, ownerId, description, hints, prms)
+   VALUES ('Land Grab  2', 1, 1, '1 Barrier but not square', 'Silver', '{
+      "numCircles": 3,
+      "goalArea": 5000.0,
+      "obstacles": [
+         { "loX": 70, "hiX": 100, "loY": 0, "hiY": 20 } 
+      ] 
+   }');
+
+   insert into Competition (title, ctpId, ownerId, description, hints, prms)
+   VALUES ('Land Grab Test 3', 1, 1, '3 Barriers', 'Gold', '{
       "numCircles": 3,
       "goalArea": 5000.0,
       "obstacles": [

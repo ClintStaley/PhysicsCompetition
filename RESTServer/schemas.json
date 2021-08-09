@@ -8,6 +8,10 @@
             "title": "Time to get all platforms that will get 100",
             "type": "number"
          },
+         "hints": {
+            "title": "Type of hints used to direct to hints page",
+            "type" : "string"
+         },
          "targets": {
             "title": "Targets to hit",
             "type": "array",
@@ -94,6 +98,10 @@
             "type": "integer",
             "minimum": 1
          },
+         "hints": {
+            "title": "Type of hints used to direct to hints page",
+            "type" : "string"
+         },
          "goalArea": {
             "title": "Area of coverage that gets 100%",
             "type": "number",
@@ -144,6 +152,10 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "Ricochet",
       "type": "object",
+      "hints": {
+         "title": "Type of hints used to direct to hints page",
+         "type" : "string"
+      },
       "properties": {
          "targetTime": {
             "title": "Time resulting in 100% credit",
