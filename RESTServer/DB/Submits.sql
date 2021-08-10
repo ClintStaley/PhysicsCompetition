@@ -1,7 +1,7 @@
 # Sample answers to use for testing EVC headlessly
 
 insert into Team (teamName, cmpId, leaderId) values 
- ('Rebound Team 1', 6, 1);
+ ('Rebound Team 1', 9, 1);
 
 insert into Membership (prsId, teamId) values (1, 1);
 
