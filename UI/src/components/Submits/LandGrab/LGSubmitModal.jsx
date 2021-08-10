@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Form, Button } from 'react-bootstrap';
+import {Form, Button} from 'react-bootstrap';
 import DraggableModal from '../../Util/DraggableModal';
 
 export class LGSubmitModal extends Component {

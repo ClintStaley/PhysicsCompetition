@@ -11,7 +11,7 @@ export class BSubmitModal extends Component {
        //set default value for entry box
        launchSpec.push({ speed: 0, finalX: 0, finalY: 0, finalTime: 0 })
  
-       this.state = { launchSpec };
+       this.state = {launchSpec};
  
        this.handleChange = this.handleChange.bind(this);
     }

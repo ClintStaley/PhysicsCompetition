@@ -36,13 +36,16 @@ export class MovieController extends Component {
 
    // Set state.playing to true, and reset to movie start if we're at end.
    // In either case start a requestAnimatinoFrame sequence once state is set.
-   play = () => {
-      if (this.state.currentOffset < this.state.duration)
-         this.setState({playing: true}, 
-          () => requestAnimationFrame(this.animate));
-      else 
-         this.setState({playing: true, startTime: null, currentOffset: 0},
-          () => requestAnimationFrame(this.animate));
+   play = (rate) => {
+      let newState = {playing: true, rate}
+
+      if (this.state.rate !== rate)
+         newState.startTime = null;
+
+      if (this.state.currentOffset >= this.state.duration)
+         newState.currentOffset = 0;
+
+      this.setState(newState, () => requestAnimationFrame(this.animate));
    };
 
    // Set state.playing to false, and invalidate startTime so it will be reset
@@ -55,25 +58,32 @@ export class MovieController extends Component {
    // consistency than use of window.performance.now().  State.currentOffset
    // is the number of seconds into the movie at the current animation point.
    // State.startTime is the time of the first frame assuming the movie has 
-   // been continuously animated to the current point.  It gets reset anytime 
-   // we pause or scrub.  To reset state.startTime, set it null, and the next
-   // |animate| will reassign it appropriately.
+   // been continuously animated to the current point, at the current rate.
+   // It gets reset anytime  we pause, scrub, or change rate.  To reset 
+   // state.startTime, set it null, and the next |animate| will reassign it 
+   // appropriately.
    animate = (timestamp) => {
+      let newState = {};
+
       if (this.state.playing) {
          timestamp /= 1000;
+         
+         // Stop animation at end of movie
+         if (this.state.currentOffset > this.state.duration) {
+            newState = {playing: false, startTime: null}
+         }
 
          // Set startTime if we are commencing animation
          if (this.state.startTime === null) 
-            //this.state.startTime = timestamp - this.state.currentOffset;
-            this.setState({startTime : timestamp - this.state.currentOffset});
+            newState.startTime
+             = timestamp - this.state.currentOffset / this.state.rate;
 
-         // Stop animation at end of movie
-         if (this.state.currentOffset > this.state.duration) {
-            this.pause();
-         }
+         // In either event, set currentOffset to reflect time.
+         newState.currentOffset =
+          (timestamp - (this.state.startTime || newState.startTime))
+          * this.state.rate;
 
-         this.setState({currentOffset: timestamp - this.state.startTime}, 
-            () => requestAnimationFrame(this.animate));
+         this.setState(newState, () => requestAnimationFrame(this.animate));
       }
    };
 
@@ -83,8 +93,13 @@ export class MovieController extends Component {
             {this.state.duration > 0 ? 
             (<div>
                <div>
-                  <button className="bar-button" onClick={this.play}>
+                  <button className="bar-button"
+                   onClick={() => this.play(1.0)}>
                      Play
+                  </button>
+                  <button className="bar-button"
+                   onClick={() => this.play(0.1)}>
+                     1/10 Speed
                   </button>
                   <button className="bar-button" onClick={this.pause}>
                      Pause

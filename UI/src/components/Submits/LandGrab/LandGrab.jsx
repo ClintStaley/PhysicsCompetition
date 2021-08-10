@@ -3,8 +3,6 @@ import { LandGrabSVGView } from './LandGrabSVGView';
 import { LandGrabMovie } from './LandGrabMovie';
 import { MovieController } from '../MovieController';
 
-
-
 // Expected props are:
 //  prms -- the parameters for the displayed competition
 //  sbm -- the submission to display

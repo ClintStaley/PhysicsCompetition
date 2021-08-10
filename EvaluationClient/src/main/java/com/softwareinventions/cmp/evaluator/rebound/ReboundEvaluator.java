@@ -21,7 +21,7 @@ public class ReboundEvaluator implements Evaluator {
    public static final double cFullHeight = 1.5;   // Height of full area
    public static final double cChuteLength = 1.0;
    public static final double cGravity = -9.81;
-   public static final double cRadius = .05, cDiameter = .1; // 10cm diameter
+   public static final double cRadius = .08, cDiameter = .16; // 16cm diameter
    public static final double cEps = 0.000001;
    public static final double cMargin = 0.001;
    public static final int    cSbmLimit = 5;  
@@ -254,6 +254,8 @@ public class ReboundEvaluator implements Evaluator {
       BallArc rtn = null;
       List<BallArc> cndArcs = new LinkedList<BallArc>();
       
+System.out.printf("Next arc for: %f %f %f %f %f %f\n",
+ arc.baseTime, arc.g, arc.xPos, arc.yPos, arc.xVlc, arc.yVlc);
       cndArcs.add(arc.fromVerticalHit(0, cFullHeight, cChuteLength)); // #1
       cndArcs.add(arc.fromHorizontalHit(cChuteLength, rightX, 0.0));
       cndArcs.add(arc.fromVerticalHit(0, cChuteHeight - cMargin, rightX));
@@ -265,7 +267,8 @@ public class ReboundEvaluator implements Evaluator {
       cndArcs.add(arc.fromVerticalHit(cChuteHeight + cDiameter + cMargin,
        cFullHeight, rightX));
       cndArcs.add(arc.fromHorizontalHit(cChuteLength, rightX, cFullHeight));
-      
+System.out.printf("Done\n");
+
       return cndArcs.stream().filter(a -> a != null)
        .min((x, y) -> x.baseTime < y.baseTime ? -1 : 1).get();
    }

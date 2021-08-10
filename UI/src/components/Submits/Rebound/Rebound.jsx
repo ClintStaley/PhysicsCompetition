@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-// import {Rebound3DView } from './Rebound3DView';
-import {ReboundSVGView} from "./ReboundSVGView"; 
 import {ReboundMovie} from './ReboundMovie';
 import {MovieController} from '../MovieController';
+import {ReboundSVGView} from "./ReboundSVGView"; 
+// import {Rebound3DView } from './Rebound3DView';
 
 import './Rebound.css'
 
@@ -63,18 +63,16 @@ export class Rebound extends Component {
       let sbm = this.props.sbm;
       let summary = '';
    
-   console.log("Movie", this.state.movie);
       if (sbm && sbm.testResult && sbm.score !== null) {
          summary = this.getSummary(sbm.testResult, sbm.score);
       }
-         //<MovieController
-         //   movie={this.state.movie}
-         //   views={Rebound.views}
-         ///>  
+     
       return (<section className="container">
          <h2>Problem Diagram</h2>
-         <h3>Movie controller goes here</h3>
-             
+         <MovieController
+            movie={this.state.movie}
+            views={Rebound.views}
+         />    
          {summary}
       </section>);
    }

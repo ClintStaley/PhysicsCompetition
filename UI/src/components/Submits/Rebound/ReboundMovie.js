@@ -2,13 +2,15 @@
 // overall background, plus a series of events describing changes to the scene
 // such as ball movements, collisions, etc.  Events are each time stamped with
 // a number of seconds since the start of the movie.
+
 export class ReboundMovie {
    static cBallPosition = 0; // Change position of all balls
    static cCollision = 1;    // Noise of collision
    static cBounce = 2;       // Noise (different) of a bounce, possible marker
-   static cGateOpen = 1;     // Show gate as open
-   static cGateClose = 2;    // Close gate
-   static cRadius = .05;     // Ball radius
+   static cGateOpen = 3;     // Show gate as open
+   static cGateClose = 4;    // Close gate
+
+   static cRadius = .08;     // Ball radius
    static cChuteWidth = 1.0; // Width of left and right chutes.
 
    // Construct with background as indicated, and events drawn from prms and 
@@ -23,21 +25,23 @@ export class ReboundMovie {
       let lastEvt, rightBall;
       let gateClose = nextArc 
        && nextArc.baseTime + ReboundMovie.cRadius / nextArc.xVlc;
-      let ballChoice = prms.balls.map(w => ({weight: w, used: false}));
+      let ballChoices = prms.balls.map(w => ({weight: w, used: false}));
 
-      starts.forEach(b => ballChoice[b.id].used = true);
+      starts.forEach(b => ballChoices[b.id].used = true);
+      ballChoices.maxBalls = prms.maxBalls;
 
       balls = starts.map(b => ({speed: b.speed, x: b.pos}));
 
       this.background = {
-         ballChoice,
+         ballChoices,
          frameRate,
          height: 1.5,
          chuteHeight: 1.0,
+         chuteWidth: ReboundMovie.cChuteWidth,
          width: 2*ReboundMovie.cChuteWidth + (cnt && cnt.jumpLength || 2.0)
       };
 
-      this.evts = [];
+      this.evts = [{time: -0.01, type: ReboundMovie.cGateClose}];
       this.addBallPositionEvt(-0.01, balls);  // Initial ball-drawing
 
       while (nextArc) {  // While stll more movement to show post launch
@@ -64,6 +68,7 @@ export class ReboundMovie {
          else {
             if (arcIdx === 0)              // First arc, thus launch
                balls = balls.slice(0, -1); //  so dump right ball.
+            currentArc = nextArc;          //  and replace it with first arc
             
             this.adjustBalls(balls, nextArc.baseTime - now);
             now = nextArc.baseTime;
@@ -73,7 +78,6 @@ export class ReboundMovie {
             rightBall = lastEvt.pos[lastEvt.pos.length-1];
             this.addBounceEvt(now, rightBall.x, rightBall.y);
 
-            currentArc = nextArc;
             nextArc = arcs[++arcIdx];
          }
       }
@@ -85,7 +89,7 @@ export class ReboundMovie {
          
          // And gate closing time
          this.evts.splice(this.evts.findIndex(v => v.time >= gateClose), 0,
-          {type: ReboundMovie.cGateOpen, time: gateClose});
+          {type: ReboundMovie.cGateClose, time: gateClose});
       }
    }
 
@@ -95,13 +99,13 @@ export class ReboundMovie {
 
    // Change position of all balls
    addBallPositionEvt(time, balls, arc) {
-      let pos = balls.map(b => ({x: b.x, y: 0.0}));
+      let pos = balls.map(b => ({x: b.x, y: ReboundMovie.cRadius + 1.0}));
 
       if (arc) {
          let arcTime = time - arc.baseTime;
          pos.push({
             x: arc.xPos + arcTime * arc.xVlc,
-            y: arc.yPos + arcTime * arc.yVlc - arc.g*arcTime*arcTime/2
+            y: arc.yPos + arcTime * arc.yVlc + arc.g*arcTime*arcTime/2
          })
       }
       this.evts.push({type: ReboundMovie.cBallPosition, time, pos});

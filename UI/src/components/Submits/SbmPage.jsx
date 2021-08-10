@@ -6,6 +6,7 @@ import {LandGrab} from './LandGrab/LandGrab';
 import {LGSubmitModal} from './LandGrab/LGSubmitModal';
 import {Rebound} from './Rebound/Rebound';
 import {RbnSubmitModal} from './Rebound/RbnSubmitModal';
+
 // Set up a page managing submissions for a competition and team.  This includes
 // a submission dialog, automatic polling for a test result on any standing
 // submission, and a display of the results.
@@ -152,8 +153,8 @@ export default class SbmPage extends Component {
       else if (ctpName === "Rebound") {
          prbDiagram = (<Rebound className="clearfix"
           prms={cmp.prms} sbm={sbm}/>);
-         //sbmDialog = (<RbnSubmitModal prms={cmp.prms}
-         // submitFn={this.state.sbmFunction}/>);
+         sbmDialog = (<RbnSubmitModal prms={cmp.prms}
+          submitFn={this.state.sbmFunction}/>);
       }
 
       return (<div className="container">
