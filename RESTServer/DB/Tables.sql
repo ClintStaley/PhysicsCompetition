@@ -26,6 +26,7 @@ create table Competition (
    id int auto_increment primary key,
    ownerId int not null,
    ctpId int not null,
+   hints varchar(30),
    title varchar(80) not null,
    prms varchar(8192) not null,
    description varchar(500) not null,
