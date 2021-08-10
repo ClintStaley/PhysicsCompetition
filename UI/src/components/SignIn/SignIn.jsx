@@ -31,7 +31,7 @@ class SignIn extends Component {
       this.props.signIn(this.state, () => {
         if (Object.keys(this.props.prs).length !== 0){
            this.props.getTeamsByPrs(this.props.prs.id);
-           this.props.history.push("/MyCmpsPage");
+           this.props.history.push("/ActiveCmpsPage");
         }
       }));
 
