@@ -9,7 +9,8 @@ import './cmp.css';
 class CmpsPage extends Component {
    constructor(props) {
       super(props);
-
+      // Important prop to understand is the showAll property
+      // showAll == true -> joinCmps page, else activeCmpsPage
       this.state = {
          showDeleteConfirmation: null,
          expanded: {},
@@ -17,15 +18,17 @@ class CmpsPage extends Component {
       }
    }
 
+
    static getDerivedStateFromProps(newProps, oldState) {
       let rtn = { ...oldState };
-
+      // If the props are the same, return oldState., else enter if statement
       if ((newProps.cmps !== oldState.cmps) || (newProps.showAll !==
          oldState.showAll)) {
          var cmpsByCtp = [];
          var cmpIds = Object.keys(newProps.cmps);
          var ctpIds = Object.keys(newProps.ctps);
 
+         //Join cmp page
          if (newProps.showAll === true) {
             ctpIds.forEach(id => { cmpsByCtp[newProps.ctps[id].id] = [] });
 
@@ -35,27 +38,27 @@ class CmpsPage extends Component {
             }
             return {
                showDeleteConfirmation: null,
-               cmpsByCtp: cmpsByCtp
+               cmpsByCtp
             }
-
-         } else {
+         }
+         // Current cmps page
+         else { 
             for (var i = 0; i < newProps.prs.myCmps.length; i++) {
                var currentCmp = newProps.cmps[newProps.prs.myCmps[i]];
-               if (currentCmp === undefined) {
+               if (currentCmp === undefined) 
                   return {
                      showDeleteConfirmation: null,
-                     cmpsByCtp: cmpsByCtp
+                     cmpsByCtp
                   }
-               }
-               if (currentCmp && typeof (cmpsByCtp[currentCmp.ctpId]) !== Array)
+               if (currentCmp && !Array.isArray(cmpsByCtp[currentCmp.ctpId]))
                   cmpsByCtp[currentCmp.ctpId] = [currentCmp];
                else
                   cmpsByCtp[currentCmp.ctpId].push(currentCmp);
-            }
+               }
          }
          return {
             showDeleteConfirmation: null,
-            cmpsByCtp: cmpsByCtp
+            cmpsByCtp
          }
       }
       rtn.cmps = newProps.cmps;
@@ -93,7 +96,7 @@ class CmpsPage extends Component {
       this.setState({ showDeleteConfirmation: cmpId });
    }
 
-
+   // render uses ternary operator on showAll prop to decide which page to load
    render() {
       var props = this.props;
       var ctps = Object.keys(props.ctps);
@@ -148,16 +151,17 @@ const ActiveCompetitionItem = function (props) {
          <div>{props.description}</div>
          <Button onClick={toggleView}>Show My Competitions</Button>
          {expanded ?
-            props.cmps.map((cmp, i) => {
+             <ListGroup>{
+               props.cmps.map((cmp, i) => {
                var cmpItem = cmp;
-
                return <CmpItem
                   key={i}
                   link={'MyCmpPage/' + cmp.id}
                   title={cmpItem.title}
                   joined={true}
                />
-            })
+            })}
+             </ListGroup>
             : ""
          }
       </ListGroupItem>
@@ -206,7 +210,7 @@ const CmpItem = function (props) {
    )
 }
 
-//makes CmpsPage a container componet, rather than a presentational componet
+//makes CmpsPage a container component, rather than a presentational component
 function mapStateToProps(state) {
    return {
       prs: state.prs,
