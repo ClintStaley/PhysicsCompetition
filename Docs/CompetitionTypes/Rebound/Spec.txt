@@ -101,7 +101,7 @@ Example Submission
    ]
 }
 
-Response schema
+Response schema (not current)
 
 {
    "$schema": "http://json-schema.org/draft-07/schema#",
@@ -158,4 +158,70 @@ Example Response:
      {"time": 0.2, "leftSide": 1, "newLeftSpeed": -1.5, "newRightSpeed": 0},
      {"time": 0.3, "leftSide": -1, "newLeftSpeed": 0, "newRightSpeed": 1.0}
    ] 
+}
+
+Current example Response
+{
+    "valid": true,
+    "sbmPenalty": null,
+    "rebounds": [
+        {
+            "idLeft": 0,
+            "time": 0.07000000000000002,
+            "speedLeft": 0.6000000000000001,
+            "speedRight": 2.6
+        },
+        {
+            "idLeft": 1,
+            "time": 0.10461538461538465,
+            "speedLeft": -2.6,
+            "speedRight": 0
+        },
+        {
+            "idLeft": 0,
+            "time": 0.12625000000000003,
+            "speedLeft": -0.039999999999999925,
+            "speedRight": 3.16
+        },
+        {
+            "idLeft": -1,
+            "time": 15.72000000000003,
+            "speedLeft": 0,
+            "speedRight": 0.039999999999999925
+        }
+    ],
+    "launchArcs": [
+        {
+            "baseTime": 0.16936708860759495,
+            "xPos": 1,
+            "yPos": 1.08,
+            "xVlc": 3.16,
+            "yVlc": 0,
+            "g": -9.81
+        },
+        {
+            "baseTime": 0.6208907295933258,
+            "xPos": 2.42681470551491,
+            "yPos": 0.08000000000000007,
+            "xVlc": 3.16,
+            "yVlc": 4.4294469180700204,
+            "g": -9.81
+        },
+        {
+            "baseTime": 1.07126582278481,
+            "xPos": 3.85,
+            "yPos": 1.0799935295102154,
+            "xVlc": 3.16,
+            "yVlc": 0,
+            "g": 0
+        },
+        {
+            "baseTime": 1.3877215189873415,
+            "xPos": 4.85,
+            "yPos": 1.0799935295102154,
+            "xVlc": 3.16,
+            "yVlc": 0,
+            "g": 0
+        }
+    ]
 }
