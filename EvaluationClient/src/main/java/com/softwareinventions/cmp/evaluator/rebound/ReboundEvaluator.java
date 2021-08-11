@@ -69,12 +69,30 @@ public class ReboundEvaluator implements Evaluator {
       }
    }
    
+   private static class ReboundBallArc {
+      public double baseTime;  // Starting time
+      public double xPos;      // Starting position
+      public double yPos;
+      public double xVlc;      // Starting velocity
+      public double yVlc;
+      public double g;      
+      
+      public ReboundBallArc(BallArc bA) {
+         baseTime = bA.baseTime;
+         xPos = bA.xPos;
+         yPos = bA.yPos;
+         xVlc = bA.xVlc;
+         yVlc = bA.yVlc;
+         g = bA.g;
+      }
+   }
+   
    // Results of rebound design spec
    public static class RbnResults {
       public boolean valid;        // Good init config and correct jumpLength
       public Double sbmPenalty;    // Score penalty for excess submits or null
       public Rebound[] rebounds;   // Rebounds in time order
-      public BallArc[] launchArcs; // Arcs taken by launched ball
+      public ReboundBallArc [] launchArcs; // Arcs taken by launched ball
    }
 
    static Logger lgr = Logger.getLogger(ReboundEvaluator.class);
@@ -107,17 +125,17 @@ public class ReboundEvaluator implements Evaluator {
       
 System.out.printf("Next arc for: %f %f %f %f %f %f\n",
  arc.baseTime, arc.g, arc.xPos, arc.yPos, arc.xVlc, arc.yVlc);
-      cndArcs.add(arc.fromVerticalHit(0, cFullHeight, cChuteLength)); // #1
-      cndArcs.add(arc.fromHorizontalHit(cChuteLength, rightX, 0.0));
-      cndArcs.add(arc.fromVerticalHit(0, cChuteHeight - cMargin, rightX));
-      cndArcs.add(arc.fromCornerHit(rightX, cChuteHeight - cMargin));
+      cndArcs.add(arc.fromVerticalHit(0, cFullHeight, cChuteLength, 0)); // #1
+      cndArcs.add(arc.fromHorizontalHit(cChuteLength, rightX, 0.0, 0));
+      cndArcs.add(arc.fromVerticalHit(0, cChuteHeight - cMargin, rightX, 0));
+      cndArcs.add(arc.fromCornerHit(rightX, cChuteHeight - cMargin, 0));
       cndArcs.add(arc.fromVerticalHit(cChuteHeight - cMargin,
-       cChuteHeight + cDiameter + cMargin, rightX + cRadius));
+       cChuteHeight + cDiameter + cMargin, rightX + cRadius, 0));
       cndArcs.add(arc.fromCornerHit(rightX, cChuteHeight + cDiameter
-       + cMargin));
+       + cMargin, 0));
       cndArcs.add(arc.fromVerticalHit(cChuteHeight + cDiameter + cMargin,
-       cFullHeight, rightX));
-      cndArcs.add(arc.fromHorizontalHit(cChuteLength, rightX, cFullHeight));
+       cFullHeight, rightX, 0));
+      cndArcs.add(arc.fromHorizontalHit(cChuteLength, rightX, cFullHeight, 0));
 System.out.printf("Done\n");
 
       return cndArcs.stream().filter(a -> a != null)
@@ -168,6 +186,8 @@ System.out.printf("Done\n");
       List<Rebound> rebounds = new LinkedList<Rebound>();
       List<BallArc> launchArcs = new LinkedList<BallArc>();
       RbnResults rtn = new RbnResults();
+      BallArc[] tempBallArcs = null; // Holds RbnResults ball arcs as ballArcs and at
+      // the end converts all the ballArcs to reduced format to be serialized
       Double score = null;
       int minIdx, ballIdx;
       double minTime, hitTime, elapsedTime = 0.0;
@@ -180,7 +200,7 @@ System.out.printf("Done\n");
       // Invalid spec results in empty, invalid, no-score reply
       if (!validSpec(spec)) {
          rtn.rebounds = new Rebound[0];
-         rtn.launchArcs = new BallArc[0];
+         rtn.launchArcs = new ReboundBallArc[0];
 
          return new EvlPut(sbm.cmpId, sbm.teamId, sbm.id,
           new Evl(mapper.writeValueAsString(rtn), score));
@@ -219,12 +239,12 @@ for (BallSpec b: balls)
                
          // If right ball hits right side at or after gateTime, launch it.
          if (minIdx == balls.length-1 && spec.gateTime-cEps <= elapsedTime &&
-          rtn.launchArcs == null) {
+          tempBallArcs == null) {
             // Launch from chute
             launchArcs.add(lastArc = new BallArc(
                elapsedTime + cRadius / balls[minIdx].speed,
                cChuteLength, cChuteHeight + cRadius,
-               balls[minIdx].speed, 0.0, cGravity));
+               balls[minIdx].speed, 0.0, cGravity, 0, false));
             
             // Bounce off floor or right side
             launchArcs.add(lastArc = getNextArc(lastArc, rightWall));
@@ -241,7 +261,7 @@ for (BallSpec b: balls)
                launchArcs.add(lastArc);
                
                // Add final arc coming off right end of exit chute
-               launchArcs.add(lastArc.atTime(cChuteLength / lastArc.xVlc));
+               launchArcs.add(lastArc.atTime(cChuteLength / lastArc.xVlc, 0, false ));
             }
             else {
                int limit = 4;
@@ -254,8 +274,8 @@ for (BallSpec b: balls)
                }
             }
             
-            rtn.launchArcs = launchArcs.toArray(new BallArc[0]);
-            finalTime = rtn.launchArcs[rtn.launchArcs.length - 1].baseTime;
+            tempBallArcs = launchArcs.toArray(new BallArc[0]);
+            finalTime = tempBallArcs[tempBallArcs.length - 1].baseTime;
             balls = Arrays.copyOf(balls, balls.length-1); // Lose right ball
          } 
          else if (minIdx < 0) { // Left wall bounce
@@ -295,7 +315,10 @@ for (BallSpec b: balls)
             score -= rtn.sbmPenalty;
          }
       }
-      
+      rtn.launchArcs = new ReboundBallArc[tempBallArcs.length];
+      for(int i = 0; i< tempBallArcs.length; i++)
+         rtn.launchArcs[i] = new ReboundBallArc(tempBallArcs[i]);
+         
       EvlPut eval = new EvlPut(sbm.cmpId, sbm.teamId, sbm.id,
             new Evl(mapper.writeValueAsString(rtn), score));
       

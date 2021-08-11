@@ -6,6 +6,8 @@ import java.util.OptionalDouble;
 import org.apache.commons.math3.analysis.solvers.LaguerreSolver;
 import org.apache.commons.math3.complex.Complex;
 
+//import com.softwareinventions.cmp.evaluator.bounce.BounceEvaluator.Collision.HitType;
+
 
 
 //Represent one arc of a gravitationally free-falling ball, starting with
@@ -18,6 +20,8 @@ public class BallArc {
    public double xVlc;      // Starting velocity
    public double yVlc;
    public double g;         // Gravity (or zero)
+   public int colliderId; // Id of object collided with, may be zero if unused
+   public boolean corner;  // is corner Collision?
    
    private static double radius, eps;
    
@@ -29,13 +33,15 @@ public class BallArc {
    public double yVlcFn(double relTime) {return yVlc + relTime * g;}
    
    public BallArc(double baseTime, double xPos, double yPos, double xVlc,
-    double yVlc, double g) {
+    double yVlc, double g, int cId, boolean c) {
       this.baseTime = baseTime;
       this.xPos = xPos;
       this.yPos = yPos;
       this.xVlc = xVlc;
       this.yVlc = yVlc;
       this.g = g;
+      this.colliderId = cId;
+      this.corner = c;
       
 System.out.printf("BallArc: %f (%f, %f) going (%f, %f)\n", baseTime,
 xPos, yPos, xVlc, yVlc);
@@ -48,14 +54,14 @@ xPos, yPos, xVlc, yVlc);
    }
 
    // Return new BallArc based on position and velocity at |relTime|
-   public BallArc atTime(double relTime) {
-      return new BallArc(baseTime + relTime, xPosFn(relTime),
-       yPosFn(relTime), xVlcFn(relTime), yVlcFn(relTime), g);
+   public BallArc atTime(double relTime, int cId, boolean c) {
+      return new BallArc(baseTime + relTime, xPosFn(relTime), yPosFn(relTime), 
+       xVlcFn(relTime), yVlcFn(relTime), g, cId, c);
    }
    
    // Return new BallArc based on hit against a vertical wall at |x| with
    // y-range [loY, hiY], or return null if no such hit will occur.
-   public BallArc fromVerticalHit(double loY, double hiY, double x) {
+   public BallArc fromVerticalHit(double loY, double hiY, double x, int cId) {
       double yValue, xHitTime;
       BallArc rtn = null;
       
@@ -69,14 +75,14 @@ xPos, yPos, xVlc, yVlc);
       
       // Throw out negative times.
       if (xHitTime > 0 && GenUtil.inBounds(loY, yValue, hiY)) {
-         rtn = atTime(xHitTime);
+         rtn = atTime(xHitTime, cId, false);
          rtn.xVlc = -rtn.xVlc;
       }
 
       return rtn;
    }
    
-   public BallArc fromHorizontalHit(double loX, double hiX, double y) {
+   public BallArc fromHorizontalHit(double loX, double hiX, double y, int cId) {
       BallArc rtn = null;
       double[] yHitTimes; 
       double yHitTime, xHit;
@@ -91,18 +97,20 @@ xPos, yPos, xVlc, yVlc);
          yHitTime = yHitTimes[0] >= 0 ? yHitTimes[0] : yHitTimes[1];
          xHit = xPosFn(yHitTime);
          if (GenUtil.inBounds(loX, xHit, hiX)) {
-            rtn = atTime(yHitTime);
+            rtn = atTime(yHitTime, cId, false);
             rtn.yVlc = -rtn.yVlc;
          }
       }
       return rtn;
    }
    
+   
    /* Generate a new BallArc representing the result of the current BallArc
     * colliding with a corner at (x,y), or null if no collision would occur.
     * Do this by solving a polynomial whose real roots give the times at
     * which the difference between the ball position and point (x,y) equals
-    * the ball radius.  
+    * the ball radius. cId is for CollisionId, and it is an optional field,
+    * so if it is an unused variable, it may be null. 
     * 
     * Given:
     * r = Radius of the ball
@@ -127,7 +135,7 @@ xPos, yPos, xVlc, yVlc);
     * ((G/2)^2)t^4 + (G Vy)t^3 + (Vx^2 + Vy^2 + G Dy)t^2 + 2(DxVx + DyVy)t +
     * (Dx^2 + Dy^2 - r^2) = 0
     */
-   public BallArc fromCornerHit(double x, double y) {
+   public BallArc fromCornerHit(double x, double y, int cId) {
       double[] coef = new double[5];
       double magnitude, dX = (xPos - x), dY = (yPos - y), proximity;
       OptionalDouble firstHit;
@@ -154,7 +162,7 @@ xPos, yPos, xVlc, yVlc);
 
       // We hit the point.  Subtract 2x our velocity component toward corner
       if (firstHit.isPresent()) {
-         rtn = atTime(firstHit.getAsDouble());        
+         rtn = atTime(firstHit.getAsDouble(), cId, true);        
          
          // Unit vector from ball center to corner
          dX = (x - rtn.xPos) / radius;
@@ -169,4 +177,29 @@ xPos, yPos, xVlc, yVlc);
 
       return rtn;
    }
+   /*
+   
+   // Represent one Collision, including its type, its time, the location of
+   // circle center as of the collision, and the index of the struck obstacle.
+   public static class Collision {
+      public enum HitType {
+         CORNER, HORIZONTAL, VERTICAL // Hit corner, top/bottom, or left/right
+      };
+
+      public HitType hType;
+
+      public double time;
+      public double xHit;
+      public double yHit;
+
+      public int obstacleIdx = -1;
+
+      public Collision(double time, HitType hType, double xHit, double yHit) {
+         this.time = time;
+         this.hType = hType;
+         this.xHit = xHit;
+         this.yHit = yHit;
+      }
+   }
+   */
 }

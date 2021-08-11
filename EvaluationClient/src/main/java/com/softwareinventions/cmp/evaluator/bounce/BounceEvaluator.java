@@ -4,18 +4,13 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.OptionalDouble;
 import java.util.stream.Stream;
-
-import org.apache.commons.math3.analysis.UnivariateFunction;
-import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
-import org.apache.commons.math3.analysis.solvers.LaguerreSolver;
-import org.apache.commons.math3.complex.Complex;
 import org.apache.log4j.Logger;
 import com.softwareinventions.cmp.dto.Submit;
 import com.softwareinventions.cmp.evaluator.Evaluator;
 import com.softwareinventions.cmp.evaluator.Evl;
 import com.softwareinventions.cmp.evaluator.EvlPut;
+import com.softwareinventions.cmp.util.BallArc;
 import com.softwareinventions.cmp.util.GenUtil;
 
 public class BounceEvaluator implements Evaluator {
@@ -28,29 +23,6 @@ public class BounceEvaluator implements Evaluator {
    public static final double cErrFactor = 0.01;
    public static final int cSbmLimit = 5;  
    public static final double cSbmPenalty = .9;
-   
-   // Represent one Collision, including its type, its time, the location of
-   // circle center as of the collision, and the index of the struck obstacle.
-   private static class Collision {
-      public enum HitType {
-         CORNER, HORIZONTAL, VERTICAL // Hit corner, top/bottom, or left/right
-      };
-
-      public HitType hType;
-
-      public double time;
-      public double xHit;
-      public double yHit;
-
-      public int obstacleIdx = -1;
-
-      public Collision(double time, HitType hType, double xHit, double yHit) {
-         this.time = time;
-         this.hType = hType;
-         this.xHit = xHit;
-         this.yHit = yHit;
-      }
-   }
 
    // One rectangular obstacle, either barrier or target
    private static class Obstacle {
@@ -69,28 +41,6 @@ public class BounceEvaluator implements Evaluator {
       public Obstacle[] barriers;    // Obstacles to avoid
    }
    
-   private static class BallEquations {
-      // CAS QUESTION: Why are we not using java.function.UnaryOperator? A quick
-      // test suggests it should work fine. E.g.
-      // public java.util.function.UnaryOperator<Double> xPos;
-      
-      public UnivariateFunction xPos;
-      public UnivariateFunction yPos;
-      public UnivariateFunction xVelocity;
-      public UnivariateFunction yVelocity;
-      
-      // Create equations to compute X/Y position and velocity components given
-      // a starting point expressed as a BounceEvent.
-      public BallEquations(BounceEvent current) {
-         xPos = t -> (t) * current.velocityX + current.posX;
-         xVelocity = t  -> current.velocityX;
-
-         yPos = t -> cGravity / 2.0 * GenUtil.sqr((t )) + 
-               current.velocityY * (t ) + current.posY;
-         yVelocity = t -> cGravity * (t ) + current.velocityY;
-      }
-   }
-
    public static class LaunchSpec {
       public double speed;
       public double finalX;
@@ -114,30 +64,15 @@ public class BounceEvaluator implements Evaluator {
       public int obstacleIdx;
       public boolean corner;
 
-      // Create a starting bounce event.
-      public BounceEvent(double startingHeight, double speed) {
-         obstacleIdx = -1;
-         posX = 0;
-         posY = startingHeight;
-         velocityX = speed;
-         velocityY = 0.0;
-         time = 0.0;
-      }
-
-      // Create a BounceEvent representing the situation that exists |time|
-      // seconds after |current|.
-      public BounceEvent(BounceEvent current, double time) {
-         // Get all equations.
-         // CAS: Why is ballFunctions not a member created on construction?
-         // Indeed, why is it a separate class at all?  
-         BallEquations ballFunctions = new BallEquations(current);
-
-         obstacleIdx = -1;
-         this.time = time + current.time;
-         posX = ballFunctions.xPos.value(time);
-         velocityX = ballFunctions.xVelocity.value(time);
-         posY = ballFunctions.yPos.value(time);
-         velocityY = ballFunctions.yVelocity.value(time);
+      //create conversion from BallArc to BounEvt
+      public BounceEvent(BallArc bA) {
+         time = bA.baseTime;
+         velocityX = bA.xVlc;
+         velocityY = bA.yVlc;
+         posX = bA.xPos;
+         posY = bA.yPos;
+         obstacleIdx = bA.colliderId;
+         corner = bA.corner;
       }
    }
 
@@ -159,9 +94,6 @@ public class BounceEvaluator implements Evaluator {
       }
    }
 
-   // Constructor only for testing this class.
-   public BounceEvaluator() {}
-
    // Evaluate a list of ball speeds comprising a single sbm.
    @Override
    public EvlPut evaluate(Submit sbm) throws Exception {
@@ -171,6 +103,7 @@ public class BounceEvaluator implements Evaluator {
       int barrierCount = prms.barriers.length;
       Double score = null;
       int idx;
+      BallArc.setGlobals(cRadius, cEps);
 
       // Assign all targets ID numbers based on their index.
       for (idx = 0; idx < targetCount; idx++)
@@ -195,17 +128,21 @@ public class BounceEvaluator implements Evaluator {
       double totalTime = 0.0;
 
       for (int i = 0; i < numBalls; i++) {
-         BounceEvent startEvent = new BounceEvent(cStartingHeight,
-               sbmData[i].speed);
+         BallArc initialArc = new BallArc(0, 0, cStartingHeight, sbmData[i].speed,
+          0, cGravity, 0, false);
+         //BounceEvent startEvent = new BounceEvent(cStartingHeight,
+           //    sbmData[i].speed);
 
          // Gets all other events for a given ball and return an array starting
          // with event given.
-         rspB.events[i] = calculateOneBall(obstacles, startEvent);
+         rspB.events[i] = calculateOneBall(obstacles, initialArc);
          totalTime += rspB.events[i][rspB.events[i].length - 1].time;
       }
 
       rspB.valid = isGoodAnswer(obstacles, prms, rspB.events, sbmData);
 
+      
+      //Calculating Score
       if (rspB.valid) {
          score = (double) Math.round(100.0 * prms.targetTime 
                / (totalTime + (numBalls - 1.0)));
@@ -256,23 +193,14 @@ public class BounceEvaluator implements Evaluator {
 
       return obs.size() == prm.barriers.length;
    }
-
-/* CAS Comments:  I stopped here, and would invite you to do a review of the rest, paying attention to:
- 1. Careful naming.  You had "obstacle" meaning both a general rectangle, and a target to hit, while "block"
-    meant an obstacle to avoid.  I renamed this to "targets" and "barriers", leaving obstacle to describe the
-    general case.  I considered keeping "block" for barrier, but the rectangles are all "blocks" geometrically
-    so that seemed a bit ambiguous.
- 2. Careful wording of comments for clarity
- 3. *Not* commenting the obvious
- 4. Consistent patterns of code, and in some cases, code conciseness.
- 5. Naming according to the rules. (No caps for members, for instance.)
-*/
    
+   //Returns the ball Events for 
    private BounceEvent[] calculateOneBall(LinkedList<Obstacle> obstacles,
-         BounceEvent StartingPoint) {
+         BallArc arc) {
       LinkedList<BounceEvent> ballEvents = new LinkedList<BounceEvent>();
-      ballEvents.add(StartingPoint);
-
+      //Check for collision obs
+      //ballEvents.add(StartingPoint);
+/*
       Optional<Collision> nextCollision = 
             getNextCollision(obstacles, StartingPoint);
 
@@ -289,50 +217,11 @@ public class BounceEvaluator implements Evaluator {
 
       // Return events as array, so that I can send the correct format as
       // response.
+       * */
+       
       return ballEvents.toArray(new BounceEvent[ballEvents.size()]);
    }
 
-   // Returns the new ball event after calculating all values,
-   // may return null, if no collisions occur.
-   private BounceEvent calculateBallCollision(BounceEvent current,
-         Collision collision) {
-      BounceEvent newBallEvent = new BounceEvent(current, collision.time);
-
-      // Horizontal or vertical hits, mean just flip velocity.
-      // Corner hit means calculate new x velocity and y velocity.
-      switch (collision.hType) {
-      case VERTICAL:
-         newBallEvent.velocityX = -newBallEvent.velocityX;
-         newBallEvent.obstacleIdx = collision.obstacleIdx;
-         break;
-      case HORIZONTAL:
-         newBallEvent.velocityY = -newBallEvent.velocityY;
-         newBallEvent.obstacleIdx = collision.obstacleIdx;
-         break;
-      case CORNER:
-         double dx = (collision.xHit - newBallEvent.posX) / cRadius;
-         double dy = (collision.yHit - newBallEvent.posY) / cRadius;
-
-         // Magnitude of velocity component in collision direction.
-         double magnitude = dx * newBallEvent.velocityX
-               + dy * newBallEvent.velocityY;
-
-         newBallEvent.velocityX = newBallEvent.velocityX
-               + (-2.0 * magnitude * dx);
-         newBallEvent.velocityY = newBallEvent.velocityY
-               + (-2.0 * magnitude * dy);
-
-         newBallEvent.obstacleIdx = collision.obstacleIdx;
-         newBallEvent.corner = true;
-         break;
-      default:
-         // should never happen
-         return null;
-
-      }
-      
-      return newBallEvent;
-   }
 
    // Calculate where and when the ball will hit the border, resulting in
    // the last event.
@@ -377,226 +266,27 @@ public class BounceEvaluator implements Evaluator {
    
    // Calculates and return the first Collision of the ball with |obstacle|,
    // or null if there is no collision.
-   private Collision getObstacleCollision(Obstacle obs, BounceEvent evt) {
+   private BallArc getObstacleCollision(Obstacle obs, BallArc arc) {
       
-      Optional<Collision> rtn = Stream.of(
-         getHorizontalEdgeCollision(obs.loX, obs.hiX, obs.hiY + cRadius, evt),
-         getHorizontalEdgeCollision(obs.loX, obs.hiX, obs.loY - cRadius, evt),
-         getVerticalEdgeCollision(obs.loY, obs.hiY, obs.hiX + cRadius, evt),
-         getVerticalEdgeCollision(obs.loY, obs.hiY, obs.loX - cRadius, evt),
-         getCornerCollision(obs.hiX, obs.hiY, evt),
-         getCornerCollision(obs.hiX, obs.loY, evt),
-         getCornerCollision(obs.loX, obs.hiY, evt),
-         getCornerCollision(obs.loX, obs.loY, evt))
+      Optional<BallArc> rtn = Stream.of(
+         arc.fromHorizontalHit(obs.loX, obs.hiX, obs.hiY + cRadius, obs.id),
+         arc.fromHorizontalHit(obs.loX, obs.hiX, obs.loY - cRadius, obs.id),
+         arc.fromVerticalHit(obs.loY, obs.hiY, obs.hiX + cRadius, obs.id),
+         arc.fromVerticalHit(obs.loY, obs.hiY, obs.loX - cRadius, obs.id),
+         arc.fromCornerHit(obs.hiX, obs.hiY, obs.id),
+         arc.fromCornerHit(obs.hiX, obs.loY, obs.id),
+         arc.fromCornerHit(obs.loX, obs.hiY, obs.id),
+         arc.fromCornerHit(obs.loX, obs.loY, obs.id))
       .filter(c -> c != null)
-      .min((c1, c2) -> Double.compare(c1.time, c2.time));
+      .min((c1, c2) -> Double.compare(c1.baseTime, c2.baseTime));
       
       if (rtn.isPresent()) {
-         rtn.get().obstacleIdx = obs.id;
-         lgr.info("Best Time is: " + rtn.get().time);
+         //rtn.get().obstacleIdx = obs.id;
+         lgr.info("Best Time is: " + rtn.get().baseTime);
          return rtn.get();
       }
       
       return null;
-   }
-
-   // Calculate and return the Collision between the ball and the horizontal
-   // edge of an obstacle at x, bounded by loY and hiY.  Return null if there
-   // is no such collision.
-   private Collision getHorizontalEdgeCollision(double loX, double hiX,
-         double y, BounceEvent current) {
-      // Get equations for event.
-      BallEquations equations = new BallEquations(current);
-      
-      // Get time when y value will be lined up with edge.
-      double[] yHitTimes = GenUtil.quadraticSolution(cGravity / 2.0,
-       current.velocityY, current.posY - y);
-      
-      if (yHitTimes == null)
-         return null;
-
-      for (int idx = 0; idx < yHitTimes.length; idx++) {
-         // Throw out negative times.
-         if (yHitTimes[idx] < 0.0)
-            continue;
-         
-         // Calculate x value at time of collision.
-         double xValue = equations.xPos.value(yHitTimes[idx]);
-         
-         if (GenUtil.inBounds(loX, xValue, hiX)) {
-            // We have a hit on the horizontal edge.
-            Collision collision = new Collision(yHitTimes[idx],
-                  Collision.HitType.HORIZONTAL, -1, -1);
-            
-            return collision;
-         }
-      }
-
-      return null;
-   }
-
-   // Calculate and return the Collision between the ball and the vertical
-   // edge of an obstacle at x, bounded by loY and hiY.  Return null if there
-   // is no such collision.
-   private Collision getVerticalEdgeCollision(double loY, double hiY, double x,
-         BounceEvent current) {
-      // Get equations for event.
-      BallEquations equations = new BallEquations(current);
-
-      // Get time when x value will be lined up with edge.
-      double xHitTime = (x - current.posX) / current.velocityX;
-      
-      // Throw out negative times.
-      if (xHitTime < 0)
-         return null;
-
-      // Get y value at possible collision time.
-      double yValue = equations.yPos.value(xHitTime);
-
-      if (GenUtil.inBounds(loY, yValue, hiY)) {
-         Collision collision = new Collision(xHitTime,
-               Collision.HitType.VERTICAL, -1, -1);
-         
-         return collision;
-      }
-
-      return null;
-   }
-
-   // Return a Collision representing the ball's collision with the obstacle
-   // corner at (x,y), or null if it doesn't collide.
-   private Collision getCornerCollision(double x, double y,
-         BounceEvent current) {
-
-      PolynomialFunction cornerEquation = getPolynomial(current, x, y);
-
-      Complex[] solutions = new LaguerreSolver().solveAllComplex
-        (cornerEquation.getCoefficients(), 0);
-
-      OptionalDouble timeOfImpact = findUsefulSolution(current.time, solutions);
-
-      // We hit a corner
-      if (timeOfImpact.isPresent()) {
-         Collision collision = new Collision(timeOfImpact.getAsDouble(),
-               Collision.HitType.CORNER, x, y);
-         
-         return collision;
-      }
-
-      return null;
-   }
-
-
-   // Helper for the LaguerreSolver, returns the lowest time in |solutions|
-   // that is greater than curTime and not a complex number, or return NULL
-   // if none is found.
-   public OptionalDouble findUsefulSolution(double curTime,
-         Complex[] solutions) {
-      
-      return Arrays.stream(solutions).filter
-            (s -> Math.abs(s.getImaginary()) < cEps && s.getReal() > 0)
-            .mapToDouble(s -> s.getReal()).min();
-   }
-
-   /* Return a PolynomialFunction whose real roots give the times at which the
-    * distance between a moving circle center and a point (e.g. an obstacle
-    * corner) is exactly equal to the radius of the circle.  Such times
-    * correspond to circle/point collisions.
-    * 
-    * Given:
-    * r = Radius of the circle
-    * Px, Py = Position of circle center at time 0
-    * Vx, Vy = Velocity of circle center at time 0
-    * 
-    * Cx, Cy = location of target point (obstacle corner)
-    * Dx, Dy = (Px - Cx), (Py - Cy) the vector from target point circle center
-    * to target point at time 0, 
-    * G = gravitational acceleration (as a negative, downward value)
-    * 
-    * The equation for squared circle center to point distance is:
-    * 
-    * (Dx + tVx)^2 + (Dy + tVy + (G/2)t^2)^2
-    * 
-    *  Setting this to r^2...
-    * 
-    * (Dx + tVx)^2 + (Dy + tVy + (G/2)t^2)^2 = r^2
-    * 
-    * ... and simplifying, we arrive at:
-    * 
-    * ((G/2)^2)t^4 + (G Vy)t^3 + (Vy^2 + Vx^2 + G Dy)t^2 + 2(DyVy + DxVx)t +
-    * (Dy^2 + Dx^2 - r^2) = 0
-    */
-   public PolynomialFunction getPolynomial(BounceEvent event, double cX,
-         double cY) {
-      double[] coef = new double[5];
-
-      double dY = (event.posY - cY);
-      double dX = (event.posX - cX);
-
-      // Coefficient of t^0
-      coef[0] = GenUtil.sqr(dX) + GenUtil.sqr(dY) - GenUtil.sqr(cRadius);
-
-      // Coefficient of t^1
-      coef[1] = 2 * (dY * event.velocityY + dX * event.velocityX);
-
-      // Coefficient of t^2
-      coef[2] = GenUtil.sqr(event.velocityY) + GenUtil.sqr(event.velocityX)
-            + cGravity * dY;
-
-      // Coefficient of t^3
-      coef[3] = (cGravity * event.velocityY);
-
-      // Coefficient of t^4
-      coef[4] = GenUtil.sqr(cGravity / 2.0);
-
-      return new PolynomialFunction(coef);
-   }
-
-   // Tester main, used only to test functions
-   public static void main(String[] args) {
-      // Test obstacles to use
-      LinkedList<Obstacle> obstacles = new LinkedList<Obstacle>();
-      Obstacle plat = new Obstacle();
-
-      plat.hiX = 60;
-      plat.loX = 0;
-      plat.hiY = 25;
-      plat.loY = 20;
-      plat.id = 0;
-
-      obstacles.add(plat);
-
-      BounceEvent start = new BounceEvent(cStartingHeight, 10);
-      start.posX = 10;
-      start.posY = 10;
-      start.velocityX = 0;
-      start.velocityY = 0;
-
-      BounceEvaluator eval = new BounceEvaluator();
-
-      Collision testCollision = eval.getObstacleCollision(plat, start);
-
-      if (testCollision != null) {
-         System.out.println(testCollision.hType);
-         System.out.println(testCollision.xHit);
-         System.out.println(testCollision.yHit);
-      } else {
-         System.out.println("miss");
-      }
-
-      double x = 10;
-      double y = 15;
-
-      Collision cornerTest = eval.getCornerCollision(x, y, start);
-
-      System.out.println("");
-      if (cornerTest != null) {
-         System.out.println(cornerTest.hType);
-         System.out.println(cornerTest.xHit);
-         System.out.println(cornerTest.yHit);
-      } else {
-         System.out.println("miss Corner");
-      }
    }
 
 }
