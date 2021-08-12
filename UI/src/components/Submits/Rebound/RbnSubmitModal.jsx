@@ -9,9 +9,9 @@ export class RbnSubmitModal extends Component {
       super(props);
  
       this.state = {
-         gateTime: null,
+         gateTime: NaN,
          strGateTime:"",
-         jumpLength: null,
+         jumpLength: NaN,
          strJumpLength: "", 
          ballStarts: [],
          unchosen: props.prms.balls.map(
@@ -40,10 +40,19 @@ export class RbnSubmitModal extends Component {
       }
    }
  
+   sortUnchosen(unchosen) {
+      let prms = this.props.prms;
+
+      return unchosen.sort((b1, b2) => {
+         let w1 = prms.balls[b1.value].weight;
+         let w2 = prms.balls[b2.value].weight;
+            return w1 < w2 ? -1 : w1 === w2 ? 0 : 1;
+      });
+   }
+
    // Special handler for the dropdown selects since they have stripped-down
    // events and need an extra |sIdx| parameter.
    handleSelect(ev, sIdx) {
-      let prms = this.props.prms;
       let unchosen = this.state.unchosen;
       let ballStarts = this.state.ballStarts;
       let ballStart = ballStarts[sIdx];
@@ -57,11 +66,7 @@ export class RbnSubmitModal extends Component {
 
          unchosen = unchosen.filter(v => v !== ev);
 
-         unchosen = unchosen.sort((b1, b2) => {
-            let w1 = prms.balls[b1.value].weight;
-            let w2 = prms.balls[b2.value].weight;
-               return w1 < w2 ? -1 : w1 === w2 ? 0 : 1;
-          });
+         this.sortUnchosen(unchosen);
          
          this.setState({unchosen, ballStarts})
       }
@@ -106,7 +111,7 @@ export class RbnSubmitModal extends Component {
       let val = Number.parseFloat(strVal); // Number form allows math checking
  
       // Only legit NaN cases past this point.
-      if (isNaN(val) && strVal && strVal !== "-")
+      if (isNaN(val) && strVal && strVal !== "-" && strVal !== ".")
          return;
 
       if (tId === 'jumpLength' && (isNaN(val) || val >= 1.0
@@ -140,10 +145,15 @@ export class RbnSubmitModal extends Component {
  
    // Return true iff all starts have complete data and are nonoverlapping
    getValidationState = () => {
-      this.state.ballStarts.forEach(st => {
+      if (isNaN(this.state.jumpLength) || isNaN(this.state.gateTime))
+         return false;
+
+      for (let idx = 0; idx < this.state.ballStarts.length; idx++) {
+         let st = this.state.ballStarts[idx];
          if (st.error || st.id === null || isNaN(st.pos) || isNaN(st.speed))
             return false;
-      });
+      }
+
       return true;
    }
  
@@ -156,9 +166,19 @@ export class RbnSubmitModal extends Component {
       this.setState({ballStarts});
    }
  
-   // Remove last text box row
+   // Remove last text box row, and restore its ball choice to the unchosen
+   // list.
    removeBall = () => {
-      this.setState({ballStarts: this.state.ballStarts.slice(0, -1)});
+      let ballStart = this.state.ballStarts[this.state.ballStarts.length-1];
+      let unchosen = this.state.unchosen;
+      let ballStarts = this.state.ballStarts.slice(0, -1);
+
+      if (ballStart.optId !== null) {
+         unchosen = this.sortUnchosen(unchosen.concat([ballStart.optId]));
+      }
+
+      this.checkPosErrors(ballStarts);   
+      this.setState({ballStarts, unchosen});
    }
  
    // Close, and also submit iff status is OK.
@@ -167,6 +187,15 @@ export class RbnSubmitModal extends Component {
    close = (status) => {
       if (status === 'OK') {
          let {gateTime, jumpLength, ballStarts} = this.state;
+
+         ballStarts = ballStarts.map(bs => {
+            let {id, pos, speed} = bs;
+
+            return {id, pos, speed};
+         })
+         ballStarts.sort(
+          (s1, s2) => s1.pos < s2.pos ? -1 : s1.pos > s2.pos ? 1 : 0);
+
          this.props.submitFn({gateTime, jumpLength, ballStarts});
       }
       else
@@ -214,7 +243,7 @@ export class RbnSubmitModal extends Component {
                   />
                </Form.Group>
                <Form.Text muted>
-                     {`Between 1.0 and ${cMaxGateTime.toPrecision(2)}`}
+                  {`Between 0 and ${cMaxGateTime.toPrecision(2)}`}
                </Form.Text>
             </div>
          </div>
@@ -244,7 +273,9 @@ export class RbnSubmitModal extends Component {
  
                <div className="col-sm-3">
                   <Form.Group controlId={idPos}>
-                     <Form.Label>Position</Form.Label>
+                     <Form.Label>{"Position" +
+                       (ballStarts[idx].error ? " (overlapping)" : "")}
+                     </Form.Label>
                      <Form.Control
                         type="text"
                         value={ballStarts[idx].strPos}
@@ -275,33 +306,30 @@ export class RbnSubmitModal extends Component {
                      <Form.Control.Feedback />
                   </Form.Group>
                </div>
-               <div className="col-sm-3 alert alert-danger">
-                  {ballStarts[idx].error ? "Overlap" : "No overlap"}
-               </div>
             </div>
          </div>)
       }
  
-       let buttons = [
-          <Button key={0} 
-           disabled={ballStarts.length >= this.props.prms.maxBalls}
-           onClick={() => {this.addBall()}}>Add Ball</Button>,
+      let buttons = [
+         <Button key={0} 
+          disabled={ballStarts.length >= this.props.prms.maxBalls}
+          onClick={() => {this.addBall()}}>Add Ball</Button>,
  
-          <Button key={1} disabled={ballStarts.length < 2}
-             onClick={() => {this.removeBall()}}>Remove Ball</Button>,
+         <Button key={1} disabled={ballStarts.length < 2}
+            onClick={() => {this.removeBall()}}>Remove Ball</Button>,
  
-          <Button key={2} disabled={!this.getValidationState()}
-             onClick={() => this.close('OK')}>OK</Button>,
+         <Button key={2} disabled={!this.getValidationState()}
+            onClick={() => this.close('OK')}>OK</Button>,
  
-          <Button key={3} onClick={() => this.close('Cancel')}>Cancel</Button>
-       ];
+         <Button key={3} onClick={() => this.close('Cancel')}>Cancel</Button>
+      ];
  
-       return (<DraggableModal
-          show={this.props.submitFn !== null}
-          onHide={() => this.close("Cancel")}
-          title="Submit Bounce Solution"
-          body={<form>{form}</form>}
-          footer={buttons}
-       />);
+      return (<DraggableModal
+         show={this.props.submitFn !== null}
+         onHide={() => this.close("Cancel")}
+         title="Submit Bounce Solution"
+         body={<form>{form}</form>}
+         footer={buttons}
+      />);
     }
  }

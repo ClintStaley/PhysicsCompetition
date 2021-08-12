@@ -28,6 +28,11 @@ public class ReboundEvaluator implements Evaluator {
    public static final double cSbmPenalty = .9;
    public static final double cMinJumpLength = .9031; // Length for 1m/s lanuch
    public static final double cBallGap = .01;         // Min initial ball gap
+   public static final double cRoundDigits = 10000.0;
+   
+   private static double round(double val) {
+      return Math.rint(val * cRoundDigits) / cRoundDigits;
+   }
    
    private static class Parameters {
       public double targetLength; // Ideal jump length
@@ -60,9 +65,9 @@ public class ReboundEvaluator implements Evaluator {
        double speedRight) {
 
          this.idLeft = idLeft;
-         this.time = time;
-         this.speedLeft = speedLeft;
-         this.speedRight = speedRight;
+         this.time = round(time);
+         this.speedLeft = round(speedLeft);
+         this.speedRight = round(speedRight);
       }
    }
    
@@ -106,15 +111,12 @@ public class ReboundEvaluator implements Evaluator {
       
       public BallArc(double baseTime, double xPos, double yPos, double xVlc,
        double yVlc, double g) {
-         this.baseTime = baseTime;
-         this.xPos = xPos;
-         this.yPos = yPos;
-         this.xVlc = xVlc;
-         this.yVlc = yVlc;
+         this.baseTime = round(baseTime);
+         this.xPos = round(xPos);
+         this.yPos = round(yPos);
+         this.xVlc = round(xVlc);
+         this.yVlc = round(yVlc);
          this.g = g;
-         
-  System.out.printf("BallArc: %f (%f, %f) going (%f, %f)\n", baseTime,
-   xPos, yPos, xVlc, yVlc);
       }
 
       // Return new BallArc based on position and velocity at |relTime|
@@ -239,6 +241,11 @@ public class ReboundEvaluator implements Evaluator {
 
          return rtn;
       }
+      
+      void dump() {
+         System.out.printf("Arc at %0.3s: (%0.3f, %0.3f) moving (%0.3f, %0.3f)"
+          + " with gravity %0.3f\n", baseTime, xPos, yPos, xVlc, yVlc, g);
+      }
    }
    
    // Starting with |arc|, compute the next arc based on rebounds within the
@@ -251,11 +258,9 @@ public class ReboundEvaluator implements Evaluator {
    // above exit chute, top.  At least one should be nonnull due to full 
    // enclosure and elastic bounces.
    BallArc getNextArc(BallArc arc, double rightX) {
-      BallArc rtn = null;
+      Optional<BallArc> rtn = null;
       List<BallArc> cndArcs = new LinkedList<BallArc>();
       
-System.out.printf("Next arc for: %f %f %f %f %f %f\n",
- arc.baseTime, arc.g, arc.xPos, arc.yPos, arc.xVlc, arc.yVlc);
       cndArcs.add(arc.fromVerticalHit(0, cFullHeight, cChuteLength)); // #1
       cndArcs.add(arc.fromHorizontalHit(cChuteLength, rightX, 0.0));
       cndArcs.add(arc.fromVerticalHit(0, cChuteHeight - cMargin, rightX));
@@ -267,10 +272,16 @@ System.out.printf("Next arc for: %f %f %f %f %f %f\n",
       cndArcs.add(arc.fromVerticalHit(cChuteHeight + cDiameter + cMargin,
        cFullHeight, rightX));
       cndArcs.add(arc.fromHorizontalHit(cChuteLength, rightX, cFullHeight));
-System.out.printf("Done\n");
 
-      return cndArcs.stream().filter(a -> a != null)
-       .min((x, y) -> x.baseTime < y.baseTime ? -1 : 1).get();
+      rtn = cndArcs.stream().filter(a -> a != null)
+       .min((x, y) -> x.baseTime < y.baseTime ? -1 : 1);
+      
+      if (!rtn.isPresent()) {
+         arc.dump();
+         return null;
+      }
+      else
+         return rtn.get();
    }
    
    // Return nonnegative time for |gap| to be closed by |speed|, or MAX_VALUE
@@ -335,11 +346,6 @@ System.out.printf("Done\n");
       }
       
       while (elapsedTime < finalTime) {
-         
-System.out.printf("Time: %.5f/%.5f\n", elapsedTime, finalTime);
-for (BallSpec b: balls)
-   System.out.printf("p: %f s: %f\n", b.pos, b.speed);
-
          // Find next collision, described by minIdx (ball index) and minTime.
          minIdx = -1;                                     // Left ball vs side
          minTime = hitTime(balls[0].pos - cRadius, -balls[0].speed);
@@ -448,6 +454,7 @@ for (BallSpec b: balls)
             new Evl(mapper.writeValueAsString(rtn), score));
       
       lgr.info("Graded Rebound Submission# " + eval.sbmId);
+      System.out.printf("Rbn %d: %s\n", sbm.id, sbm.content);
       
       return eval;
    }

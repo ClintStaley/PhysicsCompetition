@@ -62,7 +62,7 @@ create table Submit (
    id int auto_increment primary key,
    cmpId int not null,
    content varchar(2000) Not Null,
-   testResult varchar(2000),
+   testResult varchar(8192),
    teamId int not null,
    practiceRun boolean default false,
    errorResult varchar(1000) default Null,

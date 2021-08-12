@@ -34,7 +34,7 @@ router.post('/', (req, res) => {
                [req.params.teamId, req.params.cmpId], cb);
          }
       },
-      (team, err, cb) => {
+      (team, fields, cb) => {
          var teamBody = {};
          if (vld.check(team && team.length, Tags.notFound, cb)) {
             teamBody.lastSubmit = new Date();
@@ -85,12 +85,14 @@ router.put('/:id', (req, res) => {
    async.waterfall([
       (cb) => {
          if (vld.checkAdmin(cb) && vld.hasOnlyFields(body,
-            ["testResult", "errorResult", "score", "canSubmit"], cb).check(true, null, cb)) {
+            ["testResult", "errorResult", "score", "canSubmit"], cb)
+            .check(true, null, cb)) 
+         {
             cnn.chkQry('select * from Team where id = ? && cmpId = ?',
                [teamId, cmpId], cb);
          }
       },
-      (team, err, cb) => {
+      (team, fields, cb) => {
          var teamBody = {};
          if (vld.check(team && team.length, Tags.notFound, cb)) {
             if (body.score != null && team[0].bestScore < body.score)
@@ -98,25 +100,24 @@ router.put('/:id', (req, res) => {
             if ("canSubmit" in body) {
                teamBody.canSubmit = body.canSubmit;
             }
-            if ((body.score > team[0].bestScore && body.canSubmit) ||
-               body.score > team[0].bestScore && !body.canSubmit)
-               cnn.chkQry("update Team set ? where id = ?", [teamBody, teamId], cb);
+            if ("canSubmit" in teamBody || "bestScore" in teamBody)
+               cnn.chkQry("update Team set ? where id = ?",
+                [teamBody, teamId], cb);
             else {
-               cnn.chkQry("select * from Team where id = ?", teamId, cb)
+               cb(null, null, null);
             }
          }
       },
-      (result, err, cb) => {
-         delete body.canSubmit;
-         body.cmpId = cmpId;
-         body.teamId = teamId;
+      (result, fields, cb) => {
          cnn.chkQry('select * from Submit where id = ? && cmpId = ? && ' +
             'teamId = ?', [smbId, cmpId, teamId], cb);
       },
-      (submission, err, cb) => {
-         if (vld.check(submission && submission.length, Tags.notFound, cb))
+      (submits, fields, cb) => {
+         delete body.canSubmit;  // Adjust body to match fields of Submit
+console.log("Submit put: ", body);
+         if (vld.check(submits.length, Tags.notFound, cb))
             cnn.chkQry("update Submit set ? where id = ?",
-               [req.body, req.params.id], cb);
+             [body, req.params.id], cb);
       },
       (result, fields, cb) => {
          res.status(200).end();

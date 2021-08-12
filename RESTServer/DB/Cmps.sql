@@ -97,7 +97,7 @@ insert into Competition (title, ctpId, ownerId, description, hints, prms)
         ]
      }');
             
-# .9kg @.7m 1 m/s, .1kg .9m -1 m/s, gate .09s/.2s, distance 2.85m
+# jumpLength 2.85m gateTime .14s Starts: .9kg @.6m 1 m/s, .1kg .9m -1 m/s, 
 insert into Competition (title, ctpId, ownerId, description, prms)
    VALUES ('Rebound 1', 3, 1, 'Basic two-ball problem', 
     '{
