@@ -3,7 +3,6 @@ import {ReboundMovie} from './ReboundMovie';
 import {SVGUtil} from '../SVGUtil';
 import styles from './ReboundSVGView.module.css';
 
-
 // General SVG animation design notes:
 //
 // 1. Create one or more fixed background SVG fixtures, e.g. a graph or 
@@ -99,12 +98,11 @@ export class ReboundSVGView extends React.Component {
    }
 
    // Return initial state based on |movie|, including fixed ball-choice and
-   // playing area, supporting data to use for ball labels and gate open/close,
-   // and current event index and animated/moving svg data.
+   // playing area, gate open/close, and current event index and animated/moving
+   // svg data.
    static getInitState(movie){
       var bkg = movie.background;
       var br = ReboundSVGView.ballRadius;
-      var labels = bkg.ballChoices.filter(b => b.used).map(b => b.weight);
       var gates = [
          <rect key="gate0" className={styles.gate}          // Closed gate
           x={bkg.chuteWidth} y = {bkg.height-bkg.chuteHeight-3*br}
@@ -119,7 +117,6 @@ export class ReboundSVGView extends React.Component {
          svgBallChoices: ReboundSVGView.getBallChoices(movie, styles),
          svgPlayArea: ReboundSVGView.getPlayArea(movie,styles),
          
-         labels,               // Ball labels
          gates,                // Gate choices
 
          evtIdx: -1,           // Index of last event shown in svgMoving
@@ -163,8 +160,9 @@ export class ReboundSVGView extends React.Component {
    // in |movie| with time <= |timeStamp|.  Assume existing |state| was built
    // from |movie| so incremental change is appropriate.  Return adjusted state.
    static setOffset(state, timeStamp) {
-      let {movie, evtIdx, gates, labels, svgMoving} = state;
+      let {movie, evtIdx, gates, svgMoving} = state;
       let evts = movie.evts;
+      let labels = movie.background.labels;
       let yTop = movie.background.height;
       let evt, searchIdx;
       let lastPos = null, lastGate = null;

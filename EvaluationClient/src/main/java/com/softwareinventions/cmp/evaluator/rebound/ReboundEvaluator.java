@@ -26,9 +26,10 @@ public class ReboundEvaluator implements Evaluator {
    public static final double cMargin = 0.001;
    public static final int    cSbmLimit = 5;  
    public static final double cSbmPenalty = .9;
-   public static final double cMinJumpLength = .9031; // Length for 1m/s lanuch
+   public static final double cMinJumpLength = .903;  // Length for 1m/s lanuch
    public static final double cBallGap = .01;         // Min initial ball gap
    public static final double cRoundDigits = 10000.0;
+   public static final double cMaxBounce = 10;        // Max bounces if missed
    
    private static double round(double val) {
       return Math.rint(val * cRoundDigits) / cRoundDigits;
@@ -131,16 +132,12 @@ public class ReboundEvaluator implements Evaluator {
          double yValue, xHitTime;
          BallArc rtn = null;
          
-         // No intersection if we already straddle the line
-         if (GenUtil.inBounds(x - cRadius - cEps, xPos, x + cRadius + cEps))
-            return null;
-         
          x = x > xPos ? x - cRadius : x + cRadius;
          xHitTime = (x - xPos) / xVlc;
          yValue = yPosFn(xHitTime);
          
          // Throw out negative times.
-         if (xHitTime > 0 && GenUtil.inBounds(loY, yValue, hiY)) {
+         if (xHitTime > cEps && GenUtil.inBounds(loY, yValue, hiY)) {
             rtn = atTime(xHitTime);
             rtn.xVlc = -rtn.xVlc;
          }
@@ -153,14 +150,10 @@ public class ReboundEvaluator implements Evaluator {
          double[] yHitTimes; 
          double yHitTime, xHit;
          
-         // No intersection if we already straddle the line
-         if (GenUtil.inBounds(y - cRadius - cEps, yPos, y + cRadius + cEps))
-            return null;
-
          y = y > yPos ? y - cRadius : y + cRadius;
          yHitTimes = GenUtil.quadraticSolution(g/2.0, yVlc, yPos - y);
-         if (yHitTimes != null && yHitTimes[1] >= 0) {
-            yHitTime = yHitTimes[0] >= 0 ? yHitTimes[0] : yHitTimes[1];
+         if (yHitTimes != null && yHitTimes[1] > cEps) {   // Some future hit
+            yHitTime = yHitTimes[0] >= cEps ? yHitTimes[0] : yHitTimes[1];
             xHit = xPosFn(yHitTime);
             if (GenUtil.inBounds(loX, xHit, hiX)) {
                rtn = atTime(yHitTime);
@@ -243,8 +236,8 @@ public class ReboundEvaluator implements Evaluator {
       }
       
       void dump() {
-         System.out.printf("Arc at %0.3s: (%0.3f, %0.3f) moving (%0.3f, %0.3f)"
-          + " with gravity %0.3f\n", baseTime, xPos, yPos, xVlc, yVlc, g);
+         System.out.printf("Arc at %.3f: (%.3f, %.3f) moving (%.3f, %.3f)"
+          + " with gravity %.3f\n", baseTime, xPos, yPos, xVlc, yVlc, g);
       }
    }
    
@@ -260,6 +253,8 @@ public class ReboundEvaluator implements Evaluator {
    BallArc getNextArc(BallArc arc, double rightX) {
       Optional<BallArc> rtn = null;
       List<BallArc> cndArcs = new LinkedList<BallArc>();
+      
+      arc.dump();
       
       cndArcs.add(arc.fromVerticalHit(0, cFullHeight, cChuteLength)); // #1
       cndArcs.add(arc.fromHorizontalHit(cChuteLength, rightX, 0.0));
@@ -277,7 +272,7 @@ public class ReboundEvaluator implements Evaluator {
        .min((x, y) -> x.baseTime < y.baseTime ? -1 : 1);
       
       if (!rtn.isPresent()) {
-         arc.dump();
+         System.out.println("Ooops!");
          return null;
       }
       else
@@ -328,7 +323,7 @@ public class ReboundEvaluator implements Evaluator {
       List<BallArc> launchArcs = new LinkedList<BallArc>();
       RbnResults rtn = new RbnResults();
       Double score = null;
-      int minIdx, ballIdx;
+      int minIdx, ballIdx, bounces = 0;
       double minTime, hitTime, elapsedTime = 0.0;
       double finalTime = Double.MAX_VALUE;         // Reduce once we do launch
       double leftSpeed, rightSpeed;
@@ -380,6 +375,10 @@ public class ReboundEvaluator implements Evaluator {
                cChuteLength, cChuteHeight + cRadius,
                balls[minIdx].speed, 0.0, cGravity));
             
+            // Add small arc under freefall to get to x = 1 + cRadius center.
+            launchArcs.add(
+              lastArc = lastArc.atTime(cRadius / balls[minIdx].speed));
+            
             // Bounce off floor or right side
             launchArcs.add(lastArc = getNextArc(lastArc, rightWall));
             
@@ -398,9 +397,7 @@ public class ReboundEvaluator implements Evaluator {
                launchArcs.add(lastArc.atTime(cChuteLength / lastArc.xVlc));
             }
             else {
-               int limit = 4;
-               // Loop till ball hits top or left of area
-               while (limit-- > 0
+               while (bounces++ < cMaxBounce 
                 && lastArc.yPos < cFullHeight - cRadius - cMargin
                 && lastArc.xPos > cChuteLength + cMargin) {
                   launchArcs.add(lastArc);

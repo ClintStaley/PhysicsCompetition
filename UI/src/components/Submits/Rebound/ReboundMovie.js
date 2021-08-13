@@ -19,7 +19,7 @@ export class ReboundMovie {
       let rbns = sbm && sbm.testResult && sbm.testResult.rebounds || [];
       let arcs = sbm && sbm.testResult && sbm.testResult.launchArcs || [];
       let cnt = sbm && sbm.content;
-      let balls, starts = cnt && cnt.ballStarts || [];
+      let balls, labels, starts = cnt && cnt.ballStarts || [];
       let rbnIdx = 0, arcIdx = 0, now = 0, currentArc = null; // State for loop
       let nextFrame = 1/frameRate, nextRbn = rbns[0], nextArc = arcs[0];
       let lastEvt, rightBall;
@@ -29,11 +29,13 @@ export class ReboundMovie {
 
       starts.forEach(b => ballChoices[b.id].used = true);
       ballChoices.maxBalls = prms.maxBalls;
-
       balls = starts.map(b => ({speed: b.speed, x: b.pos}));
+      labels = starts.map(b => ballChoices[b.id].weight);
+      console.log(labels);
 
       this.background = {
          ballChoices,
+         labels,
          frameRate,
          height: 1.5,
          chuteHeight: 1.0,

@@ -13,7 +13,8 @@ export class RbnSubmitModal extends Component {
          strGateTime:"",
          jumpLength: NaN,
          strJumpLength: "", 
-         ballStarts: [],
+         ballStarts: [{id: null, optId: null, pos: null, strPos: "",
+          speed: null, strSpeed: ""}],
          unchosen: props.prms.balls.map(
           (wt, idx) => ({value: idx, label: `Ball ${idx+1} ${wt}kg`}))
       };
@@ -100,7 +101,7 @@ export class RbnSubmitModal extends Component {
    // adjust state.unchosen.  If |pos| or |speed|, ensure correct ranges and no
    // overlaps/touches.
    handleChange(ev) {
-      const cMaxJump = 100.0;
+      const cMaxJump = 25.0;
       const cMaxGateTime = 10.0;
       const cMaxSpeed = 1.0;
       const cChuteWidth = ReboundMovie.cChuteWidth;
