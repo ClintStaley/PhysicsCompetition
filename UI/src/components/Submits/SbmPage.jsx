@@ -77,18 +77,16 @@ export default class SbmPage extends Component {
    refreshSbm = () => {
       var current = this.props.sbms && 
        this.props.sbms[this.state.teamId].current; // current is current Sbm
+
       if (current){
          if (current.testResult) {
             this.setState({refreshNote: ""});
             this.stopTimer();
          }
-      
-         
-            this.props.refreshSbms(current.cmpId, current.teamId, () => {
-               this.props.getTeamById(current.cmpId, current.teamId);
-               this.setState({refreshNote: this.state.refreshNote + ".."})   
-            });
-         
+         this.props.refreshSbms(current.cmpId, current.teamId, () => {
+            this.props.getTeamById(current.cmpId, current.teamId);
+            this.setState({refreshNote: this.state.refreshNote + ".."})   
+         });
       }
    }
 
@@ -104,6 +102,7 @@ export default class SbmPage extends Component {
       bestScore = this.props.team.bestScore !== -1 ?
        `Best score: ${this.props.team.bestScore.toFixed(2)}` :
        'Best score: N/A';
+
       if (teamsSbms && teamsSbms.current) {
          sbm = teamsSbms.current; // current submission for this team
          sbmTime = new Date(sbm.sbmTime);
@@ -129,8 +128,7 @@ export default class SbmPage extends Component {
           = <div><h2>Your team has made no design submissions yet.</h2></div>;
 
       var sbmButton = (<div className="col-sm-3 float-right">
-        <Button disabled={!this.props.team.canSubmit ||
-         sbm && !sbm.testResult}
+        <Button disabled={!this.props.team.canSubmit}
          onClick={() => this.setState({sbmFunction: this.doSubmit})}>
            {sbm ? "Make Another Attempt" : "Make First Attempt"}
         </Button>

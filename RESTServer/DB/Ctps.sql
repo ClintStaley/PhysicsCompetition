@@ -3,15 +3,17 @@ use CmpDB;
 insert into CompetitionType (title, codeName, description, prmSchema)
    VALUES ("Land Grab", "LandGrab", "Claim territory by placing circles",  '{
       "$schema": "http://json-schema.org/draft-07/schema#",
-     
       "title": "Land Grab",
-      "type": "object", 
-       
+      "type": "object",
       "properties": {
          "numCircles": {
             "title": "Number of circles allowed per team",
             "type": "integer",
             "minimum": 1
+         },
+         "hints": {
+            "title": "Type of hints used to direct to hints page",
+            "type" : "string"
          },
          "goalArea": {
             "title": "Area of coverage that gets 100%",
@@ -52,12 +54,12 @@ insert into CompetitionType (title, codeName, description, prmSchema)
                   }
                },
                "additionalProperties": false,
-               "minProperties": 4   
+               "minProperties": 4
             }
          }
       },
       "additionalProperties": false,
-      "minProperties": 3   
+      "required": ["numCircles", "goalArea", "obstacles"]
    }');
 
 insert into CompetitionType (title, codeName, description, prmSchema)
@@ -69,6 +71,10 @@ insert into CompetitionType (title, codeName, description, prmSchema)
          "targetTime": {
             "title": "Time to get all platforms that will get 100",
             "type": "number"
+         },
+         "hints": {
+            "title": "Type of hints used to direct to hints page",
+            "type" : "string"
          },
          "targets": {
             "title": "Targets to hit",
@@ -144,7 +150,7 @@ insert into CompetitionType (title, codeName, description, prmSchema)
          }
       },
       "additionalProperties": false,
-      "minProperties": 3
+      "required": ["targetTime", "targets", "barriers"]
    }');
 
 insert into CompetitionType (title, codeName, description, prmSchema)
@@ -153,8 +159,12 @@ insert into CompetitionType (title, codeName, description, prmSchema)
       "title": "Rebound",
       "type": "object",
       "properties": {
-         "targetLength": {
-            "title": "Jump length resulting in 100% credit",
+         "hints": {
+            "title": "Type of hints used to direct to hints page",
+            "type" : "string"
+         },
+         "targetTime": {
+            "title": "Time resulting in 100% credit",
             "type": "number"
          },
          "maxBalls": {
@@ -174,5 +184,6 @@ insert into CompetitionType (title, codeName, description, prmSchema)
             }
          }
       },
-      "minProperties": 3
+      "additionalProperties": false,
+      "required": ["targetTime", "maxBalls", "balls"]
    }');

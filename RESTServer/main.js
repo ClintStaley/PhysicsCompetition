@@ -54,13 +54,11 @@ var configApp = (port, corsDomain, testFlag) => {
    // Check general login.  If OK, add Validator to |req| and continue processing,
    // otherwise respond immediately with 401 and noLogin error tag.
    app.use(function (req, res, next) {
-      console.log("Checking login for " + req.path);
       if (req.session ||
          req.method === 'POST' && (req.path === '/Prss' || req.path === '/Ssns')) {
          req.validator = new Validator(req, res);
          next();
       } else{
-         console.log(`session: ${req.session}; method: ${req.method}; path: ${req.path}`);
          res.status(401).end();
       }
    });

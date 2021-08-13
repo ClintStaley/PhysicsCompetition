@@ -1,11 +1,10 @@
 var Express = require('express');
 var Tags = require('../Validator.js').Tags;
 var router = Express.Router({ caseSensitive: true });
-var validate = require('commonjs-utils/lib/json-schema').validate;
+var Ajv = require('ajv');
 var async = require('async');
 
 var titleLimit = 150;
-
 router.baseURL = '/Cmps';
 
 router.get('/', (req, res) => {
@@ -51,6 +50,8 @@ router.post('/', (req, res) => {
    var ssn = req.session;
    var body = req.body;
    var cnn = req.cnn;
+   var ajv = new Ajv(); //schema validator
+   var schemaVld = {};
 
    if (vld.checkAdmin())
       async.waterfall([
@@ -76,9 +77,10 @@ router.post('/', (req, res) => {
             // If no duplicates, insert new competition
             if (vld.check(ctp && ctp.length, Tags.noCompType, cb)) {
                try {
-                  var validation = validate(JSON.parse(body.prms),
-                     JSON.parse(ctp[0].prmSchema));
-                  if (vld.check(validation.valid, Tags.invalidPrms, cb))
+                  schemaVld = ajv.compile(JSON.parse(ctp[0].prmSchema));
+                  var valid = schemaVld(JSON.parse(body.prms));
+                  if (vld.check(valid, [Tags.invalidPrms,
+                      schemaVld.errors], cb))
                      cnn.chkQry('insert into Competition set ?', body, cb);
                }
                catch (exception) {
@@ -118,7 +120,7 @@ router.put('/:id', (req, res) => {
    var cnn = req.cnn;
    var cmpTp;
    var titleLimit = 150;
-
+   var ajv = new Ajv();
    async.waterfall([
       (cb) => {
          if (vld.hasOnlyFields(body, ["title", "ctpId", "prms", "rules", "hints",
@@ -146,12 +148,13 @@ router.put('/:id', (req, res) => {
                      cnn.chkQry("select * from CompetitionType where id = ?",
                         [cmpTp], cb);
                   }],
-                  (fields, Ctp) => {
-                     if (vld.check(Ctp && Ctp.length, Tags.notFound, cb))
+                  (fields, ctp) => {
+                     if (vld.check(ctp && ctp.length, Tags.notFound, cb))
                         try {
-                           var validation = validate(JSON.parse(body.prms),
-                              JSON.parse(Ctp[0].prmSchema));
-                           if (vld.check(validation.valid, Tags.invalidPrms, cb))
+                           var schemaVld = ajv.compile(JSON.parse(ctp[0].prmSchema));
+                           var valid = schemaVld(JSON.parse(body.prms));
+                           if (vld.check(valid, [Tags.invalidPrms, 
+                            schemaVld.errors], cb))
                               cnn.chkQry("update Competition set ? where id = ?",
                                  [req.body, req.params.id], cb);
                         }

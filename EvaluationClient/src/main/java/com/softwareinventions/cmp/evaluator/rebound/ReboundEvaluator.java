@@ -27,8 +27,14 @@ public class ReboundEvaluator implements Evaluator {
    public static final double cMargin = 0.001;
    public static final int    cSbmLimit = 5;  
    public static final double cSbmPenalty = .9;
-   public static final double cMinJumpLength = .9031; // Length for 1m/s lanuch
+   public static final double cMinJumpLength = .903;  // Length for 1m/s lanuch
    public static final double cBallGap = .01;         // Min initial ball gap
+   public static final double cRoundDigits = 10000.0;
+   public static final double cMaxBounce = 10;        // Max bounces if missed
+   
+   private static double round(double val) {
+      return Math.rint(val * cRoundDigits) / cRoundDigits;
+   }
    
    
    
@@ -63,9 +69,9 @@ public class ReboundEvaluator implements Evaluator {
        double speedRight) {
 
          this.idLeft = idLeft;
-         this.time = time;
-         this.speedLeft = speedLeft;
-         this.speedRight = speedRight;
+         this.time = round(time);
+         this.speedLeft = round(speedLeft);
+         this.speedRight = round(speedRight);
       }
    }
    
@@ -108,7 +114,157 @@ public class ReboundEvaluator implements Evaluator {
       }
    }
 
+<<<<<<< HEAD
    
+=======
+   // Represent one arc of a gravitationally freefalling ball, starting with
+   // given position and velocity
+   public static class BallArc {
+      public double baseTime;  // Starting time
+      public double xPos;      // Starting position
+      public double yPos;
+      public double xVlc;      // Starting velocity
+      public double yVlc;
+      public double g;         // Gravity (or zero)
+      
+      // Positions and velocities at relative time from baseTime
+      public double xPosFn(double relTime) {return xPos + relTime * xVlc;}
+      public double yPosFn(double relTime) {return yPos + relTime * yVlc
+       + relTime*relTime*g/2.0;}
+      public double xVlcFn(double relTime) {return xVlc;}
+      public double yVlcFn(double relTime) {return yVlc + relTime * g;}
+      
+      public BallArc(double baseTime, double xPos, double yPos, double xVlc,
+       double yVlc, double g) {
+         this.baseTime = round(baseTime);
+         this.xPos = round(xPos);
+         this.yPos = round(yPos);
+         this.xVlc = round(xVlc);
+         this.yVlc = round(yVlc);
+         this.g = g;
+      }
+
+      // Return new BallArc based on position and velocity at |relTime|
+      public BallArc atTime(double relTime) {
+         return new BallArc(baseTime + relTime, xPosFn(relTime),
+          yPosFn(relTime), xVlcFn(relTime), yVlcFn(relTime), g);
+      }
+      
+      // Return new BallArc based on hit against a vertical wall at |x| with
+      // y-range [loY, hiY], or return null if no such hit will occur.
+      public BallArc fromVerticalHit(double loY, double hiY, double x) {
+         double yValue, xHitTime;
+         BallArc rtn = null;
+         
+         x = x > xPos ? x - cRadius : x + cRadius;
+         xHitTime = (x - xPos) / xVlc;
+         yValue = yPosFn(xHitTime);
+         
+         // Throw out negative times.
+         if (xHitTime > cEps && GenUtil.inBounds(loY, yValue, hiY)) {
+            rtn = atTime(xHitTime);
+            rtn.xVlc = -rtn.xVlc;
+         }
+
+         return rtn;
+      }
+      
+      private BallArc fromHorizontalHit(double loX, double hiX, double y) {
+         BallArc rtn = null;
+         double[] yHitTimes; 
+         double yHitTime, xHit;
+         
+         y = y > yPos ? y - cRadius : y + cRadius;
+         yHitTimes = GenUtil.quadraticSolution(g/2.0, yVlc, yPos - y);
+         if (yHitTimes != null && yHitTimes[1] > cEps) {   // Some future hit
+            yHitTime = yHitTimes[0] >= cEps ? yHitTimes[0] : yHitTimes[1];
+            xHit = xPosFn(yHitTime);
+            if (GenUtil.inBounds(loX, xHit, hiX)) {
+               rtn = atTime(yHitTime);
+               rtn.yVlc = -rtn.yVlc;
+            }
+         }
+         return rtn;
+      }
+      
+      /* Generate a new BallArc representing the result of the current BallArc
+       * colliding with a corner at (x,y), or null if no collision would occur.
+       * Do this by solving a polynomial whose real roots give the times at
+       * which the difference between the ball position and point (x,y) equals
+       * the ball radius.  
+       * 
+       * Given:
+       * r = Radius of the ball
+       * Px, Py = Position of ball center at time 0
+       * Vx, Vy = Velocity of ball center at time 0
+       * 
+       * Cx, Cy = location of target point (obstacle corner)
+       * Dx, Dy = (Px - Cx), (Py - Cy) the vector from target point to 
+       * ball center at time 0, 
+       * G = gravitational acceleration (as a negative, downward value)
+       * 
+       * The equation for squared circle center to point distance is:
+       * 
+       * (Dx + tVx)^2 + (Dy + tVy + (G/2)t^2)^2
+       * 
+       *  Setting this to r^2...
+       * 
+       * (Dx + tVx)^2 + (Dy + tVy + (G/2)t^2)^2 = r^2
+       * 
+       * ... and simplifying, we arrive at:
+       * 
+       * ((G/2)^2)t^4 + (G Vy)t^3 + (Vx^2 + Vy^2 + G Dy)t^2 + 2(DxVx + DyVy)t +
+       * (Dx^2 + Dy^2 - r^2) = 0
+       */
+      private BallArc fromCornerHit(double x, double y) {
+         double[] coef = new double[5];
+         double magnitude, dX = (xPos - x), dY = (yPos - y), proximity;
+         OptionalDouble firstHit;
+         BallArc rtn = null;
+         
+         proximity = dX*dX + dY*dY - cRadius*cRadius;
+         if (proximity <= 0.0)  // If the corner is already inside the ball
+            return null;
+         
+         // Coefficients from right to left (t^0 to t^4)
+         coef[0] = proximity;
+         coef[1] = 2 * (dX * xVlc + dY * yVlc);
+         coef[2] = xVlc*xVlc + yVlc*yVlc + g * dY;
+         coef[3] = g * yVlc;
+         coef[4] = g * g / 4.0;
+
+         
+         Complex[] solutions = new LaguerreSolver().solveAllComplex(coef, 0);
+         
+         // Find earliest nonnegative real solution
+         firstHit = Arrays.stream(solutions).filter
+          (s -> Math.abs(s.getImaginary()) < cEps && s.getReal() > 0)
+          .mapToDouble(s -> s.getReal()).min();
+
+         // We hit the point.  Subtract 2x our velocity component toward corner
+         if (firstHit.isPresent()) {
+            rtn = atTime(firstHit.getAsDouble());        
+            
+            // Unit vector from ball center to corner
+            dX = (x - rtn.xPos) / cRadius;
+            dY = (y - rtn.yPos) / cRadius;
+
+            // Magnitude of velocity component in collision direction.
+            magnitude = dX * rtn.xVlc + dY * rtn.yVlc;
+            
+            rtn.xVlc -= 2.0 * magnitude * dX;
+            rtn.yVlc -= 2.8 * magnitude * dY;
+         }
+
+         return rtn;
+      }
+      
+      void dump() {
+         System.out.printf("Arc at %.3f: (%.3f, %.3f) moving (%.3f, %.3f)"
+          + " with gravity %.3f\n", baseTime, xPos, yPos, xVlc, yVlc, g);
+      }
+   }
+>>>>>>> master
    
    // Starting with |arc|, compute the next arc based on rebounds within the
    // launch area, from cChuteLength on the left to rightX on the right, and
@@ -120,26 +276,47 @@ public class ReboundEvaluator implements Evaluator {
    // above exit chute, top.  At least one should be nonnull due to full 
    // enclosure and elastic bounces.
    BallArc getNextArc(BallArc arc, double rightX) {
-      BallArc rtn = null;
+      Optional<BallArc> rtn = null;
       List<BallArc> cndArcs = new LinkedList<BallArc>();
       
+<<<<<<< HEAD
 System.out.printf("Next arc for: %f %f %f %f %f %f\n",
  arc.baseTime, arc.g, arc.xPos, arc.yPos, arc.xVlc, arc.yVlc);
       cndArcs.add(arc.fromVerticalHit(0, cFullHeight, cChuteLength, 0)); // #1
       cndArcs.add(arc.fromHorizontalHit(cChuteLength, rightX, 0.0, 0));
       cndArcs.add(arc.fromVerticalHit(0, cChuteHeight - cMargin, rightX, 0));
       cndArcs.add(arc.fromCornerHit(rightX, cChuteHeight - cMargin, 0));
+=======
+      arc.dump();
+      
+      cndArcs.add(arc.fromVerticalHit(0, cFullHeight, cChuteLength)); // #1
+      cndArcs.add(arc.fromHorizontalHit(cChuteLength, rightX, 0.0));
+      cndArcs.add(arc.fromVerticalHit(0, cChuteHeight - cMargin, rightX));
+      cndArcs.add(arc.fromCornerHit(rightX, cChuteHeight - cMargin));
+>>>>>>> master
       cndArcs.add(arc.fromVerticalHit(cChuteHeight - cMargin,
        cChuteHeight + cDiameter + cMargin, rightX + cRadius, 0));
       cndArcs.add(arc.fromCornerHit(rightX, cChuteHeight + cDiameter
        + cMargin, 0));
       cndArcs.add(arc.fromVerticalHit(cChuteHeight + cDiameter + cMargin,
+<<<<<<< HEAD
        cFullHeight, rightX, 0));
       cndArcs.add(arc.fromHorizontalHit(cChuteLength, rightX, cFullHeight, 0));
 System.out.printf("Done\n");
+=======
+       cFullHeight, rightX));
+      cndArcs.add(arc.fromHorizontalHit(cChuteLength, rightX, cFullHeight));
+>>>>>>> master
 
-      return cndArcs.stream().filter(a -> a != null)
-       .min((x, y) -> x.baseTime < y.baseTime ? -1 : 1).get();
+      rtn = cndArcs.stream().filter(a -> a != null)
+       .min((x, y) -> x.baseTime < y.baseTime ? -1 : 1);
+      
+      if (!rtn.isPresent()) {
+         System.out.println("Ooops!");
+         return null;
+      }
+      else
+         return rtn.get();
    }
    
    // Return nonnegative time for |gap| to be closed by |speed|, or MAX_VALUE
@@ -189,7 +366,7 @@ System.out.printf("Done\n");
       BallArc[] tempBallArcs = null; // Holds RbnResults ball arcs as ballArcs and at
       // the end converts all the ballArcs to reduced format to be serialized
       Double score = null;
-      int minIdx, ballIdx;
+      int minIdx, ballIdx, bounces = 0;
       double minTime, hitTime, elapsedTime = 0.0;
       double finalTime = Double.MAX_VALUE;         // Reduce once we do launch
       double leftSpeed, rightSpeed;
@@ -207,11 +384,6 @@ System.out.printf("Done\n");
       }
       
       while (elapsedTime < finalTime) {
-         
-System.out.printf("Time: %.5f/%.5f\n", elapsedTime, finalTime);
-for (BallSpec b: balls)
-   System.out.printf("p: %f s: %f\n", b.pos, b.speed);
-
          // Find next collision, described by minIdx (ball index) and minTime.
          minIdx = -1;                                     // Left ball vs side
          minTime = hitTime(balls[0].pos - cRadius, -balls[0].speed);
@@ -246,6 +418,10 @@ for (BallSpec b: balls)
                cChuteLength, cChuteHeight + cRadius,
                balls[minIdx].speed, 0.0, cGravity, 0, false));
             
+            // Add small arc under freefall to get to x = 1 + cRadius center.
+            launchArcs.add(
+              lastArc = lastArc.atTime(cRadius / balls[minIdx].speed));
+            
             // Bounce off floor or right side
             launchArcs.add(lastArc = getNextArc(lastArc, rightWall));
             
@@ -264,9 +440,7 @@ for (BallSpec b: balls)
                launchArcs.add(lastArc.atTime(cChuteLength / lastArc.xVlc, 0, false ));
             }
             else {
-               int limit = 4;
-               // Loop till ball hits top or left of area
-               while (limit-- > 0
+               while (bounces++ < cMaxBounce 
                 && lastArc.yPos < cFullHeight - cRadius - cMargin
                 && lastArc.xPos > cChuteLength + cMargin) {
                   launchArcs.add(lastArc);
@@ -323,6 +497,7 @@ for (BallSpec b: balls)
             new Evl(mapper.writeValueAsString(rtn), score));
       
       lgr.info("Graded Rebound Submission# " + eval.sbmId);
+      System.out.printf("Rbn %d: %s\n", sbm.id, sbm.content);
       
       return eval;
    }

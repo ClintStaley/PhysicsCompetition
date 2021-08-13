@@ -97,12 +97,23 @@ insert into Competition (title, ctpId, ownerId, description, hints, prms)
         ]
      }');
             
-# .9kg @.7m 1 m/s, .1kg .9m -1 m/s, gate .09s/.2s, distance 2.85m
+# jumpLength 2.85m gateTime .14s Starts: 9kg @.6m 1 m/s, 1kg .9m -1 m/s, 
 insert into Competition (title, ctpId, ownerId, description, prms)
    VALUES ('Rebound 1', 3, 1, 'Basic two-ball problem', 
     '{
        "targetLength" : 2.85,
        "maxBalls": 2,
-       "balls": [9.0, 1.0]
+       "balls": [1.0, 5.0, 9.0]
      }');
+
+# jumpLength 3.86m gateTime .05s 
+# Starts: 19kg @.5m 1m/s, 5kg .7m -1m/s 1kg .9m -1m/s, 
+insert into Competition (title, ctpId, ownerId, description, prms)
+   VALUES ('Rebound 2', 3, 1, 'Three ball problem', 
+    '{
+       "targetLength" : 3.86,
+       "maxBalls": 3,
+       "balls": [19.0, 9.0, 6.0, 5.0, 4.0, 1.0]
+     }');
+
 

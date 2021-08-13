@@ -34,7 +34,7 @@ export default function sbms(state = {}, action) {
       case 'POST_SBM': // runs after getSbm has run recieving an ungraded sbm
          var pastTeam = Object.assign({}, state[action.teamId]);
          var history = pastTeam.current ? 
-         [pastTeam.current].concat(pastTeam.history) : pastTeam.history; 
+          [pastTeam.current].concat(pastTeam.history) : pastTeam.history; 
          curTeam = {ctpName: pastTeam.ctpName, current: action.sbm, 
           history};
   
@@ -43,7 +43,8 @@ export default function sbms(state = {}, action) {
       case 'REFRESH_SBM':  // Replace just testResult and score in current
          if (!action.sbm) 
             return state;
-         if(action.sbm.id != state[action.teamId].current.id) {
+            
+         if (action.sbm.id != state[action.teamId].current.id) {
             var team = Object.assign({}, state[action.teamId]);
             team.history = [team.current].concat(team.history);
             team.current = action.sbm;
