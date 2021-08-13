@@ -4,9 +4,9 @@
   "description": "Physics Competition REST Server",
   "main": "main.js",
   "dependencies": {
+    "ajv": "^8.6.2",
     "async": "^2.0.0-rc.6",
     "body-parser": "^1.15.2",
-    "commonjs-utils": "^0.1.1",
     "cookie-parser": "^1.4.3",
     "express": "^4.16.4",
     "mysql": "^2.11.1"
