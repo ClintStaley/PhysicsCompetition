@@ -114,9 +114,6 @@ public class ReboundEvaluator implements Evaluator {
       }
    }
 
-<<<<<<< HEAD
-   
-=======
    // Represent one arc of a gravitationally freefalling ball, starting with
    // given position and velocity
    public static class BallArc {
@@ -264,7 +261,6 @@ public class ReboundEvaluator implements Evaluator {
           + " with gravity %.3f\n", baseTime, xPos, yPos, xVlc, yVlc, g);
       }
    }
->>>>>>> master
    
    // Starting with |arc|, compute the next arc based on rebounds within the
    // launch area, from cChuteLength on the left to rightX on the right, and
@@ -279,34 +275,19 @@ public class ReboundEvaluator implements Evaluator {
       Optional<BallArc> rtn = null;
       List<BallArc> cndArcs = new LinkedList<BallArc>();
       
-<<<<<<< HEAD
-System.out.printf("Next arc for: %f %f %f %f %f %f\n",
- arc.baseTime, arc.g, arc.xPos, arc.yPos, arc.xVlc, arc.yVlc);
-      cndArcs.add(arc.fromVerticalHit(0, cFullHeight, cChuteLength, 0)); // #1
-      cndArcs.add(arc.fromHorizontalHit(cChuteLength, rightX, 0.0, 0));
-      cndArcs.add(arc.fromVerticalHit(0, cChuteHeight - cMargin, rightX, 0));
-      cndArcs.add(arc.fromCornerHit(rightX, cChuteHeight - cMargin, 0));
-=======
       arc.dump();
       
       cndArcs.add(arc.fromVerticalHit(0, cFullHeight, cChuteLength)); // #1
       cndArcs.add(arc.fromHorizontalHit(cChuteLength, rightX, 0.0));
       cndArcs.add(arc.fromVerticalHit(0, cChuteHeight - cMargin, rightX));
       cndArcs.add(arc.fromCornerHit(rightX, cChuteHeight - cMargin));
->>>>>>> master
       cndArcs.add(arc.fromVerticalHit(cChuteHeight - cMargin,
        cChuteHeight + cDiameter + cMargin, rightX + cRadius, 0));
       cndArcs.add(arc.fromCornerHit(rightX, cChuteHeight + cDiameter
        + cMargin, 0));
       cndArcs.add(arc.fromVerticalHit(cChuteHeight + cDiameter + cMargin,
-<<<<<<< HEAD
-       cFullHeight, rightX, 0));
-      cndArcs.add(arc.fromHorizontalHit(cChuteLength, rightX, cFullHeight, 0));
-System.out.printf("Done\n");
-=======
        cFullHeight, rightX));
       cndArcs.add(arc.fromHorizontalHit(cChuteLength, rightX, cFullHeight));
->>>>>>> master
 
       rtn = cndArcs.stream().filter(a -> a != null)
        .min((x, y) -> x.baseTime < y.baseTime ? -1 : 1);
