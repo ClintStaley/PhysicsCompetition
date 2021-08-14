@@ -48,14 +48,14 @@ public class BounceEvaluator implements Evaluator {
       public double finalTime;
    }
 
-   /* BounceEvent describes the initial launch of a ball, or the ball's bounce
+   /* BounceBallArc describes the initial launch of a ball, or the ball's bounce
     * off of an obstacle, or the ball going out of bounds. 
     * 
     * For a bounce, velocityX and velocityY are the ball velocities after the
     * bounce, and obstacleIdx describes the obstacle that was hit.  For a
     * starting point or out-of-bounds event, obstacleNdx is -1.
     */
-   public static class BounceEvent {
+   public static class BounceBallArc {
       public double time;
       public double velocityX;
       public double velocityY;
@@ -65,7 +65,7 @@ public class BounceEvaluator implements Evaluator {
       public boolean corner;
 
       //create conversion from BallArc to BounEvt
-      public BounceEvent(BallArc bA) {
+      public BounceBallArc(BallArc bA) {
          time = bA.baseTime;
          velocityX = bA.xVlc;
          velocityY = bA.yVlc;
@@ -74,12 +74,20 @@ public class BounceEvaluator implements Evaluator {
          obstacleIdx = bA.colliderId;
          corner = bA.corner;
       }
+      
+      public static BounceBallArc[] convert(BallArc[] ballArcs) {
+         BounceBallArc[] BounceArcs = new BounceBallArc[ballArcs.length];
+         for (int i = 0; i < ballArcs.length; i++) {
+            BounceArcs [i] = new BounceBallArc(ballArcs[i]);
+         }
+         return BounceArcs;
+      }
    }
 
    public class BounceResults {
       public boolean valid;
       public Double sbmPenalty;
-      public BounceEvaluator.BounceEvent[][] events;
+      public BounceEvaluator.BounceBallArc[][] events;
    }
 
    static Logger lgr = Logger.getLogger(BounceEvaluator.class);
@@ -123,14 +131,14 @@ public class BounceEvaluator implements Evaluator {
       BounceResults rspB = new BounceResults();
 
       // Double array of events, one array per ball
-      rspB.events = new BounceEvent[numBalls][];
+      rspB.events = new BounceBallArc[numBalls][];
 
       double totalTime = 0.0;
 
       for (int i = 0; i < numBalls; i++) {
          BallArc initialArc = new BallArc(0, 0, cStartingHeight, sbmData[i].speed,
           0, cGravity, 0, false);
-         //BounceEvent startEvent = new BounceEvent(cStartingHeight,
+         //BounceBallArc startEvent = new BounceBallArc(cStartingHeight,
            //    sbmData[i].speed);
 
          // Gets all other events for a given ball and return an array starting
@@ -164,10 +172,10 @@ public class BounceEvaluator implements Evaluator {
    // Check that all remaining obstacles are barriers and that all barriers
    // remain in the list.
    private boolean isGoodAnswer(LinkedList<Obstacle> obs, Parameters prm,
-         BounceEvent[][] res, LaunchSpec[] sbm) {
-      BounceEvent testEvent;
+         BounceBallArc[][] res, LaunchSpec[] sbm) {
+      BounceBallArc testEvent;
       LaunchSpec testSpec;
-      BounceEvent[] ball;
+      BounceBallArc[] ball;
       
       //checks all balls for the correct predictions
       for (int i = 0; i < res.length; i++) {
@@ -195,20 +203,18 @@ public class BounceEvaluator implements Evaluator {
    }
    
    //Returns the ball Events for 
-   private BounceEvent[] calculateOneBall(LinkedList<Obstacle> obstacles,
+   private BounceBallArc[] calculateOneBall(LinkedList<Obstacle> obstacles,
          BallArc arc) {
-      LinkedList<BounceEvent> ballEvents = new LinkedList<BounceEvent>();
+      LinkedList<BallArc> ballEvents = new LinkedList<BallArc>();
       //Check for collision obs
-      //ballEvents.add(StartingPoint);
-/*
-      Optional<Collision> nextCollision = 
-            getNextCollision(obstacles, StartingPoint);
+      ballEvents.add(arc);
+
+      Optional<BallArc> nextCollision = 
+            getNextCollision(obstacles, arc);
 
       // Loops until there are no more collisions calculated.
       while (nextCollision.isPresent()) {
-         ballEvents.add(calculateBallCollision(ballEvents.getLast(),
-               nextCollision.get()));
-
+         ballEvents.add(nextCollision.get());
          nextCollision = getNextCollision(obstacles, ballEvents.getLast());
       }
 
@@ -217,49 +223,50 @@ public class BounceEvaluator implements Evaluator {
 
       // Return events as array, so that I can send the correct format as
       // response.
-       * */
        
-      return ballEvents.toArray(new BounceEvent[ballEvents.size()]);
+       
+      BallArc[] rtn = ballEvents.toArray(new BallArc[ballEvents.size()]);
+      return BounceBallArc.convert(rtn); // returns converted array
    }
 
 
    // Calculate where and when the ball will hit the border, resulting in
    // the last event.
-   private BounceEvent calculateBorderEvent(BounceEvent current) {
+   private BallArc calculateBorderEvent(BallArc current) {
       double xOutOfBounds;
 
       // Solve for y, as the ball goes one radius below the lower bound.
       double[] possibleYOutOfBounds = GenUtil.quadraticSolution
-            (cGravity / 2.0, current.velocityY, current.posY + cRadius);
+            (cGravity / 2.0, current.yVlc, current.yPos + cRadius);
       
       double yOutOfBounds = possibleYOutOfBounds[0] >= 0.0 ? 
             possibleYOutOfBounds[0] : possibleYOutOfBounds[1];
       
 
       // Solve for x + radius out of bounds.
-      if (current.velocityX < 0.0)
-         xOutOfBounds = (-cRadius - current.posX) / current.velocityX;
-      else if (current.velocityX > 0.0)
-         xOutOfBounds = (cWorldLength + cRadius - current.posX)
-          / current.velocityX;
+      if (current.xVlc < 0.0)
+         xOutOfBounds = (-cRadius - current.xPos) / current.xVlc;
+      else if (current.xVlc > 0.0)
+         xOutOfBounds = (cWorldLength + cRadius - current.xPos)
+          / current.xVlc;
       else
          xOutOfBounds = Double.MAX_VALUE;
 
       double boundsTime = Math.min(xOutOfBounds, yOutOfBounds);
 
-      return new BounceEvent(current, boundsTime);
+      return current.atTime(boundsTime, -1, false);
    }
 
    //calculates next collision that occurs
-   public Optional<Collision> getNextCollision(List<Obstacle> obstacles,
-         BounceEvent evt) {
-      Optional<Collision> rtn =
-            obstacles.stream().map(o -> getObstacleCollision(o, evt))
+   public Optional<BallArc> getNextCollision(List<Obstacle> obstacles,
+         BallArc arc) {
+      Optional<BallArc> rtn =
+            obstacles.stream().map(o -> getObstacleCollision(o, arc))
             .filter(c -> c != null)
-            .min((c2, c1) -> Double.compare(c2.time, c1.time));
+            .min((c2, c1) -> Double.compare(c2.baseTime, c1.baseTime));
       
       if (rtn.isPresent()) 
-         obstacles.removeIf(o -> o.id == rtn.get().obstacleIdx);
+         obstacles.removeIf(o -> o.id == rtn.get().colliderId);
       
       return rtn;
    }

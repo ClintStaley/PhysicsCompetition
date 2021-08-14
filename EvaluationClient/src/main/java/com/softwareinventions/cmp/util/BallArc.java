@@ -42,9 +42,6 @@ public class BallArc {
       this.g = g;
       this.colliderId = cId;
       this.corner = c;
-      
-System.out.printf("BallArc: %f (%f, %f) going (%f, %f)\n", baseTime,
-xPos, yPos, xVlc, yVlc);
    }
    
    //If ballArc was an inner class instead of an import these would be constants
@@ -65,16 +62,12 @@ xPos, yPos, xVlc, yVlc);
       double yValue, xHitTime;
       BallArc rtn = null;
       
-      // No intersection if we already straddle the line
-      if (GenUtil.inBounds(x - radius - eps, xPos, x + radius + eps))
-         return null;
-      
       x = x > xPos ? x - radius : x + radius;
       xHitTime = (x - xPos) / xVlc;
       yValue = yPosFn(xHitTime);
       
       // Throw out negative times.
-      if (xHitTime > 0 && GenUtil.inBounds(loY, yValue, hiY)) {
+      if (xHitTime > eps && GenUtil.inBounds(loY, yValue, hiY)) {
          rtn = atTime(xHitTime, cId, false);
          rtn.xVlc = -rtn.xVlc;
       }
@@ -86,15 +79,11 @@ xPos, yPos, xVlc, yVlc);
       BallArc rtn = null;
       double[] yHitTimes; 
       double yHitTime, xHit;
-      
-      // No intersection if we already straddle the line
-      if (GenUtil.inBounds(y - radius - eps, yPos, y + radius + eps))
-         return null;
 
       y = y > yPos ? y - radius : y + radius;
       yHitTimes = GenUtil.quadraticSolution(g/2.0, yVlc, yPos - y);
-      if (yHitTimes != null && yHitTimes[1] >= 0) {
-         yHitTime = yHitTimes[0] >= 0 ? yHitTimes[0] : yHitTimes[1];
+      if (yHitTimes != null && yHitTimes[1] >= eps) {
+         yHitTime = yHitTimes[0] >= eps ? yHitTimes[0] : yHitTimes[1];
          xHit = xPosFn(yHitTime);
          if (GenUtil.inBounds(loX, xHit, hiX)) {
             rtn = atTime(yHitTime, cId, false);
@@ -176,6 +165,10 @@ xPos, yPos, xVlc, yVlc);
       }
 
       return rtn;
+   }
+   void dump() {
+      System.out.printf("Arc at %.3f: (%.3f, %.3f) moving (%.3f, %.3f)"
+       + " with gravity %.3f\n", baseTime, xPos, yPos, xVlc, yVlc, g);
    }
    /*
    

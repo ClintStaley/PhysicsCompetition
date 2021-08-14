@@ -113,7 +113,7 @@ public class ReboundEvaluator implements Evaluator {
          e.printStackTrace();
       }
    }
-
+/*
    // Represent one arc of a gravitationally freefalling ball, starting with
    // given position and velocity
    public static class BallArc {
@@ -212,7 +212,7 @@ public class ReboundEvaluator implements Evaluator {
        * 
        * ((G/2)^2)t^4 + (G Vy)t^3 + (Vx^2 + Vy^2 + G Dy)t^2 + 2(DxVx + DyVy)t +
        * (Dx^2 + Dy^2 - r^2) = 0
-       */
+       
       private BallArc fromCornerHit(double x, double y) {
          double[] coef = new double[5];
          double magnitude, dX = (xPos - x), dY = (yPos - y), proximity;
@@ -261,6 +261,8 @@ public class ReboundEvaluator implements Evaluator {
           + " with gravity %.3f\n", baseTime, xPos, yPos, xVlc, yVlc, g);
       }
    }
+
+*/
    
    // Starting with |arc|, compute the next arc based on rebounds within the
    // launch area, from cChuteLength on the left to rightX on the right, and
@@ -275,19 +277,19 @@ public class ReboundEvaluator implements Evaluator {
       Optional<BallArc> rtn = null;
       List<BallArc> cndArcs = new LinkedList<BallArc>();
       
-      arc.dump();
+      //arc.dump();
       
-      cndArcs.add(arc.fromVerticalHit(0, cFullHeight, cChuteLength)); // #1
-      cndArcs.add(arc.fromHorizontalHit(cChuteLength, rightX, 0.0));
-      cndArcs.add(arc.fromVerticalHit(0, cChuteHeight - cMargin, rightX));
-      cndArcs.add(arc.fromCornerHit(rightX, cChuteHeight - cMargin));
+      cndArcs.add(arc.fromVerticalHit(0, cFullHeight, cChuteLength, 0)); // #1
+      cndArcs.add(arc.fromHorizontalHit(cChuteLength, rightX, 0.0, 0));
+      cndArcs.add(arc.fromVerticalHit(0, cChuteHeight - cMargin, rightX, 0));
+      cndArcs.add(arc.fromCornerHit(rightX, cChuteHeight - cMargin, 0));
       cndArcs.add(arc.fromVerticalHit(cChuteHeight - cMargin,
        cChuteHeight + cDiameter + cMargin, rightX + cRadius, 0));
       cndArcs.add(arc.fromCornerHit(rightX, cChuteHeight + cDiameter
        + cMargin, 0));
       cndArcs.add(arc.fromVerticalHit(cChuteHeight + cDiameter + cMargin,
-       cFullHeight, rightX));
-      cndArcs.add(arc.fromHorizontalHit(cChuteLength, rightX, cFullHeight));
+       cFullHeight, rightX, 0));
+      cndArcs.add(arc.fromHorizontalHit(cChuteLength, rightX, cFullHeight, 0));
 
       rtn = cndArcs.stream().filter(a -> a != null)
        .min((x, y) -> x.baseTime < y.baseTime ? -1 : 1);
@@ -401,7 +403,7 @@ public class ReboundEvaluator implements Evaluator {
             
             // Add small arc under freefall to get to x = 1 + cRadius center.
             launchArcs.add(
-              lastArc = lastArc.atTime(cRadius / balls[minIdx].speed));
+              lastArc = lastArc.atTime(cRadius / balls[minIdx].speed, 0,false));
             
             // Bounce off floor or right side
             launchArcs.add(lastArc = getNextArc(lastArc, rightWall));
