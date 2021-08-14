@@ -106,14 +106,24 @@ insert into Competition (title, ctpId, ownerId, description, prms)
        "balls": [1.0, 5.0, 9.0]
      }');
 
-# jumpLength 3.86m gateTime .05s 
+# jumpLength 3.86m gateTime 0s 
 # Starts: 19kg @.5m 1m/s, 5kg .7m -1m/s 1kg .9m -1m/s, 
 insert into Competition (title, ctpId, ownerId, description, prms)
-   VALUES ('Rebound 2', 3, 1, 'Three ball problem', 
+   VALUES ('Rebound 2', 3, 1, 'More complex three-ball problem', 
     '{
        "targetLength" : 3.86,
        "maxBalls": 3,
        "balls": [19.0, 9.0, 6.0, 5.0, 4.0, 1.0]
+     }');
+
+# jumpLength 3.86m gateTime 0s 
+# Starts: 19kg @.5m 1m/s, 5kg .7m -1m/s 1kg .9m -1m/s, 
+insert into Competition (title, ctpId, ownerId, description, prms)
+   VALUES ('Rebound 2', 3, 1, 'More complex three-ball problem', 
+    '{
+       "targetLength" : 3.86,
+       "maxBalls": 3,
+       "balls": [19.0, 5.0, 1.0]
      }');
 
 
