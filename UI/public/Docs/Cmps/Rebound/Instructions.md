@@ -12,18 +12,40 @@ Notes:
 8. 
 
 ## Overview
-In this competition, you'll organize several balls of different masses in order to shoot one of the balls as far as possible.
+In this competition, you'll arrange collisions between several balls of different masses in order to launch the rightmost ball as far as possible.
 
-## The Details
 Here is a typical Rebound competition setup:
 
+![Rebound Layout](./ReboundLayout.png)
 
-And here is the same setup in schematic form, with coordinates for the obstacle and target corners.
+You are given two or more balls with varying masses.  The ball choices appear in the upper part of the diagram,  labelled by their masses.
 
-![Bounce Diagram](./BounceDiagram.png)
+Your task is to place one or more of these in the 1 meter long *launch chute* to the left, where the 9 and 1 balls appear in the example, and to  assign a *speed* to each ball, so that collisions between the balls impart the highest possible rightward velocity to the rightmost ball.  The rightmost ball is then launched across the open area in the middle, bounces once off of the floor, and precisely hits the *target chute* on the right side.  You assign the distance between the two chutes (the width of the middle area) to match the velocity your setup gives the rightmost ball so that the target chute gets hit.  You get a score if the ball accurately hits the target chute, and your score is based on how large a middle-area width you traversed to do so.
 
-You are given 6 balls of different masses in kg.  All are 10cm in diameter. 
-you may place 2-4 of them (the max number is given in the problem) in the *launch area*
+## The Details
+
+### Ball size and placement
+The balls have 8cm radius (16cm diameter).  You specify the x-coordinate of their center in meters from 0 to 1 within the launch chute, and there must be at least 1cm between each pair of balls and between the left/right balls and the left/right ends of the chute.  Thus the centersin practice may lie between 0.09m and .91m, and must be at least .17m apart from one another.
+
+### Ball speed
+Ball speed may range from -1 m/s to 1 m/s, with negative values indicating leftward speed and positive indicating rightward.  Thus any one ball has limited initial speed.  The trick is to use ball collisions to get speeds that may be many times as large as the initial speeds.
+
+### Open area size
+When launched, the right ball drops exactly 1m from the launch chute to the floor, and bounces elastically back up 1m.  The distance between the two chutes is set by *you*, and must be such as to cause the launched ball to precisely hit the target chute (to have exactly height 1m as its center crosses the entrance to the target chute).  The longer this distance is, the higher your score, so getting a maximum launch speed is essential.
+
+### The gate
+
+
+between -1 m/s and 1 m/s, with negative speeds going to the left and positive to the right.
+
+There must be a bit of space between the balls and between the left and right ball and the ends of the launch chute.
+
+From the starting locations and speeds you supply, the balls bounce back and forth in the launch chute, with perfectly elastic collisions as they hit one another, or the sides of the chute. 
+
+The left side of the chute is always blocked, but the right side is a *gate*, marked in red, that you may raise after the balls have bounced for some time.  If you raise it at 0 seconds, it's open from the start, but you may want to keep it closed for a time so that balls may bounce off the right side of the launch chute.  At the time you specify, the gate opens, and the next time the rightmost ball reaches the right end of the launch chute, it is free to fly out into the central open area.  The gate closes automatically after the rightmost ball launches, so none of the others will escape the launch chute.
+
+### The Goal
+Your job is to arrange the initial 
 
 ### Scoring details
 
