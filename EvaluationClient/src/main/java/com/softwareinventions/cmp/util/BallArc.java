@@ -1,6 +1,8 @@
 package com.softwareinventions.cmp.util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.OptionalDouble;
 
 import org.apache.commons.math3.analysis.solvers.LaguerreSolver;
@@ -75,24 +77,43 @@ public class BallArc {
       return rtn;
    }
    
+   
+   // Finds the first instance of a hit with an edge. Checks all four points a 
+   // ballArc could hit a given edge.  Those four points are above and below 
+   // each of the two solutions to the quadratic equation of time vs y-coord
    public BallArc fromHorizontalHit(double loX, double hiX, double y, int cId) {
-      BallArc rtn = null;
+      BallArc rtn = null, temp;
       double[] yHitTimes; 
       double yHitTime, xHit;
-
-      y = y > yPos ? y - radius : y + radius;
-      yHitTimes = GenUtil.quadraticSolution(g/2.0, yVlc, yPos - y);
-      if (yHitTimes != null && yHitTimes[1] >= eps) {
-         yHitTime = yHitTimes[0] >= eps ? yHitTimes[0] : yHitTimes[1];
-         xHit = xPosFn(yHitTime);
-         if (GenUtil.inBounds(loX, xHit, hiX)) {
-            rtn = atTime(yHitTime, cId, false);
-            rtn.yVlc = -rtn.yVlc;
+      ArrayList<BallArc> possibleArcs = new ArrayList<BallArc>(); 
+      
+      // Checks quadratic equations for when circle will be at y +- radius
+      for (int i = -1; i <= 1; i+=2) {
+         yHitTimes = GenUtil.quadraticSolution(g/2.0, yVlc, yPos - (y+ i*radius) );
+         if (yHitTimes != null && yHitTimes[1] >= eps) {
+            // Add an arc for both hits from given solutions of quadratic
+            // if it also lines up with x coordinates
+            // (but ignore negative time solutions) 
+            for (int j = 0; j < yHitTimes.length; j++) {
+               xHit = xPosFn(yHitTimes[j]);
+               if (yHitTimes[j] > eps && GenUtil.inBounds(loX, xHit, hiX)) {
+                  temp = atTime(yHitTimes[j], cId, false);
+                  temp.yVlc = -temp.yVlc;
+                  possibleArcs.add(temp);
+               }
+            }
          }
       }
+
+      // Iterates possibleArcs for the hit with the lowest time
+      yHitTime = Double.MAX_VALUE;
+      for (BallArc arc : possibleArcs) {
+         rtn = yHitTime < arc.baseTime ? rtn : arc;
+         yHitTime = rtn.baseTime;
+      }
+      
       return rtn;
    }
-   
    
    /* Generate a new BallArc representing the result of the current BallArc
     * colliding with a corner at (x,y), or null if no collision would occur.
@@ -123,20 +144,6 @@ public class BallArc {
     * 
     * ((G/2)^2)t^4 + (G Vy)t^3 + (Vx^2 + Vy^2 + G Dy)t^2 + 2(DxVx + DyVy)t +
     * (Dx^2 + Dy^2 - r^2) = 0
-    
-    *for launch speed of 3.03:
-    *
-Real Solution: 0.6413573987811823
-Real Solution: 0.669131988946722
-Real Solution: 1.3545781175411378
-Real Solution: 1.3686634123177557
-Real Solution: 0.9620874774911733
-Real Solution: 1.0051808230648471
-Real Solution: 2.2368840333107043
-Real Solution: 2.2464365175015524
-Real Solution: 2.2620800318674394
-Real Solution: 2.2743365927219408
-
     */
    public BallArc fromCornerHit(double x, double y, int cId) {
       double[] coef = new double[5];
@@ -155,15 +162,7 @@ Real Solution: 2.2743365927219408
       coef[3] = g * yVlc;
       coef[4] = g * g / 4.0;
 
-      
       Complex[] solutions = new LaguerreSolver().solveAllComplex(coef, 0);
-      
-      for (int i = 0; i < solutions.length; i++)
-      {
-         Complex s = solutions[i];
-         if( Math.abs(s.getImaginary()) < eps && s.getReal() > 0)
-         System.out.println("Real Solution: " + s.getReal());
-      }
       
       // Find earliest nonnegative real solution
       firstHit = Arrays.stream(solutions).filter
@@ -182,38 +181,17 @@ Real Solution: 2.2743365927219408
          magnitude = dX * rtn.xVlc + dY * rtn.yVlc;
          
          rtn.xVlc -= 2.0 * magnitude * dX;
-         rtn.yVlc -= 2.8 * magnitude * dY;
+         rtn.yVlc -= 2.0 * magnitude * dY;
+         //rtn.dump();
       }
-
+     
       return rtn;
    }
-   void dump() {
-      System.out.printf("Arc at %.3f: (%.3f, %.3f) moving (%.3f, %.3f)"
+   
+   public void dump() {
+      String str = corner ? "Corner" : "Not corner";
+      System.out.printf(str + " Arc at %.3f: (%.3f, %.3f) moving (%.3f, %.3f)"
        + " with gravity %.3f\n", baseTime, xPos, yPos, xVlc, yVlc, g);
    }
-   /*
-   
-   // Represent one Collision, including its type, its time, the location of
-   // circle center as of the collision, and the index of the struck obstacle.
-   public static class Collision {
-      public enum HitType {
-         CORNER, HORIZONTAL, VERTICAL // Hit corner, top/bottom, or left/right
-      };
-
-      public HitType hType;
-
-      public double time;
-      public double xHit;
-      public double yHit;
-
-      public int obstacleIdx = -1;
-
-      public Collision(double time, HitType hType, double xHit, double yHit) {
-         this.time = time;
-         this.hType = hType;
-         this.xHit = xHit;
-         this.yHit = yHit;
-      }
-   }
-   */
+ 
 }

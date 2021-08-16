@@ -138,9 +138,6 @@ public class BounceEvaluator implements Evaluator {
       for (int i = 0; i < numBalls; i++) {
          BallArc initialArc = new BallArc(0, 0, cStartingHeight, sbmData[i].speed,
           0, cGravity, 0, false);
-         //BounceBallArc startEvent = new BounceBallArc(cStartingHeight,
-           //    sbmData[i].speed);
-
          // Gets all other events for a given ball and return an array starting
          // with event given.
          rspB.events[i] = calculateOneBall(obstacles, initialArc);
@@ -242,7 +239,6 @@ public class BounceEvaluator implements Evaluator {
       double yOutOfBounds = possibleYOutOfBounds[0] >= 0.0 ? 
             possibleYOutOfBounds[0] : possibleYOutOfBounds[1];
       
-
       // Solve for x + radius out of bounds.
       if (current.xVlc < 0.0)
          xOutOfBounds = (-cRadius - current.xPos) / current.xVlc;
@@ -274,7 +270,6 @@ public class BounceEvaluator implements Evaluator {
    // Calculates and return the first Collision of the ball with |obstacle|,
    // or null if there is no collision.
    private BallArc getObstacleCollision(Obstacle obs, BallArc arc) {
-      
       Optional<BallArc> rtn = Stream.of(
          arc.fromHorizontalHit(obs.loX, obs.hiX, obs.hiY, obs.id),
          arc.fromHorizontalHit(obs.loX, obs.hiX, obs.loY, obs.id),
@@ -288,7 +283,6 @@ public class BounceEvaluator implements Evaluator {
       .min((c1, c2) -> Double.compare(c1.baseTime, c2.baseTime));
       
       if (rtn.isPresent()) {
-         //rtn.get().obstacleIdx = obs.id;
          lgr.info("Best Time is: " + rtn.get().baseTime);
          return rtn.get();
       }
