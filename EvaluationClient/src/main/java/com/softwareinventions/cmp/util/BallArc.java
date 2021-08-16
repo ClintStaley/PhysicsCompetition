@@ -123,6 +123,20 @@ public class BallArc {
     * 
     * ((G/2)^2)t^4 + (G Vy)t^3 + (Vx^2 + Vy^2 + G Dy)t^2 + 2(DxVx + DyVy)t +
     * (Dx^2 + Dy^2 - r^2) = 0
+    
+    *for launch speed of 3.03:
+    *
+Real Solution: 0.6413573987811823
+Real Solution: 0.669131988946722
+Real Solution: 1.3545781175411378
+Real Solution: 1.3686634123177557
+Real Solution: 0.9620874774911733
+Real Solution: 1.0051808230648471
+Real Solution: 2.2368840333107043
+Real Solution: 2.2464365175015524
+Real Solution: 2.2620800318674394
+Real Solution: 2.2743365927219408
+
     */
    public BallArc fromCornerHit(double x, double y, int cId) {
       double[] coef = new double[5];
@@ -143,6 +157,13 @@ public class BallArc {
 
       
       Complex[] solutions = new LaguerreSolver().solveAllComplex(coef, 0);
+      
+      for (int i = 0; i < solutions.length; i++)
+      {
+         Complex s = solutions[i];
+         if( Math.abs(s.getImaginary()) < eps && s.getReal() > 0)
+         System.out.println("Real Solution: " + s.getReal());
+      }
       
       // Find earliest nonnegative real solution
       firstHit = Arrays.stream(solutions).filter

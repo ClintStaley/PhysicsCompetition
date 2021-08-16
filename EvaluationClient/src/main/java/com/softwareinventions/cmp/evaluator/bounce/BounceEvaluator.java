@@ -276,10 +276,10 @@ public class BounceEvaluator implements Evaluator {
    private BallArc getObstacleCollision(Obstacle obs, BallArc arc) {
       
       Optional<BallArc> rtn = Stream.of(
-         arc.fromHorizontalHit(obs.loX, obs.hiX, obs.hiY + cRadius, obs.id),
-         arc.fromHorizontalHit(obs.loX, obs.hiX, obs.loY - cRadius, obs.id),
-         arc.fromVerticalHit(obs.loY, obs.hiY, obs.hiX + cRadius, obs.id),
-         arc.fromVerticalHit(obs.loY, obs.hiY, obs.loX - cRadius, obs.id),
+         arc.fromHorizontalHit(obs.loX, obs.hiX, obs.hiY, obs.id),
+         arc.fromHorizontalHit(obs.loX, obs.hiX, obs.loY, obs.id),
+         arc.fromVerticalHit(obs.loY, obs.hiY, obs.hiX, obs.id),
+         arc.fromVerticalHit(obs.loY, obs.hiY, obs.loX, obs.id),
          arc.fromCornerHit(obs.hiX, obs.hiY, obs.id),
          arc.fromCornerHit(obs.hiX, obs.loY, obs.id),
          arc.fromCornerHit(obs.loX, obs.hiY, obs.id),
