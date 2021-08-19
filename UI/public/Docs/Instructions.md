@@ -35,4 +35,4 @@ The Submission Page provides a movie of the outcome of your submission, in eithe
 For some competitions, you also get a numerically-detailed summary of your design, which may be more useful for analyzing your results.
 
 ### Submitting a Design
-The Make First/Another Attempt button on the Submit Page pops up a dialog via which you may enter a new design submission.  Once you do this, it may take several seconds for the submission to be graded.  The page will show you a message indicating that it's checking for a result, and then will show the result once your submission is graded.  
+The Make First/Another Attempt button on the Submit Page pops up a dialog via which you may enter a new design submission.  Once you do this, it may take several seconds for the submission to be graded.  The page will show you a message indicating that it's checking for a result, and then will show the result once your submission is graded.
