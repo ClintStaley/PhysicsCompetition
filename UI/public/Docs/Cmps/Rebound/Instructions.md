@@ -31,8 +31,7 @@ The left side of the chute is always blocked, but the right side is a *gate*, ma
 Your score is based on how far the rightmost ball flies before reaching the target chute.  The figure that gets 100% score is listed as part of the problem diagram.  Jumps less than this get proportionally lower scores.  You must launch at at least a speed needed to get a 1m distance or the solution is
 invalid.
 
-#### Five free submissions
-You get 5 free submissions in which to refine your answer.  You may make more submissions if you need to, but your score goes down by 10% for each submission past that limit.
+You get 5 free submissions, in which to refine your answer.  You may make more submissions if you need to, but your score goes down by 10% for each submission past that limit.
 
 ## A Few Hints
 ### Equations for Elastic Collision
