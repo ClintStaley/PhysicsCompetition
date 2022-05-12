@@ -9,6 +9,7 @@
 	2. Log in as root; create cmp user/pass
 	3. Run Deploy.sql to inject initial DB contents (or load backup of other site DB)
 	4. Helpful commands: `set password for 'cmp'@'localhost' = 'clearpass'`
+   
 3. Configure RESTServer
 	1. Use exampleConnection.json in Routes to create connection.json
 
