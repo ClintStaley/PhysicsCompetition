@@ -35,7 +35,8 @@ export class MovieController extends Component {
    }
 
    // Set state.playing to true, and reset to movie start if we're at end.
-   // In either case start a requestAnimatinoFrame sequence once state is set.
+   // |rate| is movie seconds per wallclock seconds, e.g. 0.5 for half-speed.
+   // In either case start a requestAnimationFrame sequence once state is set.
    play = (rate) => {
       let newState = {playing: true, rate}
 
@@ -59,9 +60,11 @@ export class MovieController extends Component {
    // is the number of seconds into the movie at the current animation point.
    // State.startTime is the time of the first frame assuming the movie has 
    // been continuously animated to the current point, at the current rate.
-   // It gets reset anytime  we pause, scrub, or change rate.  To reset 
-   // state.startTime, set it null, and the next |animate| will reassign it 
-   // appropriately.
+   // It gets reset anytime  we pause, scrub, or change rate.  
+   //
+   // [1] To reset state.startTime, set it null, and the next |animate| call
+   // will set it to current wallclock seconds less the number of seconds needed
+   // to reach currentOffset at current rate of play.
    animate = (timestamp) => {
       let newState = {};
 
@@ -73,12 +76,12 @@ export class MovieController extends Component {
             newState = {playing: false, startTime: null}
          }
 
-         // Set startTime if we are commencing animation
+         // If we are commencing animation, set startTime (see [1])
          if (this.state.startTime === null) 
             newState.startTime
              = timestamp - this.state.currentOffset / this.state.rate;
 
-         // In either event, set currentOffset to reflect time.
+         // In either event, set currentOffset to reflect time into movie
          newState.currentOffset =
           (timestamp - (this.state.startTime || newState.startTime))
           * this.state.rate;

@@ -7,8 +7,8 @@ function addStdHandlers(dsp, cb, promise) {
    promise
    .catch((errList) => {
       console.log(errList);
-       dsp({type: 'SHOW_ERR', details: errList});
-       return Promise.reject();  // Skip downstream "thens".
+      dsp({type: 'SHOW_ERR', details: errList});
+      return Promise.reject();  // Skip downstream "thens".
     })
    .then((val) => {if (cb) cb(); return val;});
 }
@@ -51,7 +51,7 @@ export function getAllCtps(cb){
 export function getAllCmps(cb) {
    return (dispatch, getState) => {
       api.getCmps()
-      .then((cmps) => {
+       .then((cmps) => {
          Object.keys(cmps).forEach(key => {cmps[key].cmpTeams = []});
          dispatch({ type: 'GET_CMPS', cmps});
       })
@@ -99,6 +99,7 @@ export function putCmp(cmpId, newCmpData, cb) {
    }
 }
 
+// Post a team and on success give the team one member -- the current AU.
 export function postTeam(cmpId, newTeamData, cb) {
    return (dispatch, getState) => {
       addStdHandlers(dispatch, cb,
@@ -120,7 +121,7 @@ export function putTeam(cmpId, teamId, newTeamData, cb) {
    return (dispatch, getState) => {
       api.putTeam(cmpId, teamId, newTeamData)
       .then(() => {
-          newTeamData.id = teamId;
+          newTeamData.id = teamId;  // Add Id and preclude ID alteration
           dispatch({ type: 'PUT_TEAM', newTeamData});
        })
       .then(() => {if (cb) cb()});
