@@ -4,12 +4,14 @@
 // a number of seconds since the start of the movie.
 
 export class ReboundMovie {
+   // Event types
    static cBallPosition = 0; // Change position of all balls
    static cCollision = 1;    // Noise of collision
    static cBounce = 2;       // Noise (different) of a bounce, possible marker
    static cGateOpen = 3;     // Show gate as open
    static cGateClose = 4;    // Close gate
 
+   // Graphical standard dimensions
    static cRadius = .08;     // Ball radius
    static cChuteWidth = 1.0; // Width of left and right chutes.
 
