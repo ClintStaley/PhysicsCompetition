@@ -53,7 +53,6 @@ router.post('/', (req, res) => {
    var ajv = new Ajv(); //schema validator
    var schemaVld = {};
 
-console.log("Doing POST");
    if (vld.checkAdmin())
       async.waterfall([
          (cb) => {
@@ -78,16 +77,14 @@ console.log("Doing POST");
             // If ctp exists, check schema
             if (vld.check(ctp && ctp.length, Tags.noCompType, cb)) {
                try {
-                  console.log(`Schema: ${ctp[0].prmSchema}`);
                   schemaVld = ajv.compile(JSON.parse(ctp[0].prmSchema));
-                  console.log(`Prms: ${body.prms}`);
                   var valid = schemaVld(JSON.parse(body.prms));
                   if (vld.check(valid, [Tags.invalidPrms,
                       schemaVld.errors], cb))
                      cnn.chkQry('insert into Competition set ?', body, cb);
                }
                catch (exception) {
-                  vld.check(false, [Tags.invalidPrms, exception], cb);
+                  vld.check(false, [Tags.invalidPrms, ], cb);
                }
             }
          },

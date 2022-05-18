@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "1aabe4bc-d749-48da-ba97-53b06e4453fc",
+		"_postman_id": "e8f43a0e-428a-4e2f-bbda-ecb96bc73a92",
 		"name": "PhysicsCompetitionREST Test",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -1714,7 +1714,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"Land Grab Postman Copy\",\n    \"codeName\": \"LandGrab\",\n    \"description\": \"Claim territory by placing circles in a field of obstacles\",\n    \"prmSchema\":  \"{ \\\"$schema\\\": \\\"http://json-schema.org/draft-07/schema#\\\",  \\\"title\\\": \\\"Land Grab\\\", \\\"type\\\": \\\"object\\\", \\\"properties\\\": {  \\\"numCircles\\\": { \\\"title\\\": \\\"Number of circles allowed per team\\\", \\\"type\\\": \\\"integer\\\", \\\"minValue\\\": 1  },  \\\"goalArea\\\": { \\\"title\\\": \\\"Area of coverage that gets 100%\\\", \\\"type\\\": \\\"number\\\", \\\"minimum\\\": 0.0, \\\"maximum\\\": 10000.0  },  \\\"obstacles\\\": { \\\"title\\\": \\\"Blocked areas in 100x100 square\\\", \\\"type\\\": \\\"array\\\", \\\"items\\\": {  \\\"title\\\": \\\"Blocked rectangle\\\",  \\\"type\\\": \\\"object\\\",  \\\"properties\\\": { \\\"loX\\\": {  \\\"title\\\": \\\"Left edge\\\",  \\\"type\\\": \\\"number\\\",  \\\"minimum\\\": 0.0,  \\\"maximum\\\": 100.0 }, \\\"hiX\\\": {  \\\"title\\\": \\\"Right edge\\\",  \\\"type\\\": \\\"number\\\",  \\\"minimum\\\": 0.0,  \\\"maximum\\\": 100.0 }, \\\"loY\\\": {  \\\"title\\\": \\\"Bottom edge\\\",  \\\"type\\\": \\\"number\\\",  \\\"minimum\\\": 0.0,  \\\"maximum\\\": 100.0 },  \\\"hiY\\\": {  \\\"title\\\": \\\"Top edge\\\",  \\\"type\\\": \\\"number\\\",  \\\"minimum\\\": 0.0,  \\\"maximum\\\": 100.0 }  }  }  }  } }\" \n}"
+							"raw": "{\n    \"title\": \"Land Grab Postman Copy\",\n    \"codeName\": \"LandGrab\",\n    \"description\": \"Claim territory by placing circles in a field of obstacles\",\n    \"prmSchema\":  \"{ \\\"$schema\\\": \\\"http://json-schema.org/draft-07/schema#\\\",  \\\"title\\\": \\\"Land Grab\\\", \\\"type\\\": \\\"object\\\", \\\"properties\\\": {  \\\"numCircles\\\": { \\\"title\\\": \\\"Number of circles allowed per team\\\", \\\"type\\\": \\\"integer\\\", \\\"minimum\\\": 1  },  \\\"goalArea\\\": { \\\"title\\\": \\\"Area of coverage that gets 100%\\\", \\\"type\\\": \\\"number\\\", \\\"minimum\\\": 0.0, \\\"maximum\\\": 10000.0  },  \\\"obstacles\\\": { \\\"title\\\": \\\"Blocked areas in 100x100 square\\\", \\\"type\\\": \\\"array\\\", \\\"items\\\": {  \\\"title\\\": \\\"Blocked rectangle\\\",  \\\"type\\\": \\\"object\\\",  \\\"properties\\\": { \\\"loX\\\": {  \\\"title\\\": \\\"Left edge\\\",  \\\"type\\\": \\\"number\\\",  \\\"minimum\\\": 0.0,  \\\"maximum\\\": 100.0 }, \\\"hiX\\\": {  \\\"title\\\": \\\"Right edge\\\",  \\\"type\\\": \\\"number\\\",  \\\"minimum\\\": 0.0,  \\\"maximum\\\": 100.0 }, \\\"loY\\\": {  \\\"title\\\": \\\"Bottom edge\\\",  \\\"type\\\": \\\"number\\\",  \\\"minimum\\\": 0.0,  \\\"maximum\\\": 100.0 },  \\\"hiY\\\": {  \\\"title\\\": \\\"Top edge\\\",  \\\"type\\\": \\\"number\\\",  \\\"minimum\\\": 0.0,  \\\"maximum\\\": 100.0 }  }  }  }  } }\" \n}"
 						},
 						"url": {
 							"raw": "{{url}}/Ctps",
@@ -2544,7 +2544,7 @@
 					"response": []
 				},
 				{
-					"name": "Post LandGrap A Cmp",
+					"name": "Post LandGrab A Cmp",
 					"event": [
 						{
 							"listen": "test",
@@ -2582,7 +2582,7 @@
 					"response": []
 				},
 				{
-					"name": "Post LandGrap Cmp w/ Invalid Prms",
+					"name": "Post LandGrab Cmp w/ Invalid Prms",
 					"event": [
 						{
 							"listen": "test",
@@ -3208,7 +3208,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"title\": \"CompetitionType C\",\n  \"description\": \"description\",\n  \"codeName\": \"Solar Car?\",\n  \"prmSchema\": \"{   \\\"title\\\": \\\"Route Strategy\\\",   \\\"description\\\": \\\"A solar car route strategy\\\",   \\\"type\\\": \\\"object\\\",   \\\"properties\\\": {     \\\"Altitude Profiles\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"array\\\",         \\\"items\\\": {           \\\"type\\\": \\\"number\\\"         },         \\\"maxItems\\\": 2,         \\\"minItems\\\": 2       },       \\\"minItems\\\": 2     },     \\\"Cell Output profile\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"array\\\",         \\\"items\\\": {           \\\"type\\\": \\\"number\\\"         },         \\\"maxItems\\\": 2,         \\\"minItems\\\": 2       },       \\\"minItems\\\": 2     },     \\\"Friction\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"number\\\",         \\\"minimum\\\": 0,         \\\"exclusiveMinimum\\\": true       },       \\\"maxItems\\\": 2,       \\\"minItems\\\": 1     },     \\\"Energy /m alt\\\": {       \\\"type\\\": \\\"number\\\",       \\\"minimum\\\": 0,       \\\"exclusiveMinimum\\\": true     },     \\\"Battery I/o\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"array\\\",         \\\"items\\\": {           \\\"type\\\": \\\"number\\\",           \\\"default\\\": 1000         },         \\\"maxItems\\\": 2,         \\\"minItems\\\": 2       },       \\\"minItems\\\": 2     },     \\\"Regen Efficiency\\\": {       \\\"type\\\": \\\"number\\\",       \\\"minimum\\\": 0,       \\\"default\\\": 100,       \\\"exclusiveMinimum\\\": true     },     \\\"Initial Battery\\\": {       \\\"type\\\": \\\"number\\\",       \\\"minimum\\\": 0,       \\\"default\\\": 10,       \\\"exclusiveMinimum\\\": true     }   },   \\\"required\\\": [     \\\"Altitude Profiles\\\",     \\\"Cell Output profile\\\",     \\\"Friction\\\",     \\\"Energy /m alt\\\",     \\\"Battery I/o\\\",     \\\"Regen Efficiency\\\",     \\\"Initial Battery\\\"   ] }\"\n}",
+							"raw": "{\n  \"title\": \"CompetitionType C\",\n  \"description\": \"description\",\n  \"codeName\": \"Solar Car?\",\n  \"prmSchema\": \"{\\\"$schema\\\": \\\"http://json-schema.org/draft-07/schema#\\\",   \\\"title\\\": \\\"Route Strategy\\\",   \\\"description\\\": \\\"A solar car route strategy\\\",   \\\"type\\\": \\\"object\\\",   \\\"properties\\\": {     \\\"Altitude Profiles\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"array\\\",         \\\"items\\\": {           \\\"type\\\": \\\"number\\\"         },         \\\"maxItems\\\": 2,         \\\"minItems\\\": 2       },       \\\"minItems\\\": 2     },     \\\"Cell Output profile\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"array\\\",         \\\"items\\\": {           \\\"type\\\": \\\"number\\\"         },         \\\"maxItems\\\": 2,         \\\"minItems\\\": 2       },       \\\"minItems\\\": 2     },     \\\"Friction\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"number\\\",     \\\"exclusiveMinimum\\\": 0      },       \\\"maxItems\\\": 2,       \\\"minItems\\\": 1     },     \\\"Energy /m alt\\\": {       \\\"type\\\": \\\"number\\\",   \\\"exclusiveMinimum\\\": 0   },     \\\"Battery I/o\\\": {       \\\"type\\\": \\\"array\\\",       \\\"items\\\": {         \\\"type\\\": \\\"array\\\",         \\\"items\\\": {           \\\"type\\\": \\\"number\\\",           \\\"default\\\": 1000         },         \\\"maxItems\\\": 2,         \\\"minItems\\\": 2       },       \\\"minItems\\\": 2     },     \\\"Regen Efficiency\\\": {       \\\"type\\\": \\\"number\\\",     \\\"default\\\": 100,       \\\"exclusiveMinimum\\\": 0    },     \\\"Initial Battery\\\": {       \\\"type\\\": \\\"number\\\",     \\\"default\\\": 10,       \\\"exclusiveMinimum\\\": 0    }   },   \\\"required\\\": [     \\\"Altitude Profiles\\\",     \\\"Cell Output profile\\\",     \\\"Friction\\\",     \\\"Energy /m alt\\\",     \\\"Battery I/o\\\",     \\\"Regen Efficiency\\\",     \\\"Initial Battery\\\"   ] }\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -8019,23 +8019,6 @@
 							]
 						},
 						"description": "Good Login\n"
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Server",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{url}}/Server",
-							"host": [
-								"{{url}}"
-							],
-							"path": [
-								"Server"
-							]
-						}
 					},
 					"response": []
 				}
