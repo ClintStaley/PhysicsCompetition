@@ -53,12 +53,14 @@ router.post('/', (req, res) => {
    var ajv = new Ajv(); //schema validator
    var schemaVld = {};
 
+console.log("Doing POST");
    if (vld.checkAdmin())
       async.waterfall([
          (cb) => {
             //Get dupTitles if they exist
-            if (vld.hasOnlyFields(body, ["title", "ctpId", "prms", "rules", "hints",
-               "description"], cb).check(true,null,cb) && vld.checkFieldLengths(body, ["title"], [titleLimit])) {
+            if (vld.hasOnlyFields(body, ["title", "ctpId", "prms", "rules",
+             "hints", "description"], cb).check(true,null,cb)
+             && vld.checkFieldLengths(body, ["title"], [titleLimit])) {
                body.ownerId = ssn.prsId;
                cnn.chkQry(
                   'select * from Competition where title = ? and ownerId = ?',
@@ -66,25 +68,26 @@ router.post('/', (req, res) => {
             }
          },
          (cmp, fields, cb) => {
-            //check dupTitle
             if (vld.check(!cmp.length, Tags.dupTitle, cb)) {
-               // get the prmSchema from Ctp
+               // Get Ctp info
                cnn.chkQry('select * from CompetitionType where id = ?',
                   body.ctpId, cb);
             }
          },
          (ctp, fields, cb) => {
-            // If no duplicates, insert new competition
+            // If ctp exists, check schema
             if (vld.check(ctp && ctp.length, Tags.noCompType, cb)) {
                try {
+                  console.log(`Schema: ${ctp[0].prmSchema}`);
                   schemaVld = ajv.compile(JSON.parse(ctp[0].prmSchema));
+                  console.log(`Prms: ${body.prms}`);
                   var valid = schemaVld(JSON.parse(body.prms));
                   if (vld.check(valid, [Tags.invalidPrms,
                       schemaVld.errors], cb))
                      cnn.chkQry('insert into Competition set ?', body, cb);
                }
                catch (exception) {
-                  vld.check(false, Tags.invalidPrms, cb);
+                  vld.check(false, [Tags.invalidPrms, exception], cb);
                }
             }
          },

@@ -41,13 +41,15 @@ export class RbnSubmitModal extends Component {
       }
    }
  
+   // Sort unchosen balls in increasing order of weight
    sortUnchosen(unchosen) {
       let prms = this.props.prms;
 
       return unchosen.sort((b1, b2) => {
          let w1 = prms.balls[b1.value].weight;
          let w2 = prms.balls[b2.value].weight;
-            return w1 < w2 ? -1 : w1 === w2 ? 0 : 1;
+         
+         return w1 < w2 ? -1 : w1 === w2 ? 0 : 1;
       });
    }
 
@@ -72,23 +74,26 @@ export class RbnSubmitModal extends Component {
          this.setState({unchosen, ballStarts})
       }
    }
-
+   
    checkPosErrors(ballStarts) {
-      const cMin = ReboundMovie.cRadius + .01;
-      const cMid = 2*ReboundMovie.cRadius + .01;
-      const cMax = ReboundMovie.cChuteWidth - cMin;
+      const cMin = ReboundMovie.cRadius + .01;      // Left edge of chute
+      const cMax = ReboundMovie.cChuteWidth - cMin; // Right edge of chute
+      const cSep = 2*ReboundMovie.cRadius + .01;    // Min ball center sep
+      var badPair;
 
+      // Check for simple out of range
       ballStarts.forEach(s => s.error = !isNaN(s.pos) 
        && (s.pos < cMin || s.pos > cMax));
 
+      // Check for ball overlaps
       for (let idx1 = 0; idx1 < ballStarts.length-1; idx1++)
          for (let idx2 = idx1+1; idx2 < ballStarts.length; idx2++) {
             let bs1 = ballStarts[idx1], bs2 = ballStarts[idx2];
 
-            bs1.error = bs1.error || !isNaN(bs1.pos) && !isNaN(bs2.pos)
-             && Math.abs(bs1.pos - bs2.pos) < cMid;
-            bs2.error = bs2.error || !isNaN(bs1.pos) && !isNaN(bs2.pos)
-             && Math.abs(bs1.pos - bs2.pos) < cMid;
+            badPair = !isNaN(bs1.pos) && !isNaN(bs2.pos)
+             && Math.abs(bs1.pos - bs2.pos) < cSep;
+            bs1.error = bs1.error || badPair;
+            bs2.error = bs2.error || badPair;
          }
    }
 
@@ -98,8 +103,8 @@ export class RbnSubmitModal extends Component {
    //
    // "field:sIdx" -- field is id, pos or speed, and sIdx is an index into
    // ballStarts.  If |id|, adjust value for relevant ballStart, and also
-   // adjust state.unchosen.  If |pos| or |speed|, ensure correct ranges and no
-   // overlaps/touches.
+   // adjust state.unchosen.  If |pos| or |speed|, ensure correct ranges 
+   // if |pos|, ensure no overlaps/touches.
    handleChange(ev) {
       const cMaxJump = 25.0;
       const cMaxGateTime = 10.0;

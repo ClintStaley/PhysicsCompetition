@@ -98,6 +98,10 @@
             "type": "integer",
             "minimum": 1
          },
+         "hints": {
+            "title": "Type of hints used to direct to hints page",
+            "type" : "string"
+         },
          "goalArea": {
             "title": "Area of coverage that gets 100%",
             "type": "number",
@@ -128,7 +132,7 @@
                      "type": "number",
                      "minimum": 0.0,
                      "maximum": 100.0
-                  },
+                  }, 
                   "hiY": {
                      "title": "Top edge",
                      "type": "number",
@@ -139,10 +143,6 @@
                "additionalProperties": false,
                "minProperties": 4
             }
-         },
-         "hints": {
-            "title": "Type of hints used to direct to hints page",
-            "type" : "string"
          }
       },
       "additionalProperties": false,
