@@ -29,7 +29,7 @@ public class EVCMain extends Thread {
    private final boolean relaxedHTTPS;
 
    private EVCThread[] evcThreads;
-
+   
    public EVCMain(Properties properties) {
       int numThreads = Integer.parseInt(properties.getProperty("threads"));
 
