@@ -61,12 +61,14 @@ export class BounceSVGView extends React.Component {
       while (evtIdx+1 < evts.length && evts[evtIdx+1].time <= timeStamp) {
          evt = evts[++evtIdx];
          if (evt.type === BounceMovie.cMakeBarrier) {
-            svgElms.push(SVGUtil.makeLabeledRect(evt, "barrier", yTop, style, .13));
+            svgElms.push(SVGUtil.makeLabeledRect(evt, "barrier", yTop,
+             style, .13));
          }
          else if (evt.type === BounceMovie.cMakeTarget) {
             evt.svgIdx = svgElms.length;
             trgEvts[evt.id] = evt;  // Save event for redrawing if hit
-            svgElms.push(SVGUtil.makeLabeledRect(evt, "target", yTop, style, .13));
+            svgElms.push(SVGUtil.makeLabeledRect(evt, "target", yTop,
+             style, .13));
          }
          else if (evt.type === BounceMovie.cBallPosition) {
             svgElms.push(<circle key={"ballPos" + evt.time} cx={evt.x}
@@ -84,7 +86,7 @@ export class BounceSVGView extends React.Component {
                 className={style.faded + " " + style[hitClass]}/>)
             else
                svgElms.push(<circle key={"Hit" + evt.time} cx={evt.x}
-                cy={yTop - evt.y} r={radius} 
+                cy={yTop - evt.y} r={radius}
                 className={style.faded + " " +style[hitClass]}/>)
 
             if (evt.type === BounceMovie.cHitTarget) {
