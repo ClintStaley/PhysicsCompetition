@@ -11,7 +11,6 @@ export class BounceMovie {
    static cBallLaunch = 5;
    static cBallExit = 6;
    static cTargetFade = 7;
-
    static cFadeTime = .75;     // Seconds across which a target fades away
 
    // Construct with background as indicated, and events drawn from prms and 
