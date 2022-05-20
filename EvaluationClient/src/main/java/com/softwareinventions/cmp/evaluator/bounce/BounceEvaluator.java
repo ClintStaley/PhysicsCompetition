@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.stream.Stream;
+import java.util.function.UnaryOperator;
 
-import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
 import org.apache.commons.math3.analysis.solvers.LaguerreSolver;
 import org.apache.commons.math3.complex.Complex;
@@ -25,7 +25,7 @@ public class BounceEvaluator implements Evaluator {
    public static final double GRAVITY = -9.81;
    public static final double RADIUS = .1;
    public static final double EPS = 0.00000001;
-   public static final double ERR_FACTOR = 0.01;
+   public static final double ERR_FACTOR = 0.05;
    public static final int SBM_LIMIT = 5;  
    public static final double SBM_PENALTY = .9;
    
@@ -70,27 +70,24 @@ public class BounceEvaluator implements Evaluator {
    }
    
    private static class BallEquations {
-      // CAS QUESTION: Why are we not using java.function.UnaryOperator? A quick
-      // test suggests it should work fine. E.g.
-      // public java.util.function.UnaryOperator<Double> xPos;
-      
-      public UnivariateFunction xPos;
-      public UnivariateFunction yPos;
-      public UnivariateFunction xVelocity;
-      public UnivariateFunction yVelocity;
+      public UnaryOperator<Double> xPos;
+      public UnaryOperator<Double> yPos;
+      public UnaryOperator<Double> xVelocity;
+      public UnaryOperator<Double> yVelocity;
       
       // Create equations to compute X/Y position and velocity components given
       // a starting point expressed as a BounceEvent.
       public BallEquations(BounceEvent current) {
-         xPos = t -> (t) * current.velocityX + current.posX;
-         xVelocity = t  -> current.velocityX;
+         xPos = t -> t * current.velocityX + current.posX;
+         xVelocity = t -> current.velocityX;
 
-         yPos = t -> GRAVITY / 2.0 * GenUtil.sqr((t )) + 
-               current.velocityY * (t ) + current.posY;
-         yVelocity = t -> GRAVITY * (t ) + current.velocityY;
+         yPos = t -> GRAVITY / 2.0 * GenUtil.sqr(t) + 
+               current.velocityY * t + current.posY;
+         yVelocity = t -> GRAVITY * t + current.velocityY;
       }
    }
 
+   // Launch speed and expected exit time and location.
    public static class LaunchSpec {
       public double speed;
       public double finalX;
@@ -114,7 +111,7 @@ public class BounceEvaluator implements Evaluator {
       public int obstacleIdx;
       public boolean corner;
 
-      // Create a starting bounce event.
+      // Create a starting bounce event, from launcher
       public BounceEvent(double startingHeight, double speed) {
          obstacleIdx = -1;
          posX = 0;
@@ -127,24 +124,22 @@ public class BounceEvaluator implements Evaluator {
       // Create a BounceEvent representing the situation that exists |time|
       // seconds after |current|.
       public BounceEvent(BounceEvent current, double time) {
-         // Get all equations.
-         // CAS: Why is ballFunctions not a member created on construction?
-         // Indeed, why is it a separate class at all?  
          BallEquations ballFunctions = new BallEquations(current);
 
          obstacleIdx = -1;
          this.time = time + current.time;
-         posX = ballFunctions.xPos.value(time);
-         velocityX = ballFunctions.xVelocity.value(time);
-         posY = ballFunctions.yPos.value(time);
-         velocityY = ballFunctions.yVelocity.value(time);
+         posX = ballFunctions.xPos.apply(time);
+         velocityX = ballFunctions.xVelocity.apply(time);
+         posY = ballFunctions.yPos.apply(time);
+         velocityY = ballFunctions.yVelocity.apply(time);
       }
    }
 
+ 
    public class BounceResults {
-      public boolean valid;
-      public Double sbmPenalty;
-      public BounceEvaluator.BounceEvent[][] events;
+      public boolean valid;                           // Is solution valid?
+      public Double sbmPenalty;                       // What penalty applies?
+      public BounceEvaluator.BounceEvent[][] events;  // Event lists per ball
    }
 
    static Logger lgr = Logger.getLogger(BounceEvaluator.class);
@@ -184,7 +179,7 @@ public class BounceEvaluator implements Evaluator {
       
       // LinkedList so that we can delete obstacles as they are hit.
       LinkedList<Obstacle> obstacles = new LinkedList<Obstacle>
-            (Arrays.asList(prms.targets));
+       (Arrays.asList(prms.targets));
       obstacles.addAll(Arrays.asList(prms.barriers));
 
       BounceResults rspB = new BounceResults();
@@ -196,7 +191,7 @@ public class BounceEvaluator implements Evaluator {
 
       for (int i = 0; i < numBalls; i++) {
          BounceEvent startEvent = new BounceEvent(STARTING_HEIGHT,
-               sbmData[i].speed);
+          sbmData[i].speed);
 
          // Gets all other events for a given ball and return an array starting
          // with event given.
@@ -236,7 +231,7 @@ public class BounceEvaluator implements Evaluator {
       for (int i = 0; i < res.length; i++) {
          ball = res[i];
          
-         if (ball.length < 2)  // One collision plus an exit event
+         if (ball.length < 2)  // Must have at least one collision plus exit
             return false;
          
          testEvent = ball[ball.length - 2];  // Collision prior to exit event
@@ -246,7 +241,7 @@ public class BounceEvaluator implements Evaluator {
             !(GenUtil.looseEqual(testEvent.time, testSpec.finalTime, ERR_FACTOR) 
             && GenUtil.looseEqual(testEvent.posX, testSpec.finalX, ERR_FACTOR)
             && GenUtil.looseEqual(testEvent.posY, testSpec.finalY, ERR_FACTOR)))
-            
+            System.out.printf("%f, %f, %f\n", testEvent.time, testEvent.posX, testEvent.posY);
             return false;
       }
       
@@ -256,17 +251,6 @@ public class BounceEvaluator implements Evaluator {
 
       return obs.size() == prm.barriers.length;
    }
-
-/* CAS Comments:  I stopped here, and would invite you to do a review of the rest, paying attention to:
- 1. Careful naming.  You had "obstacle" meaning both a general rectangle, and a target to hit, while "block"
-    meant an obstacle to avoid.  I renamed this to "targets" and "barriers", leaving obstacle to describe the
-    general case.  I considered keeping "block" for barrier, but the rectangles are all "blocks" geometrically
-    so that seemed a bit ambiguous.
- 2. Careful wording of comments for clarity
- 3. *Not* commenting the obvious
- 4. Consistent patterns of code, and in some cases, code conciseness.
- 5. Naming according to the rules. (No caps for members, for instance.)
-*/
    
    private BounceEvent[] calculateOneBall(LinkedList<Obstacle> obstacles,
          BounceEvent StartingPoint) {
@@ -421,7 +405,7 @@ public class BounceEvaluator implements Evaluator {
             continue;
          
          // Calculate x value at time of collision.
-         double xValue = equations.xPos.value(yHitTimes[idx]);
+         double xValue = equations.xPos.apply(yHitTimes[idx]);
          
          if (GenUtil.inBounds(loX, xValue, hiX)) {
             // We have a hit on the horizontal edge.
@@ -451,7 +435,7 @@ public class BounceEvaluator implements Evaluator {
          return null;
 
       // Get y value at possible collision time.
-      double yValue = equations.yPos.value(xHitTime);
+      double yValue = equations.yPos.apply(xHitTime);
 
       if (GenUtil.inBounds(loY, yValue, hiY)) {
          Collision collision = new Collision(xHitTime,
