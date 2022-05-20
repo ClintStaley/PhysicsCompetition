@@ -7,10 +7,10 @@ import { ListGroup, ListGroupItem, Button, FormText } from 'react-bootstrap';
 import './cmp.css';
 
 class CmpsPage extends Component {
+   // Important prop to understand is the showAll property
+   // showAll == true -> joinCmps page, else activeCmpsPage
    constructor(props) {
       super(props);
-      // Important prop to understand is the showAll property
-      // showAll == true -> joinCmps page, else activeCmpsPage
       this.state = {
          showDeleteConfirmation: null,
          expanded: {},

@@ -162,9 +162,9 @@ export default class SbmPage extends Component {
         
         {sbmStatus}
         <br/>
-         <div className = "instructionLink">
-          <a onClick = {this.openInstructions}>Hints</a>
-         </div>
+         <h3 className = "instructionLink">
+          <a onClick = {this.openInstructions}>Instructions</a>
+         </h3>
         <br/>
         {prbDiagram}
         {sbmDialog}

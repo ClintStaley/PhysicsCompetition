@@ -71,9 +71,7 @@ public class EVCThread extends Thread  {
       
       WebTarget target = client.target(evcPath);
       
-      //WebResource
-      ssnsProxy = 
-       WebResourceFactory.newResource(SessionResource.class, target);
+      ssnsProxy = WebResourceFactory.newResource(SessionResource.class, target);
 
       url = evcPath;
       user = evcUser;
