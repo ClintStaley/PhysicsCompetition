@@ -62,12 +62,12 @@ export class Bounce3DView extends React.Component {
       var concreteMat = Bounce3DView.concreteMat;
       var flatSteelMat = Bounce3DView.flatSteelMat;
 
-      var roomDim = 3 * Bounce3DView.rigSize + 2;  // 1 m boundaries around rig
+      var roomDim = 3 * Bounce3DView.rigSize + 2;  // big boundaries around rig
       var room = new THREE.Mesh(
          new THREE.BoxGeometry(roomDim, roomDim, roomDim), [concreteMat,
          concreteMat, concreteMat, flatSteelMat, concreteMat, concreteMat]);
 
-      room.position.set(0, 0, 9);  // Z=0 at back wall
+      room.position.set(0, 0, 9); 
 
       return room;
    }
@@ -83,7 +83,7 @@ export class Bounce3DView extends React.Component {
       const pistonDepth = 1;
       const pistonX = -.25;
       const pistonY =.25;
-      const cylinderWidth=.1;
+      const cylinderWidth =.1;
       const cylinderHeight = .1;
       const cylinderLength = .5;
       const cylinderRotate = 1.5708;
@@ -182,7 +182,6 @@ export class Bounce3DView extends React.Component {
       const height = this.mount.clientHeight;
       var rigSize = Bounce3DView.rigSize;
       var cameraControls;
-      var room = this.state.scene.getObjectByName('room');
 
       this.state.renderer.setSize(width, height);
 

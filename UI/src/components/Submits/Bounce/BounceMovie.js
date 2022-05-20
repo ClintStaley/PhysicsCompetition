@@ -10,13 +10,19 @@ export class BounceMovie {
    static cHitBarrier = 4;
    static cBallLaunch = 5;
    static cBallExit = 6;
+   static cTargetFade = 7;
+
+   static cFadeTime = .75;     // Seconds across which a target fades away
 
    // Construct with background as indicated, and events drawn from prms and 
    // optional sbm.  (Generate only barrier/target creation events w/o sbm)
    constructor(frameRate, prms, sbm) {
-      const cG = 9.81;               // Gravity in m/s^2
-      const bkgSize = 10.0;          // Standard field size
+      const cG = 9.81;                        // Gravity in m/s^2
+      const bkgSize = 10.0;                   // Standard field size
       let tracks = sbm && sbm.testResult ? sbm.testResult.events : [];  
+      
+      // Number of frames across which to fade
+      const fadeFrames = Math.round(BounceMovie.cFadeTime * frameRate); 
       
       this.background = {};
       this.background.frameRate = frameRate;
@@ -26,7 +32,7 @@ export class BounceMovie {
 
       // Targets numbered from 0
       prms.targets.forEach((trg, idx) => 
-      this.addMakeTargetEvt(-1, idx, trg.loX, trg.loY, trg.hiX, trg.hiY));
+       this.addMakeTargetEvt(-1, idx, trg.loX, trg.loY, trg.hiX, trg.hiY));
 
       // Barriers numbered from targets.length
       prms.barriers.forEach((brr, idx) => {
@@ -40,14 +46,20 @@ export class BounceMovie {
             if (arcId == 0)                      // Launching arc
                this.addBallLaunchEvt(time, ballId);
             else if (arc.obstacleIdx >= 0) {      // If bouncing off something
-               if (arc.obstacleIdx < prms.targets.length)
+               if (arc.obstacleIdx < prms.targets.length) { // If target
                   this.addHitTargetEvt(time, arc.posX, arc.posY, ballId,
-                   arc.obstacleIdx, arc.corner)
-               else
+                   arc.obstacleIdx, arc.corner);
+
+                  // Fade trg from 0.0 to 1.0 across |fadeFrames| frames
+                  for (let fadeFrame = 1; fadeFrame <= fadeFrames; fadeFrame++)
+                     this.addTargetFadeEvt(time + fadeFrame/frameRate,
+                      arc.obstacleIdx, fadeFrame / fadeFrames);
+               }
+               else                                        // else obstacle
                   this.addHitBarrierEvt(time, arc.posX, arc.posY, ballId,
                    arc.obstacleIdx, arc.corner)
             }
-            else                                  // Exit "arc"
+            else                                  // else it's an exit "arc"
                this.addBallExitEvt(time, arc.posX, arc.posY, ballId);
             
             // Create a sequence of ball positions, except for exit "arc"
@@ -64,8 +76,12 @@ export class BounceMovie {
             }
          });
       });
+
+      // Placement of fade events out of time sequence necessitates final sort
+      this.evts.sort((e1, e2) => e1.time - e2.time);
    }
 
+   // Methods to add each type of event
    addBallPositionEvt(time, x, y, ballNumber) 
       {this.evts.push(
        {type: BounceMovie.cBallPosition, time:time, x, y, ballNumber});
@@ -98,5 +114,10 @@ export class BounceMovie {
 
    addBallExitEvt(time, x, y, ballNumber) {
       this.evts.push({type: BounceMovie.cBallExit, time, x, y, ballNumber});
+   }
+
+   // Fade target from unhit state to "moved away" state, by fadeLevel [0, 1.0]
+   addTargetFadeEvt(time, targetId, fadeLevel) {
+      this.evts.push({type: BounceMovie.cTargetFade, time, targetId, fadeLevel})
    }
 }

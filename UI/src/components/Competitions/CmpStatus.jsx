@@ -25,9 +25,9 @@ export default class CmpPage extends Component {
          //get all mmbs if linked to join cmps, so that i can display the team
          //leader and email
          if (props.myCmpLink)
-         props.getTeamsByCmp(props.cmpId);
+            props.getTeamsByCmp(props.cmpId);
          else
-         props.getTeamsByCmp(props.cmpId, this.getAllTeamMmbs);
+            props.getTeamsByCmp(props.cmpId, this.getAllTeamMmbs);
       }
 
    getAllTeamMmbs = () => {

@@ -84,7 +84,8 @@ export class BounceSVGView extends React.Component {
                 className={style.faded + " " + style[hitClass]}/>)
             else
                svgElms.push(<circle key={"Hit" + evt.time} cx={evt.x}
-                cy={yTop - evt.y} r={radius} className={style.faded + " " +style[hitClass]}/>)
+                cy={yTop - evt.y} r={radius} 
+                className={style.faded + " " +style[hitClass]}/>)
 
             if (evt.type === BounceMovie.cHitTarget) {
                let trgEvt = trgEvts[evt.targetId];
