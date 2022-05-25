@@ -16,7 +16,11 @@
 //    ssnId data.  Successful signin returns promise 
 //    resolving to newly signed in user.
 
-const baseURL = "http://localhost:4005/";
+const baseURL = (window.location.port === "80") ? // Production vs dev configs
+   `${window.location.protocol}//${window.location.hostname}/${window.location.path}/RESTServer/` :
+   `${window.location.protocol}//${window.location.hostname}:4005/`;
+
+console.log("Rest server at " + baseURL);
 const headers = new Headers();
 let cookie;
 
@@ -25,7 +29,7 @@ headers.set('Content-Type', 'application/json');
 const reqConf = {
    headers: headers,        // Indicate JSON content type
    credentials: 'include',  // Send cookies
-}
+};
 
 // Fetch call that posts a server connect error on general fetch failure.
 function safeFetch(endpoint, body) {

@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {Button} from 'react-bootstrap';
 import {Bounce} from './Bounce/Bounce';
-import {BSubmitModal} from './Bounce/BounceSubmitModal';
 import {LandGrab} from './LandGrab/LandGrab';
 import {LGSubmitModal} from './LandGrab/LGSubmitModal';
 import {Rebound} from './Rebound/Rebound';
@@ -35,7 +34,7 @@ export default class SbmPage extends Component {
       this.props.getSbms(this.state.cmp, this.state.teamId,
        () => {
           this.setState({ctpName : this.props.sbms[this.state.teamId].ctpName});
-          this.startTimer(); // CAS FIX: Shouldn't this happen only if there is a pending submit? No we still need it to update for sbms from other users
+          this.startTimer();
        });
    }
 
@@ -46,7 +45,7 @@ export default class SbmPage extends Component {
          this.stopTimer();
    }
 
-   //used to refresh sbm if not present
+   //used to refresh sbm if not present or to check for new sbms from others
    startTimer = () => {
       if (this.timerId)
          this.stopTimer();
@@ -143,10 +142,7 @@ export default class SbmPage extends Component {
       }
       else if (ctpName === "Bounce") {
          prbDiagram = (<Bounce className="clearfix"
-          prms={cmp.prms} sbm={sbm}/>);
-         
-         sbmDialog = (<BSubmitModal prms={cmp.prms}
-          submitFn={this.state.sbmFunction}/>);
+          prms={cmp.prms} sbm={sbm} sbmFunction = {this.state.sbmFunction}/>);
       }
       else if (ctpName === "Rebound") {
          prbDiagram = (<Rebound className="clearfix"
@@ -167,7 +163,6 @@ export default class SbmPage extends Component {
          </h3>
         <br/>
         {prbDiagram}
-        {sbmDialog}
       </div>);
    }
 }
