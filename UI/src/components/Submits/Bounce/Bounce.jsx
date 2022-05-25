@@ -1,18 +1,22 @@
-import React, { Component } from 'react';
-import { Bounce3DView } from './Bounce3DView';
+import React, {Component} from 'react';
+import {Bounce3DView} from './Bounce3DView';
 import {BounceSVGView} from "./BounceSVGView"; 
-import { BounceMovie } from './BounceMovie';
-import { MovieController } from '../MovieController';
+import {BounceMovie}  from './BounceMovie';
+import {BSubmitModal} from './BounceSubmitModal';
+import {ViewChooser} from '../ViewChooser';
+import {MovieController}  from '../MovieController';
 
 import style from './Bounce.module.css'
 
 // Expected props are, exactly:
 //  prms -- the parameters for the displayed competition
-//  sbm -- the submission to display
+//  sbm -- the submission to display, if any
+//  sbmFunction -- function to call with new submission, or null if no new sbm
+//                 is expected.
 //
 // Bounce uses these props to build a BounceMovie, whicn it passes to 
-// a MovieController to display in one of several forms (e.g, Bounce3DView,
-// BounceSVGView)
+// a ViewChooser to display in one of several forms (e.g, Bounce3DView,
+// BounceSVGView or BounceVRView)
 export class Bounce extends Component {
 
    static ballColors = ["red", "green", "orange", "purple", "cyan", "blue"];
@@ -101,7 +105,20 @@ export class Bounce extends Component {
    }
 
    // Create array once to avoid appearance of prop changes.
-   static views = [BounceSVGView, Bounce3DView];
+   static viewSpecs = [
+      {
+         label: "Diagram",
+         viewMaker: mv => <MovieController movie={mv} viewCls={BounceSVGView}/>
+      },
+      {
+         label: "Movie",
+         viewMaker: mv => <MovieController movie={mv} viewCls={Bounce3DView}/>
+      },
+      //{
+      //   label: "VR",
+      //   viewMaker: mv => <BounceVRView movie={mv}/>
+      //}
+   ];
 
    render() {
       let sbm = this.props.sbm;
@@ -113,11 +130,13 @@ export class Bounce extends Component {
 
       return (<section className="container">
          <h2>Problem Diagram</h2>
-         <MovieController
+         <ViewChooser
             movie={this.state.movie}
-            views={Bounce.views}
+            viewSpecs={Bounce.viewSpecs}
          />               
          {summary}
+         <BSubmitModal prms={this.props.prms}
+          submitFn={this.props.sbmFunction}/>;
       </section>);
    }
 }

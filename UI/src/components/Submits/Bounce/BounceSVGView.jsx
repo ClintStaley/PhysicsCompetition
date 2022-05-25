@@ -32,11 +32,6 @@ export class BounceSVGView extends React.Component {
       }
    }
 
-   // Return label for button activating this view
-   static getLabel() {
-      return "Diagram";
-   }
-
    static getDerivedStateFromProps(newProps, oldState) {
       let rtn = oldState;
 

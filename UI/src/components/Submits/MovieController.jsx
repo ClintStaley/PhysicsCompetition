@@ -3,10 +3,11 @@ import "./MovieController.css";
 import "react-rangeslider/lib/index.css"
 import Slider from 'react-rangeslider';
 
-// Props are {movie, views}.  Sets up a display of the movie, allowing choice
-// of one of the views.  Runs movie up to just prior to offset 0, and enables
-// play/replay/pause buttons if there is more to show in the movie.  (A movie
-// displaying just the initial setup may have nothing more to show.)
+// Props are {movie, viewCls}.  Sets up a display of the movie using the 
+// specified view class (not view object).  Runs movie up to 
+// just prior to offset 0, and enables play/replay/pause buttons if there is 
+// more to show in the movie.  (A movie displaying just the initial setup may 
+// have nothing more to show.)
 export class MovieController extends Component {
    constructor(props) {
       super(props);
@@ -17,7 +18,6 @@ export class MovieController extends Component {
    static getInitState(props) {
       return {
          props,
-         currentViewIdx: 0, // Selected type of view
          startTime: null,   // Time at which movie began; null if not playing
          currentOffset: 0,  // Number of seconds into movie play
          playing: false,    // Are we currently playing or stopped?
@@ -124,15 +124,7 @@ export class MovieController extends Component {
             </div>)
             : ''}
 
-            {this.props.views.map((view, idx) => (
-               <button
-                  key={idx}
-                  onClick={() => this.setState({currentViewIdx: idx})}
-               >
-                  {view.getLabel()}
-               </button>
-            ))}
-            {React.createElement(this.props.views[this.state.currentViewIdx], {
+            {React.createElement(this.props.viewCls, {
                movie: this.props.movie,
                offset: this.state.currentOffset || 0.001
             })}
