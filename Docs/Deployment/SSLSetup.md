@@ -6,7 +6,7 @@ and it's possible to convert between the formats.)
 ##Set up Encryption Assets
 These steps should be done each time you configure a server, or annually when the current cert expires (Current cert expiration is around 10/12/19.).
 
-1. Generate a keypair, by creating a new keystore, or augmenting an existing one.  Prefer a .pfx or PKCS12 keystore over the older .jks format.  Give the keypair a name, e.g. "tomcat".  Sample command.  You'll be asked for identifying information; be sure the common name or "first and last name" is www.softwareinventions.com since this will be included in the Certificate Request when you generate it, and must match the domain name for which you want a a cert.  
+1. Generate a keypair, by creating a new keystore, or augmenting an existing one.  Prefer a .pfx or PKCS12 keystore over the older .jks format.  Give the keypair a name, e.g. "tomcat".  You'll be asked for identifying information; be sure the common name or "first and last name" is www.softwareinventions.com since this will be included in the Certificate Request when you generate it, and must match the domain name for which you want a a cert.  Sample command:
 
         keytool -genkeypair -alias tomcat -keyalg RSA -storetype PKCS12 -keysize 2048 -keystore /var/lib/tomcat7/keystore.pfx
 
@@ -36,5 +36,5 @@ Importing the trust chain and leaf cert one cert at a time into the keystore  ta
 
         keytool -import -alias tomcat -keystore /var/lib/tomcat7/keystore -trustcacerts -file www_softwareinventions_com.crt
 
-##Notes on Node/Express Configuration
+## Notes on Node/Express Configuration
 Node/Express config uses the ca-bundle and crt file to configure the HTTPS server.  
