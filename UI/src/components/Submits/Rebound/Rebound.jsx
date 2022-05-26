@@ -1,14 +1,22 @@
-import React, { Component } from 'react';
-import {ReboundMovie} from './ReboundMovie';
-import {MovieController} from '../MovieController';
-import {ReboundSVGView} from "./ReboundSVGView"; 
+import React, {Component} from 'react';
 // import {Rebound3DView } from './Rebound3DView';
+import {ReboundSVGView} from "./ReboundSVGView"; 
+import {ReboundMovie} from './ReboundMovie';
+import {RbnSubmitModal} from './RbnSubmitModal';
+import {ViewChooser} from '../ViewChooser';
+import {MovieController} from '../MovieController';
 
 import './Rebound.css'
 
-// Expected props are, exactly and only:
+// Expected props are, exactly:
 //  prms -- the parameters for the displayed competition
-//  sbm -- the submission to display
+//  sbm -- the submission to display, if any
+//  sbmFunction -- function to call with new submission, or null if no new sbm
+//                 is expected.
+//
+// Rebound uses these props to build a ReboundMovie, which it passes to
+// a ViewChooser to display in one of several forms (e.g, Rebound3DView,
+// ReboundSVGView or ReboundVRView)
 export class Rebound extends Component {
    constructor(props) {
       super(props);
@@ -57,7 +65,20 @@ export class Rebound extends Component {
    }
 
    // Create array once to avoid appearance of prop changes.
-   static views = [ReboundSVGView] // Rebound3DView];
+   static viewSpecs = [
+      {
+         label: "Diagram",
+         viewMaker: mv => <MovieController movie={mv} viewCls={ReboundSVGView}/>
+      },
+      // {
+      //    label: "Movie",
+      //    viewMaker: mv => <MovieController movie={mv} viewCls={Rebound3DView}/>
+      // },
+      // {
+      //    label: "VR",
+      //    viewMaker: mv => <ReboundVRView movie={mv} />
+      // }
+   ];
 
    render() {
       let sbm = this.props.sbm;
@@ -69,11 +90,13 @@ export class Rebound extends Component {
      
       return (<section className="container">
          <h2>Problem Diagram</h2>
-         <MovieController
+         <ViewChooser
             movie={this.state.movie}
-            views={Rebound.views}
+            viewSpecs={Rebound.viewSpecs}
          />    
          {summary}
+         <RbnSubmitModal prms={this.props.prms}
+          submitFn={this.props.sbmFunction}/>;
       </section>);
    }
 }
