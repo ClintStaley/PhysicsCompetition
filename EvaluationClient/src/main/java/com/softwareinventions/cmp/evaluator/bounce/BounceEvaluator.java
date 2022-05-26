@@ -241,7 +241,6 @@ public class BounceEvaluator implements Evaluator {
             !(GenUtil.looseEqual(testEvent.time, testSpec.finalTime, ERR_FACTOR) 
             && GenUtil.looseEqual(testEvent.posX, testSpec.finalX, ERR_FACTOR)
             && GenUtil.looseEqual(testEvent.posY, testSpec.finalY, ERR_FACTOR)))
-            System.out.printf("%f, %f, %f\n", testEvent.time, testEvent.posX, testEvent.posY);
             return false;
       }
       

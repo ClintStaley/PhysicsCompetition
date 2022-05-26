@@ -65,16 +65,16 @@ export default class SbmPage extends Component {
    }
 
    openInstructions = () => {
-      var link = '/Docs/Cmps/';
-      var ctpName = this.state.ctpName
-      var cmpType = this.state.cmp.hints //later change to have index for instructions
+      let link = '/Docs/Cmps/';
+      let ctpName = this.state.ctpName
+      let cmpType = this.state.cmp.hints //later change to have index for instructions
       link = link.concat(ctpName + '/Hints/' + cmpType + '/Instructions.html');
  
       window.open(link, "_blank");
    }
 
    refreshSbm = () => {
-      var current = this.props.sbms && 
+      let current = this.props.sbms && 
        this.props.sbms[this.state.teamId].current; // current is current Sbm
 
       if (current){
@@ -90,13 +90,13 @@ export default class SbmPage extends Component {
    }
 
    render() {
-      var sbm, sbmTime, dateStr, timeStr, sbmDialog;
-      var cmp = this.state.cmp;
-      var ctpName = this.state.ctpName;
-      var bestScore;
-      var sbmStatus;
-      var prbDiagram = null;
-      var teamsSbms = this.props.sbms[this.props.team.id];
+      let sbm, sbmTime, dateStr, timeStr, sbmDialog;
+      let cmp = this.state.cmp;
+      let ctpName = this.state.ctpName;
+      let bestScore;
+      let sbmStatus;
+      let prbDiagram = null;
+      let teamsSbms = this.props.sbms[this.props.team.id];
 
       bestScore = this.props.team.bestScore !== -1 ?
        `Best score: ${this.props.team.bestScore.toFixed(2)}` :
@@ -126,7 +126,7 @@ export default class SbmPage extends Component {
          sbmStatus 
           = <div><h2>Your team has made no design submissions yet.</h2></div>;
 
-      var sbmButton = (<div className="col-sm-3 float-right">
+      let sbmButton = (<div className="col-sm-3 float-right">
         <Button disabled={!this.props.team.canSubmit}
          onClick={() => this.setState({sbmFunction: this.doSubmit})}>
            {sbm ? "Make Another Attempt" : "Make First Attempt"}
