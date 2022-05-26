@@ -13,20 +13,24 @@ var schemas = require('./schemas.json');
 
 let server;  // Global server object
 
-var configApp = (port, corsDomain, testFlag) => {
+// Configure app with HTTP routes.  If corsDomain is nonNull, add CORS
+// permissions for that domain/port.  If testFlag, add special routes for
+// testing, e.g. database refresh.
+var configApp = (corsDomain, testFlag) => {
    var app = express();
 
-   // Manage CORS POS.
-   // change this back later
-   app.use(function (req, res, next) {
-      console.log("Handling " + req.path + '/' + req.method);
-      res.header("Access-Control-Allow-Origin", `http://localhost:${3001}`);
-      res.header("Access-Control-Allow-Credentials", true);
-      res.header("Access-Control-Allow-Headers", "Content-Type");
-      res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
-      res.header("Access-Control-Expose-Headers", "Content-Type, Location");
-      next();
-   });
+   // Enable CORS for web app on different host or port, as given by corsDomain
+   if (corsDomain) {
+      console.log(`Enabling cross-origin access from ${corsDomain}`)
+      app.use(function (req, res, next) {
+         res.header("Access-Control-Allow-Origin", `http://${corsDomain}`);
+         res.header("Access-Control-Allow-Credentials", true);
+         res.header("Access-Control-Allow-Headers", "Content-Type");
+         res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
+         res.header("Access-Control-Expose-Headers", "Content-Type, Location");
+         next();
+      });
+   }
 
    // No further processing needed for options calls.
    app.options("/*", function (req, res) {
@@ -195,10 +199,8 @@ var addDebugRoutes = app => {
    // If special CORS domain is indicated, use it, else stick w/ localhost
    if (corsFlag !== -1 && corsFlag + 1 < argv.length)
       corsDomain = argv[corsFlag + 1];
-   else {
-      corsDomain = `localhost:${httpPort}`;
-   }
-   app = configApp(httpPort, corsDomain, process.argv.indexOf('-test') !== -1);
+
+   app = configApp(corsDomain, process.argv.indexOf('-test') !== -1);
 
    server = http.createServer(app)
     .listen(httpPort, () => console.log(`Http listening on ${httpPort}`));

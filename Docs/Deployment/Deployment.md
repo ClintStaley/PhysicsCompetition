@@ -7,6 +7,8 @@
 2. Configure MySQL.
 	1. Install if needed
 	2. Log in as root; create cmp user/pass
+	   create database CmpDB;
+      grant all on CmpDB.* to 'CmpRESTServer'@'localhost' identified by '-pw4CmpDB.';
 	3. Run Deploy.sql to inject initial DB contents (or load backup of other site DB)
 	4. Helpful commands: `set password for 'cmp'@'localhost' = 'clearpass'`
    
