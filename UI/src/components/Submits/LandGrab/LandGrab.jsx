@@ -37,7 +37,7 @@ export class LandGrab extends Component {
    }
 
     //to be implemented later
-    getSummary = (testResult, score) => {
+   getSummary = (testResult, score) => {
       return;
    }
 

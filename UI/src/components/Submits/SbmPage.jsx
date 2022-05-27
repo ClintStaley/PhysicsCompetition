@@ -135,15 +135,18 @@ export default class SbmPage extends Component {
 
       if (ctpName === "LandGrab") {
          prbDiagram = (<LandGrab className="clearfix"
-          prms={cmp.prms} sbm={sbm} sbmFunction = {this.state.sbmFunction}/>);
+          prms={cmp.prms} sbm={sbm} 
+          sbmFunction = {this.state.sbmFunction}/>);
       }
       else if (ctpName === "Bounce") {
          prbDiagram = (<Bounce className="clearfix"
-          prms={cmp.prms} sbm={sbm} sbmFunction = {this.state.sbmFunction}/>);
+          prms={cmp.prms} sbm={sbm} 
+          sbmFunction = {this.state.sbmFunction}/>);
       }
       else if (ctpName === "Rebound") {
          prbDiagram = (<Rebound className="clearfix"
-          prms={cmp.prms} sbm={sbm} sbmFunction = {this.state.sbmFunction}/>);
+          prms={cmp.prms} sbm={sbm} 
+          sbmFunction = {this.state.sbmFunction}/>);
       }
 
       return (<div className="container">

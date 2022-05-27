@@ -39,7 +39,7 @@ router.get('/', (req, res) => {
          res.status(200);
          cb();
       }
-   ],
+      ],
       () => {
          cnn.release();
       });

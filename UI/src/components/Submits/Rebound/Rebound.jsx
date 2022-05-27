@@ -57,7 +57,6 @@ export class Rebound extends Component {
    // Build table on bottom of page showing detailed info about each hit,
    // after that hit is shown on the animation.
    getSummary = (testResult, score) => {
-      
       return (
          <div>
          </div>
