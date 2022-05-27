@@ -14,7 +14,7 @@ import style from './Bounce.module.css'
 //  sbmFunction -- function to call with new submission, or null if no new sbm
 //                 is expected.
 //
-// Bounce uses these props to build a BounceMovie, whicn it passes to 
+// Bounce uses these props to build a BounceMovie, which it passes to 
 // a ViewChooser to display in one of several forms (e.g, Bounce3DView,
 // BounceSVGView or BounceVRView)
 export class Bounce extends Component {
