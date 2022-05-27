@@ -16,9 +16,9 @@
 //    ssnId data.  Successful signin returns promise 
 //    resolving to newly signed in user.
 
-const baseURL = (window.location.port === "80") ? // Production vs dev configs
-   `${window.location.protocol}//${window.location.hostname}/${window.location.path}/RESTServer/` :
-   `${window.location.protocol}//${window.location.hostname}:4005/`;
+const baseURL = (window.location.port) ? // Dev vs production settings
+   `${window.location.protocol}//${window.location.hostname}:1024/` :
+   `${window.location.protocol}//${window.location.hostname}/PhysicsCompetition/REST/`;
 
 console.log("Rest server at " + baseURL);
 const headers = new Headers();
