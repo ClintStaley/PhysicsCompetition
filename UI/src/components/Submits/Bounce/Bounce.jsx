@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {Bounce3DView} from './Bounce3DView';
+import {BounceOld3DView} from './BounceOld3DView';
 import {BounceSVGView} from "./BounceSVGView"; 
 import {BounceMovie}  from './BounceMovie';
 import {BSubmitModal} from './BounceSubmitModal';
@@ -111,10 +112,14 @@ export class Bounce extends Component {
          viewMaker: mv => <MovieController movie={mv} viewCls={BounceSVGView}/>
       },
       {
+         label: "OldMovie",
+         viewMaker: mv => <MovieController movie={mv} viewCls={BounceOld3DView}/>
+      },
+      {
          label: "Movie",
          viewMaker: mv => <MovieController movie={mv} viewCls={Bounce3DView}/>
-      },
-      //{
+      }
+     //{
       //   label: "VR",
       //   viewMaker: mv => <BounceVRView movie={mv}/>
       //}

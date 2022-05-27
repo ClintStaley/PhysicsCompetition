@@ -9,11 +9,8 @@ import {Sampler3JS} from '../Util/Sampler3JS';
 
 const Home = (
    <div width="100%" height="100%">
-<<<<<<< HEAD
-      <img src="PhysicsCompetitionHomePicture.png" alt="PhysicsCompetition"
-=======
-      <img  src={process.env.PUBLIC_URL + "PhysicsCompetitionHomePicture.png"} alt="PhysicsCompetition"
->>>>>>> 39c4f1c5c3f9a29cdbb7dc6d3c80b85d0460407f
+      <img  src={process.env.PUBLIC_URL + "PhysicsCompetitionHomePicture.png"}
+       alt="PhysicsCompetition"
        width="100%" height="100%"/>
   </div>); // TODO make real home component
 
