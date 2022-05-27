@@ -15,6 +15,7 @@ router.get('/', (req, res) => {
       ' description from Competition';
    var fillers = [];
 
+console.log('In get');
    if (email) {
       query = 'select Competition.id, ownerId, ctpId, title, prms, rules, hints, ' +
          'description from Competition,Person where email = ? && ' +
@@ -32,6 +33,7 @@ router.get('/', (req, res) => {
 
    async.waterfall([
       (cb) => {
+console.log(`Running ${query}`);
          cnn.chkQry(query, fillers, cb);
       },
       (cmps, fields, cb) => {
@@ -39,8 +41,9 @@ router.get('/', (req, res) => {
          res.status(200);
          cb();
       }
-   ],
+      ],
       () => {
+console.log('oops');
          cnn.release();
       });
 });

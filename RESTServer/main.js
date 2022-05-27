@@ -33,12 +33,13 @@ var configApp = (corsDomain, testFlag) => {
    }
 
    // No further processing needed for options calls.
+
    app.options("/*", function (req, res) {
       res.status(200).end();
    });
 
-   // Static path to index.html and all clientside js
-   app.use(express.static(path.join(__dirname, 'public')));
+   // Unneeded Static path to index.html and all clientside js
+   // app.use(express.static(path.join(__dirname, 'public')));
 
    // Parse request body using JSON; attach to req as req.body
    app.use(bodyParser.json());
