@@ -6,7 +6,9 @@ import { Navbar, Nav} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
 import homePicture from '../../assets/images/HomePage.png';
 import './Main.css';
-import {Sampler3JS} from '../Util/Sampler3JS';
+import helpDoc from '../../assets/docs/Instructions.html';
+
+console.log(helpDoc);
 
 const Home = (
    <div width="100%" height="100%">
