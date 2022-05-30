@@ -19,8 +19,8 @@
 const baseURL = (window.location.port) ? // Dev vs production settings
    `${window.location.protocol}//${window.location.hostname}:1024/` :
    `${window.location.protocol}//${window.location.hostname}/PhysicsCompetition/REST/`;
-
 console.log("Rest server at " + baseURL);
+
 const headers = new Headers();
 let cookie;
 

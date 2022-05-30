@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Form, FormGroup, Alert} from 'react-bootstrap';
-import register_illustration from '../../images/register.svg';
+import register_illustration from '../../assets/images/register.svg';
 import './Register.css';
 
 import {ConfDialog} from '../concentrator'

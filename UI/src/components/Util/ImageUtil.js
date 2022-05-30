@@ -1,12 +1,12 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
-// Create a MeshStandard material with the given color hex-value and the 
-// given texture(s)
+// Create a MeshStandard material with the given properties.  All file names
+// are imported values.  All properties are nullable
 //
-// tex format.  Only root 
 // {
-//   root: "root dir"
+//   color: hexValue,
+//   map: "filename",
 //   normal: "filename",
 //   displacement: {file: "filename", scale: num},
 //   roughness: "filename",
@@ -15,28 +15,32 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 //   reps: {x: num, y: num}
 // }
 
-export function createMaterial(color, tex) {
-   let path = `${window.location.origin}/textures/${tex.root}/`;
+export function createMaterial(tex) {
    let reps = tex.reps;
-   let params = {color, side: tex.side || THREE.FrontSide};
+   let params = {side: tex.side || THREE.DoubleSide};
+
+   params.color = 0XFFFFFF;
+
+   if (tex.map)
+      params.map = loadTexture(tex.map, reps);
 
    if (tex.normal)
-      params.normalMap = loadTexture(`${path}/${tex.normal}`, reps);
+      params.normalMap = loadTexture(tex.normal, reps);
 
    if (tex.displacement) {
-      params.displacementMap = loadTexture(`${path}/${tex.displacement.file}`,
-       reps);
+      params.displacementMap = loadTexture(tex.displacement.file, reps);
       params.displacementScale = tex.displacement.scale
    }
    
    if (tex.aoMap)
-      params.aoMap = loadTexture(`${path}/${tex.ao}`, reps);
+      params.aoMap = loadTexture(tex.ao, reps);
 
    if (tex.roughness)
-      params.roughness = loadTexture(`${path}/${tex.roughness}, reps`);
+      params.roughness = loadTexture(tex.roughness, reps);
 
    if (tex.metal) {
-      params.metalnessMap = loadTexture(`${path}/${tex.metal.file}`, reps);
+      if (tex.metal.file)
+         params.metalnessMap = loadTexture(tex.metal.file, reps);
       params.metalness = tex.metal.metalness;
    }
    

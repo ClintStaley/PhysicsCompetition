@@ -4,7 +4,7 @@ import {
 } from 'react-bootstrap';
 import './SignIn.css';
 
-import signin_illustration from '../../images/signin.png';
+import signin_illustration from '../../assets/images/signin.png';
 
 class SignIn extends Component {
    constructor(props) {
