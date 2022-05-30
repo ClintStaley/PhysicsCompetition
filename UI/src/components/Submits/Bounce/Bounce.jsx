@@ -112,10 +112,6 @@ export class Bounce extends Component {
          viewMaker: mv => <MovieController movie={mv} viewCls={BounceSVGView}/>
       },
       {
-         label: "OldMovie",
-         viewMaker: mv => <MovieController movie={mv} viewCls={BounceOld3DView}/>
-      },
-      {
          label: "Movie",
          viewMaker: mv => <MovieController movie={mv} viewCls={Bounce3DView}/>
       }
