@@ -1,4 +1,4 @@
-#Physics Competition Deployment Checklist
+# Physics Competition Deployment Checklist
 
 1. Pull a repo copy of PhysicsCompetition to the server in question.  (You should be reading this and its companion docs from that copy on the server.)
 
@@ -22,6 +22,14 @@
 
 use: java -cp evc-0.0.1-SNAPSHOT-jar-with-dependencies.jar com.softwareinventions.cmp.driver.EVCMain EVC.properties 
 to run the jar	
+
+## Port forwarding on Oculus/Meta Quest
+1. Install Android Debug Bridge to your computer.
+2. Plug in the headset to your computer with a cable capable of transmitting 
+data
+3. Run `adb reverse tcp:<port> tcp:<port>`, where `<port>` is the port to be 
+forwarded. To access the PhysicsCompetition page on the headset, this command 
+should be run twice, to forward ports 1024 and 3001.
 
 ## Emergency info for resetting root password on MySQL
 https://stackoverflow.com/questions/41984956/cant-reset-root-password-with-skip-grant-tables-on-ubuntu-16
