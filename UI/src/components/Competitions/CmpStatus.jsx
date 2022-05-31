@@ -85,7 +85,7 @@ export default class CmpPage extends Component {
      var props = this.props;
      var ctpId = props.cmps[props.cmpId].ctpId-1;
      var ctpType = props.ctps[ctpId].codeName;
-     var link = `${env.props.PUBLIC_URL}/Docs/Cmps/${ctpType}/Instructions.html`;
+     var link = `${process.env.PUBLIC_URL}/Docs/Cmps/${ctpType}/Instructions.html`;
 
      window.open(link, "_blank");
    }
