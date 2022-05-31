@@ -2,9 +2,7 @@ import React, {Component} from 'react';
 import {Button} from 'react-bootstrap';
 import {Bounce} from './Bounce/Bounce';
 import {LandGrab} from './LandGrab/LandGrab';
-import {LGSubmitModal} from './LandGrab/LGSubmitModal';
 import {Rebound} from './Rebound/Rebound';
-import {RbnSubmitModal} from './Rebound/RbnSubmitModal';
 
 // Set up a page managing submissions for a competition and team.  This includes
 // a submission dialog, automatic polling for a test result on any standing

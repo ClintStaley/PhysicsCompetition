@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
-import {Register, SignIn, CmpsPage, TeamsPage, CmpPage, SbmPage,
-   InstructionsPage} from '../concentrator.js'
+import {Register, SignIn, CmpsPage, TeamsPage, CmpPage, SbmPage} from '../concentrator.js'
 import {Route, Redirect, Switch} from 'react-router-dom';
 import { Navbar, Nav} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
