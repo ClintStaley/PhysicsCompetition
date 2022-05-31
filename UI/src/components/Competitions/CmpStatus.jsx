@@ -83,10 +83,9 @@ export default class CmpPage extends Component {
 
    openInstructions = () => {
      var props = this.props;
-     var link = '/Docs/Cmps/';
      var ctpId = props.cmps[props.cmpId].ctpId-1;
      var ctpType = props.ctps[ctpId].codeName;
-     link = link.concat(ctpType + '/Instructions.html');
+     var link = `${process.env.PUBLIC_URL}/Docs/Cmps/${ctpType}/Instructions.html`;
 
      window.open(link, "_blank");
    }
@@ -118,7 +117,9 @@ export default class CmpPage extends Component {
             </a>
           </div>
 
-          <div className="cmpDescription-body">{props.cmps[cmpId].description}</div>
+          <div className="cmpDescription-body">
+             {props.cmps[cmpId].description}
+          </div>
         </div>
 
           {myCmpLink ?
