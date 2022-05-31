@@ -67,7 +67,7 @@ export default class SbmPage extends Component {
    openInstructions = () => {
       let link = '/Docs/Cmps/';
       let ctpName = this.state.ctpName
-      let cmpType = this.state.cmp.hints //later change to have index for instructions
+      let cmpType = this.state.cmp.hints  // Path to instructions in Hints dir
       link = link.concat(ctpName + '/Hints/' + cmpType + '/Instructions.html');
  
       window.open(link, "_blank");
