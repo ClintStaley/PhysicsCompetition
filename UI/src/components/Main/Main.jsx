@@ -6,7 +6,6 @@ import { Navbar, Nav} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
 import homePicture from '../../assets/images/HomePage.png';
 import './Main.css';
-import helpDoc from '../../assets/docs/Instructions.html';
 
 console.log(helpDoc);
 
@@ -38,7 +37,7 @@ class Main extends Component {
    }
 
    openHelp() {
-      var link = '/Docs/Instructions.html';
+      var link = './Docs/Instructions.html';
 
       window.open(link, "_blank");
    }
