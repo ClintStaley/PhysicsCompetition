@@ -3,6 +3,7 @@ import {Bounce3DView} from './Bounce3DView';
 import {BounceOld3DView} from './BounceOld3DView';
 import {BounceSVGView} from "./BounceSVGView"; 
 import {BounceVRView} from "./BounceVRView";
+import {BounceOldVRView} from './BounceOldVRView';
 import {BounceMovie}  from './BounceMovie';
 import {BSubmitModal} from './BounceSubmitModal';
 import {ViewChooser} from '../ViewChooser';
@@ -119,6 +120,10 @@ export class Bounce extends Component {
       {
          label: "VR",
          viewMaker: mv => <BounceVRView movie={mv}/>
+      },
+      {
+         label: "OldVR",
+         viewMaker: mv => <BounceOldVRView movie={mv}/>
       }
    ];
 
