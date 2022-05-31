@@ -21,7 +21,7 @@ export class BounceSceneGraph {
 
       // Create the scenegraph for the movie, at time offset 0s
       const rigSize = BounceSceneGraph.rigSize;
-      const ballRadius = BounceSceneGraph.ballRadius
+      const ballRadius = BounceSceneGraph.ballRadius;
       const ballSteps = 16;
       const pistonHeight = .5;
       const pistonWidth = .5;
@@ -65,7 +65,7 @@ export class BounceSceneGraph {
       base.position.set(rigSize / 2, rigSize / 2, -ballRadius);
       this.rig.add(base);
       let platform = new THREE.Mesh(new THREE.BoxGeometry(1, .25, 1),
-         flatSteelMat)
+         flatSteelMat);
       this.ball = new THREE.Mesh(new THREE.SphereGeometry
          (ballRadius, ballSteps, ballSteps), flatSteelMat);
    
@@ -75,7 +75,7 @@ export class BounceSceneGraph {
       this.rig.add(this.ball);
 
       // Put platform at upper left corner of rig, just below the ball
-      platform.position.set(-.5, rigSize - .25, 0)
+      platform.position.set(-.5, rigSize - .25, 0);
       platform.castshadow = true;
       this.rig.add(platform);
 
@@ -89,15 +89,15 @@ export class BounceSceneGraph {
       let pCyl = new THREE.Mesh(new THREE.CylinderGeometry(cylinderWidth,
           cylinderHeight, cylinderLength),flatSteelMat);
       pCyl.position.set(0, 0, 0);
-      pCyl.rotateZ(cylinderRotate)
-      pCyl.name = 'pCyl'
+      pCyl.rotateZ(cylinderRotate);
+      pCyl.name = 'pCyl';
       pBase.add(pCyl);
 
       // Place piston face on the far right side of the cylinder
       let pFace = new THREE.Mesh(new THREE.BoxGeometry(pistonHeight,
           faceWidth, pistonDepth),flatSteelMat);
 
-      pFace.position.set(0, -.25, 0)
+      pFace.position.set(0, -.25, 0);
       pCyl.add(pFace);
 
       // Put rig at back of room.  Assume room origin at center of back wall
@@ -155,7 +155,7 @@ export class BounceSceneGraph {
             pCyl.position.set(.4, 0, 0);
             // Delayed animation to retract piston.
             setTimeout(() => {
-               pCyl.position.set(0, 0, 0)
+               pCyl.position.set(0, 0, 0);
             }, 300);
          }
       }
@@ -173,7 +173,7 @@ export class BounceSceneGraph {
             this.ball.position.set(evt.x, evt.y, ballRadius);
          }
          if (evt.type === BounceMovie.cTargetFade) {
-            this.targets[evt.targetId].position.z          // Move target to current
+            this.targets[evt.targetId].position.z     // Move target to current
              = 3 * ballRadius * (1 - evt.fadeLevel);  // fade position
          }
          if (evt.type === BounceMovie.cBallLaunch)
@@ -183,6 +183,6 @@ export class BounceSceneGraph {
 
    // Return root group of scenegraph represented by this class
    getSceneGraph() {
-      return this.scene
+      return this.scene;
    }
 }

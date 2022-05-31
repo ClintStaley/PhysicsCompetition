@@ -4,7 +4,7 @@
 This instruction page tells you how to register for the site, sign in, create and join teams, and participate in competitions.  For details on each particular competition, see the instructions linked from that competition's page.
 
 ## Registering and Logging in
-Registering and logging in works in the usual fashion.  Click the Register tab to fill in basic information and a password.  You'll need an Email to use as your login name.  The Site Terms page is [Terms.html]("here").
+Registering and logging in works in the usual fashion.  Click the Register tab to fill in basic information and a password.  You'll need an Email to use as your login name.  The Site Terms page is [here]("./Terms.html").
 
 ## Competitions
 Once you've logged in, the site shows you the Active Competitions tab, which lists competitions you're current participating in.  When you first log in this will be empty. To participate, you must either join an existing team, or create one of your own (which can be just yourself as a team of one if you want).
