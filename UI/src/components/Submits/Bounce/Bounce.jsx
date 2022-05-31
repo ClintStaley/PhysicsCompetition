@@ -143,7 +143,7 @@ export class Bounce extends Component {
          />               
          {summary}
          <BSubmitModal prms={this.props.prms}
-          submitFn={this.props.sbmFunction}/>;
+          submitFn={this.props.sbmFunction}/>
       </section>);
    }
 }
