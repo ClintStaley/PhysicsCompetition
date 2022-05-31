@@ -7,8 +7,6 @@ import {LinkContainer} from 'react-router-bootstrap';
 import homePicture from '../../assets/images/HomePage.png';
 import './Main.css';
 
-console.log(helpDoc);
-
 const Home = (
    <div width="100%" height="100%">
       <img  src={homePicture} alt="PhysicsCompetition"
