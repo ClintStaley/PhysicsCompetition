@@ -1,6 +1,6 @@
-import { BounceMovie } from './BounceMovie';
+import {BounceMovie} from './BounceMovie';
 import * as THREE from 'three';
-import { concreteMat, flatSteelMat, steelMat } from '../../Util/Materials.js';
+import {concreteMat, flatSteelMat, steelMat} from '../../Util/Materials.js';
 
 // Create a Group with the following elements:
 //
