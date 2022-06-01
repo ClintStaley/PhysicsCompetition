@@ -1,9 +1,10 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import React, {Component} from 'react';
+import {Link} from 'react-router-dom';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
 import * as actionCreators from '../../actions/actionCreators';
-import { ListGroup, ListGroupItem, Button, FormText } from 'react-bootstrap';
+import {ListGroup, ListGroupItem, Button} from 'react-bootstrap';
+import ReactTooltip from 'react-tooltip';
 import './cmp.css';
 
 class CmpsPage extends Component {
@@ -17,7 +18,6 @@ class CmpsPage extends Component {
          cmpsByCtp: [],
       }
    }
-
 
    static getDerivedStateFromProps(newProps, oldState) {
       let rtn = { ...oldState };
@@ -96,6 +96,17 @@ class CmpsPage extends Component {
       this.setState({ showDeleteConfirmation: cmpId });
    }
 
+   // Fix this up for the props ...
+   openInstructions = () => {
+      var props = this.props;
+      var ctpId = props.cmps[props.cmpId].ctpId-1;
+      var ctpType = props.ctps[ctpId].codeName;
+      var link
+       = `${process.env.PUBLIC_URL}/Docs/Cmps/${ctpType}/Instructions.html`;
+ 
+      window.open(link, "_blank");
+   }
+ 
    // render uses ternary operator on showAll prop to decide which page to load
    render() {
       var props = this.props;
@@ -115,6 +126,7 @@ class CmpsPage extends Component {
                         cmpsByCtp={this.state.cmpsByCtp[ctp.id]}
                         expanded={this.state.expanded[ctpId]}
                         toggle={() => this.toggleView(ctpId)}
+                        openInstructions={() => this.openInstructions()}
                         {...ctp} />
                   })}
                </div>
@@ -146,8 +158,8 @@ const ActiveCompetitionItem = function (props) {
    var toggleView = (() => setExpanded(!expanded));
    
    return (
-      <ListGroupItem className="clearfix">
-         <div className='cmpItem'>{props.title}</div>
+      <div className="clearfix cmpPanel">
+         <div className='cmpHeader'>{props.title}</div>
          <div>{props.description}</div>
          <Button onClick={toggleView}>Show My Competitions</Button>
          {expanded ?
@@ -159,12 +171,13 @@ const ActiveCompetitionItem = function (props) {
                   link={'MyCmpPage/' + cmp.id}
                   title={cmpItem.title}
                   joined={true}
+                  description={cmp.description}
                />
             })}
              </ListGroup>
             : ""
          }
-      </ListGroupItem>
+      </div>
    )
 }
 
@@ -172,9 +185,13 @@ const JoinCompetitionItem = function (props) {
    const [expanded, setExpanded] = React.useState(false);
    var toggleView = (() => setExpanded(!expanded));
    return (
-      <ListGroupItem className="clearfix">
-         <div className='cmpItem'>{props.title}</div>
-         <div>{props.description}</div>
+      <div className="clearfix cmpPanel">
+         <div className='cmpHeader'>{props.title}</div>
+         <div className = "instructionLink">
+            <a onClick = {props.openInstructions}>
+              Full Instructions
+            </a>
+         </div>
          <Button onClick={toggleView}>Show Competitions</Button>
          {expanded ?
             <ListGroup>
@@ -184,18 +201,21 @@ const JoinCompetitionItem = function (props) {
                   return <CmpItem
                      key={i}
                      link={'/JoinCmpPage/' + cmp.id}
-                     title={cmp.title} />
+                     title={cmp.title} 
+                     description={cmp.description}
+                  />
                })}
             </ListGroup>
             : ""
          }
-      </ListGroupItem>
+      </div>
    )
 }
 
 const CmpItem = function (props) {
    return (
-      <ListGroupItem className="clearfix">
+      <ListGroupItem className="clearfix" data-tip={props.description}>
+         <ReactTooltip/>
          {props.title}
          {props.joined ?
             <div className="float-right">

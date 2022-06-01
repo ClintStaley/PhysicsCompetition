@@ -38,7 +38,7 @@ use CmpDB;
 
 # 6.674 m/s 1.078s 7.195 4.3
 insert into Competition (title, ctpId, ownerId, description, hints, prms)
-   VALUES ('Bounce Competition 1', 2, 1, 'Simple one-target', 'Basic', '{
+   VALUES ('Bounce Competition 1', 2, 1, 'Good starter problem', 'Basic', '{
       "targetTime": 1.514,
       "targets": [ 
          {"loX": 7.0, "hiX": 7.2, "hiY": 4.2, "loY": 4.0 }
@@ -49,7 +49,8 @@ insert into Competition (title, ctpId, ownerId, description, hints, prms)
 
 # 1.961 m/s 4.59s  9.0 5.6
 insert into Competition (title, ctpId, ownerId, description, hints, prms)
-   VALUES ('Bounce Challenge 2', 2, 1, 'Doable with one ball', 'Bronze', '{
+   VALUES ('Bounce Challenge 2', 2, 1, 
+      'More complex, but still doable in one ball', 'Bronze', '{
       "targetTime": 5.15,
       "targets": [ 
          { "loX": 1.4, "hiX": 2.4, "hiY": 7.4, "loY": 7.1 },
@@ -65,7 +66,7 @@ insert into Competition (title, ctpId, ownerId, description, hints, prms)
 # 12 m/s 1.08s 1.0 4.24 
 insert into Competition (title, ctpId, ownerId, description, hints, prms)
    VALUES ('Bounce Challenge 3', 2, 1,
-    'This competition requires 2 balls ping-ponging between
+    'Intermediate: requires 2 balls ping-ponging between
      two columns of targets', 'Silver',
     '{
        "targetTime": 3.87, 

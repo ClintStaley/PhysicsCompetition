@@ -85,7 +85,8 @@ export default class CmpPage extends Component {
      var props = this.props;
      var ctpId = props.cmps[props.cmpId].ctpId-1;
      var ctpType = props.ctps[ctpId].codeName;
-     var link = `${process.env.PUBLIC_URL}/Docs/Cmps/${ctpType}/Instructions.html`;
+     var link
+      = `${process.env.PUBLIC_URL}/Docs/Cmps/${ctpType}/Instructions.html`;
 
      window.open(link, "_blank");
    }
@@ -122,21 +123,18 @@ export default class CmpPage extends Component {
           </div>
         </div>
 
+
+        <div className = "cmpDescription">
+          <div className = "cmpDescription-header">Competing Teams</div>
+          
           {myCmpLink ?
           ''
           :
-          <div className = "cmpDescription">
-            <div className = "cmpDescription-header">Want to Join?</div>
-
             <div className = "cmpDescription-body">To join one of the existing
             teams, contact the team lead who can
             add you via their Teams tab. Or, you may start a new team with
             yourself as leader.</div>
-           </div>
-           }
-
-        <div className = "cmpDescription">
-          <div className = "cmpDescription-header">Competing Teams</div>
+          }
 
           { props.cmps[cmpId].cmpTeams.length > 0 ?
           <ListGroup>

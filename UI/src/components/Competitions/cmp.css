@@ -3,9 +3,17 @@
   text-align: center;
 }
 
+.cmpSubHeader {
+  text-align: center;
+}
+
+.cmpPanel {
+  background-color: lightgrey;
+}
+
 .cmpItem {
   color: black !important;
-  font-size: large;
+  font-size: large
 }
 
 .grid {
