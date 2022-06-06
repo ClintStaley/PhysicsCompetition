@@ -6,6 +6,7 @@ import { VRButton } from 'three/examples/jsm/webxr/VRButton.js';
 import { XRControllerModelFactory } from
  'three/examples/jsm/webxr/XRControllerModelFactory.js';
 import {BounceSceneGroup} from './BounceSceneGroup';
+import {VRMovieController} from '../VRMovieController';
 
 class ControllerPickHelper extends THREE.EventDispatcher {
    constructor(scene, renderer) {
@@ -14,13 +15,16 @@ class ControllerPickHelper extends THREE.EventDispatcher {
       this.controllerToObjectMap = new Map();
       this.tempMatrix = new THREE.Matrix4();
 
+      // Create line geometry
       const pointerGeometry = new THREE.BufferGeometry().setFromPoints([
          new THREE.Vector3(0, 0, 0),
          new THREE.Vector3(0, 0, -1),
       ]);
  
+      // Array to store controllers
       this.controllers = [];
 
+      // Dispatch controller select event, with controller and object
       const selectListener = (event) => {
          const controller = event.target;
          const selectedObject = this.controllerToObjectMap.get(controller);
@@ -29,18 +33,26 @@ class ControllerPickHelper extends THREE.EventDispatcher {
          }
       };
 
+      // Dispatch controller select end event, with controller
       const endListener = (event) => {
          const controller = event.target;
          this.dispatchEvent({type: event.type, controller});
       };
 
+      // Get controllers, and add models and a selection line
       for (let i = 0; i < 2; ++i) {
          const controller = renderer.xr.getController(i);
+         if (i) {
+            controller.name = 'rightController';
+         } else {
+            controller.name = 'leftController';
+         }
          controller.addEventListener('select', selectListener);
          controller.addEventListener('selectstart', selectListener);
          controller.addEventListener('selectend', endListener);
          scene.add(controller);
 
+         // Get and add models to controllers
          const controllerModelFactory = new XRControllerModelFactory();
          const controllerGrip = renderer.xr.getControllerGrip(i);
          const model = controllerModelFactory.
@@ -48,6 +60,7 @@ class ControllerPickHelper extends THREE.EventDispatcher {
          controllerGrip.add(model);
          scene.add(controllerGrip);
  
+         // Create a line for each controller
          const line = new THREE.Line(pointerGeometry);
          line.scale.z = 5;
          controller.add(line);
@@ -57,11 +70,12 @@ class ControllerPickHelper extends THREE.EventDispatcher {
 
    _reset() {
       for (const {line} of this.controllers) {
-         line.material.color.setHex(0xFFFFFF);
+         line.material.color.setHex(0xDDDDDD);
       }
+      this.controllerToObjectMap.clear();
    }
 
-   update(pickablesParent, time) {
+   update(pickablesParent) {
       this._reset();
       for (const {controller, line} of this.controllers) {
          // cast a ray through the from the controller
@@ -82,7 +96,7 @@ class ControllerPickHelper extends THREE.EventDispatcher {
             // save which object this controller picked
             this.controllerToObjectMap.set(controller, pickedObject);
             // Set line to flashing red/yellow
-            line.material.color.setHex((time * 8) % 2 > 1 ? 0xFFAA00 : 0xFF0000);
+            line.material.color.setHex(0x00DDDD);
          } else {
             line.scale.z = 5;
          }
@@ -100,13 +114,39 @@ export class BounceVRView extends React.Component {
       this.state = BounceVRView.getInitState(props.movie);
    }
 
-   // Return state displaying things
+   static makeButton(name, color, x) {
+      const button = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.5, 0.5));
+      button.name = name;
+      button.material.color.setHex(color);
+
+      button.position.x = x;
+      button.position.y = 0;
+      button.position.z = -3;
+
+      return button;
+   }
+
+   static makeControlsGroup() {
+      const controlsGroup = new THREE.Group();
+      controlsGroup.name = 'controlsGroup';
+
+      // Create buttons
+      controlsGroup.add(BounceVRView.makeButton('pauseButton', 0xff0000, -1));
+      controlsGroup.add(BounceVRView.makeButton('slowButton', 0xffff00, 0));
+      controlsGroup.add(BounceVRView.makeButton('playButton', 0x00ff00, 1));
+
+      return controlsGroup;
+   }
+
+   // Return state displaying background grid and other fixtures
+   // appropriate for |movie|.
    static getInitState(movie) {
       const rigSize = BounceSceneGroup.rigSize;
       const ballRadius = BounceSceneGroup.ballRadius;
+
       let scene = new THREE.Scene();
       let sceneGroup = new BounceSceneGroup(movie);
-      sceneGroup.getSceneGroup().position.set(0, 0, -5);
+      sceneGroup.getSceneGroup().position.set(0, 16, -5);
       scene.add(sceneGroup.getSceneGroup());
 
       // Full range, square-decay, white light high on near wall in center
@@ -118,6 +158,8 @@ export class BounceVRView extends React.Component {
 
       const renderer = new THREE.WebGLRenderer({antialias: true});
       renderer.xr.enabled = true;
+
+      // Create button to initiate a VR session
       const button = VRButton.createButton(renderer);
 
 
@@ -128,116 +170,59 @@ export class BounceVRView extends React.Component {
       const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
       camera.position.set(0, 1.6, 0);
 
+      // Create VR movie controller
+      const movieController = new VRMovieController(movie, (offset) => {
+         sceneGroup.setOffset(offset);
+      });
+
       // Group to contain control objects
-      const controlsGroup = new THREE.Group();
-      controlsGroup.name = 'controlsGroup';
+      const controlsGroup = BounceVRView.makeControlsGroup();
       scene.add(controlsGroup);
 
+      // Map of buttons to VRMovieController methods
       const functionMap = {
-         'buttonLeft': () => {
-            console.log('buttonLeft');
+         'pauseButton': () => {
+            movieController.pause();
          },
-         'buttonRight': () => {
-            console.log('buttonRight');
+         'slowButton': () => {
+            movieController.play(0.5);
+         },
+         'playButton': () => {
+            movieController.play(1);
          }
-      }
+      };
 
-
-      let buttonLeft = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1));
-      buttonLeft.name = 'buttonLeft';
-      buttonLeft.material.color.setHex(0xff0000);
-      buttonLeft.position.set(-1, 0, -5);
-      controlsGroup.add(buttonLeft);
-
-      let buttonRight = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1));
-      buttonRight.name = 'buttonRight';
-      buttonRight.material.color.setHex(0x00ff00);
-      buttonRight.position.set(1, 0, -5);
-      controlsGroup.add(buttonRight);
-
+      // Create controller helper
       const controllerHelper = new ControllerPickHelper(scene, renderer);
       const controllerToSelection = new Map();
 
+      // Event listener to trigger function based on object selected
       controllerHelper.addEventListener('selectstart', (event) => {
          const {controller, selectedObject} = event;
          const existingSelection = controllerToSelection.get(controller);
          if (!existingSelection) {
-         //    controllerToSelection.set(controller, {
-         //       object: selectedObject,
-         //       parent: selectedObject.parent,
-         //    });
-         //    console.log(selectedObject);
-         //    controller.attach(selectedObject);
+            controllerToSelection.set(controller, selectedObject);
             functionMap[selectedObject.name]();
          }
       });
 
-      // controllerHelper.addEventListener('selectend', (event) => {
-      //    const {controller} = event;
-      //    const selection = controllerToSelection.get(controller);
-      //    if (selection) {
-      //       controllerToSelection.delete(controller);
-      //       selection.parent.attach(selection.object);
-      //    }
-      // });
-
-      // {
-      //    const color = 0xFFFFFF;
-      //    const intensity = 1;
-      //    const light = new THREE.DirectionalLight(color, intensity);
-      //    light.position.set(-1, 2, 4);
-      //    scene.add(light);
-      // }
-
-
-      // const boxWidth = 1;
-      // const boxHeight = 1;
-      // const boxDepth = 1;
-      // const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
-
-      // function makeInstance(geometry, color, x) {
-      //    const material = new THREE.MeshPhongMaterial({color});
-   
-      //    const cube = new THREE.Mesh(geometry, material);
-      //    pickRoot.add(cube);
-   
-      //    cube.position.x = x;
-      //    cube.position.y = 1.6;
-      //    cube.position.z = -2;
-   
-      //    return cube;
-      // }
-
-      // const cubes = [
-      //    makeInstance(geometry, 0x44aa88,  0),
-      //    makeInstance(geometry, 0x8844aa, -2),
-      //    makeInstance(geometry, 0xaa8844,  2),
-      // ];
-
-
-
-
-
-
-
-
-
-
+      controllerHelper.addEventListener('selectend', (event) => {
+         const {controller} = event;
+         const selection = controllerToSelection.get(controller);
+         if (selection) {
+            controllerToSelection.delete(controller);
+         }
+      });
 
       return {
          scene,
          sceneGroup,
-         // rig,
          camera,
          renderer,
-         // cubes,
          controllerHelper,
          controlsGroup,
-         // pickRoot,
          button,
-         // ball,
-         // targets: [],  // Array of target scene elements indexed by trg id
-         // evtIdx: -1,
+         movieController,
          movie
       };
    }
@@ -245,7 +230,6 @@ export class BounceVRView extends React.Component {
    componentDidMount() {
       const width = this.mount.clientWidth;
       const height = this.mount.clientHeight;
-      let rigSize = BounceSceneGroup.rigSize;
 
       this.state.renderer.setSize(width, height);
 
@@ -276,22 +260,8 @@ export class BounceVRView extends React.Component {
    }
 
    static renderFrame(time, state) {
-      // time = 0.001 * time;
-
-      // if (BounceVRView.resizeRendererToDisplaySize(state.renderer)) {
-      //    const canvas = state.renderer.domElement;
-      //    state.camera.aspect = canvas.clientWidth / canvas.clientHeight;
-      //    state.camera.updateProjectionMatrix();
-      // }
-
-      // state.cubes.forEach((cube, ndx) => {
-      //    const speed = 1 + ndx * .1;
-      //    const rot = time * speed;
-      //    cube.rotation.x = rot;
-      //    cube.rotation.y = rot;
-      // });
-
-      state.controllerHelper.update(state.controlsGroup, time);
+      state.movieController.animate(time);
+      state.controllerHelper.update(state.controlsGroup);
 
       state.renderer.render(state.scene, state.camera);
    }
