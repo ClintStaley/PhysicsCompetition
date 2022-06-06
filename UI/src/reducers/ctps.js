@@ -5,7 +5,7 @@ export default function ctps(state = [], action) {
 
    case 'GET_CTPS':
       if (action.ctps.length) {
-         state = [...state];
+         state = state.slice();
          action.ctps.forEach(ctp => state[ctp.id] = ctp);
       }
       return state;

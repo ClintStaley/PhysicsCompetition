@@ -7,29 +7,32 @@ export default function teams(state = [], action) {
       // Action has array teams.  Save existing mmbs if any, and swap out teams
       case 'GET_PRS_TEAMS':
       case 'GET_CMP_TEAMS':
-         if (teams.length) {
-            state = [...state];
+         if (action.teams.length) {
+            state = state.slice();
             action.teams.forEach(team => {
-               if (state[team.id].mmbs.length)
+               if (state[team.id])
                   team.mmbs = state[team.id].mmbs;  // No deep copy needed?
                state[team.id] = team;
             });
          }
          return state;
+
       case 'GET_TEAM_MMBS':
-         state = [...state];
+         state = state.slice();
          state[teamId] = Object.assign({}, state[teamId], {mmbs: action.mmbs});
          return state;
 
       case 'PUT_TEAM':
-         state = [...state];
+         state = state.slice();
          state[teamId] = Object.assign({}, state[teamId], action.team);
          return state;
 
       case 'ADD_TEAM':
       case 'GET_TEAM':
-         state = [...state];
+         state = state.slice();
          state[teamId] = action.team;
+         return state;
+
       case 'DEL_TEAM':
          return state.slice(teamId, 1);
       case 'ADD_MMB':
@@ -45,7 +48,7 @@ export default function teams(state = [], action) {
                firstName: prs.firstName, 
                lastName: prs.lastName
             };
-            state = [...state];
+            state = state.slice();
             state[teamId] = Object.assign({}, state[teamId], mmbs)
          }
          return state;
@@ -55,7 +58,7 @@ export default function teams(state = [], action) {
 
          if (mmbs.length) {
             mmbs = mmbs.slice(action.prsId, 1);
-            state = [...state];
+            state = state.slice();
             state[teamId] = Object.assign({}, team, mmbs);
          }
          return state;

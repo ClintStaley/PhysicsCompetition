@@ -42,7 +42,7 @@ export default class CmpPage extends Component {
 
    openCreateDialog = () => {
       this.setState({ createTeamFunc: (newTeamName) => {
-         this.props.postTeam(parseInt(this.props.cmpId, 10),
+         this.props.postTeam(this.props.cmpId,
          { leaderId : this.props.prs.id, teamName: newTeamName});
       }});
    }
@@ -67,6 +67,7 @@ export default class CmpPage extends Component {
    }
 
    orderTeamsByScore = (teams) => {
+      console.log(teams, this.props);
       //expect an array of team Ids
       return teams.sort(this.compareTeamsByScore);
    }
@@ -136,9 +137,10 @@ export default class CmpPage extends Component {
             yourself as leader.</div>
           }
 
-          { props.cmps[cmpId].cmpTeams.length > 0 ?
+          { props.cmps[cmpId].cmpTeams.length > 0 && props.teams.length > 0 ?
           <ListGroup>
-            {this.orderTeamsByScore(props.cmps[cmpId].cmpTeams).map((teamId, i) => {
+            {this.orderTeamsByScore(
+             props.cmps[cmpId].cmpTeams).map((teamId, i) => {
               if (!this.props.teams[teamId])
                 return null;
 
@@ -150,11 +152,11 @@ export default class CmpPage extends Component {
               return <TeamLine key={i} {...team}
                   toggleTeam = {() => this.toggleView(teamId)}
                   doSubmit = {() => this.doSubmit(team)}/>
-           })}
-          </ListGroup>
+            })}
+            </ListGroup>
           :
-          <h4>This competition has no competing teams</h4>
-           }
+            <h4>This competition has no competing teams</h4>
+         }
 
           {!myCmpLink ?
           <div className = "rightButton">

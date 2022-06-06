@@ -33,13 +33,16 @@ class CmpsPage extends Component {
          var cmpsByCtp = [];
          var cmpIds = Object.keys(newProps.cmps);
          var ctpIds = Object.keys(newProps.ctps);
-console.log(newProps);
+console.log(newProps, cmpIds, ctpIds);
          // Create state for Join Competitions page
          if (newProps.showAll) {
-            for (var i = 0; i < cmpIds.length; i++) {
-               var id = parseInt(cmpIds[i]);
-               cmpsByCtp[newProps.cmps[id].ctpId].push(newProps.cmps[id]);
-            }
+            cmpIds.forEach(id => {
+               var ctpId = newProps.cmps[id].ctpId;
+               
+               if (!cmpsByCtp[ctpId])
+                  cmpsByCtp[ctpId] = [];
+               cmpsByCtp[ctpId].push(newProps.cmps[id]);
+            });
          }
 
          // Create state for Active Competitions page limiting cmpsByCtp to my
@@ -110,7 +113,8 @@ console.log(newProps);
       var props = this.props;
       var ctpIds = Object.keys(props.ctps);
       var cmpsByCtpIds = Object.keys(this.state.cmpsByCtp)
-      var cmpsByCtp = [...this.state.cmpsByCtp]
+      var cmpsByCtp = this.state.cmpsByCtp;
+      console.log(cmpsByCtp);
 
       return (
          <section className="container">
@@ -132,12 +136,12 @@ console.log(newProps);
                cmpsByCtpIds && cmpsByCtpIds.length ?
                   <div className='grid'>
                      {cmpsByCtpIds && cmpsByCtpIds.map((ctpId, i) => {
-                        var ctp = props.ctps[ctpId - 1];
+                        var ctp = props.ctps[ctpId];
                         var cmps = cmpsByCtp[ctpId];
                         return <ActiveCompetitionItem
                            key={i}
                            cmps={cmps}
-                           expanded={this.state.expanded[ctpId - 1]}
+                           expanded={this.state.expanded[ctpId]}
                            {...ctp} />
                      })}
                   </div>
