@@ -1,50 +1,65 @@
-import update from 'immutability-helper';
-
-export default function teams(state = {}, action) {
-   var data, team, prs;
+export default function teams(state = [], action) {
+   let teamId = action.teamId;
+   let team = state[teamId];
+   let mmbs;
 
    switch (action.type) {
-      case 'GET_PRS_TEAMS': // Replace previous team
+      // Action has array teams.  Save existing mmbs if any, and swap out teams
+      case 'GET_PRS_TEAMS':
       case 'GET_CMP_TEAMS':
-         for (let id in action.teams)
-            if (state[id] && Object.keys(state[id].mmbs).length)
-               action.teams[id].mmbs = Object.assign({}, state[id].mmbs);
-
-         return Object.assign({}, state, action.teams);
+         if (teams.length) {
+            state = [...state];
+            action.teams.forEach(team => {
+               if (state[team.id].mmbs.length)
+                  team.mmbs = state[team.id].mmbs;  // No deep copy needed?
+               state[team.id] = team;
+            });
+         }
+         return state;
       case 'GET_TEAM_MMBS':
-         // Add membership data to a team
-         return Object.assign({}, state,
-          {[action.teamData.id]: Object.assign({},
-          state[action.teamData.id] , {mmbs: action.teamData.mmbs})});
+         state = [...state];
+         state[teamId] = Object.assign({}, state[teamId], {mmbs: action.mmbs});
+         return state;
+
       case 'PUT_TEAM':
-         data = action.newTeamData;
-         // Overwrite only actually-changed elements in the team
-         return Object.assign({}, state, {[data.id]:
-          Object.assign({}, state[data.id], data)});
+         state = [...state];
+         state[teamId] = Object.assign({}, state[teamId], action.team);
+         return state;
+
       case 'ADD_TEAM':
       case 'GET_TEAM':
-         var teamId = action.newTeamData.id;
-         return Object.assign({}, state, {[teamId]: action.newTeamData});
+         state = [...state];
+         state[teamId] = action.team;
       case 'DEL_TEAM':
-         return update(state, {$unset: [action.teamId]});
+         return state.slice(teamId, 1);
       case 'ADD_MMB':
-         prs = action.prs;
-         team = Object.assign({}, state[action.teamId]);
+         let prs = action.prs;
+         mmbs = team.mmbs;
 
-         //if team members aren't currently loaded in store, don't add this one.
-         if (!Object.keys(team.mmbs).length)
-            return state;
+         // Add this member only if membvers are currently loaded into store
+         if (mmbs.length) {
+            mmbs = [...mmbs];
+            mmbs[prs.id] = {
+               id: prs.id, 
+               email: prs.email,
+               firstName: prs.firstName, 
+               lastName: prs.lastName
+            };
+            state = [...state];
+            state[teamId] = Object.assign({}, state[teamId], mmbs)
+         }
+         return state;
 
-         team.mmbs = Object.assign({}, team.mmbs, 
-          {[prs.id]: {id: prs.id, email: prs.email,
-          firstName: prs.firstName, lastName: prs.lastName}});
-         return Object.assign({}, state, {[action.teamId]: team});
       case 'DEL_MMB':
-         team = Object.assign({}, state[action.teamId]);
+         mmbs = team.mmbs;
 
-         team.mmbs = Object.assign({}, team.mmbs);
-         delete team.mmbs[action.prsId];
-         return Object.assign({}, state, {[action.teamId]: team});
+         if (mmbs.length) {
+            mmbs = mmbs.slice(action.prsId, 1);
+            state = [...state];
+            state[teamId] = Object.assign({}, team, mmbs);
+         }
+         return state;
+
       case 'SIGN_OUT':
          return {};
       default:

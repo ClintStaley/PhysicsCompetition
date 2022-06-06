@@ -30,26 +30,28 @@ export default function prs(state = {}, action) {
          return {} // Clear user state
       case 'GET_PRS_TEAMS':
          var newState = state;
+
          // Clear myTeams and myCmps in case they have been deleted
          newState.myTeams = [];
          newState.myCmps = [];
 
          for (let id in action.teams)
             newState = addTeamToState(newState, action.teams[id]);
-
          return newState;
+
       case 'DEL_TEAM':
          if (state.myTeams.includes(action.teamId))
             return delTeamFromState(state, action.teamId, action.cmpId,
              action.teamInfo);
          else
             return state;
+
       case 'ADD_TEAM':
          // Add the newly created team to my teams
          return addTeamToState(state, action.newTeamData);
       case 'GET_TEAM_MMBS':
-         if (Object.keys(action.teamData.mmbs).includes(state.id.toString())
-          && !state.myTeams.includes(action.teamData.id))
+         if (action.mmbs.includes(state.id)
+          && !state.myTeams.includes(action.teamId))
             return addTeamToState(state, action.teamData);
 
          return state;

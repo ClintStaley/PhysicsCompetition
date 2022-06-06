@@ -7,6 +7,12 @@ import {ListGroup, ListGroupItem, Button} from 'react-bootstrap';
 import ReactTooltip from 'react-tooltip';
 import './cmp.css';
 
+// Properties:
+// showAll: Show panels for all available competitions, else just those whose
+//  ids are in prs.myCmps.
+// ctps: Competitions types, from redux store
+// cmps: Competitions, from redux store
+
 class CmpsPage extends Component {
    // Important prop to understand is the showAll property
    // showAll == true -> joinCmps page, else activeCmpsPage
@@ -20,48 +26,43 @@ class CmpsPage extends Component {
    }
 
    static getDerivedStateFromProps(newProps, oldState) {
-      let rtn = { ...oldState };
-      // If the props are the same, return oldState., else enter if statement
+      let rtn = oldState;
+
       if ((newProps.cmps !== oldState.cmps) || (newProps.showAll !==
-         oldState.showAll)) {
+       oldState.showAll)) {
          var cmpsByCtp = [];
          var cmpIds = Object.keys(newProps.cmps);
          var ctpIds = Object.keys(newProps.ctps);
-
-         //Join cmp page
-         if (newProps.showAll === true) {
-            ctpIds.forEach(id => { cmpsByCtp[newProps.ctps[id].id] = [] });
-
+console.log(newProps);
+         // Create state for Join Competitions page
+         if (newProps.showAll) {
             for (var i = 0; i < cmpIds.length; i++) {
                var id = parseInt(cmpIds[i]);
                cmpsByCtp[newProps.cmps[id].ctpId].push(newProps.cmps[id]);
             }
-            return {
-               showDeleteConfirmation: null,
-               cmpsByCtp
-            }
          }
-         // Current cmps page
+
+         // Create state for Active Competitions page limiting cmpsByCtp to my
+         // current competitions.
          else { 
             for (var i = 0; i < newProps.prs.myCmps.length; i++) {
                var currentCmp = newProps.cmps[newProps.prs.myCmps[i]];
-               if (currentCmp === undefined) 
-                  return {
-                     showDeleteConfirmation: null,
-                     cmpsByCtp
-                  }
-               if (currentCmp && !Array.isArray(cmpsByCtp[currentCmp.ctpId]))
-                  cmpsByCtp[currentCmp.ctpId] = [currentCmp];
-               else
-                  cmpsByCtp[currentCmp.ctpId].push(currentCmp);
+             
+               if (currentCmp) {
+                  if (!cmpsByCtp[currentCmp.ctpId])
+                     cmpsByCtp[currentCmp.ctpId] = [currentCmp];
+                  else
+                     cmpsByCtp[currentCmp.ctpId].push(currentCmp);
                }
+            }
          }
-         return {
+         rtn = {
             showDeleteConfirmation: null,
-            cmpsByCtp
+            cmpsByCtp,
+            showAll: newProps.showAll
          }
       }
-      rtn.cmps = newProps.cmps;
+
       return rtn;
    }
 
@@ -96,21 +97,18 @@ class CmpsPage extends Component {
       this.setState({ showDeleteConfirmation: cmpId });
    }
 
-   // Fix this up for the props ...
-   openInstructions = () => {
-      var props = this.props;
-      var ctpId = props.cmps[props.cmpId].ctpId-1;
-      var ctpType = props.ctps[ctpId].codeName;
+   // Open instructions for ctp with indicated codename
+   openInstructions = (ctpCodeName) => {
       var link
-       = `${process.env.PUBLIC_URL}/Docs/Cmps/${ctpType}/Instructions.html`;
- 
+       = `${process.env.PUBLIC_URL}/Docs/Cmps/${ctpCodeName}/Instructions.html`;
+
       window.open(link, "_blank");
    }
  
    // render uses ternary operator on showAll prop to decide which page to load
    render() {
       var props = this.props;
-      var ctps = Object.keys(props.ctps);
+      var ctpIds = Object.keys(props.ctps);
       var cmpsByCtpIds = Object.keys(this.state.cmpsByCtp)
       var cmpsByCtp = [...this.state.cmpsByCtp]
 
@@ -118,15 +116,15 @@ class CmpsPage extends Component {
          <section className="container">
             {props.showAll ?
                <div className='grid'>
-                  {ctps && ctps.map((ctpId, i) => {
+                  {ctpIds && ctpIds.map((ctpId, i) => {
                      var ctp = props.ctps[ctpId];
 
                      return <JoinCompetitionItem
                         key={i}
                         cmpsByCtp={this.state.cmpsByCtp[ctp.id]}
                         expanded={this.state.expanded[ctpId]}
-                        toggle={() => this.toggleView(ctpId)}
-                        openInstructions={() => this.openInstructions()}
+                        openInstructions
+                         ={() => this.openInstructions(ctp.codeName)}
                         {...ctp} />
                   })}
                </div>
@@ -139,9 +137,8 @@ class CmpsPage extends Component {
                         return <ActiveCompetitionItem
                            key={i}
                            cmps={cmps}
-                           {...ctp}
                            expanded={this.state.expanded[ctpId - 1]}
-                           toggle={() => this.toggleView(ctpId - 1)} />
+                           {...ctp} />
                      })}
                   </div>
                   :
@@ -163,17 +160,16 @@ const ActiveCompetitionItem = function (props) {
          <div>{props.description}</div>
          <Button onClick={toggleView}>Show My Competitions</Button>
          {expanded ?
-             <ListGroup>{
+            <ListGroup>{
                props.cmps.map((cmp, i) => {
-               var cmpItem = cmp;
-               return <CmpItem
-                  key={i}
-                  link={'MyCmpPage/' + cmp.id}
-                  title={cmpItem.title}
-                  joined={true}
-                  description={cmp.description}
-               />
-            })}
+                  return <CmpItem
+                     key={i}
+                     link={'MyCmpPage/' + cmp.id}
+                     title={cmp.title}
+                     joined={true}
+                     description={cmp.description}
+                  />
+               })}
              </ListGroup>
             : ""
          }
@@ -188,9 +184,7 @@ const JoinCompetitionItem = function (props) {
       <div className="clearfix cmpPanel">
          <div className='cmpHeader'>{props.title}</div>
          <div className = "instructionLink">
-            <a onClick = {props.openInstructions}>
-              Full Instructions
-            </a>
+            <a onClick = {props.openInstructions}>Instructions</a>
          </div>
          <Button onClick={toggleView}>Show Competitions</Button>
          {expanded ?

@@ -26,8 +26,6 @@ class TeamsPage extends Component {
          props.getAllCmps(props.getTeamsByPrs(props.prs.id));
       }
 
-
-
       for (var i = 0; i < teamIds.length; i++) {
          if (Object.keys(props.teams[teamIds[i]].mmbs.length === 0))
             props.getTeamMmbs(props.teams[teamIds[i]].cmpId,
