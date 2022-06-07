@@ -42,7 +42,13 @@ var configApp = (corsDomain, testFlag) => {
    // app.use(express.static(path.join(__dirname, 'public')));
 
    // Parse request body using JSON; attach to req as req.body
-   app.use(bodyParser.json());
+   app.use(bodyParser.json());   
+   
+   // Debug utility
+   app.use((req, res, next) => {
+      console.log(`${req.method} to ${req.path}`);
+      next();
+   });
 
    // No messing w/db ids
    app.use(function (req, res, next) {

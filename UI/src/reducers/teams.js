@@ -11,7 +11,7 @@ export default function teams(state = [], action) {
             state = state.slice();
             action.teams.forEach(team => {
                if (state[team.id])
-                  team.mmbs = state[team.id].mmbs;  // No deep copy needed?
+                  team.mmbs = state[team.id].mmbs;
                state[team.id] = team;
             });
          }
@@ -20,8 +20,8 @@ export default function teams(state = [], action) {
       case 'GET_TEAM_MMBS':
          state = state.slice();
          mmbs = [];
-         team.mmbs.forEach(mmb => mmbs[mmb.id] = mmb);
-         state[teamId] = Object.assign({}, state[teamId], mmbs);
+         action.mmbs.forEach(mmb => mmbs[mmb.id] = mmb);
+         state[teamId] = Object.assign({}, state[teamId], {mmbs});
          return state;
 
       case 'PUT_TEAM':
@@ -41,7 +41,7 @@ export default function teams(state = [], action) {
          let prs = action.prs;
          mmbs = team.mmbs;
 
-         // Add this member only if membvers are currently loaded into store
+         // Add this member only if members are currently loaded into store
          if (mmbs.length) {
             mmbs = [...mmbs];
             mmbs[prs.id] = {

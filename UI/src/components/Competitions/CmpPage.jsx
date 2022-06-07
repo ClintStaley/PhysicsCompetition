@@ -8,7 +8,7 @@ import './cmp.css'
 // cmps -- cmp collection from redux store
 // teams -- teams collection from redux store
 // myCmpLink -- boolean indicating whether to show cmp as one I already am in
-export default class CmpPage extends Component { // CAS Fix: Rename
+export default class CmpPage extends Component {
    constructor(props) {
       super(props);
 
@@ -21,15 +21,10 @@ export default class CmpPage extends Component { // CAS Fix: Rename
    componentDidMount = () => {
       var props = this.props;
 
-      if (props.cmps[props.cmpId]) // CAS Fix: drop this.
-         //if (!(props.updateTimes && props.updateTimes.myTeams))
-         //   props.getTeamsByPrs(props.prs.id);
-         
-         // Update teams for cmpId, and get full members if I'm joining.
-         if (props.myCmpLink)
-            props.getTeamsByCmp(props.cmpId);
-         else
-            props.getTeamsByCmp(props.cmpId, this.getAllTeamMmbs);
+      if (props.myCmpLink)
+         props.getTeamsByCmp(props.cmpId);
+      else
+         props.getTeamsByCmp(props.cmpId, this.getAllTeamMmbs);
    }
 
    getAllTeamMmbs = () => {
@@ -43,9 +38,9 @@ export default class CmpPage extends Component { // CAS Fix: Rename
    }
 
    openCreateDialog = () => {
-      this.setState({ createTeamFunc: (newTeamName) => {
+      this.setState({createTeamFunc: (newTeamName) => {
          this.props.postTeam(this.props.cmpId,
-         { leaderId : this.props.prs.id, teamName: newTeamName});
+         {leaderId : this.props.prs.id, teamName: newTeamName});
       }});
    }
 
@@ -59,7 +54,7 @@ export default class CmpPage extends Component { // CAS Fix: Rename
    toggleView = (teamId) => {
       // Check for membership data, update iff none available
       if (this.props.teams[teamId].mmbs &&
-       Object.keys(this.props.teams[teamId].mmbs).length  === 0){
+       !this.props.teams[teamId].mmbs.length){
          this.props.getTeamMmbs(this.props.cmpId, teamId);
       }
       //toggle team toggles the member list on the screen
@@ -67,9 +62,8 @@ export default class CmpPage extends Component { // CAS Fix: Rename
        {[teamId]: !this.state.toggledTeams[teamId]})});
    }
 
+   //expect an array of team Ids
    orderTeamsByScore = (teams) => {
-      console.log(teams, this.props);
-      //expect an array of team Ids
       return teams.sort(this.compareTeamsByScore);
    }
 
@@ -90,6 +84,7 @@ export default class CmpPage extends Component { // CAS Fix: Rename
      var link
       = `${process.env.PUBLIC_URL}/Docs/Cmps/${ctpType}/Instructions.html`;
 
+console.log("Opening " + link);
      window.open(link, "_blank");
    }
 
@@ -173,7 +168,6 @@ export default class CmpPage extends Component { // CAS Fix: Rename
 }
 
 const TeamLine = function (props) {
-   console.log("TL", props);
    return (
    <ListGroupItem className="clearfix">
      <Button onClick = {props.toggleTeam}>{props.teamName}</Button>
