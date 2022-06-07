@@ -79,7 +79,7 @@ export default class CmpPage extends Component {
 
    openInstructions = () => {
      var props = this.props;
-     var ctpId = props.cmps[props.cmpId].ctpId-1;
+     var ctpId = props.cmps[props.cmpId].ctpId;
      var ctpType = props.ctps[ctpId].codeName;
      var link
       = `${process.env.PUBLIC_URL}/Docs/Cmps/${ctpType}/Instructions.html`;
