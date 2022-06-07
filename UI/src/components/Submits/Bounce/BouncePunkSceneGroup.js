@@ -1,6 +1,7 @@
 import {BounceMovie} from './BounceMovie';
 import * as THREE from 'three';
 import {concreteMat, flatSteelMat, steelMat} from '../../Util/Materials.js';
+import {brickMat} from '../../Util/AsyncMaterials';
 
 // Create a Group with the following elements:
 //
@@ -24,6 +25,8 @@ import {concreteMat, flatSteelMat, steelMat} from '../../Util/Materials.js';
 // Center of the top-level group is at lower-left corner of rig, at depth
 // centered on the rig's "gutter".  This is the (0,0) location of the Bounce 
 // problem itself.
+// 
+// Center of the room is at the bottom left corner
 
 export class BouncePunkSceneGroup {
    // Room and gutter dimensions
@@ -43,31 +46,113 @@ export class BouncePunkSceneGroup {
    static trgRing = .01;       // Ring and rod must be <= 10cm, min block height
    static wallRing = .04;      // Width of ring surrounding rods at wall
    static rigDepth = 1;        // Rig is 1m from back wall
+   static rigSize = 10;        // Rig is 10 x 10 meters
 
    constructor(movie) {
       this.movie = movie;
       this.topGroup = new THREE.Group();
       this.room = this.makeRoom();       // Room and gutter
-      this.rig = this.makeRig();
+      // this.rig = this.makeRig();
       this.targets = [];                 // Targets already hit
       this.evtIdx = -1;                  // Event index currently displayed
 
       this.topGroup.add(this.room);
-      this.topGroup.add(this.rig);
-      this.setOffset(0);
+      // this.topGroup.add(this.rig);
+      // this.setOffset(0);
 
    }
 
    makeRoom() {
-      // Create standard room with center of far wall at origin
-      let roomDim = 3 * rigSize + 2;  // big boundaries around rig
-      this.room = new THREE.Mesh(
-         new THREE.BoxGeometry(roomDim, roomDim, roomDim), [concreteMat,
-         concreteMat, concreteMat, flatSteelMat, concreteMat, concreteMat]);
-      this.room.position.set(0, 0, 9);
-      this.room.name = 'room';
-      this.topGroup.add(this.room);
+      const roomWidth = BouncePunkSceneGroup.roomWidth;
+      const roomHeight = BouncePunkSceneGroup.roomHeight;
+      const roomDepth = BouncePunkSceneGroup.roomDepth;
+      const floorHeight = BouncePunkSceneGroup.floorHeight;
+      const gutterWidth = BouncePunkSceneGroup.gutterWidth;
+      const gutterDepth = BouncePunkSceneGroup.gutterDepth;
+      const rigDepth = BouncePunkSceneGroup.rigDepth;
 
+      // // Create standard room with center of far wall at origin
+      // let roomDim = 3 * rigSize + 2;  // big boundaries around rig
+      // this.room = new THREE.Mesh(
+      //    new THREE.BoxGeometry(roomDim, roomDim, roomDim), [concreteMat,
+      //    concreteMat, concreteMat, flatSteelMat, concreteMat, concreteMat]);
+      // this.room.position.set(0, 0, 9);
+      // this.room.name = 'room';
+      // this.topGroup.add(this.room);
+
+      // Create group to house room components
+      const roomGroup = new THREE.Group();
+      roomGroup.name = 'roomGroup';
+
+      // Create back wall
+      const backWall = new THREE.Mesh(
+       new THREE.PlaneGeometry(roomWidth, roomHeight), concreteMat);
+      backWall.name = 'backWall';
+      backWall.position.set(roomWidth / 2, roomHeight / 2);
+      roomGroup.add(backWall);
+      
+      // Create roof
+      const roof = new THREE.Mesh(
+       new THREE.PlaneGeometry(roomWidth, roomDepth), concreteMat);
+      roof.name = 'roof';
+      roof.rotateX(Math.PI / 2);
+      roof.position.set(roomWidth / 2, roomHeight, roomDepth / 2);
+      roomGroup.add(roof);
+      
+      // Create floor group
+      const floorGroup = new THREE.Group();
+
+      // Create back floor group
+      const backFloorGroup = new THREE.Group();
+
+      const backFloorTop = new THREE.Mesh(
+       new THREE.PlaneGeometry(roomWidth, rigDepth), flatSteelMat);
+      backFloorTop.name = 'backFloorTop';
+      backFloorTop.rotateX(-Math.PI / 2);
+      backFloorTop.position.set(roomWidth / 2, 0, rigDepth / 2);
+      backFloorGroup.add(backFloorTop);
+
+      const backFloorSideTop = new THREE.Mesh(
+       new THREE.PlaneGeometry(roomWidth, floorHeight), flatSteelMat);
+      backFloorSideTop.name = 'backFloorSideTop';
+      backFloorSideTop.position.set(roomWidth / 2, -floorHeight / 2, rigDepth);
+      backFloorGroup.add(backFloorSideTop);
+
+      const backFloorSideSide = new THREE.Mesh(
+       new THREE.PlaneGeometry(roomWidth, gutterDepth), concreteMat);
+      backFloorSideSide.name = 'backFloorSideSide';
+      backFloorSideSide.position.set(roomWidth / 2, -gutterDepth / 2 - floorHeight, rigDepth);
+      backFloorGroup.add(backFloorSideSide);
+
+      // Create front floor group
+      const frontFloorGroup = new THREE.Group();
+
+      const frontFloorTop = new THREE.Mesh(
+       new THREE.PlaneGeometry(roomWidth, roomDepth - (rigDepth + gutterWidth)), flatSteelMat);
+      frontFloorTop.name = 'frontFloorTop';
+      frontFloorTop.rotateX(-Math.PI / 2);
+      frontFloorTop.position.set(roomWidth / 2, 0, (roomDepth + rigDepth + gutterWidth) / 2);
+      frontFloorGroup.add(frontFloorTop);
+
+      const frontFloorSideTop = new THREE.Mesh(
+       new THREE.PlaneGeometry(roomWidth, floorHeight), flatSteelMat);
+      frontFloorSideTop.name = 'frontFloorSideTop';
+      frontFloorSideTop.position.set(roomWidth / 2, -floorHeight / 2, rigDepth + gutterWidth);
+      frontFloorGroup.add(frontFloorSideTop);
+      
+      const frontFloorSideSide = new THREE.Mesh(
+       new THREE.PlaneGeometry(roomWidth, gutterDepth), concreteMat);
+      frontFloorSideSide.name = 'frontFloorSideSide';
+      frontFloorSideSide.position.set(roomWidth / 2, -gutterDepth / 2 - floorHeight, rigDepth + gutterWidth);
+      frontFloorGroup.add(frontFloorSideSide);
+
+      // // Add floor sections to floor group
+      floorGroup.add(backFloorGroup);
+      floorGroup.add(frontFloorGroup);
+
+      roomGroup.add(floorGroup);
+
+      return roomGroup;
    }
 
    makeRig() {
@@ -97,7 +182,6 @@ export class BouncePunkSceneGroup {
 
    // Adjust the scenegraph to reflect time.  This may require either forward
    // or backward movement in time.
-   }
    setOffset(timeStamp) {
       const ballRadius = BounceSceneGroup.ballRadius;
       const rigSize = BounceSceneGroup.rigSize;
