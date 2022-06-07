@@ -33,7 +33,7 @@ class CmpsPage extends Component {
          var cmpsByCtp = [];
          var cmpIds = Object.keys(newProps.cmps);
          var ctpIds = Object.keys(newProps.ctps);
-console.log(newProps, cmpIds, ctpIds);
+
          // Create state for Join Competitions page
          if (newProps.showAll) {
             cmpIds.forEach(id => {
@@ -114,7 +114,6 @@ console.log(newProps, cmpIds, ctpIds);
       var ctpIds = Object.keys(props.ctps);
       var cmpsByCtpIds = Object.keys(this.state.cmpsByCtp)
       var cmpsByCtp = this.state.cmpsByCtp;
-      console.log(cmpsByCtp);
 
       return (
          <section className="container">

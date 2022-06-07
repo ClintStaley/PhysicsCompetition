@@ -19,7 +19,9 @@ export default function teams(state = [], action) {
 
       case 'GET_TEAM_MMBS':
          state = state.slice();
-         state[teamId] = Object.assign({}, state[teamId], {mmbs: action.mmbs});
+         mmbs = [];
+         team.mmbs.forEach(mmb => mmbs[mmb.id] = mmb);
+         state[teamId] = Object.assign({}, state[teamId], mmbs);
          return state;
 
       case 'PUT_TEAM':

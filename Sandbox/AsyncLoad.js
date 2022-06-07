@@ -37,7 +37,7 @@ var flatSteelPrm = {
 loadMatParams(prmSpecs) {
    let loads = {};  // Object of labeled Promises returned from loadModelParams
 
-   Object.entries(prmSpecs.forEach)(([key, value]) => {
+   Object.entries(prmSpecs).forEach(([key, value]) => {
       loads[key] = loadModelParams(value);
    });
 
@@ -100,6 +100,8 @@ loadTextureAsync(path, reps) {
       return tex;
    });
 }
+
+export loadMatPrms({})
 
 /* Main program might be:
 loadMatPrms({steelPrm, concretePrm, brickPrm}).then(prms => {
