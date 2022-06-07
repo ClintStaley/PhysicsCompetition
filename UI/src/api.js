@@ -15,6 +15,10 @@
 // 5. Signin and signout operations that retain relevant
 //    ssnId data.  Successful signin returns promise 
 //    resolving to newly signed in user.
+// 6. Unpack any JSON-fields from the database into full JS objects.
+//
+// Note all array-results remain arrays indexed by 0, per the REST spec, even 
+// though their content often has 1-based id numbers.
 
 const baseURL = (window.location.port) ? // Dev vs production settings
    `${window.location.protocol}//${window.location.hostname}:1024/` :
@@ -145,37 +149,29 @@ export function getCtpById(ctpId){
 
 export function getCtps(){
    return get("Ctps")
-   .then((ctpsData)=>ctpsData.json())
-   .then((ctpsData)=>{
-      return ctpsData
-   })
+   .then((ctpsData)=>ctpsData.json());
 }
 
 export function getCmps() {
    return get("Cmps")
-   .then((cmpsData) => cmpsData.json())
-   .then((cmpsData) => {
-      var cmps = {};
-      for (var i = 0; i < cmpsData.length; i++){
-         cmpsData[i].prms = JSON.parse(cmpsData[i].prms);
-         cmps[cmpsData[i].id] = cmpsData[i];
+   .then(cmpsData => cmpsData.json())
+   .then(cmps => {
+      try {
+         cmps.forEach(cmp => cmp.prms = JSON.parse(cmp.prms));
+         return cmps;
       }
-
-      return cmps;
-   });
+      catch (err) {
+         return Promise.reject("Error parsing competition parameters");
+      }
+  });
 }
 
 export function getCmpsByPrs(prsId) {
    return get(`Prss/${prsId}/Cmps`)
    .then((rsp) => rsp.json())
-   .then(cmpsData => {
+   .then(cmps => {
       try {
-         var cmps = {};
-
-         for (var i = 0; i < cmpsData.length; i++) {
-            cmpsData[i].prms = JSON.parse(cmpsData[i].prms);
-            cmps[cmpsData[i].id] = cmpsData[i];
-         }
+         cmps.forEach(cmp => cmp.prms = JSON.parse(cmp.prms));
          return cmps;
       }
       catch (err) {
@@ -215,37 +211,17 @@ export function postCmp(body) {
 
 export function getTeamById(cmpId, teamId) {
    return get(`Cmps/${cmpId}/Teams/${teamId}`)
-   .then((teamData) => teamData.json())
-   /*.then((teamData) => {
-      var team = {};
-      team[teamData.id] = teamData;
-      return team;
-   });*/
+   .then(teamData => teamData.json())
 }
 
 export function getTeamsByPrs(prsId) {
    return get(`Prss/${prsId}/Teams`)
-   .then((teamData) => teamData.json())
-   .then((teamData) => {
-      var teams = {};
-      for (var i = 0; i < teamData.length; i++)
-         teams[teamData[i].id] = teamData[i];
-
-      return teams;
-   });
+   .then((teamData) => teamData.json());
 }
 
 export function getTeamsByCmp(cmpId) {
    return get(`Cmps/${cmpId}/Teams`)
-   .then((teamData) => teamData.json())
-   .then((teamData) => {
-      var teams = {};
-      for (var i = 0; i < teamData.length; i++){
-         teams[teamData[i].id] = teamData[i];
-      }
-
-      return teams;
-   });
+   .then((teamData) => teamData.json());
 }
 
 export function putTeam(cmpId, teamId, body) {
@@ -282,15 +258,7 @@ export function postMmb(prsId, cmpId, teamId) {
 API oughta do, really.*/
 export function getTeamMmbs(cmpId, teamId) {
    return get(`Cmps/${cmpId}/Teams/${teamId}/mmbs`)
-   .then((mmbData) => mmbData.json())
-   .then((mmbData) => {
-      var mmbs = {};
-
-      for (var i = 0; i < mmbData.length;i++)
-         mmbs[mmbData[i].id] = mmbData[i];
-
-      return mmbs;
-   })
+   .then((mmbData) => mmbData.json());
 }
 
 export function delMmb(cmpId, teamId, prsId) {

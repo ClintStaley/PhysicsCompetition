@@ -3,10 +3,12 @@ import {Bounce3DView} from './Bounce3DView';
 import {BounceOld3DView} from './BounceOld3DView';
 import {BounceSVGView} from "./BounceSVGView"; 
 import {BounceVRView} from "./BounceVRView";
+import {BounceOldVRView} from './BounceOldVRView';
 import {BounceMovie}  from './BounceMovie';
 import {BSubmitModal} from './BounceSubmitModal';
 import {ViewChooser} from '../ViewChooser';
 import {MovieController}  from '../MovieController';
+import {BouncePunk3DView} from './BouncePunk3DView';
 
 import style from './Bounce.module.css'
 
@@ -117,8 +119,16 @@ export class Bounce extends Component {
          viewMaker: mv => <MovieController movie={mv} viewCls={Bounce3DView}/>
       },
       {
+         label: "Punk",
+         viewMaker: mv => <BouncePunk3DView movie={mv}/>
+      },
+      {
          label: "VR",
          viewMaker: mv => <BounceVRView movie={mv}/>
+      },
+      {
+         label: "OldVR",
+         viewMaker: mv => <BounceOldVRView movie={mv}/>
       }
    ];
 
@@ -138,7 +148,7 @@ export class Bounce extends Component {
          />               
          {summary}
          <BSubmitModal prms={this.props.prms}
-          submitFn={this.props.sbmFunction}/>;
+          submitFn={this.props.sbmFunction}/>
       </section>);
    }
 }

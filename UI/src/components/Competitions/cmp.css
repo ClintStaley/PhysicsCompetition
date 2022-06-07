@@ -3,18 +3,29 @@
   text-align: center;
 }
 
+.cmpSubHeader {
+  text-align: center;
+}
+
+.cmpPanel {
+  background-color: lightgrey;
+  border-radius: 1em;
+  padding: 1em;
+}
+
 .cmpItem {
   color: black !important;
-  font-size: large;
+  font-size: large
 }
 
 .grid {
   all: unset;
   display: grid;
   grid-gap: 5vh 3vw;
-  border-radius: 10px;
+  border-width: 5px;
   margin: 20px 0;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  align-items: start;
   width: 100%;
 }
 
@@ -37,6 +48,7 @@
 .instructionLink {
   text-align: right;
   font-size: 14pt;
+  color: rgb(0, 110, 255);
   margin: 5px;
   cursor: pointer;
 }

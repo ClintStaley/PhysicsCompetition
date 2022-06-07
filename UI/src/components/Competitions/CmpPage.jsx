@@ -3,6 +3,11 @@ import { ListGroup, ListGroupItem, Button } from 'react-bootstrap';
 import { EntryDialog } from '../concentrator';
 import './cmp.css'
 
+// Props include the actionCreators plus
+// cmpId -- ID of cmp to specifically display
+// cmps -- cmp collection from redux store
+// teams -- teams collection from redux store
+// myCmpLink -- boolean indicating whether to show cmp as one I already am in
 export default class CmpPage extends Component {
    constructor(props) {
       super(props);
@@ -16,34 +21,26 @@ export default class CmpPage extends Component {
    componentDidMount = () => {
       var props = this.props;
 
-      if (props.cmps[props.cmpId])
-         //props.getCtp(props.cmps[props.cmpId].ctpId);
-
-         //if (!(props.updateTimes && props.updateTimes.myTeams))
-         //   props.getTeamsByPrs(props.prs.id);
-         
-         //get all mmbs if linked to join cmps, so that i can display the team
-         //leader and email
-         if (props.myCmpLink)
-            props.getTeamsByCmp(props.cmpId);
-         else
-            props.getTeamsByCmp(props.cmpId, this.getAllTeamMmbs);
-      }
+      if (props.myCmpLink)
+         props.getTeamsByCmp(props.cmpId);
+      else
+         props.getTeamsByCmp(props.cmpId, this.getAllTeamMmbs);
+   }
 
    getAllTeamMmbs = () => {
       var props = this.props;
 
       props.cmps[props.cmpId].cmpTeams.forEach((teamId, i) => {
          if (this.props.teams[teamId] && this.props.teams[teamId].mmbs &&
-          Object.keys(this.props.teams[teamId].mmbs).length  === 0)
+          this.props.teams[teamId].mmbs.length === 0)
             props.getTeamMmbs(props.cmpId, teamId);
       })
    }
 
    openCreateDialog = () => {
-      this.setState({ createTeamFunc: (newTeamName) => {
-         this.props.postTeam(parseInt(this.props.cmpId, 10),
-         { leaderId : this.props.prs.id, teamName: newTeamName});
+      this.setState({createTeamFunc: (newTeamName) => {
+         this.props.postTeam(this.props.cmpId,
+         {leaderId : this.props.prs.id, teamName: newTeamName});
       }});
    }
 
@@ -55,19 +52,18 @@ export default class CmpPage extends Component {
    }
 
    toggleView = (teamId) => {
-      // Check for membership data, only update when no membership data is
-      // available
+      // Check for membership data, update iff none available
       if (this.props.teams[teamId].mmbs &&
-       Object.keys(this.props.teams[teamId].mmbs).length  === 0){
-         this.props.getTeamMmbs(this.props.cmpId ,teamId);
+       !this.props.teams[teamId].mmbs.length){
+         this.props.getTeamMmbs(this.props.cmpId, teamId);
       }
       //toggle team toggles the member list on the screen
       this.setState({toggledTeams: Object.assign(this.state.toggledTeams,
        {[teamId]: !this.state.toggledTeams[teamId]})});
    }
 
+   //expect an array of team Ids
    orderTeamsByScore = (teams) => {
-      //expect an array of team Ids
       return teams.sort(this.compareTeamsByScore);
    }
 
@@ -85,8 +81,10 @@ export default class CmpPage extends Component {
      var props = this.props;
      var ctpId = props.cmps[props.cmpId].ctpId-1;
      var ctpType = props.ctps[ctpId].codeName;
-     var link = `${process.env.PUBLIC_URL}/Docs/Cmps/${ctpType}/Instructions.html`;
+     var link
+      = `${process.env.PUBLIC_URL}/Docs/Cmps/${ctpType}/Instructions.html`;
 
+console.log("Opening " + link);
      window.open(link, "_blank");
    }
 
@@ -122,25 +120,24 @@ export default class CmpPage extends Component {
           </div>
         </div>
 
-          {myCmpLink ?
-          ''
-          :
-          <div className = "cmpDescription">
-            <div className = "cmpDescription-header">Want to Join?</div>
-
-            <div className = "cmpDescription-body">To join one of the existing
-            teams, contact the team lead who can
-            add you via their Teams tab. Or, you may start a new team with
-            yourself as leader.</div>
-           </div>
-           }
 
         <div className = "cmpDescription">
           <div className = "cmpDescription-header">Competing Teams</div>
+          
+          {myCmpLink ?
+            ''
+          :
+            <div className = "cmpDescription-body">
+               To join one of the existing
+               teams, contact the team lead who can
+               add you via their Teams tab. Or, you may start a new team with
+               yourself as leader.</div>
+          }
 
-          { props.cmps[cmpId].cmpTeams.length > 0 ?
+          { props.cmps[cmpId].cmpTeams.length > 0 && props.teams.length > 0 ?
           <ListGroup>
-            {this.orderTeamsByScore(props.cmps[cmpId].cmpTeams).map((teamId, i) => {
+            {this.orderTeamsByScore(
+             props.cmps[cmpId].cmpTeams).map((teamId, i) => {
               if (!this.props.teams[teamId])
                 return null;
 
@@ -152,11 +149,11 @@ export default class CmpPage extends Component {
               return <TeamLine key={i} {...team}
                   toggleTeam = {() => this.toggleView(teamId)}
                   doSubmit = {() => this.doSubmit(team)}/>
-           })}
-          </ListGroup>
+            })}
+            </ListGroup>
           :
-          <h4>This competition has no competing teams</h4>
-           }
+            <h4>This competition has no competing teams</h4>
+         }
 
           {!myCmpLink ?
           <div className = "rightButton">
@@ -190,7 +187,7 @@ const TeamLine = function (props) {
          Submit/Check</Button>  : ''}
        </div>
      :
-      (props.mmbs && Object.keys(props.mmbs).length  ?
+      (props.mmbs && props.mmbs.length  ?
        `Team Leader: ${props.mmbs[props.leaderId].firstName}
        (${props.mmbs[props.leaderId].email})`
        : 'loading')

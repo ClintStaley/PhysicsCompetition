@@ -19,7 +19,7 @@ import brickHeight from '../../assets/textures/Brick/height.png';
 import brickRoughness from '../../assets/textures/Brick/roughness.png';
 import brickAo from '../../assets/textures/Brick/ao.png';
 
-import flatSteelRoughness from "../../assets/textures/flatSteel/roughness.png"
+import flatSteelRoughness from "../../assets/textures/flatSteel/roughness.png";
 
 var steelMat = ImageUtil.createMaterial({
    map: steelPlateAlbedo,
@@ -40,7 +40,7 @@ var concreteMat = ImageUtil.createMaterial({
    metal: {file: concreteMetalness, metalness: 0.5}
 });
 
-var brickMat = ImageUtil.createMaterial({
+var brickMat = ImageUtil.loadMatParams({
    map: brickAlbedo,
    normal: brickNormal,
    displacement: {file: brickHeight, scale: 0.1},
@@ -53,4 +53,12 @@ var flatSteelMat = ImageUtil.createMaterial({
    metal: {metalness: 0.5}
 });
 
-export {steelMat, concreteMat, brickMat, flatSteelMat};
+var brickMatParams = {
+   map: brickAlbedo,
+   normal: brickNormal,
+   displacement: {file: brickHeight, scale: 0.1},
+   roughness: brickRoughness,
+   ao: brickAo
+};
+
+export {steelMat, concreteMat, brickMat, flatSteelMat, brickMatParams};

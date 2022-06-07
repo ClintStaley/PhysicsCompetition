@@ -16,6 +16,10 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 // }
 
 export function createMaterial(tex) {
+   return new THREE.MeshStandardMaterial(loadMatParams(tex));
+}
+
+export function loadMatParams(tex) {
    let reps = tex.reps;
    let params = {side: tex.side || THREE.DoubleSide};
 
@@ -44,7 +48,34 @@ export function createMaterial(tex) {
       params.metalness = tex.metal.metalness;
    }
    
-   return new THREE.MeshStandardMaterial(params);
+   return params;
+}
+
+export function createMatFromParams(modelParams, reps) {
+   let newParams = {...modelParams};
+   // console.log('newParams');
+   // console.log(newParams);
+   // console.log('oldParams');
+   // console.log(modelParams);
+
+   ['map', 'normalMap', 'displacementMap', 'roughness', 'aoMap']
+    .forEach(prop => {
+      if (modelParams[prop]) {
+         newParams[prop] = modelParams[prop].clone();
+
+         if (reps) {
+            newParams[prop].needsUpdate = true;
+            const intrinsicRep = modelParams[prop].repeat;
+            newParams[prop].repeat.set(
+             intrinsicRep.x * reps.x, intrinsicRep.y * reps.y);
+            newParams[prop].needsUpdate = true;
+         }
+         console.log('newParams', prop, newParams[prop]);
+         console.log('modelParams', prop, modelParams[prop]);
+      }
+   })
+
+   return new THREE.MeshStandardMaterial(newParams);
 }
 
 // Load GLTF asset from |url|, obtaining from it just the scene (not cameras,

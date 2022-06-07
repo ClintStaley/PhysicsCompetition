@@ -1,8 +1,11 @@
 import {BounceMovie} from './BounceMovie';
 import * as THREE from 'three';
-import {concreteMat, flatSteelMat, steelMat} from '../../Util/Materials.js';
+import {concreteMat, flatSteelMat, steelMat, brickMat} from '../../Util/Materials.js';
+import UIfx from 'uifx';
+import pingAudio from '../../../assets/sound/lowPing.mp3';
+import * as ImageUtil from '../../Util/ImageUtil';
 
-export class BounceSceneGraph {
+export class BounceSceneGroup {
    // Suggested members
    //
    // 1. The graph itself.
@@ -19,9 +22,11 @@ export class BounceSceneGraph {
       // Add movie as member
       this.movie = movie;
 
+      this.ping = new UIfx(pingAudio, {volume: 0.5, throttleMs: 100});
+
       // Create the scenegraph for the movie, at time offset 0s
-      const rigSize = BounceSceneGraph.rigSize;
-      const ballRadius = BounceSceneGraph.ballRadius;
+      const rigSize = BounceSceneGroup.rigSize;
+      const ballRadius = BounceSceneGroup.ballRadius;
       const ballSteps = 16;
       const pistonHeight = .5;
       const pistonWidth = .5;
@@ -34,23 +39,32 @@ export class BounceSceneGraph {
       const cylinderRotate = 1.5708;
       const faceWidth =.1;
 
-      this.scene = new THREE.Scene();
+      this.topGroup = new THREE.Group();
 
-      // Full range, square-decay, white light high on near wall in center
-      let light = new THREE.PointLight(0xffffff, 1);
-      light.position.set(rigSize / 2, rigSize / 2, rigSize / 2);
-      light.castShadow = true;
-      // Plus general ambient
-      this.scene.add(light).add(new THREE.AmbientLight(0x404040));
+      // let brickMatSmall = brickMat.clone();
+      // brickMatSmall.needsUpdate = true;
+      // brickMatSmall.wrapS = THREE.RepeatWrapping;
+      // brickMatSmall.wrapT = THREE.RepeatWrapping;
+      // brickMatSmall.map.repeat.set(3, 3);
+      // brickMatSmall.needsUpdate = true;
+
+      let brickMatLarge = ImageUtil.createMaterial(brickMat);
+      let brickMatSmall = ImageUtil.createMatFromParams(brickMat, 5);
+
+      // console.log(brickMat);
+      // console.log(brickMatSmall);
+      // console.log(concreteMat)
+
+      console.log(concreteMat.map.repeat);
 
       // Create standard room with center of far wall at origin
       let roomDim = 3 * rigSize + 2;  // big boundaries around rig
       this.room = new THREE.Mesh(
-       new THREE.BoxGeometry(roomDim, roomDim, roomDim), [concreteMat,
-       concreteMat, concreteMat, flatSteelMat, concreteMat, concreteMat]);
+       new THREE.BoxGeometry(roomDim, roomDim, roomDim), [brickMatLarge,
+         brickMatLarge, concreteMat, flatSteelMat, brickMatSmall, brickMatSmall]);
       this.room.position.set(0, 0, 9);
       this.room.name = 'room';
-      this.scene.add(this.room);
+      this.topGroup.add(this.room);
 
       // Add a launcher at upper-left corner of rig. Flat horizontal steel plate
       //   with right edge at origin launch point minus .1m, so a ball can be
@@ -60,14 +74,18 @@ export class BounceSceneGraph {
 
       // Make rig a group so we can put origin at lower left front of base
       this.rig = new THREE.Group();
+      this.rig.name = 'rig';
       let base = new THREE.Mesh(new THREE.BoxGeometry(rigSize, rigSize,
          2 * ballRadius), steelMat)
+      base.name = 'base';
       base.position.set(rigSize / 2, rigSize / 2, -ballRadius);
       this.rig.add(base);
       let platform = new THREE.Mesh(new THREE.BoxGeometry(1, .25, 1),
          flatSteelMat);
+      platform.name = 'platform';
       this.ball = new THREE.Mesh(new THREE.SphereGeometry
          (ballRadius, ballSteps, ballSteps), flatSteelMat);
+      this.ball.name = 'ball';
    
       // Put ball at upper left corner of rig, just touching the base.
       this.ball.position.set(0, rigSize, 2 * ballRadius);
@@ -82,12 +100,14 @@ export class BounceSceneGraph {
       // Put Piston base on the far left of platform
       let pBase = new THREE.Mesh(new THREE.BoxGeometry(pistonHeight,
           pistonWidth, pistonDepth),flatSteelMat);
+      pBase.name = 'pBase';
       pBase.position.set(pistonX,pistonY,0);
       platform.add(pBase);
 
       // Put Cylinder between piston base and piston face
       let pCyl = new THREE.Mesh(new THREE.CylinderGeometry(cylinderWidth,
           cylinderHeight, cylinderLength),flatSteelMat);
+      pCyl.name = 'pCyl';
       pCyl.position.set(0, 0, 0);
       pCyl.rotateZ(cylinderRotate);
       pCyl.name = 'pCyl';
@@ -96,13 +116,13 @@ export class BounceSceneGraph {
       // Place piston face on the far right side of the cylinder
       let pFace = new THREE.Mesh(new THREE.BoxGeometry(pistonHeight,
           faceWidth, pistonDepth),flatSteelMat);
-
+      pFace.name = 'pFace';
       pFace.position.set(0, -.25, 0);
       pCyl.add(pFace);
 
       // Put rig at back of room.  Assume room origin at center of back wall
       this.rig.position.set(-rigSize / 2, -rigSize / 2, 2 * ballRadius);
-      this.scene.add(this.rig);
+      this.topGroup.add(this.rig);
 
       this.targets = [];
       this.evtIdx = -1;
@@ -113,11 +133,11 @@ export class BounceSceneGraph {
    // Adjust the scenegraph to reflect time.  This may require either forward
    // or backward movement in time.
    setOffset(timeStamp) {
-      const ballRadius = BounceSceneGraph.ballRadius;
-      const rigSize = BounceSceneGraph.rigSize;
+      const ballRadius = BounceSceneGroup.ballRadius;
+      const rigSize = BounceSceneGroup.rigSize;
       let evts = this.movie.evts;
       let evt;
-      let pCyl = this.scene.getObjectByName('pCyl', true);
+      let pCyl = this.topGroup.getObjectByName('pCyl', true);
 
       // While the event after evtIdx exists and needs adding to 3DElms
       while (this.evtIdx + 1 < evts.length
@@ -142,6 +162,10 @@ export class BounceSceneGraph {
           || evt.type === BounceMovie.cHitBarrier
           || evt.type === BounceMovie.cHitTarget) {
             this.ball.position.set(evt.x, evt.y, ballRadius);
+         }
+         if (evt.type === BounceMovie.cHitBarrier
+          || evt.type === BounceMovie.cHitTarget) {
+             this.ping.play();
          }
          if (evt.type === BounceMovie.cTargetFade) {
             this.targets[evt.targetId].position.z
@@ -182,7 +206,7 @@ export class BounceSceneGraph {
    }
 
    // Return root group of scenegraph represented by this class
-   getSceneGraph() {
-      return this.scene;
+   getSceneGroup() {
+      return this.topGroup;
    }
 }
