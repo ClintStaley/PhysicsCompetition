@@ -16,7 +16,7 @@ import store from './store';
 
 const router = (
   <Provider store={store}>
-    <BrowserRouter >
+    <BrowserRouter basename={process.env.PUBLIC_URL} >
       <App></App>
     </BrowserRouter>
   </Provider>
