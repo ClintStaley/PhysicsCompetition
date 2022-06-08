@@ -62,15 +62,11 @@ export default class CmpPage extends Component {
        {[teamId]: !this.state.toggledTeams[teamId]})});
    }
 
-   //expect an array of team Ids
-   orderTeamsByScore = (teams) => {
-      return teams.sort(this.compareTeamsByScore);
-   }
-
-   compareTeamsByScore = (team1, team2) => {
+   orderTeamsByScore = (teamIds) => {
       var teams = this.props.teams;
 
-      return teams[team2].bestScore - teams[team1].bestScore;
+      return teamIds.sort(
+       (id1, id2) => teams[id1].bestScore - teams[id2].bestScore);
    }
 
    doSubmit = (team) => {
@@ -84,17 +80,12 @@ export default class CmpPage extends Component {
      var link
       = `${process.env.PUBLIC_URL}/Docs/Cmps/${ctpType}/Instructions.html`;
 
-console.log("Opening " + link);
      window.open(link, "_blank");
    }
 
    render() {
       var props = this.props;
       var cmpId = props.cmpId;
-
-      if (!props.cmps[cmpId])
-         return (<h1>Error loading Competition</h1>)
-
       var myCmpLink = this.props.myCmpLink;
 
       return (
@@ -172,9 +163,7 @@ const TeamLine = function (props) {
    <ListGroupItem className="clearfix">
      <Button onClick = {props.toggleTeam}>{props.teamName}</Button>
 
-     {props.isMember ?
-      ' (Your team) '
-      : ''}
+     {props.isMember ? ' (Your team) ' : ''}
 
      <div className="float-right">
      { props.myTeamLink ?

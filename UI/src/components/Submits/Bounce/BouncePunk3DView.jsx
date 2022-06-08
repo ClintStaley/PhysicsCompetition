@@ -49,6 +49,7 @@ export class BouncePunk3DView extends React.Component {
        40, 1, .01, 10 * BouncePunkSceneGroup.rigSize);
       camera.position.set(0, 0, 15);  // Center of near wall
 
+      // Rerender when all pending textures are loaded to show new textures.
       Promise.all(sceneGroup.getPendingPromises()).then(() => {
          renderer.render(scene, camera);
       });
