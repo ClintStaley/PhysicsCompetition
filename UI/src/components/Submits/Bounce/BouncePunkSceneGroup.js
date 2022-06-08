@@ -1,6 +1,7 @@
 import {BounceMovie} from './BounceMovie';
 import * as THREE from 'three';
-import {steelMat, concreteMat, brickMat, flatSteelMat, goldMat} from
+import {steelMat, concreteMat, brickMat, flatSteelMat, goldMat,
+ verticalLinedMetalMat, brassMat, scuffedMetalMat} from
  '../../Util/AsyncMaterials';
 import {cloneMatPrms} from '../../Util/ImageUtil';
 
@@ -36,16 +37,16 @@ export class BouncePunkSceneGroup {
    static roomDepth = 5;       // Don't need a lot of depth
    static floorHeight = .05;   // 5cm thick wood on floor
    static gutterWidth = .75;   // Rig gutter is 75cm wide
-   static gutterDepth = 5;     // 2m is enough so you can't see the bottom
+   static gutterDepth = 2.5;     // 2.5m is enough so you can't see the bottom
 
    // Rig dimensions
    static cannonLength = 1.5;  // 1.5m fits in left margin
    static cannonDiameter = .2; // Outside muzzle diameter at right end.
    static ballRadius = .1;     // Ball has 10cm radius, as does inner muzzle
-   static rodDiameter = .08;   // Steel rods and any struts supporting cannon
+   static rodDiameter = .06;   // Steel rods and any struts supporting cannon
    static trgDepth = .1;       // Just as wide as the ball to emphasize accuracy
    static trgRing = .01;       // Ring and rod must be <= 10cm, min block height
-   static wallRing = .04;      // Width of ring surrounding rods at wall
+   static wallRing = .03;      // Width of ring surrounding rods at wall
    static rigDepth = 1;        // Rig is 1m from back wall
    static rigSize = 10;        // Rig is 10 x 10 meters
 
@@ -87,6 +88,7 @@ export class BouncePunkSceneGroup {
           height: roomHeight
        }, brickMat);
       backWall.position.set(roomWidth / 2, roomHeight / 2, 0);
+      backWall.receiveShadow = true;
 
       // Create roof
       const roof = this.createPlaneElement(
@@ -105,26 +107,28 @@ export class BouncePunkSceneGroup {
       const backFloorTop = this.createPlaneElement(
        'backFloorTop', floorGroup, {
           width: roomWidth,
-          height: rigDepth
+          height: rigDepth - gutterWidth / 2
        }, concreteMat);
       backFloorTop.rotateX(-Math.PI / 2);
-      backFloorTop.position.set(roomWidth / 2, 0, rigDepth / 2);
+      backFloorTop.position.set(
+       roomWidth / 2, 0, (rigDepth - gutterWidth / 2) / 2);
 
       const backFloorSide = this.createPlaneElement(
        'backFloorSide', floorGroup, {
           width: roomWidth,
           height: floorHeight
        }, concreteMat);
-      backFloorSide.position.set(roomWidth / 2, -floorHeight / 2, rigDepth);
+      backFloorSide.position.set(
+       roomWidth / 2, -floorHeight / 2, rigDepth - gutterWidth / 2);
 
       const frontFloorTop = this.createPlaneElement(
        'frontFloorTop', floorGroup, {
           width: roomWidth,
-          height: roomDepth - (rigDepth + gutterWidth),
+          height: roomDepth - (rigDepth + gutterWidth / 2),
        }, concreteMat);
       frontFloorTop.rotateX(-Math.PI / 2);
       frontFloorTop.position.set(
-       roomWidth / 2, 0, (roomDepth + rigDepth + gutterWidth) / 2);
+       roomWidth / 2, 0, (roomDepth + rigDepth + gutterWidth / 2) / 2);
 
       const frontFloorSide = this.createPlaneElement(
        'frontFloorSide', floorGroup, {
@@ -132,7 +136,7 @@ export class BouncePunkSceneGroup {
           height: floorHeight
        }, concreteMat);
       frontFloorSide.position.set(
-       roomWidth / 2, -floorHeight / 2, rigDepth + gutterWidth);
+       roomWidth / 2, -floorHeight / 2, rigDepth + gutterWidth / 2);
 
       // Side walls group
       const sideWallsGroup = new THREE.Group();
@@ -141,38 +145,40 @@ export class BouncePunkSceneGroup {
       // Back side walls
       const leftBackSideWall = this.createPlaneElement(
        'leftBackSideWall', sideWallsGroup, {
-          width: rigDepth,
+          width: rigDepth - gutterWidth / 2,
           height: roomHeight
        }, brickMat);
       leftBackSideWall.rotateY(Math.PI / 2);
-      leftBackSideWall.position.set(0, roomHeight / 2, rigDepth / 2);
+      leftBackSideWall.position.set(
+       0, roomHeight / 2, (rigDepth - gutterWidth / 2) / 2);
 
       const rightBackSideWall = this.createPlaneElement(
        'rightBackSideWall', sideWallsGroup, {
-          width: rigDepth,
+          width: rigDepth - gutterWidth / 2,
           height: roomHeight
        }, brickMat);
       rightBackSideWall.rotateY(-Math.PI / 2);
-      rightBackSideWall.position.set(roomWidth, roomHeight / 2, rigDepth / 2);
+      rightBackSideWall.position.set(
+       roomWidth, roomHeight / 2, (rigDepth - gutterWidth / 2) / 2);
 
       // Front side walls
       const leftFrontSideWall = this.createPlaneElement(
        'leftFrontSideWall', sideWallsGroup, {
-          width: roomDepth - (rigDepth + gutterWidth),
+          width: roomDepth - (rigDepth + gutterWidth / 2),
           height: roomHeight
        }, brickMat);
       leftFrontSideWall.rotateY(Math.PI / 2);
       leftFrontSideWall.position.set(
-       0, roomHeight / 2, (roomDepth + rigDepth + gutterWidth) / 2);
+       0, roomHeight / 2, (roomDepth + rigDepth + gutterWidth / 2) / 2);
 
       const rightFrontSideWall = this.createPlaneElement(
        'rightFrontSideWall', sideWallsGroup, {
-          width: roomDepth - (rigDepth + gutterWidth),
+          width: roomDepth - (rigDepth + gutterWidth / 2),
           height: roomHeight
        }, brickMat);
       rightFrontSideWall.rotateY(-Math.PI / 2);
       rightFrontSideWall.position.set(
-       roomWidth, roomHeight / 2, (roomDepth + rigDepth + gutterWidth) / 2);
+       roomWidth, roomHeight / 2, (roomDepth + rigDepth + gutterWidth / 2) / 2);
 
       // Gutter group
       const gutterGroup = new THREE.Group();
@@ -185,7 +191,8 @@ export class BouncePunkSceneGroup {
           height: gutterDepth - floorHeight
        }, brickMat);
       bottomGutterBack.position.set(
-       roomWidth / 2, - (gutterDepth + floorHeight) / 2, rigDepth);
+       roomWidth / 2, - (gutterDepth + floorHeight) / 2,
+       rigDepth - gutterWidth / 2);
 
       const bottomGutterFront = this.createPlaneElement(
        'bottomGutterFront', gutterGroup, {
@@ -193,8 +200,8 @@ export class BouncePunkSceneGroup {
           height: gutterDepth - floorHeight
        }, brickMat);
       bottomGutterFront.position.set(
-       roomWidth / 2, - (gutterDepth + floorHeight) / 2, 
-       rigDepth + gutterWidth);
+       roomWidth / 2, - (gutterDepth + floorHeight) / 2,
+       rigDepth + gutterWidth / 2);
 
       const leftGutterBack = this.createPlaneElement(
        'leftGutterBack', gutterGroup, {
@@ -202,7 +209,8 @@ export class BouncePunkSceneGroup {
           height: roomHeight + gutterDepth
        }, brickMat);
       leftGutterBack.position.set(
-       -gutterDepth / 2, (roomHeight - gutterDepth) / 2, rigDepth);
+       -gutterDepth / 2, (roomHeight - gutterDepth) / 2,
+       rigDepth - gutterWidth / 2);
 
       const rightGutterBack = this.createPlaneElement(
        'rightGutterBack', gutterGroup, {
@@ -210,7 +218,8 @@ export class BouncePunkSceneGroup {
           height: roomHeight + gutterDepth
        }, brickMat);
       rightGutterBack.position.set(
-       roomWidth + gutterDepth / 2, (roomHeight - gutterDepth) / 2, rigDepth);
+       roomWidth + gutterDepth / 2, (roomHeight - gutterDepth) / 2,
+       rigDepth - gutterWidth / 2);
 
       const leftGutterFront = this.createPlaneElement(
        'leftGutterFront', gutterGroup, {
@@ -219,7 +228,7 @@ export class BouncePunkSceneGroup {
        }, brickMat);
       leftGutterFront.position.set(
        -gutterDepth / 2, (roomHeight - gutterDepth) / 2, 
-       rigDepth + gutterWidth);
+       rigDepth + gutterWidth / 2);
 
       const rightGutterFront = this.createPlaneElement(
        'rightGutterFront', gutterGroup, {
@@ -228,7 +237,7 @@ export class BouncePunkSceneGroup {
        }, brickMat);
       rightGutterFront.position.set(
        roomWidth + gutterDepth / 2, (roomHeight - gutterDepth) / 2, 
-       rigDepth + gutterWidth);
+       rigDepth + gutterWidth / 2);
 
       const leftGutterRoof = this.createPlaneElement(
        'leftGutterRoof', gutterGroup, {
@@ -237,7 +246,7 @@ export class BouncePunkSceneGroup {
        }, concreteMat);
       leftGutterRoof.rotateX(Math.PI / 2);
       leftGutterRoof.position.set(
-       -gutterDepth / 2, roomHeight, rigDepth + gutterWidth / 2);
+       -gutterDepth / 2, roomHeight, rigDepth);
 
       const rightGutterRoof = this.createPlaneElement(
        'rightGutterRoof', gutterGroup, {
@@ -246,7 +255,7 @@ export class BouncePunkSceneGroup {
        }, concreteMat);
       rightGutterRoof.rotateX(Math.PI / 2);
       rightGutterRoof.position.set(
-       roomWidth + gutterDepth / 2, roomHeight, rigDepth + gutterWidth / 2);
+       roomWidth + gutterDepth / 2, roomHeight, rigDepth);
 
       // Add groups to room group
       roomGroup.add(floorGroup);
@@ -261,6 +270,8 @@ export class BouncePunkSceneGroup {
        new THREE.PlaneGeometry(dims.width, dims.height),
        new THREE.MeshStandardMaterial(matPrms.fast));
       plane.name = name;
+      // plane.castShadow = true;
+      // plane.receiveShadow = true;
       parent.add(plane);
 
       this.pendingPromises.push(matPrms.slow.then(prms => {
@@ -270,7 +281,7 @@ export class BouncePunkSceneGroup {
          }
 
          plane.material = new THREE.MeshStandardMaterial(
-            cloneMatPrms(prms, desiredRep, offset));
+          cloneMatPrms(prms, desiredRep, offset));
       }));
 
       return plane;
@@ -293,16 +304,76 @@ export class BouncePunkSceneGroup {
       // Test target
       const testTargetGroup = new THREE.Group();
       const testTarget = new THREE.Mesh(
-       new THREE.BoxGeometry(1, 0.5, 0.5),
-       new THREE.MeshStandardMaterial(goldMat.fast));
+       new THREE.BoxGeometry(0.1, 0.1, ballRadius),
+       new THREE.MeshStandardMaterial(brassMat.fast));
       testTarget.name = 'testTarget';
-      rigGroup.add(testTarget);
-      testTarget.position.set(rigSize / 2.3, rigSize / 2, rigDepth);
+      testTargetGroup.add(testTarget);
+      testTarget.position.set(rigSize / 2.3, rigSize / 2, 0);
+      testTarget.castShadow = true;
 
-      this.pendingPromises.push(goldMat.slow.then(prms => {
+      this.pendingPromises.push(brassMat.slow.then(prms => {
          testTarget.material = new THREE.MeshStandardMaterial(
-            cloneMatPrms(prms));
+          cloneMatPrms(prms, {
+             x: 0.1,
+             y: 0.1
+          }));
       }));
+
+      const testTargetRod = new THREE.Mesh(
+       new THREE.CylinderGeometry(rodDiameter / 2, rodDiameter / 2, rigDepth, 16),
+       new THREE.MeshStandardMaterial(scuffedMetalMat.fast));
+      testTargetRod.name = 'testTargetRod';
+      testTargetGroup.add(testTargetRod);
+      testTargetRod.rotateX(Math.PI / 2);
+      testTargetRod.position.set(rigSize / 2.3, rigSize / 2, -rigDepth / 2);
+      testTargetRod.castShadow = true;
+      // testTargetRod.receiveShadow = true;
+
+      this.pendingPromises.push(scuffedMetalMat.slow.then(prms => {
+         testTargetRod.material = new THREE.MeshStandardMaterial(
+          cloneMatPrms(prms));
+      }));
+
+      rigGroup.add(testTargetGroup);
+
+      const wallRingPoints = [];
+      wallRingPoints.push(new THREE.Vector2(rodDiameter / 2, 0));
+      wallRingPoints.push(new THREE.Vector2(rodDiameter / 2, 0.02));
+      wallRingPoints.push(new THREE.Vector2(rodDiameter / 2 + 0.005, 0.025));
+      wallRingPoints.push(new THREE.Vector2(rodDiameter / 2 + wallRing - 0.005, 0.025));
+      wallRingPoints.push(new THREE.Vector2(rodDiameter / 2 + wallRing, 0.02));
+      wallRingPoints.push(new THREE.Vector2(rodDiameter / 2 + wallRing, 0));
+      // wallRingPoints.push(new THREE.Vector2(rodDiameter / 2, 0.02));
+      // wallRingPoints.push(new THREE.Vector2(rodDiameter / 2 + 0.01, 0.03));
+      // wallRingPoints.push(new THREE.Vector2(
+      //  rodDiameter / 2 + wallRing - 0.01, 0.03));
+      // wallRingPoints.push(new THREE.Vector2(rodDiameter / 2 + wallRing, 0.02));
+      // wallRingPoints.push(new THREE.Vector2(rodDiameter / 2 + wallRing, 0));
+      const testTargetWallRing = new THREE.Mesh(
+       new THREE.LatheGeometry(wallRingPoints, 32),
+       new THREE.MeshStandardMaterial(flatSteelMat.fast));
+      testTargetWallRing.name = 'testTargetWallRing';
+      testTargetGroup.add(testTargetWallRing);
+      testTargetWallRing.rotateX(Math.PI / 2);
+      testTargetWallRing.position.set(
+       rigSize / 2.3, rigSize / 2, -rigDepth);
+      testTargetWallRing.receiveShadow = true;
+
+      const trgRingPoints = [];
+      trgRingPoints.push(new THREE.Vector2(rodDiameter / 2, 0));
+      trgRingPoints.push(new THREE.Vector2(rodDiameter / 2 + 0.005, 0.005));
+      trgRingPoints.push(new THREE.Vector2(rodDiameter / 2 + trgRing, 0));
+      const testTargetTrgRing = new THREE.Mesh(
+       new THREE.LatheGeometry(trgRingPoints, 32),
+       new THREE.MeshStandardMaterial(flatSteelMat.fast));
+      testTargetTrgRing.name = 'testTargetTrgRing';
+      testTargetGroup.add(testTargetTrgRing);
+      testTargetTrgRing.rotateX(-Math.PI / 2);
+      testTargetTrgRing.position.set(rigSize / 2.3, rigSize / 2, -0.05);
+      testTargetTrgRing.receiveShadow = true;
+
+      this.pendingPromises.push()
+
 
 
 

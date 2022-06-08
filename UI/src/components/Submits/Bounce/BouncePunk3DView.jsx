@@ -5,6 +5,7 @@ import CameraControls from "camera-controls";
 import pingAudio from '../../../assets/sound/ping.mp3';
 import UIfx from 'uifx';
 import {BouncePunkSceneGroup} from './BouncePunkSceneGroup';
+import { SpotLight } from 'three';
 
 CameraControls.install({THREE});
 
@@ -35,15 +36,34 @@ export class BouncePunk3DView extends React.Component {
       scene.add(sceneGroup.getSceneGroup());
 
       // Full range, square-decay, white light high on near wall in center
-      let light = new THREE.PointLight(0xffffff, 1);
-      light.position.set(0, 0, roomDepth / 2);
-      light.castShadow = true;
+      // let light = new THREE.PointLight(0xffffff, 10);
+      let leftLight = new THREE.SpotLight(0xffffff, 18, 0, Math.PI / 3.5, 0.8, 0.5);
+      leftLight.castShadow = true;
+      leftLight.position.set(-roomWidth / 2 + 0.5, roomHeight / 2 - 0.5, roomDepth / 2);
+      leftLight.target.position.set(0, 0, -roomDepth / 2);
+      // leftLight.decay = 0.5;
+      // leftLight.power = 30;
+      // leftLight.penumbra = 0.5;
+      // leftLight.angle = Math.Pi / 3.5;
+
+      let rightLight = new THREE.SpotLight(0xffffff, 18, 0, Math.PI / 3.5, 0.8, 0.5);
+      rightLight.castShadow = true;
+      rightLight.position.set(roomWidth / 2 - 0.5, roomHeight / 2 - 0.5, roomDepth / 2);
+      rightLight.target.position.set(0, 0, -roomDepth / 2);
+      // rightLight.decay = 0.5;
+      // rightLight.power = 30;
+      // rightLight.penumbra = 0.5;
+      // rightLight.angle = Math.Pi / 3.5;
+      // light.position.set(0, 0, roomDepth / 2);
+      // light.castShadow = true;
       // Plus general ambient
-      scene.add(light).add(new THREE.AmbientLight(0x404040));
+      scene.add(leftLight).add(rightLight).add(new THREE.AmbientLight(0x808080));
 
       // CAS Fix: Try moving renderer out of state
       let renderer = new THREE.WebGLRenderer({antialias: true});
       renderer.shadowMap.enabled = true;
+      renderer.physicallyCorrectLights = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap
 
       let camera = new THREE.PerspectiveCamera(
        40, 1, .01, 10 * BouncePunkSceneGroup.rigSize);
@@ -81,17 +101,17 @@ export class BouncePunk3DView extends React.Component {
       this.state.camera.updateProjectionMatrix();
       this.mount.appendChild(this.state.renderer.domElement);
 
-      let cameraBounds = new THREE.Box3(new THREE.Vector3(rigSize - 24,
-         rigSize - 19, rigSize - 8), new THREE.Vector3(rigSize + 4, rigSize + 4,
-         rigSize + 5))
+      // let cameraBounds = new THREE.Box3(new THREE.Vector3(rigSize - 24,
+      //    rigSize - 19, rigSize - 8), new THREE.Vector3(rigSize + 4, rigSize + 4,
+      //    rigSize + 5))
 
       cameraControls = new CameraControls(
          this.state.camera,
          this.state.renderer.domElement
       );
       // Restric right click camera movement
-      cameraControls.setBoundary(cameraBounds);
-      cameraControls.boundaryEnclosesCamera = true;
+      // cameraControls.setBoundary(cameraBounds);
+      // cameraControls.boundaryEnclosesCamera = true;
 
       cameraControls.addEventListener("control", () => {
          cameraControls.update(1);   // Needed w/nonzero param
