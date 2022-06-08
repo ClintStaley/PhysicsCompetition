@@ -31,7 +31,7 @@ export class BouncePunk3DView extends React.Component {
       const rigSize = BouncePunkSceneGroup.rigSize;
       let scene = new THREE.Scene();
       let sceneGroup = new BouncePunkSceneGroup(movie);
-      sceneGroup.getSceneGroup().position.set( -roomWidth / 2, -roomHeight / 2, 0 );
+      sceneGroup.getSceneGroup().position.set( -roomWidth / 2, -rigSize / 2, 0 );
       scene.add(sceneGroup.getSceneGroup());
 
       // Full range, square-decay, white light high on near wall in center
@@ -48,6 +48,10 @@ export class BouncePunk3DView extends React.Component {
       let camera = new THREE.PerspectiveCamera(
        40, 1, .01, 10 * BouncePunkSceneGroup.rigSize);
       camera.position.set(0, 0, 15);  // Center of near wall
+
+      Promise.all(sceneGroup.getPendingPromises()).then(() => {
+         renderer.render(scene, camera);
+      });
 
       return {
          scene,
