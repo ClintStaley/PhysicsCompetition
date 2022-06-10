@@ -1,4 +1,6 @@
-#Instructions for Land Grab Competition
+<link rel="stylesheet" type="text/css" media="all" href="../../CmpDocs.css" />
+
+# Instructions for Land Grab Competition
 
 ## Overview
 In this competition, you'll choose several circles that do not overlap with one another nor with the barriers in the diagram.  The goal is to maximize the area of the chosen circles. 

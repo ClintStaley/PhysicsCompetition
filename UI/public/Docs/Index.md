@@ -1,3 +1,5 @@
+<link rel="stylesheet" type="text/css" media="all" href="CmpDocs.css" />
+
 # STEM Competitions
 
 Welcome to STEM Competitions!  This website provides educational STEM design competitions of various types, involving physics, math, and engineering.  
@@ -24,4 +26,4 @@ Build a ["Galilean cannon"](https://en.wikipedia.org/wiki/Galilean_cannon) by ar
 
 ## How to get started
 
-Register at [the competition site](http://www.softwareinventions.com/PhysicsCompetition), and follow [these directions](Instructions.html).
+Register at [the competition site](http://www.softwareinventions.com/PhysicsCompetition), and follow [these directions](SiteInstructions.html).

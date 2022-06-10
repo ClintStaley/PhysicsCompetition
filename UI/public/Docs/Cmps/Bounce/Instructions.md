@@ -1,4 +1,6 @@
-#Instructions for Bounce Competition
+<link rel="stylesheet" type="text/css" media="all" href="../../CmpDocs.css" />
+
+# Instructions for Bounce Competition
 
 ## Overview
 In this competition, you'll launch balls to hit rectangular targets, while avoiding rectangular barriers.  You'll compete to hit all the targets, while avoiding the barriers, in as little time as possible.
