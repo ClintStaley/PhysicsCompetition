@@ -1,4 +1,37 @@
-#Setting up SSL on Tomcat and Node/Express
+# Setting up SSL on Apache
+
+## Read Up
+We'll use the openssl tool for this segment.  Read up on concepts and openssl at:
+
+ * [General concepts and Prep](https://www.ssl.com/guide/ssl-best-practices/) from ssl.com
+ * [openssl and keytool](https://cheapsslsecurity.com/blog/various-types-ssl-commands-keytool/)
+ * [and more on openssl](https://wiki.openssl.org/index.php/Command_Line_Utilities)
+ * [Relevant file formats/endings](https://www.ssl.com/guide/pem-der-crt-and-cer-x-509-encodings-and-conversions/)
+ * [Good validation and diagnostic tool](https://www.sslshopper.com/ssl-checker.html#hostname=www.softwareinventions.com)
+
+## Figure out Apache config
+
+### mod_ssl
+You need the mod_ssl Apache module, which is usually already installed.
+
+### Config for mod_ssl
+A VirtualHost configuration is needed to set up the necessary file pointes to
+the key, cert, and trust chain.  This is already mocked up in the config for
+mod_ssl and you can mostly use the commented out example sections.  Look for
+this in either httpd.conf or one of the 
+
+/etc/httpd/conf.d/ssl.conf
+
+
+### /etc/pki/tls
+
+sudo openssl req -out SI.csr -new -newkey rsa:2048 -nodes -keyout SI.key
+openssl req -noout -text -in SI.csr
+openssl rsa -in SI2.key -check  (will prompt for passphrase)
+
+
+# Setting up SSL on Tomcat
+
 (These instructions use the Java-specific `keytool` command and database format.
 Similar steps can be performed using e.g. OpenSSL to create standard PEM files,
 and it's possible to convert between the formats.)
@@ -9,12 +42,14 @@ the current cert expires (Current cert expiration is around 10/12/19.).
 
 1. Generate a keypair, by creating a new keystore, or augmenting an existing
 one.  Prefer a .pfx or PKCS12 keystore over the older .jks format.  Give the
-keypair a name, e.g. "tomcat".  You'll be asked for identifying information; be 
+keypair a name, e.g. "SI".  You'll be asked for identifying information; be 
 sure the common name or "first and last name" is www.softwareinventions.com 
 since this will be included in the Certificate Request when you generate it, 
 and must match the domain name for which you want a a cert.  Sample command:
 
-        keytool -genkeypair -alias tomcat -keyalg RSA -storetype PKCS12 -keysize 2048 -keystore /var/lib/tomcat7/keystore.pfx
+        keytool -genkeypair -alias SI -keyalg RSA -storetype PKCS12 -keysize 2048 -keystore /var/lib/tomcat7/keystore.pfx
+
+
 
 2. Make sure this keypair works properly with Tomcat.  Adjust if necessary 
 (e.g. alias name, keystore password) the existing Tomcat `server.xml` which 
