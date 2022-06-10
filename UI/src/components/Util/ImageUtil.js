@@ -127,3 +127,30 @@ export function loadAsset(url) {
       (err) => console.log(err)
    );
 }
+
+
+// Takes parameters to be cloned, an optional repeat count for the desired
+// height and width for the texture to repeat in meters, and an optional offset
+// value. 
+// 
+// Returns cloned parameters, with their repeat and offset adjusted. 
+// 
+// This function requires the textures in the parameters to be loaded
+export function cloneMatPrms(prms, rep, offset) {
+   let clonedPrms = {...prms};
+   ['map', 'normalMap', 'displacementMap', 'roughness', 'aoMap']
+    .forEach(prop => {
+      if (prms[prop]) {
+         clonedPrms[prop] = prms[prop].clone();
+
+         if (rep) {
+            const intrinsicRep = prms[prop].repeat;
+            clonedPrms[prop].repeat.set(
+             rep.x * intrinsicRep.x, rep.y * intrinsicRep.y);
+         }
+         clonedPrms[prop].needsUpdate = true;
+      }
+   })
+
+   return clonedPrms;
+}

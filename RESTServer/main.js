@@ -38,9 +38,6 @@ var configApp = (corsDomain, testFlag) => {
       res.status(200).end();
    });
 
-   // Unneeded Static path to index.html and all clientside js
-   // app.use(express.static(path.join(__dirname, 'public')));
-
    // Parse request body using JSON; attach to req as req.body
    app.use(bodyParser.json());   
    
