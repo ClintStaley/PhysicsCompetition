@@ -1,7 +1,7 @@
 import {BounceMovie} from './BounceMovie';
 import * as THREE from 'three';
 import {steelMat, concreteMat, brickMat, flatSteelMat, goldMat,
- verticalLinedMetalMat, brassMat, scuffedMetalMat} from
+ verticalLinedMetalMat, brassMat, scuffedMetalMat, checkerboardMat} from
  '../../Util/AsyncMaterials';
 import {cloneMatPrms} from '../../Util/ImageUtil';
 
@@ -20,7 +20,7 @@ import {cloneMatPrms} from '../../Util/ImageUtil';
 // attachment to target, and a ring at wall in which rod "slides". Targets 
 // extend from back wall to the center of the rig, and retract back to wall 
 // when hit. The rig has black enamel obstacles, extended on steel rods like 
-// targets, but not retracting.  Finally, the rig includes a meter long brass 
+// targets, but not retracting.  Finally, the rig includes a 1.8m long brass 
 // cannon that fires balls; its muzzle is centered at top left of rig,
 // 10m above floor
 //
@@ -40,10 +40,10 @@ export class BouncePunkSceneGroup {
    static gutterDepth = 2.5;     // 2.5m is enough so you can't see the bottom
 
    // Rig dimensions
-   static cannonLength = 1.5;  // 1.5m fits in left margin
-   static cannonDiameter = .2; // Outside muzzle diameter at right end.
+   static cannonLength = 1.8;  // 1.5m fits in left margin
+   static cannonRadius = .2;   // Outside muzzle radius at right end.
    static ballRadius = .1;     // Ball has 10cm radius, as does inner muzzle
-   static rodDiameter = .06;   // Steel rods and any struts supporting cannon
+   static rodRadius = .03;     // Steel rods and any struts supporting cannon
    static trgDepth = .1;       // Just as wide as the ball to emphasize accuracy
    static trgRing = .01;       // Ring and rod must be <= 10cm, min block height
    static wallRing = .03;      // Width of ring surrounding rods at wall
@@ -274,24 +274,38 @@ export class BouncePunkSceneGroup {
       // plane.receiveShadow = true;
       parent.add(plane);
 
+      // this.pendingPromises.push(matPrms.slow.then(prms => {
+      //    const desiredRep = {
+      //       x: dims.width,
+      //       y: dims.height
+      //    }
+
+      //    plane.material = new THREE.MeshStandardMaterial(
+      //     cloneMatPrms(prms, desiredRep, offset));
+      // }));
+
+      this.updateLoadedTexture(matPrms, plane, dims, offset);
+
+      return plane;
+   }
+
+   updateLoadedTexture(matPrms, object, dims, offset) {
       this.pendingPromises.push(matPrms.slow.then(prms => {
          const desiredRep = {
             x: dims.width,
             y: dims.height
          }
 
-         plane.material = new THREE.MeshStandardMaterial(
+         object.material = new THREE.MeshStandardMaterial(
           cloneMatPrms(prms, desiredRep, offset));
       }));
-
-      return plane;
    }
 
    makeRig() {
       const cannonLength = BouncePunkSceneGroup.cannonLength;
-      const cannonDiameter = BouncePunkSceneGroup.cannonDiameter;
+      const cannonRadius = BouncePunkSceneGroup.cannonRadius;
       const ballRadius = BouncePunkSceneGroup.ballRadius;
-      const rodDiameter = BouncePunkSceneGroup.rodDiameter;
+      const rodRadius = BouncePunkSceneGroup.rodRadius;
       const trgDepth = BouncePunkSceneGroup.trgDepth;
       const trgRing = BouncePunkSceneGroup.trgRing;
       const wallRing = BouncePunkSceneGroup.wallRing;
@@ -319,8 +333,10 @@ export class BouncePunkSceneGroup {
           }));
       }));
 
+      // this.updateLoadedTexture(brassMat, testTarget, {x: 0.1, y: 0.1});
+
       const testTargetRod = new THREE.Mesh(
-       new THREE.CylinderGeometry(rodDiameter / 2, rodDiameter / 2, rigDepth, 16),
+       new THREE.CylinderGeometry(rodRadius, rodRadius, rigDepth, 16),
        new THREE.MeshStandardMaterial(scuffedMetalMat.fast));
       testTargetRod.name = 'testTargetRod';
       testTargetGroup.add(testTargetRod);
@@ -337,18 +353,14 @@ export class BouncePunkSceneGroup {
       rigGroup.add(testTargetGroup);
 
       const wallRingPoints = [];
-      wallRingPoints.push(new THREE.Vector2(rodDiameter / 2, 0));
-      wallRingPoints.push(new THREE.Vector2(rodDiameter / 2, 0.02));
-      wallRingPoints.push(new THREE.Vector2(rodDiameter / 2 + 0.005, 0.025));
-      wallRingPoints.push(new THREE.Vector2(rodDiameter / 2 + wallRing - 0.005, 0.025));
-      wallRingPoints.push(new THREE.Vector2(rodDiameter / 2 + wallRing, 0.02));
-      wallRingPoints.push(new THREE.Vector2(rodDiameter / 2 + wallRing, 0));
-      // wallRingPoints.push(new THREE.Vector2(rodDiameter / 2, 0.02));
-      // wallRingPoints.push(new THREE.Vector2(rodDiameter / 2 + 0.01, 0.03));
-      // wallRingPoints.push(new THREE.Vector2(
-      //  rodDiameter / 2 + wallRing - 0.01, 0.03));
-      // wallRingPoints.push(new THREE.Vector2(rodDiameter / 2 + wallRing, 0.02));
-      // wallRingPoints.push(new THREE.Vector2(rodDiameter / 2 + wallRing, 0));
+      wallRingPoints.push(new THREE.Vector2(rodRadius, 0));
+      wallRingPoints.push(new THREE.Vector2(rodRadius, 0.02));
+      wallRingPoints.push(new THREE.Vector2(rodRadius + 0.005, 0.025));
+      wallRingPoints.push(new THREE.Vector2(
+       rodRadius + wallRing - 0.005, 0.025));
+      wallRingPoints.push(new THREE.Vector2(rodRadius + wallRing, 0.02));
+      wallRingPoints.push(new THREE.Vector2(rodRadius + wallRing, 0));
+
       const testTargetWallRing = new THREE.Mesh(
        new THREE.LatheGeometry(wallRingPoints, 32),
        new THREE.MeshStandardMaterial(flatSteelMat.fast));
@@ -360,9 +372,9 @@ export class BouncePunkSceneGroup {
       testTargetWallRing.receiveShadow = true;
 
       const trgRingPoints = [];
-      trgRingPoints.push(new THREE.Vector2(rodDiameter / 2, 0));
-      trgRingPoints.push(new THREE.Vector2(rodDiameter / 2 + 0.005, 0.005));
-      trgRingPoints.push(new THREE.Vector2(rodDiameter / 2 + trgRing, 0));
+      trgRingPoints.push(new THREE.Vector2(rodRadius, 0));
+      trgRingPoints.push(new THREE.Vector2(rodRadius + 0.005, 0.005));
+      trgRingPoints.push(new THREE.Vector2(rodRadius + trgRing, 0));
       const testTargetTrgRing = new THREE.Mesh(
        new THREE.LatheGeometry(trgRingPoints, 32),
        new THREE.MeshStandardMaterial(flatSteelMat.fast));
@@ -372,13 +384,183 @@ export class BouncePunkSceneGroup {
       testTargetTrgRing.position.set(rigSize / 2.3, rigSize / 2, -0.05);
       testTargetTrgRing.receiveShadow = true;
 
-      this.pendingPromises.push()
+      const cannonGroup = new THREE.Group();
+      cannonGroup.name = 'cannon';
+      rigGroup.add(cannonGroup);
+
+      // Make cannon
+
+      const cannonPoints = [];
+      const segments = 128;
+
+      // Inside end of barrel
+      this.generateCannonArcPoints(
+       cannonPoints, ballRadius,
+       {
+          x: 0,
+          y: cannonLength - 0.2
+       },
+       {
+          start: Math.PI / 2,          // Starts at 0, cannonLength - 0.1
+          end: 0,                      // Ends at ballRadius, cannonLength - 0.2
+          incr: -Math.PI / 16
+       });
+
+      // Inner curve of front of muzzle
+      this.generateCannonArcPoints(
+       cannonPoints, 0.02,
+       {
+          x: ballRadius + 0.02,
+          y: 0.02
+       },
+       {
+          start: - Math.PI,            // Starts at ballRadius, 0.02
+          end: - Math.PI / 2,          // Ends at ballRadius + 0.02, 0
+          incr: Math.PI / 16
+       });
+
+      // Outer curve of front of muzzle
+      this.generateCannonArcPoints(
+       cannonPoints, 0.02,
+       {
+          x: cannonRadius - 0.07,
+          y: 0.02
+       },
+       {
+          start: - Math.PI / 2,        // Starts at cannonRadius - 0.07, 0
+          end: 0,                      // Ends at cannonRadius - 0.05, 0.02
+          incr: Math.PI / 16
+       });
+
+      // Curve of side of muzzle
+      this.generateCannonArcPoints(
+       cannonPoints, 0.05,
+       {
+          x: cannonRadius - 0.015,
+          y: 0.08
+       },
+       {
+          start: - 3 * Math.PI / 4,    // Starts at ~cannonRadius - 0.05, 
+          end: - 5.01 * Math.PI / 4,   // Ends at ~cannonRadius - 0.05, 
+          incr: -Math.PI / 16
+       });
+
+      // Curve of back of muzzle
+      this.generateCannonArcPoints(
+       cannonPoints, 0.02,
+       {
+          x: cannonRadius - 0.07,
+          y: 0.14
+       },
+       {
+          start: 0,                    // Starts at cannonRadius - 0.05, 0.14
+          end: Math.PI / 2,            // Ends at cannonRadius - 0.07, 0.16
+          incr: Math.PI / 16
+       });
+
+      // Curve of back of cannon
+      this.generateCannonArcPoints(
+       cannonPoints, cannonRadius,
+       {
+          x: 0,
+          y: cannonLength - cannonRadius
+       },
+       {
+          start: 0,
+          end: Math.PI / 2,
+          incr: Math.PI / 16
+       });
+
+      const cannon = new THREE.Mesh(
+         new THREE.LatheGeometry(cannonPoints, segments),
+         new THREE.MeshStandardMaterial(brassMat.fast));
+      cannon.name = 'cannon';
+      cannonGroup.add(cannon);
+      cannon.rotateZ(Math.PI / 2);
+      cannon.position.set(0, rigSize, 0);
+
+      const testLathe = new THREE.Mesh(
+       new THREE.LatheGeometry([
+          new THREE.Vector2(1, 0),
+          new THREE.Vector2(1, 1),
+          new THREE.Vector2(1, 5)
+       ], 4),
+       new THREE.MeshStandardMaterial(brassMat.fast));
+      testLathe.name = 'testLathe';
+      cannonGroup.add(testLathe);
+
+      this.pendingPromises.push(checkerboardMat.slow.then(prms => {
+         testLathe.material = new THREE.MeshStandardMaterial(
+          cloneMatPrms(prms, {
+             x: 1,
+             y: 1
+          }));
+      }));
+
+      // The cannon's uv mapping will be weird, as it assumes all segments
+      // are the same length. So, we need to change these uv values to reflect
+      // the actual length of each segment.
+
+      // Go through points array and calculate total length of curve
+      let totalLength = 0;
+      for (let i = 0; i < cannonPoints.length - 1; i++) {
+         const p1 = cannonPoints[i];
+         const p2 = cannonPoints[i + 1];
+         totalLength += Math.sqrt(
+          (p2.x - p1.x) * (p2.x - p1.x) +
+          (p2.y - p1.y) * (p2.y - p1.y));
+      }
+
+      // Go through Uvs and scale them to total length
+      // Copy array of uvs
+      let uvArray = cannon.geometry.getAttribute('uv').array;
+      // cycle through uv array and change each v value
+      for (let i = 0; i < segments + 1; i++) {
+         // Variable to save length from start of curve to current point
+         let lengthFromStart = 0;
+         for (let j = 0; j < cannonPoints.length - 1; j++) {
+            const vValue = 2 * (i * cannonPoints.length + j) + 1;
+            // Constant to save percentage of length from start of curve
+            const lengthPercent = lengthFromStart / totalLength;
+            uvArray[vValue] = lengthPercent;
+            const p1 = cannonPoints[j];
+            const p2 = cannonPoints[j + 1];
+            lengthFromStart += Math.sqrt(
+             (p2.x - p1.x) * (p2.x - p1.x) +
+             (p2.y - p1.y) * (p2.y - p1.y));
+         }
+      }
+
+      // Set uv array to new array
+      cannon.geometry.setAttribute('uv', new THREE.BufferAttribute(uvArray, 2));
+
+      // Length of texture already calculated, so calculate width
+      const textureWidth = 2 * Math.PI * cannonRadius;
+
+
+      this.pendingPromises.push(brassMat.slow.then(prms => {
+         cannon.material = new THREE.MeshStandardMaterial(
+          cloneMatPrms(prms, {
+             x: textureWidth,
+             y: totalLength
+          }));
+      }));
+
+
+
+
+
+
+
+
+
+
 
 
 
 
       return rigGroup;
-      
+
       // let base = new THREE.Mesh(new THREE.BoxGeometry(rigSize, rigSize,
       //    2 * ballRadius), steelMat)
       // base.position.set(rigSize / 2, rigSize / 2, -ballRadius);
@@ -400,6 +582,43 @@ export class BouncePunkSceneGroup {
 
       // // Put rig at back of room.  Assume room origin at center of back wall
       // this.rig.position.set(-rigSize / 2, -rigSize / 2, 2 * ballRadius);
+   }
+
+   makeCannonLatheParts(name, parent, points, matPrms) {
+      const rigSize = BouncePunkSceneGroup.rigSize;
+      const part = new THREE.Mesh(
+         new THREE.LatheGeometry(points, 32),
+         new THREE.MeshStandardMaterial(matPrms.fast));
+      part.name = name;
+      parent.add(part);
+      part.rotateZ(Math.PI / 2);
+      part.position.set(0, rigSize, 0);
+  
+      this.pendingPromises.push(matPrms.slow.then(prms => {
+         part.material = new THREE.MeshStandardMaterial(
+          cloneMatPrms(prms, {
+             x: 1,
+             y: 1
+          }));
+      }));
+
+      return part;
+   }
+
+   generateCannonArcPoints(points, radius, center, angle) {
+      if (angle.incr < 0) {
+         for (let i = angle.start; i >= angle.end; i += angle.incr) {
+            const x = center.x + radius * Math.cos(i);
+            const y = center.y + radius * Math.sin(i);
+            points.push(new THREE.Vector2(x, y));
+         }
+      } else {
+         for (let i = angle.start; i <= angle.end; i += angle.incr) {
+            const x = center.x + radius * Math.cos(i);
+            const y = center.y + radius * Math.sin(i);
+            points.push(new THREE.Vector2(x, y));
+         }
+      }
    }
 
    // Adjust the scenegraph to reflect time.  This may require either forward
