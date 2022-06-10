@@ -64,10 +64,14 @@ export class BouncePunkSceneGroup {
       this.topGroup.add(this.room);
       this.rig.position.set(2, 0, rigDepth);
       this.topGroup.add(this.rig);
-      // this.setOffset(0);
+      // this.setOffset(0);  // CAS FIX: Delete lines like this unless you're only temporarily commenting them out.
 
    }
 
+// CAS FIx: This needs to be several smaller functions.  Group the room creation
+// in natural ways (e.g. gutter, walls, floor) and make each its own function.
+// Function breakup is partly about DRY, but also about "phrasing" or "chapters"
+// that permit easier comprehension of the code.
    makeRoom() {
       const roomWidth = BouncePunkSceneGroup.roomWidth;
       const roomHeight = BouncePunkSceneGroup.roomHeight;
@@ -270,7 +274,7 @@ export class BouncePunkSceneGroup {
        new THREE.PlaneGeometry(dims.width, dims.height),
        new THREE.MeshStandardMaterial(matPrms.fast));
       plane.name = name;
-      // plane.castShadow = true;
+      // plane.castShadow = true;  CAS FIX See comment above about scrap comments
       // plane.receiveShadow = true;
       parent.add(plane);
 
@@ -301,7 +305,12 @@ export class BouncePunkSceneGroup {
       }));
    }
 
+   // CAS FIX: Same comment as for makeRoom.  This will need to be several
+   // functions.
    makeRig() {
+      // CAS, I believe this can work:
+      // const {cannonLength, cannonRadius, ballRadius, ...} = BouncePunkSceneGroup
+      // At least try it. 
       const cannonLength = BouncePunkSceneGroup.cannonLength;
       const cannonRadius = BouncePunkSceneGroup.cannonRadius;
       const ballRadius = BouncePunkSceneGroup.ballRadius;
@@ -500,6 +509,7 @@ export class BouncePunkSceneGroup {
       // The cannon's uv mapping will be weird, as it assumes all segments
       // are the same length. So, we need to change these uv values to reflect
       // the actual length of each segment.
+      // CAS FIX: And this could be a "fixUVs" function.
 
       // Go through points array and calculate total length of curve
       let totalLength = 0;
