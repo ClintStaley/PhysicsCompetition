@@ -30,7 +30,7 @@ export default function cmps(state = [], action) {
          var oldCmp = state[cmpId];
          state = state.slice();
          state[cmpId] = Object.assign({}, oldCmp,
-          {cmpTeams: oldCmp.teams.concat(teamId)});
+          {cmpTeams: oldCmp.cmpTeams.concat(teamId)});
          return state;
 
       // Action is just a teamId to be deleted

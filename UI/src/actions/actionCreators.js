@@ -112,7 +112,7 @@ export function postTeam(cmpId, newTeamData, cb) {
          newTeamData.mmbs[prs.id] = {email: prs.email, isLeader: true,
           firstName: prs.firstName, lastName: prs.lastName, id: prs.id};
 
-         dispatch({type: 'ADD_TEAM', teamId, cmpId, newTeamData});
+         dispatch({type: 'ADD_TEAM', teamId, cmpId, team: newTeamData});
       })
       .then(() => {if (cb) cb()}));
    }
