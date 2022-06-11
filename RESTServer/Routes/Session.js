@@ -68,7 +68,6 @@ Session.router = function(req, res, next) {
       if (session.lastUsed < new Date().getTime() - duration) 
          session.logOut();
       else {
-         console.log('setting session');
          req.session = session;
       }
    }

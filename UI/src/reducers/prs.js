@@ -48,7 +48,7 @@ export default function prs(state = {}, action) {
 
       case 'ADD_TEAM':
          // Add the newly created team to my teams
-         return addTeamToState(state, action.newTeamData);
+         return addTeamToState(state, action.team);
       case 'GET_TEAM_MMBS':
          if (action.mmbs.includes(state.id)
           && !state.myTeams.includes(action.teamId))

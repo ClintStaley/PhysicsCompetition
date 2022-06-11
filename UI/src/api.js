@@ -24,7 +24,6 @@ const baseURL = (window.location.port) ? // Dev vs production settings
    `${window.location.protocol}//${window.location.hostname}:1024/` :
    `${window.location.protocol}//${window.location.hostname}/PhysicsCompetition/REST/`;
 
-console.log("Rest server at " + baseURL);
 console.log("Public URL " + process.env.PUBLIC_URL);
 
 const headers = new Headers();
