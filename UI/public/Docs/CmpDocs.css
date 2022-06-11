@@ -18,6 +18,10 @@ body::-webkit-scrollbar {
     color: #eef;
 }
 
+.markdown-body a {
+   color: #aaF;
+}
+
 p {
     line-height: 1.7;
 }

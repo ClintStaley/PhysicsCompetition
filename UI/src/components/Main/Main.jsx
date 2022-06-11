@@ -34,7 +34,7 @@ class Main extends Component {
    }
 
    openHelp() {
-      var link = `${process.env.PUBLIC_URL}/Docs/Instructions.html`;
+      var link = `${process.env.PUBLIC_URL}/Docs/Index.html`;
 
       window.open(link, "_blank");
    }

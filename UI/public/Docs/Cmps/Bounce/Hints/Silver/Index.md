@@ -1,7 +1,11 @@
-#Instructions for Bounce Competition
+<link rel="stylesheet" type="text/css" media="all" 
+ href="../../../../CmpDocs.css" />
+
+# Hints for Silver Bounce Competition
 
 ## Overview
-In this competition, you'll launch balls to hit rectangular targets, while avoiding rectangular barriers.  You'll compete to hit all the targets, while avoiding the barriers, in as little time as possible.
+Silver Bounce competitions have just one target, and can be solved with a
+single ball launch.
 
 ## The Details
 Here is a typical Bounce competition setup:

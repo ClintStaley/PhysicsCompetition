@@ -1,3 +1,5 @@
+<link rel="stylesheet" type="text/css" media="all" href="CmpDocs.css" />
+
 # STEM Competition Site How-To
 
 This instruction page tells you how to register for the site, sign in, create and join teams, and participate in competitions.  For details on each particular competition, see the instructions linked from that competition's page.

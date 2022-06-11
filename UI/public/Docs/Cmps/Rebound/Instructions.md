@@ -1,7 +1,9 @@
+<link rel="stylesheet" type="text/css" media="all" href="../../CmpDocs.css" />
+
 # Instructions for Rebound Competition
 
 ## Overview
-In this competition, you'll arrange collisions between several balls of different masses in order to launch the rightmost ball as far as possible.
+In this competition, you create a "Gallilean Cannon" by arranging collisions between several balls of different masses in order to launch the rightmost ball as far as possible.
 
 Here is a typical Rebound competition setup:
 
