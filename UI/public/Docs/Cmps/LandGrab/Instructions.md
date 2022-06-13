@@ -15,3 +15,8 @@ When you make a submission, all your circles show in gray on the diagram while t
 
 ## Some Hints on Design
 Obviously, it's best to place circles in the largest open areas, and make each as big as possible.  One simple, though non-optimal, way to do this is to make a best guess as to the center point, and then compute the distance from your centerpoint to each obstacle corner you might hit, to the centers of all other circles, and to the edges of the playing area.  This information will help you pick the largest radius you can set without overlap.  It may also give you an idea of how you might slightly adjust your center to increase the possible radius.
+
+##
+
+
+And, if you are working in a team, it's very useful to have each member do the computations independently and compare results.  This lets you catch errors, and builds confidence when you come up with the same results.

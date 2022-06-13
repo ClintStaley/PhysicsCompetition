@@ -35,7 +35,7 @@ class Main extends Component {
    }
 
    openHelp() {
-      var link = `${process.env.PUBLIC_URL}/Docs/Instructions.html`;
+      var link = `${process.env.PUBLIC_URL}/Docs/Index.html`;
 
       window.open(link, "_blank");
    }
@@ -105,18 +105,19 @@ class Main extends Component {
         <Route path='/MyCmpPage/:cmpId/' render={pathProps =>
           <ProtectedRoute path='/MyCmpPage/:cmpId' {...this.props}
           component={CmpPage} myCmpLink = {true}
-          cmpId = {pathProps.match.params.cmpId}/>
+          cmpId = {parseInt(pathProps.match.params.cmpId)}/>
         }/>
 
         <Route path='/JoinCmpPage/:cmpId/' render={pathProps =>
            <ProtectedRoute path='/JoinCmpPage/:cmpId/' {...this.props}
             component = {CmpPage}   myCmpLink = {false}
-            cmpId = {pathProps.match.params.cmpId}/>
+            cmpId = {parseInt(pathProps.match.params.cmpId)}/>
         }/>
 
         <Route path='/Instructions/:cmpId' render = {pathProps =>
            <ProtectedRoute path='/Instructions/:cmpId' {...this.props}
-            component = {InstructionsPage} cmpId = {pathProps.match.params.cmpId}/>
+            component = {InstructionsPage} 
+            cmpId = {parseInt(pathProps.match.params.cmpId)}/>
         }/>
 
         <Route path='/SbmPage/:teamId' render={pathProps =>

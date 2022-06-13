@@ -106,13 +106,13 @@ export function putCmp(cmpId, newData, cb) {
 export function postTeam(cmpId, newTeamData, cb) {
    return (dispatch, getState) => {
       addStdHandlers(dispatch, cb, api.postTeam(cmpId, newTeamData)
-      .then((teamId) => {
+      .then((team) => {
          var prs = getState().prs;
-         newTeamData.mmbs = [];
-         newTeamData.mmbs[prs.id] = {email: prs.email, isLeader: true,
+         team.mmbs = [];
+         team.mmbs[prs.id] = {email: prs.email, isLeader: true,
           firstName: prs.firstName, lastName: prs.lastName, id: prs.id};
 
-         dispatch({type: 'ADD_TEAM', teamId, cmpId, team: newTeamData});
+         dispatch({type: 'ADD_TEAM', teamId: team.id, cmpId, team});
       })
       .then(() => {if (cb) cb()}));
    }

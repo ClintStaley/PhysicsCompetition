@@ -1,5 +1,7 @@
 use CmpDB;  
 
+# Bounce Competitions ------------------------------------
+
 # 6.674 m/s 1.078s 7.195 4.3
 insert into Competition (title, ctpId, ownerId, description, hints, prms)
    VALUES ('Basic Bounce Competition', 2, 1, 'Good starter problem', 'Basic', '{
@@ -101,39 +103,54 @@ insert into Competition (title, ctpId, ownerId, description, hints, prms)
    VALUES ('Gold Landgrab Competition', 1, 1, '1 Barrier but not square', 'Gold',
    '{
       "numCircles": 2,
-      "goalArea": 4039.4.0,
+      "goalArea": 4039.4,
       "obstacles": [
          { "loX": 70, "hiX": 100, "loY": 0, "hiY": 20 } 
       ] 
    }');
 
- 
-# jumpLength 2.85m gateTime .14s Starts: 9kg @.6m 1 m/s, 1kg .9m -1 m/s, 
+# Rebound Competitions ------------------------------------------
+
+# jumpLength 2.35m gateTime 0s Starts: 9kg @.5m 1m/s, .9m -1m/s, 
 insert into Competition (title, ctpId, ownerId, description, hints, prms)
-   VALUES ('Basic Rebound Competition', 3, 1, 'Basic two-ball problem', 'Basic', 
+   VALUES ('Basic Rebound Competition', 3, 1,
+   'Simple two-ball cannon', 'Basic',
+   '{
+      "targetLength" : 2.35,
+      "maxBalls": 2,
+      "balls": [9.0, 5.0, 1.0]
+   }');
+
+# jumpLength 3.86m gateTime 0s 
+# Starts: 19kg @.5m 1m/s, 5kg .7m -1m/s 1kg .9m -1m/s, 
+insert into Competition (title, ctpId, ownerId, description, hints, prms)
+   VALUES ('Bronze Rebound Competition', 3, 1, 
+   'Simple cannon, but with three balls', 'Basic',
+   '{
+      "targetLength" : 3.86,
+      "maxBalls": 3,
+      "balls": [19.0, 5.0, 1.0]
+   }');
+   
+# jumpLength 3.86m gateTime 0s 
+# Starts: 19kg @.5m 1m/s, 5kg .7m -1m/s 1kg .9m -1m/s
+# Simple cannon, but three balls
+insert into Competition (title, ctpId, ownerId, description, prms)
+   VALUES ('Silver Rebound Competition', 3, 1,
+    'More complex three-ball problem', 
+   '{
+      "targetLength" : 3.86,
+      "maxBalls": 3,
+      "balls": [19.0, 9.0, 6.0, 5.0, 4.0, 1.0]
+   }');
+ 
+# jumpLength 2.85m gateTime .14s Starts: 9kg @.6m 1 m/s, 1kg .9m -1 m/s
+# Double hit by 1kg on 9kg
+insert into Competition (title, ctpId, ownerId, description, hints, prms)
+   VALUES ('Gold Rebound Competition', 3, 1, 'Basic two-ball problem', 'Gold', 
    '{
       "targetLength" : 2.85,
       "maxBalls": 2,
       "balls": [1.0, 5.0, 9.0]
    }');
 
-# jumpLength 3.86m gateTime 0s 
-# Starts: 19kg @.5m 1m/s, 5kg .7m -1m/s 1kg .9m -1m/s, 
-insert into Competition (title, ctpId, ownerId, description, prms)
-   VALUES ('Bronze Rebound Competition', 3, 1, 'More complex three-ball problem', 
-   '{
-      "targetLength" : 3.86,
-      "maxBalls": 3,
-      "balls": [19.0, 9.0, 6.0, 5.0, 4.0, 1.0]
-   }');
-
-# jumpLength 3.86m gateTime 0s 
-# Starts: 19kg @.5m 1m/s, 5kg .7m -1m/s 1kg .9m -1m/s, 
-insert into Competition (title, ctpId, ownerId, description, hints, prms)
-   VALUES ('Silver Rebound Competition', 3, 1, 
-   'More complex three-ball problem', 
-   '{
-      "targetLength" : 3.86,
-      "maxBalls": 3,
-      "balls": [19.0, 5.0, 1.0]
-   }');

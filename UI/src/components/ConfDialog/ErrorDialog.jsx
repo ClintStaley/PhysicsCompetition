@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {ConfDialog} from '../concentrator.js';
 import {ListGroup} from 'react-bootstrap';
 
-export default ({errs}) => 
+export default ({errs, clearErrors}) => 
    <ConfDialog
       show={errs.length > 0}
       title="Error Notice"
@@ -14,5 +14,5 @@ export default ({errs}) =>
          )}
       </ListGroup>}
       buttons={['OK']}
-      onClose={() => { props.clearErrors() }}
+      onClose={() => clearErrors()}
    />;

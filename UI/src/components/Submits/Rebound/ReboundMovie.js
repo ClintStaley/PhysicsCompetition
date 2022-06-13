@@ -33,7 +33,6 @@ export class ReboundMovie {
       ballChoices.maxBalls = prms.maxBalls;
       balls = starts.map(b => ({speed: b.speed, x: b.pos}));
       labels = starts.map(b => ballChoices[b.id].weight);
-      console.log(labels);
 
       this.background = {
          ballChoices,

@@ -109,6 +109,7 @@ class TeamsPage extends Component {
 
    render() {
       var props = this.props;
+      console.log("Render teams ", props);
       return (
          <section className="container">
 
