@@ -1,41 +1,5 @@
 use CmpDB;  
 
-   insert into Competition (title, ctpId, ownerId, description, hints, prms)
-   VALUES ('Land Grab Tutorial', 1, 1, 'Tutorial Land Grab', 'Bronze', '{
-      "numCircles": 3,
-      "goalArea": 5000.0,
-      "obstacles": [
-         { "loX": 50, "hiX": 100, "loY": 0, "hiY": 50 }
-      ] 
-   }');
-
-   insert into Competition (title, ctpId, ownerId, description, hints, prms)
-   VALUES ('Land Grab 1', 1, 1, 'Empty Field', 'Bronze',  '{
-      "numCircles": 3,
-      "goalArea": 5000.0,
-      "obstacles": [] 
-   }');
-
-   insert into Competition (title, ctpId, ownerId, description, hints, prms)
-   VALUES ('Land Grab  2', 1, 1, '1 Barrier but not square', 'Silver', '{
-      "numCircles": 3,
-      "goalArea": 5000.0,
-      "obstacles": [
-         { "loX": 70, "hiX": 100, "loY": 0, "hiY": 20 } 
-      ] 
-   }');
-
-   insert into Competition (title, ctpId, ownerId, description, hints, prms)
-   VALUES ('Land Grab Test 3', 1, 1, '3 Barriers', 'Gold', '{
-      "numCircles": 3,
-      "goalArea": 5000.0,
-      "obstacles": [
-         { "loX": 0, "hiX": 40.2, "loY": 0, "hiY": 28.7 },
-         { "loX": 0, "hiX": 50, "loY": 85, "hiY": 100 },
-         { "loX": 80, "hiX": 100, "loY": 0, "hiY": 12 } 
-      ] 
-   }');
-
 # 6.674 m/s 1.078s 7.195 4.3
 insert into Competition (title, ctpId, ownerId, description, hints, prms)
    VALUES ('Basic Bounce Competition', 2, 1, 'Good starter problem', 'Basic', '{
@@ -85,7 +49,8 @@ insert into Competition (title, ctpId, ownerId, description, hints, prms)
 insert into Competition (title, ctpId, ownerId, description, hints, prms)
    VALUES ('Gold Bounce Competition', 2, 1, 
     'A challenging Bounce competition, though still doable with two balls',
-    'Gold', '{
+    'Gold', 
+    '{
         "targetTime": 6.53, 
         "targets": [
            {"loX": 1.0, "hiX": 2.0, "hiY": 7.9, "loY": 7.6},
@@ -97,34 +62,78 @@ insert into Competition (title, ctpId, ownerId, description, hints, prms)
            {"loX": 2.5, "hiX": 7.5, "hiY": 8.3, "loY": 8}
         ]
      }');
-            
+
+# (50, 50) r50   (7.321, 7.321) r10.35
+insert into Competition (title, ctpId, ownerId, description, hints, prms)
+   VALUES ('Basic Landgrab Competition', 1, 1, 'Empty Field', 'Basic', 
+   '{
+      "numCircles": 2,
+      "goalArea": 8190.5,
+      "obstacles": [] 
+   }');
+
+# (29.28, 70.72) r29.28        
+insert into Competition (title, ctpId, ownerId, description, hints, prms)
+   VALUES ('Bronze Landgrab Competition', 1, 1, 'Tutorial Land Grab', 'Bronze',
+   '{
+      "numCircles": 1,
+      "goalArea": 2693.3,
+      "obstacles": [
+         { "loX": 50, "hiX": 100, "loY": 0, "hiY": 50 }
+      ] 
+   }');
+
+# (67.5, 47.5) r32.5
+insert into Competition (title, ctpId, ownerId, description, hints, prms)
+   VALUES ('Silver Landgrab Competition', 1, 1, '3 Barriers', NULL, 
+   '{
+      "numCircles": 1,
+      "goalArea": 3318.3,
+      "obstacles": [
+         { "loX": 0, "hiX": 40, "loY": 0, "hiY": 30 },
+         { "loX": 40, "hiX": 100, "loY": 80, "hiY": 100 },
+         { "loX": 80, "hiX": 100, "loY": 0, "hiY": 12 } 
+      ] 
+   }');
+
+# (29.28, 70.72) r29.28  (79.3, 70.7) r20.7
+insert into Competition (title, ctpId, ownerId, description, hints, prms)
+   VALUES ('Gold Landgrab Competition', 1, 1, '1 Barrier but not square', 'Gold',
+   '{
+      "numCircles": 2,
+      "goalArea": 4039.4.0,
+      "obstacles": [
+         { "loX": 70, "hiX": 100, "loY": 0, "hiY": 20 } 
+      ] 
+   }');
+
+ 
 # jumpLength 2.85m gateTime .14s Starts: 9kg @.6m 1 m/s, 1kg .9m -1 m/s, 
-insert into Competition (title, ctpId, ownerId, description, prms)
-   VALUES ('Rebound 1', 3, 1, 'Basic two-ball problem', 
-    '{
-       "targetLength" : 2.85,
-       "maxBalls": 2,
-       "balls": [1.0, 5.0, 9.0]
-     }');
+insert into Competition (title, ctpId, ownerId, description, hints, prms)
+   VALUES ('Basic Rebound Competition', 3, 1, 'Basic two-ball problem', 'Basic', 
+   '{
+      "targetLength" : 2.85,
+      "maxBalls": 2,
+      "balls": [1.0, 5.0, 9.0]
+   }');
 
 # jumpLength 3.86m gateTime 0s 
 # Starts: 19kg @.5m 1m/s, 5kg .7m -1m/s 1kg .9m -1m/s, 
 insert into Competition (title, ctpId, ownerId, description, prms)
-   VALUES ('Rebound 2', 3, 1, 'More complex three-ball problem', 
-    '{
-       "targetLength" : 3.86,
-       "maxBalls": 3,
-       "balls": [19.0, 9.0, 6.0, 5.0, 4.0, 1.0]
-     }');
+   VALUES ('Bronze Rebound Competition', 3, 1, 'More complex three-ball problem', 
+   '{
+      "targetLength" : 3.86,
+      "maxBalls": 3,
+      "balls": [19.0, 9.0, 6.0, 5.0, 4.0, 1.0]
+   }');
 
 # jumpLength 3.86m gateTime 0s 
 # Starts: 19kg @.5m 1m/s, 5kg .7m -1m/s 1kg .9m -1m/s, 
-insert into Competition (title, ctpId, ownerId, description, prms)
-   VALUES ('Rebound 2', 3, 1, 'More complex three-ball problem', 
-    '{
-       "targetLength" : 3.86,
-       "maxBalls": 3,
-       "balls": [19.0, 5.0, 1.0]
-     }');
-
-
+insert into Competition (title, ctpId, ownerId, description, hints, prms)
+   VALUES ('Silver Rebound Competition', 3, 1, 
+   'More complex three-ball problem', 
+   '{
+      "targetLength" : 3.86,
+      "maxBalls": 3,
+      "balls": [19.0, 5.0, 1.0]
+   }');

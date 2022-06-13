@@ -64,9 +64,9 @@ export default class SbmPage extends Component {
 
    openInstructions = () => {
       let ctpName = this.state.ctpName
-      let cmpType = this.state.cmp.hints  // Path to instructions in Hints dir
+      let hintType = this.state.cmp.hints  // Path to instructions in Hints dir
       let link = `${process.env.PUBLIC_URL}/Docs/Cmps/${ctpName}/Hints/`
-       + `${cmpType}/Instructions.html`;
+       + `${hintType}/Instructions.html`;
  
       window.open(link, "_blank");
    }
@@ -154,10 +154,16 @@ export default class SbmPage extends Component {
         
         {sbmStatus}
         <br/>
-         <h3 className = "instructionLink">
-          <a onClick = {this.openInstructions}>Hints</a>
-         </h3>
-        <br/>
+        {this.state.cmp.hints ?
+           <div>
+              <h3 className = "instructionLink">
+                 <a onClick = {this.openInstructions}>Hints</a>
+              </h3>
+              <br/>
+           </div>
+        : 
+           ""
+        }
         {prbDiagram}
       </div>);
    }

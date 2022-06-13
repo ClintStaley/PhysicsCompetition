@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-import {Register, SignIn, CmpsPage, TeamsPage, CmpPage, SbmPage} from '../concentrator.js'
+import {Register, SignIn, CmpsPage, TeamsPage, CmpPage, SbmPage, ErrorDialog}
+ from '../concentrator.js'
 import {Route, Redirect, Switch} from 'react-router-dom';
 import { Navbar, Nav} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
@@ -17,12 +18,12 @@ class Main extends Component {
       return this.props.prs && this.props.prs.id;
    }
 
-   ProtectedRoute = ({component: Cmp, path, ...rest }) => {
-      return (<Route path={path} render={(props) => {
+   ProtectedRoute = ({component: Cmp, path, ...rest }) => 
+      <Route path={path} render={(props) => {
          return this.signedIn() ?
            <Cmp {...rest}/> : <Redirect to='/signin'/>;
-      }}/>);
-   }
+      }}/>;
+   
 
    signOut(event) {
       this.props.history.push("/");
@@ -38,11 +39,6 @@ class Main extends Component {
 
       window.open(link, "_blank");
    }
-
-   // render={(pathProps) => {
-   // return reRoute(<CmpPage cmpId = {pathProps.match.params.cmpId}
-   // myCmpLink = {true}
-   // {...this.props} />)}} />
 
    render() {
      var ProtectedRoute = this.ProtectedRoute;
@@ -128,8 +124,9 @@ class Main extends Component {
             component={SbmPage}
             team={this.props.teams[pathProps.match.params.teamId]}/>
         }/>
-
       </Switch>
+
+      <ErrorDialog {...this.props}/>
     </div>);
   }
 }
