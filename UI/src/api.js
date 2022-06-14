@@ -234,7 +234,10 @@ export function delTeam(cmpId, teamId) {
 export function postTeam(cmpId, body) {
    return post(`Cmps/${cmpId}/Teams`, body)
    .then(rsp => {
-      return parseInt(rsp.headers.get("Location").split('/').splice(-1)[0], 10);
+      body.id
+       = parseInt(rsp.headers.get("Location").split('/').splice(-1)[0], 10);
+      body.cmpId = cmpId;
+      return body;
    })
 }
 

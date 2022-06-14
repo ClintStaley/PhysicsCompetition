@@ -60,3 +60,5 @@ You may find yourself designing ball trajectories that come close to the corners
 
 ### Careful computation
 As you get into the challenge, you'll find you need to do a lot of computations of ball falling and rising times, speeds, etc.  It's easy to make dumb mistakes.  Keeping an orderly table of your work, and double checking it, will save you from extra submissions.
+
+And, if you are working in a team, it's very useful to **have each member do the computations independently** and compare results.  This lets you catch errors, and builds confidence when you come up with the same results.

@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-import {Register, SignIn, CmpsPage, TeamsPage, CmpPage, SbmPage} from '../concentrator.js'
+import {Register, SignIn, CmpsPage, TeamsPage, CmpPage, SbmPage, ErrorDialog}
+ from '../concentrator.js'
 import {Route, Redirect, Switch} from 'react-router-dom';
 import { Navbar, Nav} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
@@ -17,12 +18,12 @@ class Main extends Component {
       return this.props.prs && this.props.prs.id;
    }
 
-   ProtectedRoute = ({component: Cmp, path, ...rest }) => {
-      return (<Route path={path} render={(props) => {
+   ProtectedRoute = ({component: Cmp, path, ...rest }) => 
+      <Route path={path} render={(props) => {
          return this.signedIn() ?
            <Cmp {...rest}/> : <Redirect to='/signin'/>;
-      }}/>);
-   }
+      }}/>;
+   
 
    signOut(event) {
       this.props.history.push("/");
@@ -38,11 +39,6 @@ class Main extends Component {
 
       window.open(link, "_blank");
    }
-
-   // render={(pathProps) => {
-   // return reRoute(<CmpPage cmpId = {pathProps.match.params.cmpId}
-   // myCmpLink = {true}
-   // {...this.props} />)}} />
 
    render() {
      var ProtectedRoute = this.ProtectedRoute;
@@ -109,18 +105,19 @@ class Main extends Component {
         <Route path='/MyCmpPage/:cmpId/' render={pathProps =>
           <ProtectedRoute path='/MyCmpPage/:cmpId' {...this.props}
           component={CmpPage} myCmpLink = {true}
-          cmpId = {pathProps.match.params.cmpId}/>
+          cmpId = {parseInt(pathProps.match.params.cmpId)}/>
         }/>
 
         <Route path='/JoinCmpPage/:cmpId/' render={pathProps =>
            <ProtectedRoute path='/JoinCmpPage/:cmpId/' {...this.props}
             component = {CmpPage}   myCmpLink = {false}
-            cmpId = {pathProps.match.params.cmpId}/>
+            cmpId = {parseInt(pathProps.match.params.cmpId)}/>
         }/>
 
         <Route path='/Instructions/:cmpId' render = {pathProps =>
            <ProtectedRoute path='/Instructions/:cmpId' {...this.props}
-            component = {InstructionsPage} cmpId = {pathProps.match.params.cmpId}/>
+            component = {InstructionsPage} 
+            cmpId = {parseInt(pathProps.match.params.cmpId)}/>
         }/>
 
         <Route path='/SbmPage/:teamId' render={pathProps =>
@@ -128,8 +125,9 @@ class Main extends Component {
             component={SbmPage}
             team={this.props.teams[pathProps.match.params.teamId]}/>
         }/>
-
       </Switch>
+
+      <ErrorDialog {...this.props}/>
     </div>);
   }
 }

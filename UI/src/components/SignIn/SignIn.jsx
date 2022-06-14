@@ -22,19 +22,18 @@ class SignIn extends Component {
       this.signIn = this.signIn.bind(this);
    }
 
-   //calls signIn updates history
+   // Sign in, and if successful, get all Ctps, and once that is done, 
+   // fetch teams, and then once that's done, go to ActiveCmpsPage
    signIn(event) {
-      //Get all competition types to ensure proper rendering on Join Competition
-      //page and Active Competition page.
-      //Sign in after competions are retrieved
-      this.props.getAllCtps(
       this.props.signIn(this.state, () => {
-        if (Object.keys(this.props.prs).length !== 0){
-           this.props.getTeamsByPrs(this.props.prs.id);
-           this.props.history.push("/ActiveCmpsPage");
-        }
-      }));
-
+         if (Object.keys(this.props.prs).length !== 0) { // If logged in OK
+            this.props.getAllCtps(() => {
+               this.props.getTeamsByPrs(this.props.prs.id, 
+                () => this.props.history.push("/ActiveCmpsPage"));
+            })
+         };
+      });
+   
       event.preventDefault(); //otherwise parent will respond
    }
 

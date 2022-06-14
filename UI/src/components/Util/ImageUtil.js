@@ -53,10 +53,6 @@ export function loadMatParams(tex) {
 
 export function createMatFromParams(modelParams, reps) {
    let newParams = {...modelParams};
-   // console.log('newParams');
-   // console.log(newParams);
-   // console.log('oldParams');
-   // console.log(modelParams);
 
    ['map', 'normalMap', 'displacementMap', 'roughness', 'aoMap']
     .forEach(prop => {
@@ -70,8 +66,6 @@ export function createMatFromParams(modelParams, reps) {
              intrinsicRep.x * reps.x, intrinsicRep.y * reps.y);
             newParams[prop].needsUpdate = true;
          }
-         console.log('newParams', prop, newParams[prop]);
-         console.log('modelParams', prop, modelParams[prop]);
       }
    })
 

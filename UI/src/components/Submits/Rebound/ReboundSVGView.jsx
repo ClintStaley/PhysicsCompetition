@@ -39,7 +39,7 @@ export class ReboundSVGView extends React.Component {
       var xOff = 0;
       var svgElms = [];
 
-      svgElms.push(<text x={xOff} y={2*br}
+      svgElms.push(<text key="ballExpl" x={xOff} y={2*br}
        className={styles.text}>{`Choose 1 to ${ballChoices.maxBalls} balls:`}
        </text>);
 
@@ -59,7 +59,7 @@ export class ReboundSVGView extends React.Component {
    }
 
    static getBorderedBlock(key, brd, x, y, width, height) {
-      return <g>
+      return <g key={key+"BBlk"}>
          <rect key={key+"out"} className={styles.outerBlock} 
           x={x} y={y} width={width} height={height}/>
          <rect key={key+"in"} className={styles.innerBlock} 

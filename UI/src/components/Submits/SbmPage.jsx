@@ -152,10 +152,16 @@ export default class SbmPage extends Component {
         
         {sbmStatus}
         <br/>
-         <h3 className = "instructionLink">
-          <a onClick = {this.openHints}>Hints</a>
-         </h3>
-        <br/>
+        {this.state.cmp.hints ?
+           <div>
+              <h3 className = "instructionLink">
+                 <a onClick = {this.openInstructions}>Hints</a>
+              </h3>
+              <br/>
+           </div>
+        : 
+           ""
+        }
         {prbDiagram}
       </div>);
    }

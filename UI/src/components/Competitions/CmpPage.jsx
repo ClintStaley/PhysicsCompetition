@@ -40,7 +40,7 @@ export default class CmpPage extends Component {
    openCreateDialog = () => {
       this.setState({createTeamFunc: (newTeamName) => {
          this.props.postTeam(this.props.cmpId,
-         {leaderId : this.props.prs.id, teamName: newTeamName});
+         {leaderId: this.props.prs.id, teamName: newTeamName});
       }});
    }
 

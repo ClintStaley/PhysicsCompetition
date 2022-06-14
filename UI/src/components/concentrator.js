@@ -4,6 +4,7 @@ export {default as Register} from './Register/Register';
 export {default as CmpsPage} from './Competitions/CmpsPage';
 export {default as TeamsPage} from './Teams/TeamsPage';
 export {default as ConfDialog} from './ConfDialog/ConfDialog';
+export {default as ErrorDialog} from './ConfDialog/ErrorDialog'
 export {default as EntryDialog} from './ConfDialog/EntryDialog';
 export {default as CmpPage} from './Competitions/CmpPage';
 export {default as SbmPage} from './Submits/SbmPage';
