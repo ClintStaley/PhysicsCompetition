@@ -1,8 +1,7 @@
 import {BounceMovie} from './BounceMovie';
 import * as THREE from 'three';
-import {steelMat, concreteMat, brickMat, flatSteelMat, goldMat,
- verticalLinedMetalMat, brassMat, scuffedMetalMat, checkerboardMat} from
- '../../Util/AsyncMaterials';
+import {brickMat, flatSteelMat, plasterMat, scratchedPlasticMat, brassMat,
+ scuffedMetalMat, olderWoodFloorMat} from '../../Util/AsyncMaterials';
 import {cloneMatPrms} from '../../Util/ImageUtil';
 
 // Create a Group with the following elements:
@@ -49,6 +48,7 @@ export class BouncePunkSceneGroup {
    static wallRing = .03;      // Width of ring surrounding rods at wall
    static rigDepth = 1;        // Rig is 1m from back wall
    static rigSize = 10;        // Rig is 10 x 10 meters
+   static latheSegments = 128;
 
    constructor(movie) {
       const rigDepth = BouncePunkSceneGroup.rigDepth;
@@ -57,7 +57,7 @@ export class BouncePunkSceneGroup {
       this.topGroup = new THREE.Group(); // Holds pending material promises
       this.pendingPromises = [];
       this.room = this.makeRoom();       // Room and gutter
-      this.rig = this.makeRig();
+      this.rig = this.makeRig();         // Rig, with ball, cannon and targets
       this.targets = [];                 // Targets already hit
       this.evtIdx = -1;                  // Event index currently displayed
 
@@ -73,46 +73,106 @@ export class BouncePunkSceneGroup {
 // Function breakup is partly about DRY, but also about "phrasing" or "chapters"
 // that permit easier comprehension of the code.
    makeRoom() {
-      const roomWidth = BouncePunkSceneGroup.roomWidth;
-      const roomHeight = BouncePunkSceneGroup.roomHeight;
-      const roomDepth = BouncePunkSceneGroup.roomDepth;
-      const floorHeight = BouncePunkSceneGroup.floorHeight;
-      const gutterWidth = BouncePunkSceneGroup.gutterWidth;
-      const gutterDepth = BouncePunkSceneGroup.gutterDepth;
-      const rigDepth = BouncePunkSceneGroup.rigDepth;
+      const {roomHeight, roomWidth, roomDepth, floorHeight, gutterWidth,
+       gutterDepth, rigDepth} = BouncePunkSceneGroup;
 
       // Create group to house room components
       const roomGroup = new THREE.Group();
       roomGroup.name = 'roomGroup';
 
-      // Create back wall
-      const backWall = this.createPlaneElement(
-       'backWall', roomGroup, {
-          width: roomWidth, 
-          height: roomHeight
-       }, brickMat);
-      backWall.position.set(roomWidth / 2, roomHeight / 2, 0);
-      backWall.receiveShadow = true;
+      // Create wall sections
+      this.makeWalls(roomGroup, brickMat);
 
       // Create roof
       const roof = this.createPlaneElement(
        'roof', roomGroup, {
           width: roomWidth, 
           height: roomDepth
-       }, concreteMat);
+       }, plasterMat);
       roof.rotateX(Math.PI / 2);
       roof.position.set(roomWidth / 2, roomHeight, roomDepth / 2);
-      
-      // Floor group
+
+      // Create floor sections
+      this.makeFloor(roomGroup, olderWoodFloorMat);
+
+      // Create gutter sections
+      this.makeGutter(roomGroup, brickMat, plasterMat);
+
+      return roomGroup;
+   }
+
+   makeWalls(roomGroup, wallMat) {
+      const {roomHeight, roomWidth, roomDepth, floorHeight, gutterWidth,
+       gutterDepth, rigDepth} = BouncePunkSceneGroup;
+
+      // Create walls group
+      const wallsGroup = new THREE.Group();
+      wallsGroup.name = 'wallsGroup';
+
+      // Back wall
+      const backWall = this.createPlaneElement(
+       'backWall', wallsGroup, {
+          width: roomWidth, 
+          height: roomHeight
+       }, wallMat);
+      backWall.position.set(roomWidth / 2, roomHeight / 2, 0);
+      backWall.receiveShadow = true;
+
+      // Left walls
+      const leftBackSideWall = this.createPlaneElement(
+       'leftBackSideWall', wallsGroup, {
+          width: rigDepth - gutterWidth / 2,
+          height: roomHeight
+       }, wallMat);
+      leftBackSideWall.rotateY(Math.PI / 2);
+      leftBackSideWall.position.set(
+       0, roomHeight / 2, (rigDepth - gutterWidth / 2) / 2);
+
+      const leftFrontSideWall = this.createPlaneElement(
+       'leftFrontSideWall', wallsGroup, {
+          width: roomDepth - (rigDepth + gutterWidth / 2),
+          height: roomHeight
+       }, wallMat);
+      leftFrontSideWall.rotateY(Math.PI / 2);
+      leftFrontSideWall.position.set(
+       0, roomHeight / 2, (roomDepth + rigDepth + gutterWidth / 2) / 2);
+
+      // Right walls
+      const rightBackSideWall = this.createPlaneElement(
+       'rightBackSideWall', wallsGroup, {
+          width: rigDepth - gutterWidth / 2,
+          height: roomHeight
+       }, wallMat);
+      rightBackSideWall.rotateY(-Math.PI / 2);
+      rightBackSideWall.position.set(
+       roomWidth, roomHeight / 2, (rigDepth - gutterWidth / 2) / 2);
+
+      const rightFrontSideWall = this.createPlaneElement(
+       'rightFrontSideWall', wallsGroup, {
+          width: roomDepth - (rigDepth + gutterWidth / 2),
+          height: roomHeight
+       }, brickMat);
+      rightFrontSideWall.rotateY(-Math.PI / 2);
+      rightFrontSideWall.position.set(
+       roomWidth, roomHeight / 2, (roomDepth + rigDepth + gutterWidth / 2) / 2);
+
+      // Add walls group to room group
+      roomGroup.add(wallsGroup);
+   }
+
+   makeFloor(roomGroup, floorMat) {
+      const {roomWidth, roomDepth, floorHeight, gutterWidth, rigDepth}
+       = BouncePunkSceneGroup;
+
+      // Create roof group
       const floorGroup = new THREE.Group();
       floorGroup.name = 'floorGroup';
 
-      // Wooden floor boards
       const backFloorTop = this.createPlaneElement(
        'backFloorTop', floorGroup, {
           width: roomWidth,
           height: rigDepth - gutterWidth / 2
-       }, concreteMat);
+       }, floorMat);
       backFloorTop.rotateX(-Math.PI / 2);
       backFloorTop.position.set(
        roomWidth / 2, 0, (rigDepth - gutterWidth / 2) / 2);
@@ -121,7 +181,7 @@ export class BouncePunkSceneGroup {
        'backFloorSide', floorGroup, {
           width: roomWidth,
           height: floorHeight
-       }, concreteMat);
+       }, floorMat);
       backFloorSide.position.set(
        roomWidth / 2, -floorHeight / 2, rigDepth - gutterWidth / 2);
 
@@ -129,7 +189,7 @@ export class BouncePunkSceneGroup {
        'frontFloorTop', floorGroup, {
           width: roomWidth,
           height: roomDepth - (rigDepth + gutterWidth / 2),
-       }, concreteMat);
+       }, floorMat);
       frontFloorTop.rotateX(-Math.PI / 2);
       frontFloorTop.position.set(
        roomWidth / 2, 0, (roomDepth + rigDepth + gutterWidth / 2) / 2);
@@ -138,62 +198,28 @@ export class BouncePunkSceneGroup {
        'frontFloorSide', floorGroup, {
           width: roomWidth,
           height: floorHeight
-       }, concreteMat);
+       }, floorMat);
       frontFloorSide.position.set(
        roomWidth / 2, -floorHeight / 2, rigDepth + gutterWidth / 2);
 
-      // Side walls group
-      const sideWallsGroup = new THREE.Group();
-      sideWallsGroup.name = 'sideWallsGroup';
+      // Add floor group to room group
+      roomGroup.add(floorGroup);
+   }
 
-      // Back side walls
-      const leftBackSideWall = this.createPlaneElement(
-       'leftBackSideWall', sideWallsGroup, {
-          width: rigDepth - gutterWidth / 2,
-          height: roomHeight
-       }, brickMat);
-      leftBackSideWall.rotateY(Math.PI / 2);
-      leftBackSideWall.position.set(
-       0, roomHeight / 2, (rigDepth - gutterWidth / 2) / 2);
+   makeGutter(roomGroup, gutterWallMat, gutterRoofMat) {
+      const {roomHeight, roomWidth, floorHeight, gutterWidth, gutterDepth,
+       rigDepth} = BouncePunkSceneGroup;
 
-      const rightBackSideWall = this.createPlaneElement(
-       'rightBackSideWall', sideWallsGroup, {
-          width: rigDepth - gutterWidth / 2,
-          height: roomHeight
-       }, brickMat);
-      rightBackSideWall.rotateY(-Math.PI / 2);
-      rightBackSideWall.position.set(
-       roomWidth, roomHeight / 2, (rigDepth - gutterWidth / 2) / 2);
-
-      // Front side walls
-      const leftFrontSideWall = this.createPlaneElement(
-       'leftFrontSideWall', sideWallsGroup, {
-          width: roomDepth - (rigDepth + gutterWidth / 2),
-          height: roomHeight
-       }, brickMat);
-      leftFrontSideWall.rotateY(Math.PI / 2);
-      leftFrontSideWall.position.set(
-       0, roomHeight / 2, (roomDepth + rigDepth + gutterWidth / 2) / 2);
-
-      const rightFrontSideWall = this.createPlaneElement(
-       'rightFrontSideWall', sideWallsGroup, {
-          width: roomDepth - (rigDepth + gutterWidth / 2),
-          height: roomHeight
-       }, brickMat);
-      rightFrontSideWall.rotateY(-Math.PI / 2);
-      rightFrontSideWall.position.set(
-       roomWidth, roomHeight / 2, (roomDepth + rigDepth + gutterWidth / 2) / 2);
-
-      // Gutter group
+      // Create gutter group
       const gutterGroup = new THREE.Group();
       gutterGroup.name = 'gutterGroup';
 
-      // Gutter walls
+      // Bottom gutter
       const bottomGutterBack = this.createPlaneElement(
        'bottomGutterBack', gutterGroup, {
           width: roomWidth, 
           height: gutterDepth - floorHeight
-       }, brickMat);
+       }, gutterWallMat);
       bottomGutterBack.position.set(
        roomWidth / 2, - (gutterDepth + floorHeight) / 2,
        rigDepth - gutterWidth / 2);
@@ -202,52 +228,55 @@ export class BouncePunkSceneGroup {
        'bottomGutterFront', gutterGroup, {
           width: roomWidth,
           height: gutterDepth - floorHeight
-       }, brickMat);
+       }, gutterWallMat);
       bottomGutterFront.position.set(
        roomWidth / 2, - (gutterDepth + floorHeight) / 2,
        rigDepth + gutterWidth / 2);
 
+      // Left gutter
       const leftGutterBack = this.createPlaneElement(
        'leftGutterBack', gutterGroup, {
           width: gutterDepth,
           height: roomHeight + gutterDepth
-       }, brickMat);
+       }, gutterWallMat);
       leftGutterBack.position.set(
        -gutterDepth / 2, (roomHeight - gutterDepth) / 2,
-       rigDepth - gutterWidth / 2);
-
-      const rightGutterBack = this.createPlaneElement(
-       'rightGutterBack', gutterGroup, {
-          width: gutterDepth,
-          height: roomHeight + gutterDepth
-       }, brickMat);
-      rightGutterBack.position.set(
-       roomWidth + gutterDepth / 2, (roomHeight - gutterDepth) / 2,
        rigDepth - gutterWidth / 2);
 
       const leftGutterFront = this.createPlaneElement(
        'leftGutterFront', gutterGroup, {
           width: gutterDepth,
           height: roomHeight + gutterDepth
-       }, brickMat);
+       }, gutterWallMat);
       leftGutterFront.position.set(
        -gutterDepth / 2, (roomHeight - gutterDepth) / 2, 
        rigDepth + gutterWidth / 2);
+
+      // Right gutter
+      const rightGutterBack = this.createPlaneElement(
+       'rightGutterBack', gutterGroup, {
+          width: gutterDepth,
+          height: roomHeight + gutterDepth
+       }, gutterWallMat);
+      rightGutterBack.position.set(
+       roomWidth + gutterDepth / 2, (roomHeight - gutterDepth) / 2,
+       rigDepth - gutterWidth / 2);
 
       const rightGutterFront = this.createPlaneElement(
        'rightGutterFront', gutterGroup, {
           width: gutterDepth,
           height: roomHeight + gutterDepth
-       }, brickMat);
+       }, gutterWallMat);
       rightGutterFront.position.set(
        roomWidth + gutterDepth / 2, (roomHeight - gutterDepth) / 2, 
        rigDepth + gutterWidth / 2);
 
+      // Gutter roof
       const leftGutterRoof = this.createPlaneElement(
        'leftGutterRoof', gutterGroup, {
           width: gutterDepth,
           height: gutterWidth
-       }, concreteMat);
+       }, gutterRoofMat);
       leftGutterRoof.rotateX(Math.PI / 2);
       leftGutterRoof.position.set(
        -gutterDepth / 2, roomHeight, rigDepth);
@@ -256,70 +285,21 @@ export class BouncePunkSceneGroup {
        'rightGutterRoof', gutterGroup, {
           width: gutterDepth,
           height: gutterWidth
-       }, concreteMat);
+       }, gutterRoofMat);
       rightGutterRoof.rotateX(Math.PI / 2);
       rightGutterRoof.position.set(
        roomWidth + gutterDepth / 2, roomHeight, rigDepth);
 
-      // Add groups to room group
-      roomGroup.add(floorGroup);
-      roomGroup.add(sideWallsGroup);
+      // Add gutter group to room group
       roomGroup.add(gutterGroup);
-
-      return roomGroup;
-   }
-
-   createPlaneElement(name, parent, dims, matPrms, offset) {
-      const plane = new THREE.Mesh(
-       new THREE.PlaneGeometry(dims.width, dims.height),
-       new THREE.MeshStandardMaterial(matPrms.fast));
-      plane.name = name;
-      // plane.castShadow = true;  CAS FIX See comment above about scrap comments
-      // plane.receiveShadow = true;
-      parent.add(plane);
-
-      // this.pendingPromises.push(matPrms.slow.then(prms => {
-      //    const desiredRep = {
-      //       x: dims.width,
-      //       y: dims.height
-      //    }
-
-      //    plane.material = new THREE.MeshStandardMaterial(
-      //     cloneMatPrms(prms, desiredRep, offset));
-      // }));
-
-      this.updateLoadedTexture(matPrms, plane, dims, offset);
-
-      return plane;
-   }
-
-   updateLoadedTexture(matPrms, object, dims, offset) {
-      this.pendingPromises.push(matPrms.slow.then(prms => {
-         const desiredRep = {
-            x: dims.width,
-            y: dims.height
-         }
-
-         object.material = new THREE.MeshStandardMaterial(
-          cloneMatPrms(prms, desiredRep, offset));
-      }));
    }
 
    // CAS FIX: Same comment as for makeRoom.  This will need to be several
    // functions.
    makeRig() {
-      // CAS, I believe this can work:
-      // const {cannonLength, cannonRadius, ballRadius, ...} = BouncePunkSceneGroup
-      // At least try it. 
-      const cannonLength = BouncePunkSceneGroup.cannonLength;
-      const cannonRadius = BouncePunkSceneGroup.cannonRadius;
-      const ballRadius = BouncePunkSceneGroup.ballRadius;
-      const rodRadius = BouncePunkSceneGroup.rodRadius;
-      const trgDepth = BouncePunkSceneGroup.trgDepth;
-      const trgRing = BouncePunkSceneGroup.trgRing;
-      const wallRing = BouncePunkSceneGroup.wallRing;
-      const rigDepth = BouncePunkSceneGroup.rigDepth;
-      const rigSize = BouncePunkSceneGroup.rigSize;
+      const {cannonLength, cannonRadius, ballRadius, rodRadius, trgDepth,
+       trgRing, wallRing, rigDepth, rigSize, latheSegments}
+       = BouncePunkSceneGroup;
 
       const rigGroup = new THREE.Group();
       rigGroup.name = 'rig';
@@ -328,13 +308,13 @@ export class BouncePunkSceneGroup {
       const testTargetGroup = new THREE.Group();
       const testTarget = new THREE.Mesh(
        new THREE.BoxGeometry(0.1, 0.1, ballRadius),
-       new THREE.MeshStandardMaterial(brassMat.fast));
+       new THREE.MeshStandardMaterial(scratchedPlasticMat.fast));
       testTarget.name = 'testTarget';
       testTargetGroup.add(testTarget);
       testTarget.position.set(rigSize / 2.3, rigSize / 2, 0);
       testTarget.castShadow = true;
 
-      this.pendingPromises.push(brassMat.slow.then(prms => {
+      this.pendingPromises.push(scratchedPlasticMat.slow.then(prms => {
          testTarget.material = new THREE.MeshStandardMaterial(
           cloneMatPrms(prms, {
              x: 0.1,
@@ -352,43 +332,37 @@ export class BouncePunkSceneGroup {
       testTargetRod.rotateX(Math.PI / 2);
       testTargetRod.position.set(rigSize / 2.3, rigSize / 2, -rigDepth / 2);
       testTargetRod.castShadow = true;
-      // testTargetRod.receiveShadow = true;
 
-      this.pendingPromises.push(scuffedMetalMat.slow.then(prms => {
-         testTargetRod.material = new THREE.MeshStandardMaterial(
-          cloneMatPrms(prms));
-      }));
+      this.updateLoadedTexture(
+       scuffedMetalMat, testTargetRod, {
+          x: 2 * rodRadius * Math.PI,
+          y: rigDepth
+       });
 
       rigGroup.add(testTargetGroup);
 
-      const wallRingPoints = [];
-      wallRingPoints.push(new THREE.Vector2(rodRadius, 0));
-      wallRingPoints.push(new THREE.Vector2(rodRadius, 0.02));
-      wallRingPoints.push(new THREE.Vector2(rodRadius + 0.005, 0.025));
-      wallRingPoints.push(new THREE.Vector2(
-       rodRadius + wallRing - 0.005, 0.025));
-      wallRingPoints.push(new THREE.Vector2(rodRadius + wallRing, 0.02));
-      wallRingPoints.push(new THREE.Vector2(rodRadius + wallRing, 0));
-
-      const testTargetWallRing = new THREE.Mesh(
-       new THREE.LatheGeometry(wallRingPoints, 32),
-       new THREE.MeshStandardMaterial(flatSteelMat.fast));
-      testTargetWallRing.name = 'testTargetWallRing';
-      testTargetGroup.add(testTargetWallRing);
+      const testTargetWallRing = this.createRingElement(
+       'testTargetWallRing', testTargetGroup, {
+          innerRad: rodRadius,
+          ringSize: wallRing,
+          segments: latheSegments
+       }, scuffedMetalMat);
       testTargetWallRing.rotateX(Math.PI / 2);
       testTargetWallRing.position.set(
        rigSize / 2.3, rigSize / 2, -rigDepth);
       testTargetWallRing.receiveShadow = true;
 
-      const trgRingPoints = [];
-      trgRingPoints.push(new THREE.Vector2(rodRadius, 0));
-      trgRingPoints.push(new THREE.Vector2(rodRadius + 0.005, 0.005));
-      trgRingPoints.push(new THREE.Vector2(rodRadius + trgRing, 0));
-      const testTargetTrgRing = new THREE.Mesh(
-       new THREE.LatheGeometry(trgRingPoints, 32),
-       new THREE.MeshStandardMaterial(flatSteelMat.fast));
-      testTargetTrgRing.name = 'testTargetTrgRing';
-      testTargetGroup.add(testTargetTrgRing);
+      // const trgRingPoints = [];
+      // trgRingPoints.push(new THREE.Vector2(rodRadius, 0));
+      // trgRingPoints.push(new THREE.Vector2(rodRadius + 0.005, 0.005));
+      // trgRingPoints.push(new THREE.Vector2(rodRadius + trgRing, 0));
+
+      const testTargetTrgRing = this.createRingElement(
+       'testTargetTrgRing', testTargetGroup, {
+          innerRad: rodRadius,
+          ringSize: trgRing,
+          segments: latheSegments
+       }, scuffedMetalMat);
       testTargetTrgRing.rotateX(-Math.PI / 2);
       testTargetTrgRing.position.set(rigSize / 2.3, rigSize / 2, -0.05);
       testTargetTrgRing.receiveShadow = true;
@@ -400,273 +374,184 @@ export class BouncePunkSceneGroup {
       // Make cannon
 
       const cannonPoints = [];
-      const segments = 128;
 
       // Inside end of barrel
-      this.generateCannonArcPoints(
-       cannonPoints, ballRadius,
-       {
+      this.generateArcPoints(
+       cannonPoints, ballRadius, {
           x: 0,
           y: cannonLength - 0.2
-       },
-       {
+       }, {
           start: Math.PI / 2,          // Starts at 0, cannonLength - 0.1
           end: 0,                      // Ends at ballRadius, cannonLength - 0.2
           incr: -Math.PI / 16
        });
 
       // Inner curve of front of muzzle
-      this.generateCannonArcPoints(
-       cannonPoints, 0.02,
-       {
+      this.generateArcPoints(
+       cannonPoints, 0.02, {
           x: ballRadius + 0.02,
           y: 0.02
-       },
-       {
+       }, {
           start: - Math.PI,            // Starts at ballRadius, 0.02
           end: - Math.PI / 2,          // Ends at ballRadius + 0.02, 0
           incr: Math.PI / 16
        });
 
       // Outer curve of front of muzzle
-      this.generateCannonArcPoints(
-       cannonPoints, 0.02,
-       {
+      this.generateArcPoints(
+       cannonPoints, 0.02, {
           x: cannonRadius - 0.07,
           y: 0.02
-       },
-       {
+       }, {
           start: - Math.PI / 2,        // Starts at cannonRadius - 0.07, 0
           end: 0,                      // Ends at cannonRadius - 0.05, 0.02
           incr: Math.PI / 16
        });
 
       // Curve of side of muzzle
-      this.generateCannonArcPoints(
-       cannonPoints, 0.05,
-       {
+      this.generateArcPoints(
+       cannonPoints, 0.05, {
           x: cannonRadius - 0.015,
           y: 0.08
-       },
-       {
+       }, {
           start: - 3 * Math.PI / 4,    // Starts at ~cannonRadius - 0.05, 
           end: - 5.01 * Math.PI / 4,   // Ends at ~cannonRadius - 0.05, 
           incr: -Math.PI / 16
        });
 
       // Curve of back of muzzle
-      this.generateCannonArcPoints(
-       cannonPoints, 0.02,
-       {
+      this.generateArcPoints(
+       cannonPoints, 0.02, {
           x: cannonRadius - 0.07,
           y: 0.14
-       },
-       {
+       }, {
           start: 0,                    // Starts at cannonRadius - 0.05, 0.14
           end: Math.PI / 2,            // Ends at cannonRadius - 0.07, 0.16
           incr: Math.PI / 16
        });
 
       // Curve of back of cannon
-      this.generateCannonArcPoints(
-       cannonPoints, cannonRadius,
-       {
+      this.generateArcPoints(
+       cannonPoints, cannonRadius, {
           x: 0,
           y: cannonLength - cannonRadius
-       },
-       {
+       }, {
           start: 0,
           end: Math.PI / 2,
           incr: Math.PI / 16
        });
 
-      const cannon = new THREE.Mesh(
-         new THREE.LatheGeometry(cannonPoints, segments),
-         new THREE.MeshStandardMaterial(brassMat.fast));
-      cannon.name = 'cannon';
-      cannonGroup.add(cannon);
+
+      const cannon = this.createLatheElement(
+       'cannon', cannonGroup, {
+          points: cannonPoints,
+          maxRadius: cannonRadius,
+          segments: latheSegments
+       }, brassMat);
       cannon.rotateZ(Math.PI / 2);
+      cannon.rotateY(Math.PI);
       cannon.position.set(0, rigSize, 0);
-
-      const testLathe = new THREE.Mesh(
-       new THREE.LatheGeometry([
-          new THREE.Vector2(1, 0),
-          new THREE.Vector2(1, 1),
-          new THREE.Vector2(1, 5)
-       ], 4),
-       new THREE.MeshStandardMaterial(brassMat.fast));
-      testLathe.name = 'testLathe';
-      cannonGroup.add(testLathe);
-
-      this.pendingPromises.push(checkerboardMat.slow.then(prms => {
-         testLathe.material = new THREE.MeshStandardMaterial(
-          cloneMatPrms(prms, {
-             x: 1,
-             y: 1
-          }));
-      }));
 
       // The cannon's uv mapping will be weird, as it assumes all segments
       // are the same length. So, we need to change these uv values to reflect
       // the actual length of each segment.
-      // CAS FIX: And this could be a "fixUVs" function.
 
-      // Go through points array and calculate total length of curve
-      let totalLength = 0;
-      for (let i = 0; i < cannonPoints.length - 1; i++) {
-         const p1 = cannonPoints[i];
-         const p2 = cannonPoints[i + 1];
-         totalLength += Math.sqrt(
-          (p2.x - p1.x) * (p2.x - p1.x) +
-          (p2.y - p1.y) * (p2.y - p1.y));
-      }
+      // Make cannon wall mount
+      const frontLargeCannonMount = this.createCylinderElement(
+       'frontLargeCannonMount', cannonGroup, {
+          radius: 0.1,
+          height: 1.1,
+          segments: latheSegments
+       }, scuffedMetalMat);
+      frontLargeCannonMount.rotateZ(Math.PI / 2);
+      frontLargeCannonMount.rotateY(Math.PI);
+      frontLargeCannonMount.position.set(-1.45, rigSize, 0.5);
 
-      // Go through Uvs and scale them to total length
-      // Copy array of uvs
-      let uvArray = cannon.geometry.getAttribute('uv').array;
-      // cycle through uv array and change each v value
-      for (let i = 0; i < segments + 1; i++) {
-         // Variable to save length from start of curve to current point
-         let lengthFromStart = 0;
-         for (let j = 0; j < cannonPoints.length - 1; j++) {
-            const vValue = 2 * (i * cannonPoints.length + j) + 1;
-            // Constant to save percentage of length from start of curve
-            const lengthPercent = lengthFromStart / totalLength;
-            uvArray[vValue] = lengthPercent;
-            const p1 = cannonPoints[j];
-            const p2 = cannonPoints[j + 1];
-            lengthFromStart += Math.sqrt(
-             (p2.x - p1.x) * (p2.x - p1.x) +
-             (p2.y - p1.y) * (p2.y - p1.y));
-         }
-      }
+      const frontMountRing = this.createRingElement(
+       'frontMountRing', cannonGroup, {
+          innerRad: 0.1,
+          ringSize: 0.03,
+          segments: latheSegments
+       }, scuffedMetalMat);
+      frontMountRing.rotateZ(-Math.PI / 2);
+      frontMountRing.position.set(-2, rigSize, 0.5);
 
-      // Set uv array to new array
-      cannon.geometry.setAttribute('uv', new THREE.BufferAttribute(uvArray, 2));
+      const frontSmallCannonMount = this.createCylinderElement(
+         'frontSmallCannonMount', cannonGroup, {
+            radius: 0.05,
+            height: 0.5,
+            segments: latheSegments
+         }, scuffedMetalMat);
+      frontSmallCannonMount.rotateX(Math.PI / 2);
+      frontSmallCannonMount.position.set(-1, rigSize, 0.35);
 
-      // Length of texture already calculated, so calculate width
-      const textureWidth = 2 * Math.PI * cannonRadius;
+      const backLargeCannonMount = this.createCylinderElement(
+       'backLargeCannonMount', cannonGroup, {
+          radius: 0.1,
+          height: 1.1,
+          segments: latheSegments
+       }, scuffedMetalMat);
+      backLargeCannonMount.rotateZ(Math.PI / 2);
+      backLargeCannonMount.rotateY(Math.PI);
+      backLargeCannonMount.position.set(-1.45, rigSize, -0.5);
 
+      const backMountRing = this.createRingElement(
+       'backMountRing', cannonGroup, {
+          innerRad: 0.1,
+          ringSize: 0.03,
+          segments: latheSegments
+       }, scuffedMetalMat);
+      backMountRing.rotateZ(-Math.PI / 2);
+      backMountRing.position.set(-2, rigSize, -0.5);
 
-      this.pendingPromises.push(brassMat.slow.then(prms => {
-         cannon.material = new THREE.MeshStandardMaterial(
-          cloneMatPrms(prms, {
-             x: textureWidth,
-             y: totalLength
-          }));
-      }));
-
-
-
-
-
-
-
-
-
-
-
-
-
+      const backSmallCannonMount = this.createCylinderElement(
+       'backSmallCannonMount', cannonGroup, {
+          radius: 0.05,
+          height: 0.5,
+          segments: latheSegments
+       }, scuffedMetalMat);
+      backSmallCannonMount.rotateX(Math.PI / 2);
+      backSmallCannonMount.position.set(-1, rigSize, -0.35);
 
       return rigGroup;
-
-      // let base = new THREE.Mesh(new THREE.BoxGeometry(rigSize, rigSize,
-      //    2 * ballRadius), steelMat)
-      // base.position.set(rigSize / 2, rigSize / 2, -ballRadius);
-      // this.rig.add(base);
-      // let platform = new THREE.Mesh(new THREE.BoxGeometry(1, .25, 1),
-      //    flatSteelMat);
-      // this.ball = new THREE.Mesh(new THREE.SphereGeometry
-      //    (ballRadius, ballSteps, ballSteps), flatSteelMat);
-
-      // // Put ball at upper left corner of rig, just touching the base.
-      // this.ball.position.set(0, rigSize, 2 * ballRadius);
-      // this.ball.castShadow = true;
-      // this.rig.add(this.ball);
-
-      // // Put platform at upper left corner of rig, just below the ball
-      // platform.position.set(-.5, rigSize - .25, 0);
-      // platform.castshadow = true;
-      // this.rig.add(platform);
-
-      // // Put rig at back of room.  Assume room origin at center of back wall
-      // this.rig.position.set(-rigSize / 2, -rigSize / 2, 2 * ballRadius);
-   }
-
-   makeCannonLatheParts(name, parent, points, matPrms) {
-      const rigSize = BouncePunkSceneGroup.rigSize;
-      const part = new THREE.Mesh(
-         new THREE.LatheGeometry(points, 32),
-         new THREE.MeshStandardMaterial(matPrms.fast));
-      part.name = name;
-      parent.add(part);
-      part.rotateZ(Math.PI / 2);
-      part.position.set(0, rigSize, 0);
-  
-      this.pendingPromises.push(matPrms.slow.then(prms => {
-         part.material = new THREE.MeshStandardMaterial(
-          cloneMatPrms(prms, {
-             x: 1,
-             y: 1
-          }));
-      }));
-
-      return part;
-   }
-
-   generateCannonArcPoints(points, radius, center, angle) {
-      if (angle.incr < 0) {
-         for (let i = angle.start; i >= angle.end; i += angle.incr) {
-            const x = center.x + radius * Math.cos(i);
-            const y = center.y + radius * Math.sin(i);
-            points.push(new THREE.Vector2(x, y));
-         }
-      } else {
-         for (let i = angle.start; i <= angle.end; i += angle.incr) {
-            const x = center.x + radius * Math.cos(i);
-            const y = center.y + radius * Math.sin(i);
-            points.push(new THREE.Vector2(x, y));
-         }
-      }
    }
 
    // Adjust the scenegraph to reflect time.  This may require either forward
    // or backward movement in time.
    setOffset(timeStamp) {
-      const ballRadius = BounceSceneGroup.ballRadius;
-      const rigSize = BounceSceneGroup.rigSize;
+      const {ballRadius, rodRadius, trgDepth, trgRing, wallRing, rigSize,
+       latheSegments} = BounceSceneGroup;
       let evts = this.movie.evts;
       let evt;
-      let pCyl = this.topGroup.getObjectByName('pCyl', true);
 
       // While the event after evtIdx exists and needs adding to 3DElms
       while (this.evtIdx + 1 < evts.length
-         && evts[this.evtIdx + 1].time <= timeStamp) {
+       && evts[this.evtIdx + 1].time <= timeStamp) {
          evt = evts[++this.evtIdx];
+         // If the event is obstacle creation, add the obstacle to the scene
          if (evt.type === BounceMovie.cMakeBarrier
-            || evt.type === BounceMovie.cMakeTarget) {
+          || evt.type === BounceMovie.cMakeTarget) {
             // Add the indicated barrier to the scene
             let width = evt.hiX - evt.loX;
             let height = evt.hiY - evt.loY;
             let obj = new THREE.Mesh(new THREE.BoxGeometry(width, height,
-               6 * ballRadius), flatSteelMat);
+             6 * ballRadius), flatSteelMat);
 
             obj.position.set(evt.loX + width / 2, evt.loY + height / 2,
-               3 * ballRadius);
+             3 * ballRadius);
             this.rig.add(obj);
             if (evt.type === BounceMovie.cMakeTarget) {
                this.targets[evt.id] = obj;
             }
          }
          else if (evt.type === BounceMovie.cBallPosition
-            || evt.type === BounceMovie.cHitBarrier
-            || evt.type === BounceMovie.cHitTarget) {
+          || evt.type === BounceMovie.cHitBarrier
+          || evt.type === BounceMovie.cHitTarget) {
             this.ball.position.set(evt.x, evt.y, ballRadius);
          }
          if (evt.type === BounceMovie.cTargetFade) {
             this.targets[evt.targetId].position.z
-               = 3 * ballRadius * (1 - evt.fadeLevel);
+             = 3 * ballRadius * (1 - evt.fadeLevel);
          }
          else if (evt.type === BounceMovie.cBallExit) {
             this.ball.position.set(0, rigSize, ballRadius);
@@ -689,16 +574,166 @@ export class BouncePunkSceneGroup {
          evt = evts[this.evtIdx--];
 
          if (evt.type === BounceMovie.cBallPosition
-            || evt.type === BounceMovie.cHitBarrier
-            || evt.type === BounceMovie.cHitTarget) {
+          || evt.type === BounceMovie.cHitBarrier
+          || evt.type === BounceMovie.cHitTarget) {
             this.ball.position.set(evt.x, evt.y, ballRadius);
          }
          if (evt.type === BounceMovie.cTargetFade) {
             this.targets[evt.targetId].position.z     // Move target to current
-               = 3 * ballRadius * (1 - evt.fadeLevel);  // fade position
+             = 3 * ballRadius * (1 - evt.fadeLevel);  // fade position
          }
          if (evt.type === BounceMovie.cBallLaunch)
             this.ball.position.set(0, rigSize, ballRadius);
+      }
+   }
+
+   createObstacle(name, group, {}, matPrms) {
+      const {} = BounceSceneGroup;
+   }
+
+   createPlaneElement(name, parent, dims, matPrms, offset) {
+      const {width, height} = dims;
+      const plane = new THREE.Mesh(
+       new THREE.PlaneGeometry(width, height),
+       new THREE.MeshStandardMaterial(matPrms.fast));
+      plane.name = name;
+      parent.add(plane);
+
+      const desiredRep = {
+         x: width,
+         y: height
+      };
+
+      this.updateLoadedTexture(matPrms, plane, desiredRep, offset);
+
+      return plane;
+   }
+
+   createCylinderElement(name, parent, dims, matPrms, offset) {
+      const {radius, height, segments} = dims;
+
+      const cylinder = new THREE.Mesh(new THREE.CylinderGeometry(
+       radius, radius, height, segments),
+       new THREE.MeshStandardMaterial(matPrms.fast));
+      cylinder.name = name;
+      parent.add(cylinder);
+
+      const desiredRep = {
+         x: 2 * radius * Math.PI,
+         y: height
+      };
+
+      this.updateLoadedTexture(matPrms, cylinder, desiredRep, offset);
+
+      return cylinder;
+   }
+
+   createRingElement(name, parent, dims, matPrms, offset) {
+      const {innerRad, ringSize, segments} = dims;
+
+      const points = [];
+      points.push(new THREE.Vector2(innerRad + ringSize, 0));
+      this.generateArcPoints(
+       points, ringSize / 2, {
+          x: innerRad + ringSize / 2,
+          y: ringSize,
+       }, {
+          start: 0,
+          end: Math.PI,
+          incr: Math.PI / 16
+       });
+      points.push(new THREE.Vector2(innerRad, 0));
+
+      const newDims = {
+         points,
+         maxRadius: innerRad + ringSize,
+         segments: segments
+      };
+
+      return this.createLatheElement(name, parent, newDims, matPrms, offset);
+   }
+
+   createLatheElement(name, parent, dims, matPrms, offset) {
+      const {points, maxRadius, segments} = dims;
+      const lathe = new THREE.Mesh(
+         new THREE.LatheGeometry(points, segments),
+         new THREE.MeshStandardMaterial(matPrms.fast));
+      lathe.name = name;
+      parent.add(lathe);
+  
+      this.fixLatheUVs(lathe, dims, matPrms, offset);
+
+      return lathe;
+   }
+
+   updateLoadedTexture(matPrms, object, desiredRep, offset) {
+      this.pendingPromises.push(matPrms.slow.then(prms => {
+         object.material = new THREE.MeshStandardMaterial(
+          cloneMatPrms(prms, desiredRep, offset));
+      }));
+   }
+
+   // Takes a lathe, and adjusts its UV values to make the texture map evenly,
+   // then applies a texture the correct size. 
+   fixLatheUVs(lathe, dims, matPrms, offset) {
+      const {points, maxRadius, segments} = dims;
+      // Go through points array and calculate total length of curve
+      let textureLength = 0;
+      for (let i = 0; i < points.length - 1; i++) {
+         const p1 = points[i];
+         const p2 = points[i + 1];
+         textureLength += Math.sqrt(
+          (p2.x - p1.x) * (p2.x - p1.x) +
+          (p2.y - p1.y) * (p2.y - p1.y));
+      }
+
+      // Go through Uvs and scale them to total length
+      // Copy array of uvs
+      let uvArray = lathe.geometry.getAttribute('uv').array;
+      // cycle through uv array and change each v value
+      for (let i = 0; i < segments + 1; i++) {
+         // Variable to save length from start of curve to current point
+         let lengthFromStart = 0;
+         for (let j = 0; j < points.length - 1; j++) {
+            const vValue = 2 * (i * points.length + j) + 1;
+            // Constant to save percentage of length from start of curve
+            const lengthPercent = lengthFromStart / textureLength;
+            uvArray[vValue] = lengthPercent;
+            const p1 = points[j];
+            const p2 = points[j + 1];
+            lengthFromStart += Math.sqrt(
+             (p2.x - p1.x) * (p2.x - p1.x) +
+             (p2.y - p1.y) * (p2.y - p1.y));
+         }
+      }
+
+      // Set uv array to new array
+      lathe.geometry.setAttribute('uv', new THREE.BufferAttribute(uvArray, 2));
+
+      // Length of texture already calculated, so calculate width
+      const textureWidth = 2 * Math.PI * maxRadius;
+
+      const desiredRep = {
+         x: textureWidth,
+         y: textureLength
+      };
+
+      this.updateLoadedTexture(matPrms, lathe, desiredRep, offset);
+   }
+
+   generateArcPoints(points, radius, center, angle) {
+      if (angle.incr < 0) {
+         for (let i = angle.start; i >= angle.end; i += angle.incr) {
+            const x = center.x + radius * Math.cos(i);
+            const y = center.y + radius * Math.sin(i);
+            points.push(new THREE.Vector2(x, y));
+         }
+      } else {
+         for (let i = angle.start; i <= angle.end; i += angle.incr) {
+            const x = center.x + radius * Math.cos(i);
+            const y = center.y + radius * Math.sin(i);
+            points.push(new THREE.Vector2(x, y));
+         }
       }
    }
 
