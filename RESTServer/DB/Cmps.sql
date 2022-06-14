@@ -19,9 +19,9 @@ insert into Competition (title, ctpId, ownerId, description, hints, prms)
       'More complex, but still doable in one ball', 'Bronze', '{
       "targetTime": 5.15,
       "targets": [ 
-         { "loX": 1.4, "hiX": 2.4, "hiY": 7.4, "loY": 7.1 },
-         { "loX": 4.0, "hiX": 5.5, "hiY": 3.9, "loY": 3.6 },
-         { "loX": 8.0, "hiX": 9.5, "hiY": 5.5, "loY": 5.2 }
+         { "loX": 1.4, "hiX": 2.4, "hiY": 7.4, "loY": 7.2 },
+         { "loX": 4.0, "hiX": 5.5, "hiY": 3.9, "loY": 3.7 },
+         { "loX": 8.0, "hiX": 9.5, "hiY": 5.5, "loY": 5.3 }
       ],
       "barriers": [ 
          { "loX": 6.4, "hiX": 7, "hiY": 9, "loY": 3 }
@@ -54,13 +54,13 @@ insert into Competition (title, ctpId, ownerId, description, hints, prms)
     'Gold', '{
         "targetTime": 6.53, 
         "targets": [
-           {"loX": 1.0, "hiX": 2.0, "hiY": 7.9, "loY": 7.6},
-           {"loX": 4.8, "hiX": 5.3, "hiY": 9.0, "loY": 8.7},
-           {"loX": 6.3, "hiX": 8.0, "hiY": 7.9, "loY": 7.6},
-           {"loX": 1.9, "hiX": 2.9, "hiY": 4.9, "loY": 4.6},
-           {"loX": 1.1, "hiX": 2.2, "hiY": 0.9, "loY": 0.6}], 
+           {"loX": 1.0, "hiX": 2.0, "hiY": 7.9, "loY": 7.7},
+           {"loX": 4.8, "hiX": 5.3, "hiY": 9.0, "loY": 8.8},
+           {"loX": 6.3, "hiX": 8.0, "hiY": 7.9, "loY": 7.7},
+           {"loX": 1.9, "hiX": 2.9, "hiY": 4.9, "loY": 4.7},
+           {"loX": 1.1, "hiX": 2.2, "hiY": 0.9, "loY": 0.7}], 
         "barriers": [
-           {"loX": 2.5, "hiX": 7.5, "hiY": 8.3, "loY": 8}
+           {"loX": 2.5, "hiX": 7.5, "hiY": 8.3, "loY": 8.1}
         ]
      }');
 
