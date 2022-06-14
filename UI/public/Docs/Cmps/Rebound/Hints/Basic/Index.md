@@ -1,3 +1,6 @@
+<link rel="stylesheet" type="text/css" media="all" 
+ href="../../../../CmpDocs.css" />
+
 # Basic Hints for Rebound Competition
 
 ## Overview
