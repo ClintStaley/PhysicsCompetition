@@ -1,4 +1,4 @@
-use CmpDB;  
+use CmpDB;
 
 # Bounce Competitions ------------------------------------
 
