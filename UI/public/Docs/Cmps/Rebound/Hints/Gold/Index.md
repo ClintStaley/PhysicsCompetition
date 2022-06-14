@@ -1,22 +1,28 @@
-# Basic Hints for Rebound Competition
+# Gold Hints for Rebound Competition
 
 ## Overview
-These hints walk you through a full analysis and solution of a small
-Rebound design, to give you a starting point for more complex
-Rebound challenges.  The hints ask you to do some computational work and 
-answer a few questions.  Talk with teammates and/or an instructor to figure
-out the answers to these questions.
+These hints cover more advanced design ideas for the Rebound competition.
 
-We'll assume you have reviewed the elastic collision
-equations in the main instructions.  We'll use those in the following discussion, in these forms:
+As in other Rebound hints, we'll use these equations:
 
 $v_1 = \frac{(m_1 - m_2)u_1 + 2m_2 u_2}{m_1 + m_2}$
 
 $v_2 = \frac{(m_2 - m_1)u_2 + 2m_1 u_1}{m_1 + m_2}$
 
+And we'll assume ball weights of 1kg, 3kg, and 8kg.
 
-## The Example Problem
-Let's assume ball weights of 1kg, 3kg, and 8kg, and start with a collision
+## Rebounds off the same ball
+The major new design idea to explore is whether it's worth closing the gate for a while in order to let the launch ball bounce off the gate, and get hit again by the ball to its left.  Let's use a configuration with an 8kg ball at 1m/s and
+a 1kg ball at -1m/s.
+
+**How fast will each ball be moving after the first collision?**
+
+Do this computation to arrive at a velocity of over 2.5 for the 1kg ball and over .5 for the 8kg ball.
+
+
+Now, keep the gate closed, and let the 1kg *bounce off the gate*.  Its velocity will be exactly reversed (negated), causing a second collision with the 8kg ball.  
+
+ and start with a collision
 between just two of these, say the 3kg and 1kg ball, with the 1kg ball to the
 right, so it's the "launch ball".  
 
