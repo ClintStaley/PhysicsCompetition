@@ -57,7 +57,7 @@ export class BouncePunk3DView extends React.Component {
       // light.position.set(0, 0, roomDepth / 2);
       // light.castShadow = true;
       // Plus general ambient
-      scene.add(leftLight).add(rightLight).add(new THREE.AmbientLight(0x808080));
+      scene.add(leftLight).add(rightLight).add(new THREE.AmbientLight(0xffffff)); // 0x808080
 
       // CAS Fix: Try moving renderer out of state
       let renderer = new THREE.WebGLRenderer({antialias: true});
@@ -140,7 +140,7 @@ export class BouncePunk3DView extends React.Component {
    // from |movie| so incremental change is appropriate.  Return adjusted state
    static setOffset(state, timeStamp) {
       let {scene, sceneGroup, camera, renderer, movie} = state;
-      // sceneGroup.setOffset(timeStamp);
+      sceneGroup.setOffset(timeStamp);
       return {
          scene,
          sceneGroup,

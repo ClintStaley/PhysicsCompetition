@@ -142,6 +142,10 @@ export function cloneMatPrms(prms, rep, offset) {
             clonedPrms[prop].repeat.set(
              rep.x * intrinsicRep.x, rep.y * intrinsicRep.y);
          }
+
+         if (offset) {
+            clonedPrms[prop].offset.set(offset.x, offset.y);
+         }
          clonedPrms[prop].needsUpdate = true;
       }
    })
