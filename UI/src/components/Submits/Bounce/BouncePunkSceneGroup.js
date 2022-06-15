@@ -50,6 +50,7 @@ export class BouncePunkSceneGroup {
    static rigDepth = 1;        // Rig is 1m from back wall
    static rigSize = 10;        // Rig is 10 x 10 meters
    static latheSegments = 128;
+   static bevelRadius = .005;
 
    constructor(movie) {
       const rigDepth = BouncePunkSceneGroup.rigDepth;
@@ -722,7 +723,8 @@ export class BouncePunkSceneGroup {
       return cube;
    }
 
-   createSphereElement(name, parent, {radius, widthSegments, heightSegments}, matPrms, offset) {
+   createSphereElement(
+    name, parent, {radius, widthSegments, heightSegments}, matPrms, offset) {
       const sphere = new THREE.Mesh(
        new THREE.SphereGeometry(radius, widthSegments, heightSegments),
        new THREE.MeshStandardMaterial(matPrms.fast));
@@ -756,8 +758,8 @@ export class BouncePunkSceneGroup {
       return plane;
    }
 
-   createCylinderElement(name, parent, {radius, height, segments}, matPrms, offset) {
-
+   createCylinderElement(
+    name, parent, {radius, height, segments}, matPrms, offset) {
       const cylinder = new THREE.Mesh(new THREE.CylinderGeometry(
        radius, radius, height, segments),
        new THREE.MeshStandardMaterial(matPrms.fast));
@@ -774,16 +776,26 @@ export class BouncePunkSceneGroup {
       return cylinder;
    }
 
-   createRingElement(name, parent, {innerRad, ringSize, segments}, matPrms, offset) {
-
+   createRingElement(
+    name, parent, {innerRad, ringSize, segments}, matPrms, offset) {
+      const {bevelRadius} = BouncePunkSceneGroup;
       const points = [];
       points.push(new THREE.Vector2(innerRad + ringSize, 0));
       this.generateArcPoints(
-       points, ringSize / 2, {
-          x: innerRad + ringSize / 2,
+       points, bevelRadius, {
+          x: innerRad + ringSize - bevelRadius,
           y: ringSize,
        }, {
           start: 0,
+          end: Math.PI / 2,
+          incr: Math.PI / 16
+       });
+      this.generateArcPoints(
+       points, bevelRadius, {
+          x: innerRad + bevelRadius,
+          y: ringSize
+       }, {
+          start: Math.PI / 2,
           end: Math.PI,
           incr: Math.PI / 16
        });
@@ -798,7 +810,8 @@ export class BouncePunkSceneGroup {
       return this.createLatheElement(name, parent, newDims, matPrms, offset);
    }
 
-   createLatheElement(name, parent, {points, maxRadius, segments}, matPrms, offset) {
+   createLatheElement(
+    name, parent, {points, maxRadius, segments}, matPrms, offset) {
       const lathe = new THREE.Mesh(
          new THREE.LatheGeometry(points, segments),
          new THREE.MeshStandardMaterial(matPrms.fast));
