@@ -120,7 +120,7 @@ export class Bounce extends Component {
       },
       {
          label: "Punk",
-         viewMaker: mv => <BouncePunk3DView movie={mv}/>
+         viewMaker: mv => <MovieController movie={mv} viewCls={BouncePunk3DView}/>
       },
       {
          label: "VR",

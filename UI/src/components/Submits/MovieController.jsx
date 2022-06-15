@@ -126,7 +126,7 @@ export class MovieController extends Component {
 
             {React.createElement(this.props.viewCls, {
                movie: this.props.movie,
-               offset: this.state.currentOffset || 0.001
+               offset: this.state.currentOffset || -0.001 // Starting events
             })}
          </div>
       );
