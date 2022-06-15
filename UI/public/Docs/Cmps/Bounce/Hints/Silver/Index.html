@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/4.0.0/github-markdown.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/styles/default.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/markdown-it-texmath/css/texmath.min.css">
+<link rel="stylesheet" href="file:////home/clint/.vscode/extensions/goessner.mdmath-2.7.4/themes/default/style.css">
+
+</head>
+<body class="markdown-body">
+<div  dir="auto" ></div>
+<link rel="stylesheet" type="text/css" media="all" 
+ href="../../../../CmpDocs.css" />
+<h1 dir="auto" id="hints-for-silver-bounce-competition">Hints for Silver Bounce Competition</h1>
+<h2 dir="auto" id="overview">Overview</h2>
+<p dir="auto">Silver Bounce competitions have just one target, and can be solved with a
+single ball launch.</p>
+<h2 dir="auto" id="the-details">The Details</h2>
+<p dir="auto">Here is a typical Bounce competition setup:</p>
+<p dir="auto"><img src="../../Bounce3D.png" alt="Bounce 3D Image" class="loading" id="image-hash--710468899" data-src="../../Bounce3D.png"></p>
+<p dir="auto">And here is the same setup in schematic form, with coordinates for the obstacle and target corners.</p>
+<p dir="auto"><img src="../../BounceDiagram.png" alt="Bounce Diagram" class="loading" id="image-hash-1439653725" data-src="../../BounceDiagram.png"></p>
+<p dir="auto">The setup is a square 10m high and 10m wide, filled with rectangles, some red and some dark gray.  The red rectangles are <strong>targets</strong>, and the dark gray ones are <strong>barriers</strong>.  You have to hit all the targets, while avoiding the barriers.</p>
+<p dir="auto">To do this, you launch balls from the upper left edge of the playing area, at any left-to-right horizontal speed you like.  Each ball you launch falls toward the bottom of the playing area at a gravitational acceleration of 9.81 m/s^2.  Given the 10m height of the area, this means it'll hit the bottom in just over 1.4s.  Or, if you launch it fast enough, it'll hit the far right edge in less time than that.</p>
+<p dir="auto">But, if the ball hits any target or barrier, then it bounces off, perfectly elastically.  The target or barrier retracts so you won't hit it again.  This means you can keep the ball going for quite a while by launching relatively slowly, and arranging for it to hit targets, bouncing back up off of each one.  The job, then, is to figure out a horizontal speed that makes the ball hit as many targets as possible before leaving the playing area, without hitting any barriers.</p>
+<p dir="auto">In some cases, you'll be able to hit all the targets with a single ball, but you're allowed as many balls as you need.  You specify a launch speed for each ball, and they get launched one after another, each one launched as soon as the prior one entirely leaves the playing area.  For each ball you must also enter the location of its center, and the time, of the final target collision the ball makes before leaving the playing area.  (It's assumed you won't launch a ball without expecting to hit at least one target.)  This precludes solving the problem by iterative guessing; you have to do the math.</p>
+<p dir="auto">For each proposed solution you submit, you'll get a movie of the result.  If you hit all the targets without hitting any barriers, and if you get the right final time and location for the final collision of each ball, then you have a <strong>valid solution</strong>, and you also get a table of numerical collision data so you can confirm your math.  Invalid solutions still get the movie, so you can see roughly where you went wrong.  But they don't get a numerical table of collision data; you still have to fix the math yourself.</p>
+<h3 dir="auto" id="scoring-details">Scoring details</h3>
+<p dir="auto">Your score is based on the total travel time for all balls, plus an assumed 1 second delay between balls.  (So if you have three balls with travel times of 1.5, 2.1, and 1.6, your total time is 7.2.)  Each competition has a <strong>target time</strong> to shoot for, and you get a full score of 100 if you hit that time.  Longer times get a reduced score in proportion to the amount of excess time, for instance 50 points out of 100 if you take twice the target time.</p>
+<p dir="auto">And, finally, you are only allowed 5 free submissions in which to refine your answer.  You may make more submissions if you need to, but your score goes down by 10% for each submission past the limit.</p>
+<h3 dir="auto" id="some-numerical-details">Some numerical details</h3>
+<ul dir="auto">
+<li dir="auto">The diagram shows the corners of each target or barrier, in meters, measured from the bottom and left side of the playing area.</li>
+<li dir="auto">The ball has a radius of .1 m, which you need to take into account when calculating impact times and locations.</li>
+<li dir="auto">The simulated gravity is exactly 9.81 m/s^2.</li>
+<li dir="auto">Each ball launches after the prior one has <em>entirely</em> left the playing area, not just when the prior ball's centerpoint leaves the playing area.</li>
+<li dir="auto">The diagram movie leaves a faded ball outline at each collision even though the ball moves on.  If the collision was with the <strong>corner</strong>, this faded outline is a square instead of a circle.</li>
+</ul>
+<h2 dir="auto" id="suggested-playing-strategy">Suggested Playing Strategy</h2>
+<h3 dir="auto" id="first-just-try-it-out-a-bit">First Just try it out a bit</h3>
+<p dir="auto">Since invalid solutions aren't penalized, start by just launching a ball or two, guessing several different speeds to hit a target or two.  Follow the diagram and see if you can calculate the impact times and locations you get from this.</p>
+<h3 dir="auto" id="use-one-ball-per-target">Use one ball per target</h3>
+<p dir="auto">Once you've tried it out, calculate a solution that uses one ball per target.  This is the easiest kind of solution to do.  Calculate the time the ball will take to fall to the level of the target, and calculate the speed necessary for the ball to hit the target at that time.</p>
+<h3 dir="auto" id="now-see-if-you-can-kill-multiple-targets-per-ball">Now see if you can kill multiple targets per ball</h3>
+<p dir="auto">Doing this requires calculating the timing of the ball as it rises and falls, computing the length of time for each rise and fall, and trying to get a horizontal speed that will hit all the desired targets at the right times.  Or, you can be more creative (some competitions require this) and bounce off the sides or even the bottom of targets)</p>
+<h3 dir="auto" id="speeding-up-the-solution">Speeding up the solution</h3>
+<p dir="auto">The faster you hit all the targets, the better the score.  Thus, using fewer balls is generally a good idea, though a couple of fast balls may sometimes get the job done more quickly than one slow ball.  And for a given ball, using the fastest speed that will still hit all the targets is helpful.</p>
+<h2 dir="auto" id="a-few-hints">A Few Hints</h2>
+<h3 dir="auto" id="elastic-bounces">&quot;Elastic&quot; bounces</h3>
+<p dir="auto">As you may know, &quot;perfectly elastically&quot; means the ball bounces away with the same velocity it hit, but with the velocity component in the direction of the target or barrier negated or reversed.  In the diagram below, the ball hits the rectangle with a downward velocity of 2 m/s and a horizontal velocity of 3 m/s.  After the collision, it has an <em>upward</em> velocity of 2 m/s, and the horizontal velocity is unchanged.  It's important to think of the ball's velocity in two components -- vertical and horizontal.</p>
+<h3 dir="auto" id="corner-hits">Corner hits</h3>
+<p dir="auto">You may find yourself designing ball trajectories that come close to the corners of the targets.  You may bounce the ball off of corners and the simulation will accurately show the result, but the balls tend to fly off in unusual directions when you do this, and if you just barely hit the corner, the result may be a slightly skewed bounce.  We noted above that a corner hit leaves a faded square, not circle.  Watch for this if you are confused about an odd bounce.</p>
+<h3 dir="auto" id="careful-computation">Careful computation</h3>
+<p dir="auto">As you get into the challenge, you'll find you need to do a lot of computations of ball falling and rising times, speeds, etc.  It's easy to make dumb mistakes.  Keeping an orderly table of your work, and double checking it, will save you from extra submissions.</p>
+
+</body>
+</html>

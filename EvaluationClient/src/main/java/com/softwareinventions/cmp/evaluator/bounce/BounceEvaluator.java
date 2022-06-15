@@ -135,7 +135,6 @@ public class BounceEvaluator implements Evaluator {
       }
    }
 
- 
    public class BounceResults {
       public boolean valid;                           // Is solution valid?
       public Double sbmPenalty;                       // What penalty applies?
@@ -213,8 +212,6 @@ public class BounceEvaluator implements Evaluator {
       
       EvlPut eval = new EvlPut(sbm.cmpId, sbm.teamId, sbm.id, new Evl(
             mapper.writeValueAsString(rspB), score));
-
-      lgr.info("Graded Bounce Sbm# " + eval.sbmId);
 
       return eval;
    }
@@ -354,7 +351,7 @@ public class BounceEvaluator implements Evaluator {
       
       if (rtn.isPresent()) 
          obstacles.removeIf(o -> o.id == rtn.get().obstacleIdx);
-      
+
       return rtn;
    }
    
@@ -376,7 +373,6 @@ public class BounceEvaluator implements Evaluator {
       
       if (rtn.isPresent()) {
          rtn.get().obstacleIdx = obs.id;
-         lgr.info("Best Time is: " + rtn.get().time);
          return rtn.get();
       }
       
