@@ -67,16 +67,16 @@ insert into Competition (title, ctpId, ownerId, description, hints, prms)
 
 # (50, 50) r50   (7.321, 7.321) r10.35
 insert into Competition (title, ctpId, ownerId, description, hints, prms)
-   VALUES ('Basic Landgrab Competition', 1, 1, 'Empty Field', 'Basic', 
+   VALUES ('Basic Landgrab Competition', 1, 1, 'No barriers', 'Basic', 
    '{
       "numCircles": 2,
-      "goalArea": 8190.5,
+      "goalArea": 8085.2,
       "obstacles": [] 
    }');
 
 # (29.28, 70.72) r29.28        
 insert into Competition (title, ctpId, ownerId, description, hints, prms)
-   VALUES ('Bronze Landgrab Competition', 1, 1, 'Tutorial Land Grab', 'Bronze',
+   VALUES ('Bronze Landgrab Competition', 1, 1, 'Simple one-barrier', 'Basic',
    '{
       "numCircles": 1,
       "goalArea": 2693.3,
@@ -86,8 +86,8 @@ insert into Competition (title, ctpId, ownerId, description, hints, prms)
    }');
 
 # (67.5, 47.5) r32.5
-insert into Competition (title, ctpId, ownerId, description, hints, prms)
-   VALUES ('Silver Landgrab Competition', 1, 1, '3 Barriers', NULL, 
+insert into Competition (title, ctpId, ownerId, description, prms)
+   VALUES ('Silver Landgrab Competition', 1, 1, '3 Barriers', 
    '{
       "numCircles": 1,
       "goalArea": 3318.3,
@@ -100,12 +100,23 @@ insert into Competition (title, ctpId, ownerId, description, hints, prms)
 
 # (29.28, 70.72) r29.28  (79.3, 70.7) r20.7
 insert into Competition (title, ctpId, ownerId, description, hints, prms)
-   VALUES ('Gold Landgrab Competition', 1, 1, '1 Barrier but not square', 'Gold',
+   VALUES ('Gold Landgrab Competition', 1, 1, '1 Barrier but not square', 'Basic',
    '{
       "numCircles": 2,
       "goalArea": 4039.4,
       "obstacles": [
          { "loX": 70, "hiX": 100, "loY": 0, "hiY": 20 } 
+      ] 
+   }');
+
+# (29.28, 70.72) r29.28  (79.3, 70.7) r20.7
+insert into Competition (title, ctpId, ownerId, description, hints, prms)
+   VALUES ('Example Landgrab Competition', 1, 1, '1 Barrier, 3 circules', 'Basic',
+   '{
+      "numCircles": 3,
+      "goalArea": 4039.4,
+      "obstacles": [
+         {"loX": 60, "hiX": 70, "loY": 30, "hiY": 100} 
       ] 
    }');
 
