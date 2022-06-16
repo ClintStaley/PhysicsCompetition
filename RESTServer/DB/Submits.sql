@@ -6,7 +6,7 @@ insert into Team (teamName, cmpId, leaderId) values
 insert into Membership (prsId, teamId) values (1, 1);
 
 insert into Submit (cmpId, teamId, sbmTime, content) values
- (9, 1, NOW(), '{
+ (10, 1, NOW(), '{
     "gateTime": 0.14,
     "jumpLength": 2.85,
     "ballStarts" : [
@@ -16,7 +16,7 @@ insert into Submit (cmpId, teamId, sbmTime, content) values
  }');
 
  insert into Submit (cmpId, teamId, sbmTime, content) values
- (9, 1, NOW(), '{
+ (10, 1, NOW(), '{
     "gateTime": 0.14,
     "jumpLength": 2.8,
     "ballStarts" : [
@@ -26,7 +26,7 @@ insert into Submit (cmpId, teamId, sbmTime, content) values
  }');
 
  insert into Submit (cmpId, teamId, sbmTime, content) values
- (9, 1, NOW(), '{
+ (10, 1, NOW(), '{
     "gateTime": 0.1,
     "jumpLength": 2.85,
     "ballStarts" : [
@@ -36,7 +36,7 @@ insert into Submit (cmpId, teamId, sbmTime, content) values
  }');
 
  insert into Submit (cmpId, teamId, sbmTime, content) values
- (9, 1, NOW(), '{
+ (10, 1, NOW(), '{
     "gateTime": 0.1,
     "jumpLength": 2.8,
     "ballStarts" : [
