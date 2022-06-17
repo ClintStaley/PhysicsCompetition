@@ -111,7 +111,7 @@ insert into Competition (title, ctpId, ownerId, description, hints, prms)
 
 # (29.28, 70.72) r29.28  (79.3, 70.7) r20.7  (20.45, 20.45) r20.45
 insert into Competition (title, ctpId, ownerId, description, hints, prms)
-   VALUES ('Example Landgrab Competition', 1, 1, '1 Barrier, 3 circules', 'Basic',
+   VALUES ('Example Landgrab Competition', 1, 1, '1 Barrier, 3 circles', 'Basic',
    '{
       "numCircles": 3,
       "goalArea": 5111,
