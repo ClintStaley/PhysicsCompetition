@@ -1,68 +1,64 @@
 <link rel="stylesheet" type="text/css" media="all" 
  href="../../../../CmpDocs.css" />
  
- # Gold Hints for Rebound Competition
+# Basic Hints for Land Grab Competition
 
 ## Overview
-These hints cover more advanced design ideas for the Rebound competition.
 
-As in other Rebound hints, we'll use these equations:
+This hint sheet covers a few basics for playing Land Grab, in particular ways
+of finding the center and radius of circles that fit into a particular area.
 
-$v_1 = \frac{(m_1 - m_2)u_1 + 2m_2 u_2}{m_1 + m_2}$
+We'll use this example layout for Land Grab, with a single obstacle of width
+10 and height 70, and we'll place three circles in it.
 
-$v_2 = \frac{(m_2 - m_1)u_2 + 2m_1 u_1}{m_1 + m_2}$
+![Land Grab Layout](./Frame.png)
 
-And we'll assume ball weights of 1kg, 3kg, and 8kg.
+### Simple square or rectangular area
+The simplest math is placing a circle of maximum radius in a rectangular area
+like the upper left corner of the diagram.  
 
-## Rebounds off the same ball
-The major new design idea to close the gate for a while in order to let the 
-launch ball bounce off the gate, and get hit again by the ball to its left.  
-Let's use a configuration with an 8kg ball at 1m/s and a 1kg ball at -1m/s.
+**What is the maximum radius circle that can fit into the upper left corner?**
 
-**How fast will each ball be moving after the first collision?**
+You should be able to answer this with a bit of thought.  Note that the area's
+width is less than its height so width is the constraining limit.  A radius of
+30, half the width, is the highest feasible circle.
 
-Do this computation to arrive at a velocity of over 2.5 for the 1kg ball and 
-over .5 for the 8kg ball.
+**What center coordinated will put the circle as high as possible?**
 
-Now, keep the gate closed, and let the 1kg *bounce off the gate*.  Its 
-velocity will be exactly reversed (negated), causing a second collision with 
-the 8kg ball.  
+This is left as an exercise, with an answer shown below
 
-**How fast will the 1kg ball move after the second collision?**
+### Cornered circle against a corner point
+A more complex case arises in the lower right corner.  Here the largest circle
+is bracketed by the right and lower sides, and by the barrier corner at (70, 30).
+Importantly, that barrier, the circle center, and the lower right corner, are
+in a line.  This makes computation of radius **r** simpler. 
 
-Use the equations above to confirm that the 1kg ball will move at nearly 3 m/s 
-after the second collision.
+**As a multiple of r, how far is the circle center from the lower right corner?**
 
-**How fast is the 8kg ball moving after the second collision?**
+It may help to recall that the proportions of a right isocoles triangle 
+are 1, 1, $\sqrt{2}$. 
 
-You should come up with an answer of between -0.1 and -0.2 (i.e. moving to the
-left).  The 8kg ball has transferred all of its rightward momentum, and a little
-more than that, to the 1kg ball.
+**As a multiple of r, how far is the (70, 30) point from the lower right corner?**
 
-Does this mean it's always worth a second bounce if the 8kg ball is still 
-moving to the right?  Not necessarily.  To arrange a second bounce, the 1kg ball
-must bounce off the gate.
+Just add in another r to the value you had for the distance between the center
+and lower right corner.
 
-**What happens to the total momentum of the balls when the 1kg bounces off the
-gate?**
+**Finally, how far is (70,30) from the corner in actual terms?**
 
-With some thought, you should see that the total rightward momentum of the balls
-reduces with that collision.  How much depends on the speed with which the
-1kg ball hits the gate.  (Technically the momentum is still preserved, but it's
-transferred to the gate and the entire rig.)  A second bounce isn't always worth
-that loss; you have to do the math.  
+This value, combined with the same distance as a multiple of r, should give you
+an equation to compute r.  Do so, and come up with a value between 17 and 18.
 
-### Check the momenta
+![Diagrams](Lined.png)
 
-Calculating the total momenta after the second collision is still a good reality 
-check, if you reduce the total by the momentum lost to the gate.
+### Cornered circle against another circle
 
-**Compute the total momenta for the 8kg and 1kg ball after the first collision.**
+A more complex case 
 
-Your answer should total 7 mkg/s.
 
-**Compute the total momenta for the two balls after the second collision.**
 
-This answer requires computing the momentum lost to the gate, which you should
-compute at a little more than 5 mkg/s, leaving just under 2 mkg/s as the total.
-This should match the momentum calculated from the two balls' speeds and masses.
+
+
+
+
+### Circles
+The final answer with all three circles:
