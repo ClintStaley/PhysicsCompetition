@@ -26,38 +26,71 @@ export class BouncePunk3DView extends React.Component {
    // Return state displaying background grid and other fixtures
    // appropriate for |movie|.  
    static getInitState(movie) {
-      const roomHeight = BouncePunkSceneGroup.roomHeight;
-      const roomWidth = BouncePunkSceneGroup.roomWidth;
-      const roomDepth = BouncePunkSceneGroup.roomDepth;
-      const rigSize = BouncePunkSceneGroup.rigSize;
+      const {roomHeight, roomWidth, roomDepth, rigSize} = BouncePunkSceneGroup;
       let scene = new THREE.Scene();
       let sceneGroup = new BouncePunkSceneGroup(movie);
-      sceneGroup.getSceneGroup().position.set( -roomWidth / 2, -rigSize / 2, 0 );
+      sceneGroup.getSceneGroup().position.set(-roomWidth / 2, -roomHeight / 2, 0);
       scene.add(sceneGroup.getSceneGroup());
 
       // Full range, square-decay, white light high on near wall in center
       // let light = new THREE.PointLight(0xffffff, 10);
-      let leftLight = new THREE.SpotLight(0xffffff, 18, 0, Math.PI / 3.5, 0.8, 0.5);
-      leftLight.castShadow = true;
-      leftLight.position.set(-roomWidth / 2 + 0.5, roomHeight / 2 - 0.5, roomDepth / 2);
-      leftLight.target.position.set(0, 0, -roomDepth / 2);
+      // let leftLight = new THREE.SpotLight(
+      //  0xffffff, 18, 0, Math.PI / 3.5, 0.8, 2);
+      // leftLight.castShadow = true;
+      // leftLight.position.set(
+      //  -roomWidth / 2 + 0.5, roomHeight / 2 - 0.5, roomDepth - 0.5);
+      // leftLight.power = 1600;
+      // scene.add(leftLight);
+      // let leftLightHelper = new THREE.SpotLightHelper(leftLight);
+      // scene.add(leftLightHelper);
       // leftLight.decay = 0.5;
       // leftLight.power = 30;
       // leftLight.penumbra = 0.5;
       // leftLight.angle = Math.Pi / 3.5;
 
-      let rightLight = new THREE.SpotLight(0xffffff, 18, 0, Math.PI / 3.5, 0.8, 0.5);
-      rightLight.castShadow = true;
-      rightLight.position.set(roomWidth / 2 - 0.5, roomHeight / 2 - 0.5, roomDepth / 2);
-      rightLight.target.position.set(0, 0, -roomDepth / 2);
+      // let rightLight = new THREE.SpotLight(
+      //  0xffffff, 18, 0, Math.PI / 3.5, 0.8, 0.5);
+      // rightLight.castShadow = true;
+      // rightLight.position.set(
+      //  roomWidth / 2 - 0.5, roomHeight / 2 - 0.5, roomDepth / 2);
+      // rightLight.target.position.set(0, 0, -roomDepth / 2);
       // rightLight.decay = 0.5;
       // rightLight.power = 30;
       // rightLight.penumbra = 0.5;
       // rightLight.angle = Math.Pi / 3.5;
       // light.position.set(0, 0, roomDepth / 2);
       // light.castShadow = true;
+
+      const numOfLights = 4;
+
+      for (let i = 0; i < numOfLights; i++) {
+         let light = new THREE.SpotLight(
+          0xffffff, 18, 0, Math.PI / 2.5, 1, 2);
+         light.castShadow = true;
+         light.position.set(
+          1 + i, roomHeight / 2 - 0.5, roomDepth - 0.5);
+         light.position.x =
+          -roomWidth / 2 + (i + 0.5) * (roomWidth / numOfLights);
+         light.target.position.set(light.position.x, -2, 0);
+         light.power = 300;
+         scene.add(light);
+         scene.add(light.target);
+         light.target.updateMatrixWorld();
+         // let lightHelper = new THREE.SpotLightHelper(light);
+         // scene.add(lightHelper);
+      }
+
+      let ballLight = new THREE.SpotLight(
+       0xffffff, 18, 0, Math.PI / 10, 0.8, 2);
+      ballLight.castShadow = true;
+      ballLight.position.set(
+       0, 0, roomDepth - 0.5);
+      ballLight.power = 150;
+      ballLight.target = sceneGroup.getBall();
+      scene.add(ballLight);
+
       // Plus general ambient
-      scene.add(leftLight).add(rightLight).add(new THREE.AmbientLight(0xffffff)); // 0x808080
+      scene.add(new THREE.AmbientLight(0xffffff)); // 0x808080
 
       // CAS Fix: Try moving renderer out of state
       let renderer = new THREE.WebGLRenderer({antialias: true});
