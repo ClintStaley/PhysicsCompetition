@@ -587,10 +587,12 @@ export class BouncePunkSceneGroup {
          }
          else if (evt.type === BounceMovie.cBallExit) {
             ball.position.set(-cannonLength / 2, rigSize, 0);
-            console.log(`Ball ${evt.ballNumber} exited at ${evt.x}, ${evt.y}, at time ${evt.time}`);
+            console.log(`Ball ${evt.ballNumber} exited at ${evt.x}, ${evt.y},`
+             + ` at time ${evt.time}`);
          }
          else if (evt.type === BounceMovie.cHitEdge) {
-            console.log(`Ball ${evt.ballNumber} hit edge at ${evt.x}, ${evt.y}, at time ${evt.time}`);
+            console.log(`Ball ${evt.ballNumber} hit edge at ${evt.x}, ${evt.y},`
+             + ` at time ${evt.time}`);
          }
       }
 
