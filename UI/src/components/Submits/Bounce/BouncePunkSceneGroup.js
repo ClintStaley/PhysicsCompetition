@@ -55,8 +55,6 @@ export class BouncePunkSceneGroup {
    constructor(movie) {
       const rigDepth = BouncePunkSceneGroup.rigDepth;
 
-      console.log(movie);
-
       this.movie = movie;
       this.topGroup = new THREE.Group(); // Holds pending material promises
       this.pendingPromises = [];
@@ -449,6 +447,7 @@ export class BouncePunkSceneGroup {
       cannon.rotateZ(Math.PI / 2);
       cannon.rotateY(Math.PI);
       cannon.position.set(0, rigSize, 0);
+      cannon.castShadow = true;
 
       // The cannon's uv mapping will be weird, as it assumes all segments
       // are the same length. So, we need to change these uv values to reflect
@@ -464,6 +463,7 @@ export class BouncePunkSceneGroup {
       frontLargeCannonMount.rotateZ(Math.PI / 2);
       frontLargeCannonMount.rotateY(Math.PI);
       frontLargeCannonMount.position.set(-1.45, rigSize, 0.5);
+      frontLargeCannonMount.castShadow = true;
 
       const frontMountRing = this.createRingElement(
        'frontMountRing', cannonGroup, {
@@ -482,6 +482,7 @@ export class BouncePunkSceneGroup {
          }, scuffedMetalMat);
       frontSmallCannonMount.rotateX(Math.PI / 2);
       frontSmallCannonMount.position.set(-1, rigSize, 0.35);
+      frontSmallCannonMount.castShadow = true;
 
       const backLargeCannonMount = this.createCylinderElement(
        'backLargeCannonMount', cannonGroup, {
@@ -492,6 +493,7 @@ export class BouncePunkSceneGroup {
       backLargeCannonMount.rotateZ(Math.PI / 2);
       backLargeCannonMount.rotateY(Math.PI);
       backLargeCannonMount.position.set(-1.45, rigSize, -0.5);
+      backLargeCannonMount.castShadow = true;
 
       const backMountRing = this.createRingElement(
        'backMountRing', cannonGroup, {
@@ -510,6 +512,7 @@ export class BouncePunkSceneGroup {
        }, scuffedMetalMat);
       backSmallCannonMount.rotateX(Math.PI / 2);
       backSmallCannonMount.position.set(-1, rigSize, -0.35);
+      backSmallCannonMount.castShadow = true;
 
       // Create group for obstacles
       const obstaclesGroup = new THREE.Group();
@@ -524,6 +527,7 @@ export class BouncePunkSceneGroup {
           heightSegments: latheSegments / 2
        }, brassMat);
       ball.position.set( -cannonLength / 2, rigSize, 0);
+      ball.castShadow = true;
 
       return rigGroup;
    }
@@ -532,12 +536,10 @@ export class BouncePunkSceneGroup {
    // or backward movement in time.
    setOffset(timeStamp) {
       const {ballRadius, rodRadius, trgDepth, trgRing, wallRing, rigDepth,
-       rigSize, latheSegments, gutterWidth} = BouncePunkSceneGroup;
+       rigSize, latheSegments, gutterWidth, cannonLength} = BouncePunkSceneGroup;
       let evts = this.movie.evts;
       let evt;
-      let ball = this.rig.getObjectByName('ball');
-
-
+      const ball = this.rig.getObjectByName('ball');
 
       // While the event after evtIdx exists and needs adding to 3DElms
       while (this.evtIdx + 1 < evts.length
@@ -548,8 +550,8 @@ export class BouncePunkSceneGroup {
          if (evt.type === BounceMovie.cMakeBarrier
           || evt.type === BounceMovie.cMakeTarget) {
             // Add the indicated barrier to the scene
-            let width = evt.hiX - evt.loX;
-            let height = evt.hiY - evt.loY;
+            const width = evt.hiX - evt.loX;
+            const height = evt.hiY - evt.loY;
             let objGroup;
             if (evt.type === BounceMovie.cMakeTarget) {
                objGroup = this.createObstacle(
@@ -579,21 +581,17 @@ export class BouncePunkSceneGroup {
           || evt.type === BounceMovie.cHitTarget) {
             ball.position.set(evt.x, evt.y, 0);
          }
-         if (evt.type === BounceMovie.cTargetFade) {
+         if (evt.type === BounceMovie.cObstacleFade) {
             this.obstacles[evt.targetId].position.z =
              - gutterWidth * evt.fadeLevel;  // fade position
          }
          else if (evt.type === BounceMovie.cBallExit) {
-            ball.position.set(0, rigSize, 0);
+            ball.position.set(-cannonLength / 2, rigSize, 0);
+            console.log(`Ball ${evt.ballNumber} exited at ${evt.x}, ${evt.y}, at time ${evt.time}`);
          }
-         // else if (evt.type === BounceMovie.cBallLaunch) {
-         //    // Make launcher fire by moving piston
-         //    pCyl.position.set(.4, 0, 0);
-         //    // Delayed animation to retract piston.
-         //    setTimeout(() => {
-         //       pCyl.position.set(0, 0, 0);
-         //    }, 300);
-         // }
+         else if (evt.type === BounceMovie.cHitEdge) {
+            console.log(`Ball ${evt.ballNumber} hit edge at ${evt.x}, ${evt.y}, at time ${evt.time}`);
+         }
       }
 
       // Undo events to move backward in time. (Note that this and the prior
@@ -608,7 +606,7 @@ export class BouncePunkSceneGroup {
           || evt.type === BounceMovie.cHitTarget) {
             ball.position.set(evt.x, evt.y, 0);
          }
-         if (evt.type === BounceMovie.cTargetFade) {
+         if (evt.type === BounceMovie.cObstacleFade) {
             this.obstacles[evt.targetId].position.z =
              - gutterWidth * evt.fadeLevel;  // fade position
          }
@@ -630,24 +628,20 @@ export class BouncePunkSceneGroup {
       obstacleMoveGroup.name = 'obstacleMoveGroup';
       obstacleGroup.add(obstacleMoveGroup);
 
-      // Obstacle
+      // Create obstacle
       const obstacle = this.createCubeElement(
        name, obstacleMoveGroup, {width, height, depth}, matPrms, offset);
       obstacle.castShadow = true;
 
       // Calculate rods needed in x and y direction
-      const xRods = 1 + Math.floor(width - 2 * (rodRadius + wallRing));
-      const yRods = 1 + Math.floor(height - 2 * (rodRadius + wallRing));
-      // Loop through to create support rods
+      const xRods = 1 + Math.floor(width - 2 * (rodRadius + trgRing));
+      const yRods = 1 + Math.floor(height - 2 * (rodRadius + trgRing));
+      // Loop through to create support rods and rings
       for (let i = 0; i < xRods; i++) {
          for (let j = 0; j < yRods; j++) {
-            const xOld = i * (width / xRods) - width / 2;
-            const yOld = j * (height / yRods) - height / 2;
-
             const x = -(xRods - 1) / 2 + i;
             const y = -(yRods - 1) / 2 + j;
 
-            console.log(x, y);
             this.createSupportRods(obstacleGroup, obstacleMoveGroup, {x, y});
          }
       }
@@ -896,6 +890,10 @@ export class BouncePunkSceneGroup {
    // Return root group of scenegraph represented by this class
    getSceneGroup() {
       return this.topGroup;
+   }
+
+   getBall() {
+      return this.topGroup.getObjectByName('ball');
    }
 
    getPendingPromises() {

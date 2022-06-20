@@ -66,8 +66,8 @@ export class BounceSVGView extends React.Component {
              style, .13));
          }
          else if (evt.type === BounceMovie.cBallPosition) {
-            svgElms.push(<circle key={"ballPos" + evt.time} cx={evt.x}
-             cy={yTop - evt.y} r={BounceSVGView.ballPosRadius} 
+            svgElms.push(<circle key={`ballPos${evt.ballNumber}-${evt.time}`}
+             cx={evt.x} cy={yTop - evt.y} r={BounceSVGView.ballPosRadius}
              className={style[BounceSVGView.ballColors[evt.ballNumber]]}/>);
          }
          else if (evt.type === BounceMovie.cHitBarrier
