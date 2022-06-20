@@ -9,6 +9,7 @@ import {BSubmitModal} from './BounceSubmitModal';
 import {ViewChooser} from '../ViewChooser';
 import {MovieController}  from '../MovieController';
 import {BouncePunk3DView} from './BouncePunk3DView';
+import {BouncePunkVRView} from './BouncePunkVRView';
 
 import style from './Bounce.module.css'
 
@@ -129,6 +130,10 @@ export class Bounce extends Component {
       {
          label: "OldVR",
          viewMaker: mv => <BounceOldVRView movie={mv}/>
+      },
+      {
+         label: "Punk VR",
+         viewMaker: mv => <BouncePunkVRView movie={mv}/>
       }
    ];
 
