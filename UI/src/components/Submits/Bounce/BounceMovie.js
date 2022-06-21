@@ -30,6 +30,8 @@ export class BounceMovie {
       this.background.height = bkgSize;
       this.background.width = bkgSize;
       this.evts = [];
+
+      // CAS Fix: Make these accessor methods, e.g. getLastEdgeTime, getLastExitTime
       this.lastBallEdgeTime = 0;
       this.lastBallExitTime = 0;
 

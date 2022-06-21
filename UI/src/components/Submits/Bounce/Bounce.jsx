@@ -119,24 +119,11 @@ export class Bounce extends Component {
       },
       {
          label: "Movie",
-         viewMaker: mv => <MovieController movie={mv} viewCls={Bounce3DView}
-          duration={mv.lastBallExitTime}/>
-      },
-      {
-         label: "Punk",
          viewMaker: mv => <MovieController movie={mv} viewCls={BouncePunk3DView}
           duration={mv.lastBallExitTime}/>
       },
       {
          label: "VR",
-         viewMaker: mv => <BounceVRView movie={mv}/>
-      },
-      {
-         label: "OldVR",
-         viewMaker: mv => <BounceOldVRView movie={mv}/>
-      },
-      {
-         label: "Punk VR",
          viewMaker: mv => <BouncePunkVRView movie={mv}/>
       }
    ];
