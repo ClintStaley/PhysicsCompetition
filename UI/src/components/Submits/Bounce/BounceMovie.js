@@ -30,6 +30,8 @@ export class BounceMovie {
       this.background.height = bkgSize;
       this.background.width = bkgSize;
       this.evts = [];
+      this.lastBallEdgeTime = 0;
+      this.lastBallExitTime = 0;
 
       // Targets numbered from 0
       prms.targets.forEach((trg, idx) => 
@@ -66,17 +68,17 @@ export class BounceMovie {
                       arc.obstacleIdx, fadeFrame / fadeFrames);
                }
             }
-            else                                  // else it's an exit "arc"
+            else {                                // else it's an exit "arc"
                this.addHitEdgeEvt(time, arc.posX, arc.posY, ballId);
+               this.lastBallEdgeTime = time;
+            }
 
             // Create a sequence of ball positions, except for exit "arc"
             let arcDuration;
-            if (arcId < trk.length - 1) {
+            if (arcId < trk.length - 1)
                arcDuration = trk[arcId + 1].time - arc.time;
-            }
-            else {
+            else
                arcDuration = ballExitTime;
-            }
             let x, y;
             for (let arcTime = 0; arcTime < arcDuration;
                arcTime += 1.0/frameRate) {
@@ -87,8 +89,10 @@ export class BounceMovie {
             }
             if (arcId < trk.length - 1)
                time += arcDuration;
-            else
+            else {
                this.addBallExitEvt(time + arcDuration, x, y, ballId);
+               this.lastBallExitTime = time + arcDuration;
+            }
          });
       });
 

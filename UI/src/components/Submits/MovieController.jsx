@@ -21,14 +21,15 @@ export class MovieController extends Component {
          startTime: null,   // Time at which movie began; null if not playing
          currentOffset: 0,  // Number of seconds into movie play
          playing: false,    // Are we currently playing or stopped?
-         duration: props.movie.evts[props.movie.evts.length - 1].time
+         duration: props.duration
       }
    }
  
    static getDerivedStateFromProps(newProps, oldState) {
       let rtn = oldState;
 
-      if (newProps.movie !== oldState.props.movie) // Reset for new movie
+      if (newProps.movie !== oldState.props.movie
+       || newProps.duration !== oldState.duration) // Reset for new movie
          rtn = MovieController.getInitState(newProps);
 
       return rtn;

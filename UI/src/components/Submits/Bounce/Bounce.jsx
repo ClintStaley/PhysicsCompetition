@@ -25,7 +25,7 @@ import style from './Bounce.module.css'
 export class Bounce extends Component {
 
    static ballColors = ["red", "green", "orange", "purple", "cyan", "blue"];
-   static ballExitTime = 1.5;  // Time to continue arc after ball exits the rig
+   static ballExitTime = 1;  // Time to continue arc after ball exits the rig
 
    constructor(props) {
       super(props);
@@ -114,15 +114,18 @@ export class Bounce extends Component {
    static viewSpecs = [
       {
          label: "Diagram",
-         viewMaker: mv => <MovieController movie={mv} viewCls={BounceSVGView}/>
+         viewMaker: mv => <MovieController movie={mv} viewCls={BounceSVGView}
+          duration={mv.lastBallEdgeTime}/>
       },
       {
          label: "Movie",
-         viewMaker: mv => <MovieController movie={mv} viewCls={Bounce3DView}/>
+         viewMaker: mv => <MovieController movie={mv} viewCls={Bounce3DView}
+          duration={mv.lastBallExitTime}/>
       },
       {
          label: "Punk",
-         viewMaker: mv => <MovieController movie={mv} viewCls={BouncePunk3DView}/>
+         viewMaker: mv => <MovieController movie={mv} viewCls={BouncePunk3DView}
+          duration={mv.lastBallExitTime}/>
       },
       {
          label: "VR",

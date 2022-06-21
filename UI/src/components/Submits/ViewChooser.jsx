@@ -15,8 +15,7 @@ export class ViewChooser extends Component {
    }
  
    static getDerivedStateFromProps(newProps, oldState) {
-      if (newProps.movie !== oldState.props.movie || newProps.viewSpecs !==
-       oldState.props.viewSpecs)
+      if (newProps.movie !== oldState.props.movie)
           return {currentViewIdx: 0, props: newProps}
 
       return oldState;
