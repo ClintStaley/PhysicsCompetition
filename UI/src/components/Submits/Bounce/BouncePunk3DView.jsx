@@ -26,53 +26,23 @@ export class BouncePunk3DView extends React.Component {
    // Return state displaying background grid and other fixtures
    // appropriate for |movie|.  
    static getInitState(movie) {
-      const {roomHeight, roomWidth, roomDepth, rigSize} = BouncePunkSceneGroup;
+      const {roomHeight, roomWidth, roomDepth3D, rigSize} = BouncePunkSceneGroup;
       let scene = new THREE.Scene();
       let sceneGroup = new BouncePunkSceneGroup(movie);
-      sceneGroup.getSceneGroup().position.set(-roomWidth / 2, -roomHeight / 2, 0);
       scene.add(sceneGroup.getSceneGroup());
-
-      // Full range, square-decay, white light high on near wall in center
-      // let light = new THREE.PointLight(0xffffff, 10);
-      // let leftLight = new THREE.SpotLight(
-      //  0xffffff, 18, 0, Math.PI / 3.5, 0.8, 2);
-      // leftLight.castShadow = true;
-      // leftLight.position.set(
-      //  -roomWidth / 2 + 0.5, roomHeight / 2 - 0.5, roomDepth - 0.5);
-      // leftLight.power = 1600;
-      // scene.add(leftLight);
-      // let leftLightHelper = new THREE.SpotLightHelper(leftLight);
-      // scene.add(leftLightHelper);
-      // leftLight.decay = 0.5;
-      // leftLight.power = 30;
-      // leftLight.penumbra = 0.5;
-      // leftLight.angle = Math.Pi / 3.5;
-
-      // let rightLight = new THREE.SpotLight(
-      //  0xffffff, 18, 0, Math.PI / 3.5, 0.8, 0.5);
-      // rightLight.castShadow = true;
-      // rightLight.position.set(
-      //  roomWidth / 2 - 0.5, roomHeight / 2 - 0.5, roomDepth / 2);
-      // rightLight.target.position.set(0, 0, -roomDepth / 2);
-      // rightLight.decay = 0.5;
-      // rightLight.power = 30;
-      // rightLight.penumbra = 0.5;
-      // rightLight.angle = Math.Pi / 3.5;
-      // light.position.set(0, 0, roomDepth / 2);
-      // light.castShadow = true;
 
       const numOfLights = 4;
 
       for (let i = 0; i < numOfLights; i++) {
          let light = new THREE.SpotLight(
-          0xffffff, 18, 0, Math.PI / 2.5, 1, 2);
+          0xffffff, 18, 0, Math.PI / 5, 1, 2);
          light.castShadow = true;
          light.position.set(
-          1 + i, roomHeight / 2 - 0.5, roomDepth - 0.5);
+          1 + i, roomHeight - 0.5, roomDepth3D - 0.5);
          light.position.x =
-          -roomWidth / 2 + (i + 0.5) * (roomWidth / numOfLights);
-         light.target.position.set(light.position.x, -2, 0);
-         light.power = 300;
+          (i + 0.5) * (roomWidth / numOfLights);
+         light.target.position.set(light.position.x, 5, 0);
+         light.power = 800;
          scene.add(light).add(light.target);
          light.target.updateMatrixWorld();
          // let lightHelper = new THREE.SpotLightHelper(light);
@@ -80,12 +50,12 @@ export class BouncePunk3DView extends React.Component {
       }
 
       let ballLight = new THREE.SpotLight(
-       0xffffff, 18, 0, Math.PI / 10, 0.8, 2);
+       0xffffff, 18, 0, Math.PI / 20, 0.8, 2);
       ballLight.name = "ballLight";
       ballLight.castShadow = true;
       ballLight.position.set(
-       0, 0, roomDepth - 0.5);
-      ballLight.power = 150;
+       roomWidth / 2, roomHeight / 2, roomDepth3D - 0.5);
+      ballLight.power = 400;
       // ballLight.target = sceneGroup.getBall();
       ballLight.target.position.set(-rigSize / 2, rigSize / 2, 0);
       scene.add(ballLight).add(ballLight.target);
@@ -101,8 +71,8 @@ export class BouncePunk3DView extends React.Component {
       renderer.shadowMap.type = THREE.PCFSoftShadowMap
 
       let camera = new THREE.PerspectiveCamera(
-       40, 1, .01, 10 * BouncePunkSceneGroup.rigSize);
-      camera.position.set(0, 0, 15);  // Center of near wall
+       60, 1, .01, 10 * BouncePunkSceneGroup.rigSize);
+      camera.position.set(roomWidth / 2, rigSize / 2, 10);  // Center of near wall
 
       // Rerender when all pending textures are loaded to show new textures.
       Promise.all(sceneGroup.getPendingPromises()).then(() => {
@@ -125,9 +95,9 @@ export class BouncePunk3DView extends React.Component {
    // 3. Attach the renderer dom element to the mount.
    // 4. Do a render
    componentDidMount() {
+      const {roomWidth, roomHeight, rigDepth, rigSize} = BouncePunkSceneGroup;
       const width = this.mount.clientWidth;
       const height = this.mount.clientHeight;
-      let rigSize = BouncePunkSceneGroup.rigSize;
       let cameraControls;
 
       this.state.renderer.setSize(width, height);
@@ -150,15 +120,14 @@ export class BouncePunk3DView extends React.Component {
 
       cameraControls.addEventListener("control", () => {
          cameraControls.update(1);   // Needed w/nonzero param
-         this.state.renderer.render(
-          this.state.scene, this.state.camera);
+         this.state.renderer.render(this.state.scene, this.state.camera);
       });
 
-      cameraControls.setTarget(0, 0, 0);  // Center of rig
+      cameraControls.setTarget(roomWidth / 2, rigSize / 2, rigDepth);  // Center of rig
+      cameraControls.update();
 
       // Do a render
-      this.state.renderer.render(
-       this.state.scene, this.state.camera);
+      this.state.renderer.render(this.state.scene, this.state.camera);
    }
 
    static getDerivedStateFromProps(newProps, oldState) {
