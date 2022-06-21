@@ -27,5 +27,5 @@ Build a ["Galilean cannon"](https://en.wikipedia.org/wiki/Galilean_cannon) by ar
 
 ## The Details
 
-* You can register at [the competition site](https://www.softwareinventions.com/PhysicsCompetition/register)
+* You can register at [the competition site](https://www.softwareinventions.com/PhysicsCompetition/#/register)
 * Full details on how to use the site are [here](SiteInstructions.html).
