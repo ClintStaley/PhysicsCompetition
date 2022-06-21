@@ -62,12 +62,13 @@ export class BouncePunkSceneGroup {
       this.rig = this.makeRig();         // Rig, with ball, cannon and targets
       this.obstacles = [];                 // Targets already hit
       this.evtIdx = -1;                  // Event index currently displayed
+      this.balls = [];                   // Balls currently in play
+      this.currentBall;                  // Current ball in frame
 
       this.topGroup.add(this.room);
       this.rig.position.set(2, 0, rigDepth);
       this.topGroup.add(this.rig);
       this.setOffset(-0.01);
-
    }
 
    makeRoom() {
@@ -300,69 +301,6 @@ export class BouncePunkSceneGroup {
       const rigGroup = new THREE.Group();
       rigGroup.name = 'rig';
 
-      // // Test target
-      // const testTargetGroup = new THREE.Group();
-      // const testTarget = new THREE.Mesh(
-      //  new THREE.BoxGeometry(0.1, 0.1, ballRadius),
-      //  new THREE.MeshStandardMaterial(scratchedPlasticMat.fast));
-      // testTarget.name = 'testTarget';
-      // testTargetGroup.add(testTarget);
-      // testTarget.position.set(rigSize / 2.3, rigSize / 2, 0);
-      // testTarget.castShadow = true;
-
-      // this.pendingPromises.push(scratchedPlasticMat.slow.then(prms => {
-      //    testTarget.material = new THREE.MeshStandardMaterial(
-      //     cloneMatPrms(prms, {
-      //        x: 0.1,
-      //        y: 0.1
-      //     }));
-      // }));
-
-      // // this.updateLoadedTexture(brassMat, testTarget, {x: 0.1, y: 0.1});
-
-      // const testTargetRod = new THREE.Mesh(
-      //  new THREE.CylinderGeometry(rodRadius, rodRadius, rigDepth, 16),
-      //  new THREE.MeshStandardMaterial(scuffedMetalMat.fast));
-      // testTargetRod.name = 'testTargetRod';
-      // testTargetGroup.add(testTargetRod);
-      // testTargetRod.rotateX(Math.PI / 2);
-      // testTargetRod.position.set(rigSize / 2.3, rigSize / 2, -rigDepth / 2);
-      // testTargetRod.castShadow = true;
-
-      // this.updateLoadedTexture(
-      //  scuffedMetalMat, testTargetRod, {
-      //     x: 2 * rodRadius * Math.PI,
-      //     y: rigDepth
-      //  });
-
-      // rigGroup.add(testTargetGroup);
-
-      // const testTargetWallRing = this.createRingElement(
-      //  'testTargetWallRing', testTargetGroup, {
-      //     innerRad: rodRadius,
-      //     ringSize: wallRing,
-      //     segments: latheSegments
-      //  }, scuffedMetalMat);
-      // testTargetWallRing.rotateX(Math.PI / 2);
-      // testTargetWallRing.position.set(
-      //  rigSize / 2.3, rigSize / 2, -rigDepth);
-      // testTargetWallRing.receiveShadow = true;
-
-      // // const trgRingPoints = [];
-      // // trgRingPoints.push(new THREE.Vector2(rodRadius, 0));
-      // // trgRingPoints.push(new THREE.Vector2(rodRadius + 0.005, 0.005));
-      // // trgRingPoints.push(new THREE.Vector2(rodRadius + trgRing, 0));
-
-      // const testTargetTrgRing = this.createRingElement(
-      //  'testTargetTrgRing', testTargetGroup, {
-      //     innerRad: rodRadius,
-      //     ringSize: trgRing,
-      //     segments: latheSegments
-      //  }, scuffedMetalMat);
-      // testTargetTrgRing.rotateX(-Math.PI / 2);
-      // testTargetTrgRing.position.set(rigSize / 2.3, rigSize / 2, -0.05);
-      // testTargetTrgRing.receiveShadow = true;
-
       const cannonGroup = new THREE.Group();
       cannonGroup.name = 'cannon';
       rigGroup.add(cannonGroup);
@@ -519,16 +457,6 @@ export class BouncePunkSceneGroup {
       obstaclesGroup.name = 'obstaclesGroup';
       rigGroup.add(obstaclesGroup);
 
-      // Create ball
-      const ball = this.createSphereElement(
-       'ball', rigGroup, {
-          radius: ballRadius,
-          widthSegments: latheSegments,
-          heightSegments: latheSegments / 2
-       }, brassMat);
-      ball.position.set( -cannonLength / 2, rigSize, 0);
-      ball.castShadow = true;
-
       return rigGroup;
    }
 
@@ -539,12 +467,24 @@ export class BouncePunkSceneGroup {
        rigSize, latheSegments, gutterWidth, cannonLength} = BouncePunkSceneGroup;
       let evts = this.movie.evts;
       let evt;
-      const ball = this.rig.getObjectByName('ball');
 
       // While the event after evtIdx exists and needs adding to 3DElms
       while (this.evtIdx + 1 < evts.length
        && evts[this.evtIdx + 1].time <= timeStamp) {
          evt = evts[++this.evtIdx];
+
+         // If the event is ball launch, add the ball to the scene
+         if (evt.type === BounceMovie.cBallLaunch) {
+            // Create new ball
+            const ball = this.createSphereElement(
+             `ball ${evt.ballNumber}`, this.rig, {
+                radius: ballRadius,
+                widthSegments: latheSegments,
+                heightSegments: latheSegments / 2
+             }, brassMat);
+            ball.position.set(evt.x, evt.y, 0);
+            this.balls[evt.ballNumber] = this.currentBall = ball;
+         }
 
          // If the event is obstacle creation, add the obstacle to the scene
          if (evt.type === BounceMovie.cMakeBarrier
@@ -579,20 +519,16 @@ export class BouncePunkSceneGroup {
          else if (evt.type === BounceMovie.cBallPosition
           || evt.type === BounceMovie.cHitBarrier
           || evt.type === BounceMovie.cHitTarget) {
-            ball.position.set(evt.x, evt.y, 0);
+            this.balls[evt.ballNumber].position.set(evt.x, evt.y, 0);
          }
          if (evt.type === BounceMovie.cObstacleFade) {
             this.obstacles[evt.targetId].position.z =
              - gutterWidth * evt.fadeLevel;  // fade position
          }
          else if (evt.type === BounceMovie.cBallExit) {
-            ball.position.set(-cannonLength / 2, rigSize, 0);
-            console.log(`Ball ${evt.ballNumber} exited at ${evt.x}, ${evt.y},`
-             + ` at time ${evt.time}`);
+            this.rig.remove(this.balls[evt.ballNumber]);
          }
          else if (evt.type === BounceMovie.cHitEdge) {
-            console.log(`Ball ${evt.ballNumber} hit edge at ${evt.x}, ${evt.y},`
-             + ` at time ${evt.time}`);
          }
       }
 
@@ -606,14 +542,33 @@ export class BouncePunkSceneGroup {
          if (evt.type === BounceMovie.cBallPosition
           || evt.type === BounceMovie.cHitBarrier
           || evt.type === BounceMovie.cHitTarget) {
-            ball.position.set(evt.x, evt.y, 0);
+            this.balls[evt.ballNumber].position.set(evt.x, evt.y, 0);
          }
          if (evt.type === BounceMovie.cObstacleFade) {
             this.obstacles[evt.targetId].position.z =
              - gutterWidth * evt.fadeLevel;  // fade position
          }
-         if (evt.type === BounceMovie.cBallLaunch)
-            ball.position.set(0, rigSize, 0);
+         if (evt.type === BounceMovie.cBallLaunch) {
+            this.balls[evt.ballNumber].position.set(0, rigSize, 0);
+            this.rig.remove(this.balls[evt.ballNumber]);
+         }
+         else if (evt.type === BounceMovie.cBallExit) {
+            // Create new ball
+            const ball = this.createSphereElement(
+             `ball ${evt.ballNumber}`, this.rig, {
+                radius: ballRadius,
+                widthSegments: latheSegments,
+                heightSegments: latheSegments / 2
+             }, brassMat);
+            ball.position.set(evt.x, evt.y, 0);
+            this.balls[evt.ballNumber] = ball;
+
+            // If this is the last ball
+            if (evt.ballNumber === this.balls.length - 1)
+               this.currentBall = ball;
+         }
+         else if (evt.type === BounceMovie.cHitEdge)
+            this.currentBall = this.balls[evt.ballNumber];
       }
    }
 
@@ -894,8 +849,8 @@ export class BouncePunkSceneGroup {
       return this.topGroup;
    }
 
-   getBall() {
-      return this.topGroup.getObjectByName('ball');
+   getCurrentBall() {
+      return this.currentBall;
    }
 
    getPendingPromises() {

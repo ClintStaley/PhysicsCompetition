@@ -73,8 +73,7 @@ export class BouncePunk3DView extends React.Component {
           -roomWidth / 2 + (i + 0.5) * (roomWidth / numOfLights);
          light.target.position.set(light.position.x, -2, 0);
          light.power = 300;
-         scene.add(light);
-         scene.add(light.target);
+         scene.add(light).add(light.target);
          light.target.updateMatrixWorld();
          // let lightHelper = new THREE.SpotLightHelper(light);
          // scene.add(lightHelper);
@@ -82,12 +81,15 @@ export class BouncePunk3DView extends React.Component {
 
       let ballLight = new THREE.SpotLight(
        0xffffff, 18, 0, Math.PI / 10, 0.8, 2);
+      ballLight.name = "ballLight";
       ballLight.castShadow = true;
       ballLight.position.set(
        0, 0, roomDepth - 0.5);
       ballLight.power = 150;
-      ballLight.target = sceneGroup.getBall();
-      scene.add(ballLight);
+      // ballLight.target = sceneGroup.getBall();
+      ballLight.target.position.set(-rigSize / 2, rigSize / 2, 0);
+      scene.add(ballLight).add(ballLight.target);
+      ballLight.target.updateMatrixWorld();
 
       // Plus general ambient
       scene.add(new THREE.AmbientLight(0xffffff)); // 0x808080
@@ -185,6 +187,10 @@ export class BouncePunk3DView extends React.Component {
 
    render() {
       this.state.renderer.render(this.state.scene, this.state.camera);
+
+      // Update ball spotlight to point to ball
+      if (this.state.sceneGroup.getCurrentBall())
+         this.state.scene.getObjectByName("ballLight").target = this.state.sceneGroup.getCurrentBall();
       return (
          <div
             style={{height: "600px", width: "100%"}}
