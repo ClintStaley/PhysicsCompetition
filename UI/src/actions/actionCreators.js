@@ -12,9 +12,15 @@ import * as api from '../api';
 // value of the promise.
 function addStdHandlers(dsp, cb, promise) {
    promise
-   .catch((errList) => {
-      dsp({type: 'SHOW_ERR', details: errList});
-      return Promise.reject();  // Skip downstream "thens".
+   .catch((errInfo) => {
+      if (!errInfo.status)    // Thrown exception due to error in a "then"
+         dsp({type: 'SHOW_ERR', details: [`Unexpected error: ${errInfo}`]});
+      else if (errInfo.status === 400)
+         dsp({type: 'SHOW_ERR', details: errInfo.details});
+      else if (errInfo.status === 401)
+         dsp({type: 'SIGN_OUT'});     // Force signed out status if 401
+         
+      return Promise.reject();             // Skip downstream "thens".
    })
    .then((val) => {if (cb) cb(); return val;});
 }
@@ -24,6 +30,15 @@ export function signIn(credentials, cb) {
       addStdHandlers(dispatch, cb,
        api.signIn(credentials)
       .then((userInfo) => dispatch({type: "SIGN_IN", user: userInfo})));
+   }
+}
+
+export function signOut(cb) {
+   return (dispatch) => {
+      addStdHandlers(dispatch, cb,
+      api.signOut()
+       .then(() => dispatch({type: 'SIGN_OUT'}))
+       .then(() => {if (cb) cb()}));
    }
 }
 
@@ -45,22 +60,23 @@ export function getCtp(ctpId, cb){
 }
 
 export function getAllCtps(cb){
-   return(dispatch, getState) => {
-      api.getCtps().then((ctps) => {
-         dispatch({type: 'GET_CTPS', ctps});
-      })
-      .then(()=>{if (cb) cb()})
+   return(dispatch) => {
+      addStdHandlers(dispatch, cb,
+       api.getCtps().then((ctps) => {
+          dispatch({type: 'GET_CTPS', ctps});
+       })
+       .then(()=>{if (cb) cb()}));
    }
 }
 
 export function getAllCmps(cb) {
    return (dispatch, getState) => {
-      api.getCmps()
-       .then((cmps) => {
+      addStdHandlers(dispatch, cb,
+       api.getCmps().then((cmps) => {
          cmps.forEach(cmp => cmp.cmpTeams = []);
          dispatch({ type: 'GET_CMPS', cmps});
       })
-      .then(() => {if (cb) cb()})
+      .then(() => {if (cb) cb()}));
    }
 }
 
@@ -69,36 +85,36 @@ export function getAllCmps(cb) {
 // Dispatch an update for the teams property of app state.
 export function getTeamsByPrs(prsId, cb) {
    return (dispatch, getState) => {
-      api.getTeamsByPrs(prsId)
-      .then((teams) => {
+      addStdHandlers(dispatch, cb,
+      api.getTeamsByPrs(prsId).then((teams) => {
          teams.forEach(team => {
             team.mmbs = [];
             team.toggled = false;
          });
          dispatch({type: 'GET_PRS_TEAMS', teams})
       })
-      .then(() => {if (cb) cb()})
+      .then(() => {if (cb) cb()}));
    }
 }
 
 export function getCmpsByPrs(id, cb) {
    return ((dispatch, getState) => {
-      api.getCmpsByPrs(id)
-      .then((cmps) => {
+      addStdHandlers(dispatch, cb,
+      api.getCmpsByPrs(id).then((cmps) => {
          cmps.forEach(cmp => cmp.cmpTeams = []);
          dispatch({type: 'GET_PRS_CMPS', cmps});
       })
-      .then(() => {if (cb) cb()});
+      .then(() => {if (cb) cb()}));
    })
 }
 
 export function putCmp(cmpId, newData, cb) {
    return (dispatch) => {
-      api.putCmp(cmpId, newData)
-      .then(() => {
+      addStdHandlers(dispatch, cb,
+       api.putCmp(cmpId, newData).then(() => {
           dispatch({type: 'PUT_CMP', cmpId, newData});
        })
-      .then(() => {if (cb) cb()});
+      .then(() => {if (cb) cb()}));
    }
 }
 
@@ -120,58 +136,61 @@ export function postTeam(cmpId, newTeamData, cb) {
 
 export function putTeam(cmpId, teamId, newTeamData, cb) {
    return (dispatch, getState) => {
-      api.putTeam(cmpId, teamId, newTeamData)
-      .then(() => {
+      addStdHandlers(dispatch, cb,
+       api.putTeam(cmpId, teamId, newTeamData).then(() => {
           newTeamData.id = teamId;  // Add Id and preclude ID alteration
           dispatch({type: 'PUT_TEAM', teamId, team: newTeamData});
        })
-      .then(() => {if (cb) cb()});
+      .then(() => {if (cb) cb()}));
    }
 }
 
 export function getTeamById(cmpId, teamId, cb) {
    return (dispatch, getState) => {
-      api.getTeamById(cmpId, teamId)
-      .then((team) => {
+      addStdHandlers(dispatch, cb,
+       api.getTeamById(cmpId, teamId).then((team) => {
          team.mmbs = [];
          team.toggled = false;
          dispatch({type: 'GET_TEAM',  teamId, team});
       })
-      .then(() => {if (cb) cb()})}
+      .then(() => {if (cb) cb()}));
+   }
 }
 
 export function getTeamsByCmp(cmpId, cb) {
    return (dispatch, getState) => {
-      api.getTeamsByCmp(cmpId)
-      .then((teams) => {
+      addStdHandlers(dispatch, cb,
+      api.getTeamsByCmp(cmpId).then((teams) => {
          teams.forEach(team => {
             team.mmbs = [];
             team.toggled = false;
          });
          dispatch({type: 'GET_CMP_TEAMS', teams, cmpId})
       })
-      .then(() => {if (cb) cb()})}
+      .then(() => {if (cb) cb()}));
+   }
 }
 
 export function delTeam(cmpId, teamId, cb) {
    return (dispatch, getState) => {
-      api.delTeam(cmpId, teamId).then(() =>
-       dispatch({type: 'DEL_TEAM', teamId,
+      addStdHandlers(dispatch, cb,
+       api.delTeam(cmpId, teamId).then(() => dispatch({type: 'DEL_TEAM', teamId,
         cmpId, teamInfo: getState().teams}))
-      .then(() => {if (cb) cb()})
+      .then(() => {if (cb) cb()}));
    }
 }
 
 export function addMmb(mmbEmail, cmpId, teamId, cb) {
    return (dispatch, getState) => {
-      api.getPrssByEmail(mmbEmail)                    // Get the person to add
-      .then(prss => api.getPrs(prss[0].id))           // get their full data
-      .then(prs => api.postMmb(prs.id, cmpId, teamId) // Post the membership
-         .then(() => prs)) // Subpromise returns prs for full info in dispatch
-      .then(prs => dispatch({type: 'ADD_MMB', teamId, prs}))
-      .catch(err => dispatch({type: 'SHOW_ERR',
+      addStdHandlers(dispatch, cb,
+       api.getPrssByEmail(mmbEmail)                    // Get the person to add
+       .then(prss => api.getPrs(prss[0].id))           // get their full data
+       .then(prs => api.postMmb(prs.id, cmpId, teamId) // Post the membership
+          .then(() => prs)) // Subpromise returns prs for full info in dispatch
+       .then(prs => dispatch({type: 'ADD_MMB', teamId, prs}))
+       .catch(err => dispatch({type: 'SHOW_ERR',
         details: [`Can't add member: ${err}`]}))
-      .then(() => {if (cb) cb()})
+       .then(() => {if (cb) cb()}));
    }
 }
 
@@ -186,11 +205,11 @@ export function delMmb(cmpId, teamId, prsId, cb) {
 
 export function getTeamMmbs(cmpId, teamId, cb) {
    return (dispatch, getState) => {
-      api.getTeamMmbs(cmpId, teamId)
-      .then((mmbs) => {
+      addStdHandlers(dispatch, cb,
+       api.getTeamMmbs(cmpId, teamId).then((mmbs) => {
          return dispatch({type: 'GET_TEAM_MMBS', teamId, mmbs});
       })
-      .then(() => {if (cb) cb()})
+      .then(() => {if (cb) cb()}));
    }
 }
 
@@ -229,17 +248,6 @@ export function refreshSbms(cmpId, teamId, cb) {
       addStdHandlers(dispatch, cb,
        api.getSbms(cmpId, teamId, 1)
        .then(sbms => dispatch({type: "REFRESH_SBM", sbm: sbms[0], teamId})));
-   }
-}
-
-export function signOut(cb) {
-   return (dispatch, getState) => {
-      api.signOut()
-      .then(() => dispatch({ type: 'SIGN_OUT' }))
-      .then(() => {if (cb) cb()})
-      .catch((err) => {
-         dispatch({type: "SHOW_ERR", err});
-      })
    }
 }
 

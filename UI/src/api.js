@@ -46,13 +46,15 @@ function safeFetch(endpoint, body) {
 // Handle response with non-200 status by returning a Promise that rejects,
 // with reason: array of one or more error strings suitable for display.
 function createErrorPromise(response) {
-   if (response.status === 400)
+   if (response.status === 400) {
       return response.json()
-      .then(errorList => Promise.reject(errorList.map(
-         err => errorTranslate(err.tag))));
+      .then(errorList => Promise.reject({status: 400,
+         details: errorList.map(err =>  errorTranslate(err.tag))}))
+   } 
    else
-      return Promise.reject([response.status === 401 ? "Not logged in"
-       : response.status === 403 ? "Not permitted" : "Unknown error"]);
+      return Promise.reject({status: response.status, 
+       details: response.status === 401 ? ["Not logged in"]
+       : response.status === 403 ? ["Not permitted"] : ["Unknown error"]});
 }
 
 // Helper functions for the comon request types

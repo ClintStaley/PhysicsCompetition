@@ -42,7 +42,7 @@ export default function cmps(state = [], action) {
 
       // Action has no data
       case 'SIGN_OUT':
-         return {} // Clear user state
+         return []; // Clear user state
    }
    
    return state;

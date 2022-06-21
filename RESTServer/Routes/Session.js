@@ -42,18 +42,22 @@ Session.prototype.isAdmin = function() {
    return this.role === 1;
 };
 
-
 // Log out a user by removing this Session
 Session.prototype.logOut = function() {
    delete Session.ssnsById[this.id];
    delete Session.ssnsByCookie[this.authToken];
-   Session.ssnsByPrs[this.prsId] = Session.ssnsByPrs[this.prsId].filter(ssn => ssn !== this);
+   Session.ssnsByPrs[this.prsId] = Session.ssnsByPrs[this.prsId]
+    .filter(ssn => ssn !== this);
 };
 
 Session.getAllIds = () => Object.keys(Session.ssnsById);
 Session.findById = id => Session.ssnsById[id];
 Session.findByPrs = id => Session.ssnsByPrs[id];
-Session.resetAll = () => {Session.ssnsById = []; Session.ssnsByCookie = {}; Session.ssnsByPrs = {};}
+Session.resetAll = () => {
+   Session.ssnsById = []; 
+   Session.ssnsByCookie = {}; 
+   Session.ssnsByPrs = {};
+}
 
 // Function router that will find any Session associated with |req|, based on
 // cookies, delete the Session if it has timed out, or attach the Session to
@@ -65,8 +69,10 @@ Session.router = function(req, res, next) {
    
    if (session) {
       // If the session was last used more than |duration| mS ago..
-      if (session.lastUsed < new Date().getTime() - duration) 
+      if (session.lastUsed < new Date().getTime() - duration) {
          session.logOut();
+console.log("No session");
+      }
       else {
          req.session = session;
       }

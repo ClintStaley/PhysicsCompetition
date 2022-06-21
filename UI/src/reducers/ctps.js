@@ -11,7 +11,7 @@ export default function ctps(state = [], action) {
       return state;
       
    case 'SIGN_OUT':
-      return {} // Clear user state
+      return []; // Clear user state
    default:
       return state;
    }

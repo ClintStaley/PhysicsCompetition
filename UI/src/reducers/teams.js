@@ -66,7 +66,7 @@ export default function teams(state = [], action) {
          return state;
 
       case 'SIGN_OUT':
-         return {};
+         return [];
       default:
          return state;
    }
