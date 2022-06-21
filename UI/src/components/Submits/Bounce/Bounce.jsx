@@ -9,6 +9,7 @@ import {BSubmitModal} from './BounceSubmitModal';
 import {ViewChooser} from '../ViewChooser';
 import {MovieController}  from '../MovieController';
 import {BouncePunk3DView} from './BouncePunk3DView';
+import {BouncePunkVRView} from './BouncePunkVRView';
 
 import style from './Bounce.module.css'
 
@@ -24,6 +25,7 @@ import style from './Bounce.module.css'
 export class Bounce extends Component {
 
    static ballColors = ["red", "green", "orange", "purple", "cyan", "blue"];
+   static ballExitTime = 1;  // Time to continue arc after ball exits the rig
 
    constructor(props) {
       super(props);
@@ -36,7 +38,7 @@ export class Bounce extends Component {
        || newProps.sbm !== oldState.props.sbm) {
          return {
             props: newProps, 
-            movie: new BounceMovie(60, newProps.prms, newProps.sbm)
+            movie: new BounceMovie(60, newProps.prms, newProps.sbm, Bounce.ballExitTime)
          };
       }
       else
@@ -112,23 +114,17 @@ export class Bounce extends Component {
    static viewSpecs = [
       {
          label: "Diagram",
-         viewMaker: mv => <MovieController movie={mv} viewCls={BounceSVGView}/>
+         viewMaker: mv => <MovieController movie={mv} viewCls={BounceSVGView}
+          duration={mv.lastBallEdgeTime}/>
       },
       {
          label: "Movie",
-         viewMaker: mv => <MovieController movie={mv} viewCls={Bounce3DView}/>
-      },
-      {
-         label: "Punk",
-         viewMaker: mv => <MovieController movie={mv} viewCls={BouncePunk3DView}/>
+         viewMaker: mv => <MovieController movie={mv} viewCls={BouncePunk3DView}
+          duration={mv.lastBallExitTime}/>
       },
       {
          label: "VR",
-         viewMaker: mv => <BounceVRView movie={mv}/>
-      },
-      {
-         label: "OldVR",
-         viewMaker: mv => <BounceOldVRView movie={mv}/>
+         viewMaker: mv => <BouncePunkVRView movie={mv}/>
       }
    ];
 
