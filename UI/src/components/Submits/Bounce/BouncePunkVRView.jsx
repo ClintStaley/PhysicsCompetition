@@ -48,17 +48,20 @@ export class BouncePunkVRView extends React.Component {
    // Return state displaying background grid and other fixtures
    // appropriate for |movie|.  
    static getInitState(movie) {
-      const roomHeight = BouncePunkSceneGroup.roomHeight;
-      const roomWidth = BouncePunkSceneGroup.roomWidth;
-      const roomDepth = BouncePunkSceneGroup.roomDepth;
+      const {roomHeight, roomWidth, roomDepthVR} = BouncePunkSceneGroup;
       const rigSize = BouncePunkSceneGroup.rigSize;
 
       let scene = new THREE.Scene();
       let sceneGroup = new BouncePunkSceneGroup(movie);
 
       // Position room so that 0, 0, 0 is back middle of floor
-      sceneGroup.getSceneGroup().position.set(-roomWidth / 2, 0, -roomDepth);
+      // sceneGroup.getSceneGroup().position.set(-roomWidth / 2, 0, -roomDepthVR);
       scene.add(sceneGroup.getSceneGroup());
+
+      const test = new THREE.Mesh(
+       new THREE.BoxGeometry(1, 1, 1),
+       new THREE.MeshBasicMaterial({color: 0x00ff00}));
+      scene.add(test);
 
       // Full range, square-decay, white light high on near wall in center
       // let light = new THREE.PointLight(0xffffff, 10);
@@ -68,7 +71,7 @@ export class BouncePunkVRView extends React.Component {
       leftLight.castShadow = true;
       leftLight.position.set(
        -roomWidth / 2 + 0.5, roomHeight - 0.5, 0);
-      leftLight.target.position.set(0, roomHeight / 2, roomDepth);
+      leftLight.target.position.set(0, roomHeight / 2, roomDepthVR);
       let leftLightHelper = new THREE.SpotLightHelper(leftLight);
       scene.add(leftLightHelper);
       // leftLight.decay = 0.5;
@@ -81,12 +84,12 @@ export class BouncePunkVRView extends React.Component {
       rightLight.castShadow = true;
       rightLight.position.set(
        roomWidth / 2 - 0.5, roomHeight - 0.5, 0);
-      rightLight.target.position.set(0, roomHeight, roomDepth);
+      rightLight.target.position.set(0, roomHeight, roomDepthVR);
       // rightLight.decay = 0.5;
       // rightLight.power = 30;
       // rightLight.penumbra = 0.5;
       // rightLight.angle = Math.Pi / 3.5;
-      // light.position.set(0, 0, roomDepth / 2);
+      // light.position.set(0, 0, roomDepthVR / 2);
       // light.castShadow = true;
       // Plus general ambient
       scene.add(rightLight)
@@ -108,7 +111,11 @@ export class BouncePunkVRView extends React.Component {
       const near = 0.1;
       const far = 50;
       const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-      camera.position.set(0, 1.6, 0);
+      // camera.position.set(roomWidth / 2, rigSize / 2, 10);
+
+      const cameraGroup = new THREE.Group();
+      cameraGroup.add(camera);
+      cameraGroup.position.set(roomWidth / 2, rigSize / 2, 10);
 
       const movieController = new VRMovieController(movie, (offset) => {
          sceneGroup.setOffset(offset);

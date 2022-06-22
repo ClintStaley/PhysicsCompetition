@@ -25,7 +25,7 @@ import style from './Bounce.module.css'
 export class Bounce extends Component {
 
    static ballColors = ["red", "green", "orange", "purple", "cyan", "blue"];
-   static ballExitTime = 1;  // Time to continue arc after ball exits the rig
+   static ballExitTime = 1.5;  // Time to continue arc after ball exits the rig
 
    constructor(props) {
       super(props);

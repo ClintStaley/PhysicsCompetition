@@ -34,7 +34,8 @@ export class BouncePunkSceneGroup {
    // Room and gutter dimensions
    static roomHeight = 12;     // 12m tall, rig reaches up to 10m
    static roomWidth = 14;      // 2m extra on either side of rig
-   static roomDepth = 5;       // Don't need a lot of depth
+   static roomDepthVR = 5;     // Don't need a lot of depth
+   static roomDepth3D = 12;    // Needs more space for camera to pan around
    static floorHeight = .05;   // 5cm thick wood on floor
    static gutterWidth = .75;   // Rig gutter is 75cm wide
    static gutterDepth = 2.5;     // 2.5m is enough so you can't see the bottom
@@ -49,18 +50,18 @@ export class BouncePunkSceneGroup {
    static wallRing = .03;      // Width of ring surrounding rods at wall
    static rigDepth = 1;        // Rig is 1m from back wall
    static rigSize = 10;        // Rig is 10 x 10 meters
-   static latheSegments = 128;
-   static bevelRadius = .005;
+   static latheSegments = 128; // Enough to make lathes look smooth
+   static bevelRadius = .005;  // Radius of bevel on rings
 
    constructor(movie) {
-      const rigDepth = BouncePunkSceneGroup.rigDepth;
+      const {rigDepth} = BouncePunkSceneGroup;
 
       this.movie = movie;
       this.topGroup = new THREE.Group(); // Holds pending material promises
       this.pendingPromises = [];
       this.room = this.makeRoom();       // Room and gutter
       this.rig = this.makeRig();         // Rig, with ball, cannon and targets
-      this.obstacles = [];                 // Targets already hit
+      this.obstacles = [];               // Total obstacles in scene
       this.evtIdx = -1;                  // Event index currently displayed
       this.balls = [];                   // Balls currently in play
       this.currentBall;                  // Current ball in frame
@@ -72,8 +73,7 @@ export class BouncePunkSceneGroup {
    }
 
    makeRoom() {
-      const {roomHeight, roomWidth, roomDepth, floorHeight, gutterWidth,
-       gutterDepth, rigDepth} = BouncePunkSceneGroup;
+      const {roomHeight, roomWidth, roomDepth3D} = BouncePunkSceneGroup;
 
       // Create group to house room components
       const roomGroup = new THREE.Group();
@@ -86,10 +86,10 @@ export class BouncePunkSceneGroup {
       const roof = this.createPlaneElement(
        'roof', roomGroup, {
           width: roomWidth, 
-          height: roomDepth
+          height: roomDepth3D
        }, plasterMat);
       roof.rotateX(Math.PI / 2);
-      roof.position.set(roomWidth / 2, roomHeight, roomDepth / 2);
+      roof.position.set(roomWidth / 2, roomHeight, roomDepth3D / 2);
 
       // Create floor sections
       this.makeFloor(roomGroup, olderWoodFloorMat);
@@ -101,7 +101,7 @@ export class BouncePunkSceneGroup {
    }
 
    makeWalls(roomGroup, wallMat) {
-      const {roomHeight, roomWidth, roomDepth, floorHeight, gutterWidth,
+      const {roomHeight, roomWidth, roomDepth3D, floorHeight, gutterWidth,
        gutterDepth, rigDepth} = BouncePunkSceneGroup;
 
       // Create walls group
@@ -129,12 +129,12 @@ export class BouncePunkSceneGroup {
 
       const leftFrontSideWall = this.createPlaneElement(
        'leftFrontSideWall', wallsGroup, {
-          width: roomDepth - (rigDepth + gutterWidth / 2),
+          width: roomDepth3D - (rigDepth + gutterWidth / 2),
           height: roomHeight
        }, wallMat);
       leftFrontSideWall.rotateY(Math.PI / 2);
       leftFrontSideWall.position.set(
-       0, roomHeight / 2, (roomDepth + rigDepth + gutterWidth / 2) / 2);
+       0, roomHeight / 2, (roomDepth3D + rigDepth + gutterWidth / 2) / 2);
 
       // Right walls
       const rightBackSideWall = this.createPlaneElement(
@@ -148,19 +148,19 @@ export class BouncePunkSceneGroup {
 
       const rightFrontSideWall = this.createPlaneElement(
        'rightFrontSideWall', wallsGroup, {
-          width: roomDepth - (rigDepth + gutterWidth / 2),
+          width: roomDepth3D - (rigDepth + gutterWidth / 2),
           height: roomHeight
        }, brickMat);
       rightFrontSideWall.rotateY(-Math.PI / 2);
       rightFrontSideWall.position.set(
-       roomWidth, roomHeight / 2, (roomDepth + rigDepth + gutterWidth / 2) / 2);
+       roomWidth, roomHeight / 2, (roomDepth3D + rigDepth + gutterWidth / 2) / 2);
 
       // Add walls group to room group
       roomGroup.add(wallsGroup);
    }
 
    makeFloor(roomGroup, floorMat) {
-      const {roomWidth, roomDepth, floorHeight, gutterWidth, rigDepth}
+      const {roomWidth, roomDepth3D, floorHeight, gutterWidth, rigDepth}
        = BouncePunkSceneGroup;
 
       // Create roof group
@@ -187,11 +187,11 @@ export class BouncePunkSceneGroup {
       const frontFloorTop = this.createPlaneElement(
        'frontFloorTop', floorGroup, {
           width: roomWidth,
-          height: roomDepth - (rigDepth + gutterWidth / 2),
+          height: roomDepth3D - (rigDepth + gutterWidth / 2),
        }, floorMat);
       frontFloorTop.rotateX(-Math.PI / 2);
       frontFloorTop.position.set(
-       roomWidth / 2, 0, (roomDepth + rigDepth + gutterWidth / 2) / 2);
+       roomWidth / 2, 0, (roomDepth3D + rigDepth + gutterWidth / 2) / 2);
 
       const frontFloorSide = this.createPlaneElement(
        'frontFloorSide', floorGroup, {
