@@ -5,8 +5,7 @@ import { ListGroup, ListGroupItem, Button, Popover, OverlayTrigger }
    from 'react-bootstrap';
 import { ConfDialog, EntryDialog } from '../concentrator';
 import * as actionCreators from '../../actions/actionCreators';
-import TeamModal from './TeamModal'
-import { propTypes } from 'react-bootstrap/esm/Image';
+import TeamModal from './TeamModal';
 
 class TeamsPage extends Component {
    constructor(props) {

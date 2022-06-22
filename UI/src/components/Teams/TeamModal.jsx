@@ -1,8 +1,6 @@
-import React, { Component } from 'react';
-import {
-  Modal, Button, Form} from 'react-bootstrap';
+import React, {Component} from 'react';
+import {Modal, Button, Form} from 'react-bootstrap';
 import Select from 'react-select';
-// import 'react-select/dist/react-select.css';
 
 export default class TeamModal extends Component {
    constructor(props) {
@@ -32,6 +30,7 @@ export default class TeamModal extends Component {
    componentDidMount(){
       document.addEventListener("keydown", this.handleKeyPress, false);
    }
+
    componentWillUnmount(){
       document.removeEventListener("keydown", this.handleKeyPress, false);
    }
@@ -56,7 +55,7 @@ export default class TeamModal extends Component {
       this.setState({leader : event});
    }
 
-   //enter still has problems, will automatically reopen window, different key works fine
+   // Enter still automatically reopens window, different key works fine
    handleKeyPress = (target) => {
       if (target.keyCode === 13) {
          target.preventDefault();

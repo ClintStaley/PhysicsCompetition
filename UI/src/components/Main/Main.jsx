@@ -24,7 +24,6 @@ class Main extends Component {
            <Cmp {...rest}/> : <Redirect to='/signin'/>;
       }}/>;
    
-
    signOut(event) {
       this.props.history.push("/");
       this.props.signOut();
