@@ -35,6 +35,7 @@
     "eject": "react-scripts eject"
   },
   "devDependencies": {
+    "dat.gui": "^0.7.9",
     "react-scripts": "^5.0.1"
   },
   "browserslist": {
