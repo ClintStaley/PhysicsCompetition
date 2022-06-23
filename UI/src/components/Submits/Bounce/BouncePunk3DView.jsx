@@ -26,7 +26,7 @@ export class BouncePunk3DView extends React.Component {
    // Return state displaying background grid and other fixtures
    // appropriate for |movie|.  
    static getInitState(movie) {
-      const {roomHeight, roomWidth, roomDepth3D, rigSize} = BouncePunkSceneGroup;
+      const {roomHeight, roomWidth, roomDepth3D, rigSize, rigDepth} = BouncePunkSceneGroup;
       let scene = new THREE.Scene();
       let sceneGroup = new BouncePunkSceneGroup(movie);
       scene.add(sceneGroup.getSceneGroup());
@@ -57,7 +57,8 @@ export class BouncePunk3DView extends React.Component {
        roomWidth / 2, roomHeight / 2, roomDepth3D - 0.5);
       ballLight.power = 400;
       // ballLight.target = sceneGroup.getBall();
-      ballLight.target.position.set(-rigSize / 2, rigSize / 2, 0);
+      ballLight.target.position.set(
+       (roomWidth - rigSize) / 2, rigSize, rigDepth);
       scene.add(ballLight).add(ballLight.target);
       ballLight.target.updateMatrixWorld();
 
@@ -95,7 +96,7 @@ export class BouncePunk3DView extends React.Component {
    // 3. Attach the renderer dom element to the mount.
    // 4. Do a render
    componentDidMount() {
-      const {roomWidth, roomHeight, rigDepth, rigSize} = BouncePunkSceneGroup;
+      const {roomWidth, roomHeight, roomDepth3D, rigDepth, rigSize} = BouncePunkSceneGroup;
       const width = this.mount.clientWidth;
       const height = this.mount.clientHeight;
       let cameraControls;
@@ -106,15 +107,14 @@ export class BouncePunk3DView extends React.Component {
       this.state.camera.updateProjectionMatrix();
       this.mount.appendChild(this.state.renderer.domElement);
 
-      // let cameraBounds = new THREE.Box3(new THREE.Vector3(rigSize - 24,
-      //    rigSize - 19, rigSize - 8), new THREE.Vector3(rigSize + 4, rigSize + 4,
-      //    rigSize + 5))
+      // let cameraBounds = new THREE.Box3(new THREE.Vector3(0, 0, 0),
+      //  new THREE.Vector3(roomWidth, roomHeight, roomDepth3D));
 
       cameraControls = new CameraControls(
          this.state.camera,
          this.state.renderer.domElement
       );
-      // Restric right click camera movement
+      // // Restric right click camera movement
       // cameraControls.setBoundary(cameraBounds);
       // cameraControls.boundaryEnclosesCamera = true;
 
