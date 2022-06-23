@@ -43,7 +43,7 @@ router.post('/', (req, res) => {
       }
    },
    (result, fields, cb) => {
-      // DO NOT Return location of inserted Member (but do confirm resolution of chkQry)
+      // DO NOT return location of inserted Member
       res.end();
       cb();
    }],

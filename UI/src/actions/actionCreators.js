@@ -188,8 +188,6 @@ export function addMmb(mmbEmail, cmpId, teamId, cb) {
        .then(prs => api.postMmb(prs.id, cmpId, teamId) // Post the membership
           .then(() => prs)) // Subpromise returns prs for full info in dispatch
        .then(prs => dispatch({type: 'ADD_MMB', teamId, prs}))
-       .catch(err => dispatch({type: 'SHOW_ERR',
-        details: [`Can't add member: ${err}`]}))
        .then(() => {if (cb) cb()}));
    }
 }

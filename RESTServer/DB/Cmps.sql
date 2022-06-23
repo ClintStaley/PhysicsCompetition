@@ -2,6 +2,23 @@ use CmpDB;
 
 # Bounce Competitions ------------------------------------
 
+# 3.1 m/s 2.89s 8.96 6.1
+insert into Competition (title, ctpId, ownerId, description, hints, prms)
+   VALUES ('Example Bounce Competition', 2, 1, 
+    'An example Bounce competition, to learn how it works',
+    'Bronze', 
+    '{
+        "targetTime": 3.23, 
+        "targets": [
+           {"loX": 2.0, "hiX": 4.0, "hiY": 5.0, "loY": 4.9},
+           {"loX": 8.0, "hiX": 9.0, "hiY": 6.0, "loY": 5.9}
+         ],
+        "barriers": [
+           {"loX": 5.8, "hiX": 6.2, "hiY": 9.6, "loY": 4.0}
+        ]
+     }');
+
+
 # 6.674 m/s 1.078s 7.195 4.3
 insert into Competition (title, ctpId, ownerId, description, hints, prms)
    VALUES ('Basic Bounce Competition', 2, 1, 'Good starter problem', 'Basic', '{

@@ -127,7 +127,8 @@ router.put('/:id', (req, res) => {
 
    async.waterfall([
       (cb) => {
-         if (vld.hasOnlyFields(body, ["teamName", "leaderId"]).check(true, null, cb))
+         if (vld.hasOnlyFields(body, ["teamName", "leaderId"])
+          .check(true, null, cb))
             cnn.chkQry("select * from Team where id = ? && cmpId = ?",
                [req.params.id, req.params.cmpId], cb);
       },
