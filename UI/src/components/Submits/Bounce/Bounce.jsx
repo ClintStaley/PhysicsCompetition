@@ -38,7 +38,8 @@ export class Bounce extends Component {
        || newProps.sbm !== oldState.props.sbm) {
          return {
             props: newProps, 
-            movie: new BounceMovie(60, newProps.prms, newProps.sbm, Bounce.ballExitTime)
+            movie: new BounceMovie(60, newProps.prms, newProps.sbm,
+             Bounce.ballExitTime)
          };
       }
       else
