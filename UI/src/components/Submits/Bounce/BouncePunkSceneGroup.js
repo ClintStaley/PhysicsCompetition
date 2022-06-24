@@ -1,7 +1,7 @@
 import {BounceMovie} from './BounceMovie';
 import * as THREE from 'three';
 import {brickMat, flatSteelMat, plasterMat, scratchedPlasticMat,
- streakyPlasticMat, brassMat, scuffedMetalMat, olderWoodFloorMat} from
+ streakyPlasticMat, brassMat, ballMat, scuffedMetalMat, olderWoodFloorMat} from
  '../../Util/AsyncMaterials';
 import {cloneMatPrms} from '../../Util/ImageUtil';
 
