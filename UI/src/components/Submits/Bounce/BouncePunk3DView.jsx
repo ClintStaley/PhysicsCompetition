@@ -121,6 +121,7 @@ export class BouncePunk3DView extends React.Component {
       cameraControls.addEventListener("control", () => {
          cameraControls.update(1);   // Needed w/nonzero param
          this.state.renderer.render(this.state.scene, this.state.camera);
+         // console.log(this.state.renderer.info);
       });
 
       cameraControls.setTarget(roomWidth / 2, rigSize / 2, rigDepth);  // Center of rig
@@ -160,6 +161,7 @@ export class BouncePunk3DView extends React.Component {
       // Update ball spotlight to point to ball
       if (this.state.sceneGroup.getCurrentBall())
          this.state.scene.getObjectByName("ballLight").target = this.state.sceneGroup.getCurrentBall();
+      // console.log(this.state.renderer.info);
       return (
          <div
             style={{height: "600px", width: "100%"}}
