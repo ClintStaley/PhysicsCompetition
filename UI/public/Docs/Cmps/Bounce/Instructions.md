@@ -8,15 +8,15 @@ In this competition, you'll launch balls to hit rectangular targets, while avoid
 ## The Details
 Here is a typical Bounce competition setup:
 
-![Bounce 3D Image](./Bounce3D.png)
+![Bounce 3D Image](./Hints/Example/ProblemMovie.png)
 
 And here is the same setup in schematic form, with coordinates for the obstacle and target corners.
 
-![Bounce Diagram](./BounceDiagram.png)
+![Bounce Diagram](./Hints/Example/ProblemDiagram.png)
 
 The setup is a square 10m high and 10m wide, filled with rectangles, some red and some dark gray.  The red rectangles are **targets**, and the dark gray ones are **barriers**.  You have to hit all the targets, while avoiding the barriers.
 
-To do this, you launch balls from the upper left edge of the playing area, at any left-to-right horizontal speed you like.  (In the nonschematic version, the cannon at upper left fires the balls at the speed you specify.
+To do this, you launch balls from the upper left edge of the playing area, at any left-to-right horizontal speed you like.  (In the movie version, the cannon at upper left fires the balls at the speed you specify.)
 
 Each ball you launch falls toward the bottom of the playing area at a gravitational acceleration of 9.81 m/s^2.  Given the 10m height of the area, this means it'll hit the bottom in just over 1.4s.  Or, if you launch it fast enough, it'll hit the far right edge in less time than that.
 
