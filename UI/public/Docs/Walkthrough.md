@@ -8,4 +8,4 @@ You can try out a competition without even registering on the site if you like. 
 
 3. Now choose Active Competitions on the upper left, and you should see Example Bounce Competition as your one active competition.  Click "status" for this competition to see the team you created, and click Submit/check by that team, to actually work on the competition.
 
-4. Now go to [the hints for this competition](./Cmps/Bounce/Hints/Intro/Index.html).  They'll give you exact answers, so you can try out the competition.
+4. Now go to [the hints for this competition](./Cmps/Bounce/Hints/Example/Index.html).  They'll give you exact answers, so you can try out the competition.
