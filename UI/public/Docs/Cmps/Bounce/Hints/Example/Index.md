@@ -42,8 +42,8 @@ and so the center will only fall to y = 5.1m -- a drop of 4.9m
 shows the ball will fall for .999 seconds.  (Check this on your own, possibly
 with help from an instructor.)
 
-3. So, a speed of say 2.1 m/s will make the ball travel to the right $.999 * 2.1 = 2.099$ 
-meters as it falls.  
+3. So, a speed of say 2.1 m/s will make the ball travel to the right 
+$.999 * 2.1 = 2.099$ meters as it falls.  
 
-We do another attempt, entering 2.1 m/s, and the collision time of .999 and location
-of x = 2.099 and y = 4.9 (the ball's center location, remember).  
+We do another attempt, entering 2.1 m/s, and the collision time of .999 and 
+location of x = 2.099 and y = 4.9 (the ball's center location, remember).
