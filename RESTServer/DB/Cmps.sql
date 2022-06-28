@@ -2,9 +2,28 @@ use CmpDB;
 
 # Bounce Competitions ------------------------------------
 
+# 3.1 m/s 2.89s 8.96 6.1
+# 2.28 m/s 1.272s 2.9, 2.07
+# Lower score alt 2nd ball 2.83 m/s, 1.097s 3.1, 4.1
+insert into Competition (title, ctpId, ownerId, description, hints, prms)
+   VALUES ('Example Bounce Competition', 1, 1, 
+    'An example Bounce competition, to learn how it works',
+    'Bronze', 
+    '{
+        "targetTime": 5.69, 
+        "targets": [
+           {"loX": 2.0, "hiX": 4.0, "loY": 4.9, "hiY": 5.0},
+           {"loX": 8.0, "hiX": 9.0, "loY": 5.9, "hiY": 6.0},
+           {"loX": 3.0, "hiX": 3.2, "loY": 2.0, "hiY": 4.0}
+         ],
+        "barriers": [
+           {"loX": 5.8, "hiX": 6.4, "loY": 1.0, "hiY": 9.6}
+        ]
+     }');
+
 # 6.674 m/s 1.078s 7.195 4.3
 insert into Competition (title, ctpId, ownerId, description, hints, prms)
-   VALUES ('Basic Bounce Competition', 2, 1, 'Good starter problem', 'Basic', '{
+   VALUES ('Basic Bounce Competition', 1, 1, 'Good starter problem', 'Basic', '{
       "targetTime": 1.514,
       "targets": [ 
          {"loX": 7.0, "hiX": 7.2, "hiY": 4.2, "loY": 4.0 }
@@ -15,7 +34,7 @@ insert into Competition (title, ctpId, ownerId, description, hints, prms)
 
 # 1.961 m/s 4.59s  9.0 5.6
 insert into Competition (title, ctpId, ownerId, description, hints, prms)
-   VALUES ('Bronze Bounce Competition', 2, 1, 
+   VALUES ('Bronze Bounce Competition', 1, 1, 
       'More complex, but still doable in one ball', 'Bronze', '{
       "targetTime": 5.15,
       "targets": [ 
@@ -31,7 +50,7 @@ insert into Competition (title, ctpId, ownerId, description, hints, prms)
 # 5.9 m/s 1.186s 1.0 3.1
 # 12 m/s 1.08s 1.0 4.24 
 insert into Competition (title, ctpId, ownerId, description, hints, prms)
-   VALUES ('Silver Bounce Competition', 2, 1,
+   VALUES ('Silver Bounce Competition', 1, 1,
     'Intermediate: requires 2 balls ping-ponging between
      two columns of targets', 'Silver',
     '{
@@ -49,7 +68,7 @@ insert into Competition (title, ctpId, ownerId, description, hints, prms)
 # 2.88 m/s 2.77s 7.98 8.0
 # 1.62 m/s 1.645s 2.67 4.5
 insert into Competition (title, ctpId, ownerId, description, hints, prms)
-   VALUES ('Gold Bounce Competition', 2, 1, 
+   VALUES ('Gold Bounce Competition', 1, 1, 
     'A challenging Bounce competition, though still doable with two balls',
     'Gold', 
     '{
@@ -65,9 +84,22 @@ insert into Competition (title, ctpId, ownerId, description, hints, prms)
         ]
      }');
 
+# Landgrab Competitions -------------------------------
+
+# (29.28, 70.72) r29.28  (79.3, 70.7) r20.7  (20.45, 20.45) r20.45
+insert into Competition (title, ctpId, ownerId, description, hints, prms)
+   VALUES ('Example Landgrab Competition', 2, 1, '1 Barrier, 3 circles', 'Basic',
+   '{
+      "numCircles": 3,
+      "goalArea": 5111,
+      "obstacles": [
+         {"loX": 60, "hiX": 70, "loY": 30, "hiY": 100} 
+      ] 
+   }');
+
 # (50, 50) r50   (7.321, 7.321) r10.35
 insert into Competition (title, ctpId, ownerId, description, hints, prms)
-   VALUES ('Basic Landgrab Competition', 1, 1, 'No barriers', 'Basic', 
+   VALUES ('Basic Landgrab Competition', 2, 1, 'No barriers', 'Basic', 
    '{
       "numCircles": 2,
       "goalArea": 8085.2,
@@ -76,7 +108,7 @@ insert into Competition (title, ctpId, ownerId, description, hints, prms)
 
 # (29.28, 70.72) r29.28        
 insert into Competition (title, ctpId, ownerId, description, hints, prms)
-   VALUES ('Bronze Landgrab Competition', 1, 1, 'Simple one-barrier', 'Basic',
+   VALUES ('Bronze Landgrab Competition', 2, 1, 'Simple one-barrier', 'Basic',
    '{
       "numCircles": 1,
       "goalArea": 2693.3,
@@ -87,7 +119,7 @@ insert into Competition (title, ctpId, ownerId, description, hints, prms)
 
 # (67.5, 47.5) r32.5
 insert into Competition (title, ctpId, ownerId, description, prms)
-   VALUES ('Silver Landgrab Competition', 1, 1, '3 Barriers', 
+   VALUES ('Silver Landgrab Competition', 2, 1, '3 Barriers', 
    '{
       "numCircles": 1,
       "goalArea": 3318.3,
@@ -100,23 +132,12 @@ insert into Competition (title, ctpId, ownerId, description, prms)
 
 # (29.28, 70.72) r29.28  (79.3, 70.7) r20.7
 insert into Competition (title, ctpId, ownerId, description, hints, prms)
-   VALUES ('Gold Landgrab Competition', 1, 1, '1 Barrier but not square', 'Basic',
+   VALUES ('Gold Landgrab Competition', 2, 1, '1 Barrier but not square', 'Basic',
    '{
       "numCircles": 2,
       "goalArea": 4039.4,
       "obstacles": [
          { "loX": 70, "hiX": 100, "loY": 0, "hiY": 20 } 
-      ] 
-   }');
-
-# (29.28, 70.72) r29.28  (79.3, 70.7) r20.7  (20.45, 20.45) r20.45
-insert into Competition (title, ctpId, ownerId, description, hints, prms)
-   VALUES ('Example Landgrab Competition', 1, 1, '1 Barrier, 3 circles', 'Basic',
-   '{
-      "numCircles": 3,
-      "goalArea": 5111,
-      "obstacles": [
-         {"loX": 60, "hiX": 70, "loY": 30, "hiY": 100} 
       ] 
    }');
 

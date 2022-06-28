@@ -32,7 +32,7 @@ class TeamsPage extends Component {
       }
    }
 
-   //enter still has problems, will automatically reopen window, different key works fine
+   // Enter still will automatically reopen window, different key works fine
    handleKeyPress = (target) => {
       if (target.keyCode === 13) {
          target.preventDefault();

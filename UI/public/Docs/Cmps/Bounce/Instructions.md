@@ -1,28 +1,30 @@
 <link rel="stylesheet" type="text/css" media="all" href="../../CmpDocs.css" />
 
-# Instructions for Bounce Competition
+# Full Instructions for Bounce Competition
 
 ## Overview
-In this competition, you'll launch balls to hit rectangular targets, while avoiding rectangular barriers.  You'll compete to hit all the targets, while avoiding the barriers, in as little time as possible.
+In this competition, you launch balls to hit rectangular targets, while avoiding
+rectangular barriers.  You compete to hit all the targets in as little time as 
+possible.
 
 ## The Details
 Here is a typical Bounce competition setup:
 
-![Bounce 3D Image](./Bounce3D.png)
+![Bounce 3D Image](./Hints/Example/ProblemMovie.png)
 
 And here is the same setup in schematic form, with coordinates for the obstacle and target corners.
 
-![Bounce Diagram](./BounceDiagram.png)
+![Bounce Diagram](./Hints/Example/ProblemDiagram.png)
 
-The setup is a square 10m high and 10m wide, filled with rectangles, some red and some dark gray.  The red rectangles are **targets**, and the dark gray ones are **barriers**.  You have to hit all the targets, while avoiding the barriers.
+The setup is a square 10m high and 10m wide, filled with rectangles.  The red rectangles are **targets**, and the dark gray ones are **barriers**.  You have to hit all the targets, while avoiding the barriers.
 
-To do this, you launch balls from the upper left edge of the playing area, at any left-to-right horizontal speed you like.  Each ball you launch falls toward the bottom of the playing area at a gravitational acceleration of 9.81 m/s^2.  Given the 10m height of the area, this means it'll hit the bottom in just over 1.4s.  Or, if you launch it fast enough, it'll hit the far right edge in less time than that.
+To do this, you launch balls from the upper left edge of the playing area, at any left-to-right horizontal speed up to 20 m/s.  (In the movie version, a cannon at upper left fires the balls at the speed you specify.)
 
-But, if the ball hits any target or barrier, then it bounces off, perfectly elastically.  The target or barrier retracts so you won't hit it again.  This means you can keep the ball going for quite a while by launching relatively slowly, and arranging for it to hit targets, bouncing back up off of each one.  The job, then, is to figure out a horizontal speed that makes the ball hit as many targets as possible before leaving the playing area, without hitting any barriers.
+Each ball you launch falls toward the bottom of the playing area at a gravitational acceleration of 9.81 m/s^2.  Given the 10m height of the area, this means it'll fall 10m to the bottom in just over 1.4s.  Or, if you launch it fast enough, it'll hit the far right edge in less time than that.
 
-In some cases, you'll be able to hit all the targets with a single ball, but you're allowed as many balls as you need.  You specify a launch speed for each ball, and they get launched one after another, each one launched as soon as the prior one entirely leaves the playing area.  For each ball you must also enter the location of its center, and the time, of the final target collision the ball makes before leaving the playing area.  (It's assumed you won't launch a ball without expecting to hit at least one target.)  This precludes solving the problem by iterative guessing; you have to do the math.
+If the ball hits any target or barrier, it bounces off, perfectly elastically.  The target or barrier retracts so you won't hit it again.  This means you can keep the ball going for quite a while by arranging for it to hit targets, bouncing back up off of each one.  In some cases, you'll be able to hit all the targets with a single ball, but you're allowed as many balls as you need.  You specify a launch speed for each ball, and they get launched one after another, each one launched as soon as the prior one entirely leaves the playing area.  For each ball you must also enter the location of its center, and the time, of the final target collision the ball makes before leaving the playing area.  (It's assumed you won't launch a ball without expecting to hit at least one target.)  This precludes solving the problem by iterative guessing; you have to do the math.
 
-For each proposed solution you submit, you'll get a movie of the result.  If you hit all the targets without hitting any barriers, and if you get the right final time and location for the final collision of each ball, then you have a **valid solution**, and you also get a table of numerical collision data so you can confirm your math.  Invalid solutions still get the movie, so you can see roughly where you went wrong.  But they don't get a numerical table of collision data; you still have to fix the math yourself.
+For each proposed solution you submit, you get a movie of the result.  If you hit all the targets without hitting any barriers, and if you get the right final time and location for the final collision of each ball, then you have a **valid solution**, and you also get a table of numerical collision data so you can confirm your math.  Invalid solutions still get the movie, so you can see roughly where you went wrong.  But they don't get a numerical table of collision data; you still have to fix the math yourself.
 
 ### Scoring details
 Your score is based on the total travel time for all balls, plus an assumed 1 second delay between balls.  (So if you have three balls with travel times of 1.5, 2.1, and 1.6, your total time is 7.2.)  Each competition has a **target time** to shoot for, and you get a full score of 100 if you hit that time.  Longer times get a reduced score in proportion to the amount of excess time, for instance 50 points out of 100 if you take twice the target time.

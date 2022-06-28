@@ -1,7 +1,7 @@
 import {BounceMovie} from './BounceMovie';
 import * as THREE from 'three';
 import {brickMat, flatSteelMat, plasterMat, scratchedPlasticMat,
- streakyPlasticMat, brassMat, scuffedMetalMat, olderWoodFloorMat} from
+ streakyPlasticMat, brassMat, ballMat, scuffedMetalMat, olderWoodFloorMat} from
  '../../Util/AsyncMaterials';
 import {cloneMatPrms} from '../../Util/ImageUtil';
 
@@ -56,20 +56,45 @@ export class BouncePunkSceneGroup {
    constructor(movie) {
       const {rigDepth} = BouncePunkSceneGroup;
 
+      // Create materials object
+      this.mats = {};
+
       this.movie = movie;
       this.topGroup = new THREE.Group(); // Holds pending material promises
       this.pendingPromises = [];
-      this.room = this.makeRoom();       // Room and gutter
-      this.rig = this.makeRig();         // Rig, with ball, cannon and targets
+      this.balls = [];                   // Array of balls currently in play
       this.obstacles = [];               // Total obstacles in scene
       this.evtIdx = -1;                  // Event index currently displayed
-      this.balls = [];                   // Balls currently in play
       this.currentBall;                  // Current ball in frame
 
+      this.room = this.makeRoom();       // Room and gutter
+      this.rig = this.makeRig();         // Rig, with ball, cannon and targets
+
+      
       this.topGroup.add(this.room);
       this.rig.position.set(2, 0, rigDepth);
       this.topGroup.add(this.rig);
       this.setOffset(-0.01);
+
+      console.log(this.mats);
+
+      // Iterate through this.mats, creating each material and applying it to
+      // every object in the this.mats.[name].objs array
+      Object.entries(this.mats).forEach(([name, {mat, x, y, objs}]) => {
+         // Add promise for material, and a then to run when mat prms load
+         this.pendingPromises.push(this.mats[name].mat.then(prms => {
+            const mat = new THREE.MeshStandardMaterial(
+             cloneMatPrms(prms, {
+                x: this.mats[name].x,
+                y: this.mats[name].y
+             }));
+
+            // Apply material to all relevant objects
+            this.mats[name].objs.forEach(obj => {
+               obj.material = mat
+            })
+         }));
+      });
    }
 
    makeRoom() {
@@ -119,7 +144,7 @@ export class BouncePunkSceneGroup {
 
       // Left walls
       const leftBackSideWall = this.createPlaneElement(
-       'leftBackSideWall', wallsGroup, {
+       'backSideWall', wallsGroup, {
           width: rigDepth - gutterWidth / 2,
           height: roomHeight
        }, wallMat);
@@ -128,7 +153,7 @@ export class BouncePunkSceneGroup {
        0, roomHeight / 2, (rigDepth - gutterWidth / 2) / 2);
 
       const leftFrontSideWall = this.createPlaneElement(
-       'leftFrontSideWall', wallsGroup, {
+       'frontSideWall', wallsGroup, {
           width: roomDepth3D - (rigDepth + gutterWidth / 2),
           height: roomHeight
        }, wallMat);
@@ -138,7 +163,7 @@ export class BouncePunkSceneGroup {
 
       // Right walls
       const rightBackSideWall = this.createPlaneElement(
-       'rightBackSideWall', wallsGroup, {
+       'backSideWall', wallsGroup, {
           width: rigDepth - gutterWidth / 2,
           height: roomHeight
        }, wallMat);
@@ -147,7 +172,7 @@ export class BouncePunkSceneGroup {
        roomWidth, roomHeight / 2, (rigDepth - gutterWidth / 2) / 2);
 
       const rightFrontSideWall = this.createPlaneElement(
-       'rightFrontSideWall', wallsGroup, {
+       'frontSideWall', wallsGroup, {
           width: roomDepth3D - (rigDepth + gutterWidth / 2),
           height: roomHeight
        }, brickMat);
@@ -215,7 +240,7 @@ export class BouncePunkSceneGroup {
 
       // Bottom gutter
       const bottomGutterBack = this.createPlaneElement(
-       'bottomGutterBack', gutterGroup, {
+       'bottomGutter', gutterGroup, {
           width: roomWidth, 
           height: gutterDepth - floorHeight
        }, gutterWallMat);
@@ -224,7 +249,7 @@ export class BouncePunkSceneGroup {
        rigDepth - gutterWidth / 2);
 
       const bottomGutterFront = this.createPlaneElement(
-       'bottomGutterFront', gutterGroup, {
+       'bottomGutter', gutterGroup, {
           width: roomWidth,
           height: gutterDepth - floorHeight
        }, gutterWallMat);
@@ -234,7 +259,7 @@ export class BouncePunkSceneGroup {
 
       // Left gutter
       const leftGutterBack = this.createPlaneElement(
-       'leftGutterBack', gutterGroup, {
+       'sideGutter', gutterGroup, {
           width: gutterDepth,
           height: roomHeight + gutterDepth
        }, gutterWallMat);
@@ -243,7 +268,7 @@ export class BouncePunkSceneGroup {
        rigDepth - gutterWidth / 2);
 
       const leftGutterFront = this.createPlaneElement(
-       'leftGutterFront', gutterGroup, {
+       'sideGutter', gutterGroup, {
           width: gutterDepth,
           height: roomHeight + gutterDepth
        }, gutterWallMat);
@@ -253,7 +278,7 @@ export class BouncePunkSceneGroup {
 
       // Right gutter
       const rightGutterBack = this.createPlaneElement(
-       'rightGutterBack', gutterGroup, {
+       'sideGutter', gutterGroup, {
           width: gutterDepth,
           height: roomHeight + gutterDepth
        }, gutterWallMat);
@@ -262,7 +287,7 @@ export class BouncePunkSceneGroup {
        rigDepth - gutterWidth / 2);
 
       const rightGutterFront = this.createPlaneElement(
-       'rightGutterFront', gutterGroup, {
+       'sideGutter', gutterGroup, {
           width: gutterDepth,
           height: roomHeight + gutterDepth
        }, gutterWallMat);
@@ -272,7 +297,7 @@ export class BouncePunkSceneGroup {
 
       // Gutter roof
       const leftGutterRoof = this.createPlaneElement(
-       'leftGutterRoof', gutterGroup, {
+       'gutterRoof', gutterGroup, {
           width: gutterDepth,
           height: gutterWidth
        }, gutterRoofMat);
@@ -281,7 +306,7 @@ export class BouncePunkSceneGroup {
        -gutterDepth / 2, roomHeight, rigDepth);
 
       const rightGutterRoof = this.createPlaneElement(
-       'rightGutterRoof', gutterGroup, {
+       'gutterRoof', gutterGroup, {
           width: gutterDepth,
           height: gutterWidth
        }, gutterRoofMat);
@@ -306,6 +331,160 @@ export class BouncePunkSceneGroup {
       rigGroup.add(cannonGroup);
 
       // Make cannon
+      this.makeCannon(cannonGroup);
+
+      // The cannon's uv mapping will be weird, as it assumes all segments
+      // are the same length. So, we need to change these uv values to reflect
+      // the actual length of each segment.
+
+      // Make cannon wall mount
+      this.makeCannonMount(cannonGroup);
+
+      // Create group for obstacles
+      const obstaclesGroup = new THREE.Group();
+      obstaclesGroup.name = 'obstaclesGroup';
+      rigGroup.add(obstaclesGroup);
+
+      // Pre-create starter ball, so that additional balls can copy material
+      this.createBall(0, rigGroup);
+
+      return rigGroup;
+   }
+
+   // Adjust the scenegraph to reflect time.  This may require either forward
+   // or backward movement in time.
+   setOffset(timeStamp) {
+      const {ballRadius, rodRadius, trgDepth, trgRing, wallRing, rigDepth,
+       rigSize, latheSegments, gutterWidth, cannonLength} = BouncePunkSceneGroup;
+      let evts = this.movie.evts;
+      let evt;
+
+      // While the event after evtIdx exists and needs adding to 3DElms
+      while (this.evtIdx + 1 < evts.length
+       && evts[this.evtIdx + 1].time <= timeStamp) {
+         evt = evts[++this.evtIdx];
+
+         // If the event is ball launch, add the ball to the scene
+         if (evt.type === BounceMovie.cBallLaunch) {
+            // Create new ball
+            let ball;
+            if (this.balls[evt.ballNumber]) {
+               ball = this.balls[evt.ballNumber];
+               this.rig.add(ball);
+               console.log('revealed a ball!');
+            }
+            else {
+               ball = this.createBall(evt.ballNumber, this.rig);
+               this.balls[evt.ballNumber] = ball;
+               console.log('made a ball!');
+            }
+            console.log('ball number', evt.ballNumber);
+            this.currentBall = ball;
+            ball.position.set(evt.x, evt.y, 0);
+         }
+
+         // If the event is obstacle creation, add the obstacle to the scene
+         if (evt.type === BounceMovie.cMakeBarrier
+          || evt.type === BounceMovie.cMakeTarget) {
+            // Add the indicated barrier to the scene
+            const width = evt.hiX - evt.loX;
+            const height = evt.hiY - evt.loY;
+            let objGroup;
+            if (evt.type === BounceMovie.cMakeTarget) {
+               objGroup = this.createObstacle(
+                'target', this.rig, {
+                   width: width,
+                   height: height,
+                   depth: trgDepth,
+                }, brassMat);
+            }
+            else if (evt.type === BounceMovie.cMakeBarrier) {
+               objGroup = this.createObstacle(
+                'barrier', this.rig, {
+                   width: width,
+                   height: height,
+                   depth: trgDepth,
+                }, streakyPlasticMat, new THREE.Vector2(0.1, 0));
+            }
+
+            objGroup.position.set(evt.loX + width / 2, evt.loY + height / 2, 0);
+            this.obstacles[evt.id] = objGroup.getObjectByName(
+             'obstacleMoveGroup');
+         }
+
+         // If the event contains ball position, update the ball's position
+         else if (evt.type === BounceMovie.cBallPosition
+          || evt.type === BounceMovie.cHitBarrier
+          || evt.type === BounceMovie.cHitTarget) {
+            if (this.currentBall) {
+               console.log('positioning ball');
+               this.balls[evt.ballNumber].position.set(evt.x, evt.y, 0);
+            }
+            else
+               console.log('no ball to position');
+         }
+         if (evt.type === BounceMovie.cObstacleFade) {
+            this.obstacles[evt.targetId].position.z =
+             - gutterWidth * evt.fadeLevel;  // fade position
+         }
+         else if (evt.type === BounceMovie.cBallExit) {
+            this.rig.remove(this.balls[evt.ballNumber]);
+            console.log('hid a ball!');
+         }
+         else if (evt.type === BounceMovie.cHitEdge) {
+         }
+      }
+
+      // Undo events to move backward in time. (Note that this and the prior
+      // while condition are mutually exclusive.) Assume that barrier and
+      // target creation occur at negative time and thus will not be "backed
+      // over"
+      while (this.evtIdx > 0 && timeStamp < evts[this.evtIdx].time) {
+         evt = evts[this.evtIdx--];
+
+         if (evt.type === BounceMovie.cBallPosition
+          || evt.type === BounceMovie.cHitBarrier
+          || evt.type === BounceMovie.cHitTarget) {
+            this.balls[evt.ballNumber].position.set(evt.x, evt.y, 0);
+         }
+         if (evt.type === BounceMovie.cObstacleFade) {
+            this.obstacles[evt.targetId].position.z =
+             - gutterWidth * evt.fadeLevel;  // fade position
+         }
+         if (evt.type === BounceMovie.cBallLaunch) {
+            this.balls[evt.ballNumber].position.set(0, rigSize, 0);
+            this.rig.remove(this.balls[evt.ballNumber]);
+            console.log('backwards launch!');
+         }
+         else if (evt.type === BounceMovie.cBallExit) {
+            // // Create new ball
+            // const ball = this.createSphereElement(
+            //  `ball ${evt.ballNumber}`, this.rig, {
+            //     radius: ballRadius,
+            //     widthSegments: latheSegments,
+            //     heightSegments: latheSegments / 2
+            //  }, brassMat);
+            // ball.position.set(evt.x, evt.y, 0);
+            // this.balls[evt.ballNumber] = ball;
+            const ball = this.balls[evt.ballNumber];
+
+            // Unhide ball
+            this.rig.add(ball);
+            console.log('revealed a ball!');
+
+            // If this is the last ball
+            if (evt.ballNumber === this.balls.length - 1)
+               this.currentBall = ball;
+         }
+         else if (evt.type === BounceMovie.cHitEdge)
+            this.currentBall = this.balls[evt.ballNumber];
+      }
+   }
+
+   makeCannon(cannonGroup) {
+      const {cannonLength, cannonRadius, ballRadius, rodRadius, trgDepth,
+       trgRing, wallRing, rigDepth, rigSize, latheSegments}
+       = BouncePunkSceneGroup;
 
       const cannonPoints = [];
 
@@ -386,14 +565,15 @@ export class BouncePunkSceneGroup {
       cannon.rotateY(Math.PI);
       cannon.position.set(0, rigSize, 0);
       cannon.castShadow = true;
+   }
 
-      // The cannon's uv mapping will be weird, as it assumes all segments
-      // are the same length. So, we need to change these uv values to reflect
-      // the actual length of each segment.
+   makeCannonMount(cannonGroup) {
+      const {cannonLength, cannonRadius, ballRadius, rodRadius, trgDepth,
+       trgRing, wallRing, rigDepth, rigSize, latheSegments}
+       = BouncePunkSceneGroup;
 
-      // Make cannon wall mount
       const frontLargeCannonMount = this.createCylinderElement(
-       'frontLargeCannonMount', cannonGroup, {
+       'largeCannonMount', cannonGroup, {
           radius: 0.1,
           height: 1.1,
           segments: latheSegments
@@ -404,7 +584,7 @@ export class BouncePunkSceneGroup {
       frontLargeCannonMount.castShadow = true;
 
       const frontMountRing = this.createRingElement(
-       'frontMountRing', cannonGroup, {
+       'mountRing', cannonGroup, {
           innerRad: 0.1,
           ringSize: 0.03,
           segments: latheSegments
@@ -413,17 +593,17 @@ export class BouncePunkSceneGroup {
       frontMountRing.position.set(-2, rigSize, 0.5);
 
       const frontSmallCannonMount = this.createCylinderElement(
-         'frontSmallCannonMount', cannonGroup, {
-            radius: 0.05,
-            height: 0.5,
-            segments: latheSegments
-         }, scuffedMetalMat);
+       'smallCannonMount', cannonGroup, {
+          radius: 0.05,
+          height: 0.5,
+          segments: latheSegments
+       }, scuffedMetalMat);
       frontSmallCannonMount.rotateX(Math.PI / 2);
       frontSmallCannonMount.position.set(-1, rigSize, 0.35);
       frontSmallCannonMount.castShadow = true;
 
       const backLargeCannonMount = this.createCylinderElement(
-       'backLargeCannonMount', cannonGroup, {
+       'largeCannonMount', cannonGroup, {
           radius: 0.1,
           height: 1.1,
           segments: latheSegments
@@ -434,7 +614,7 @@ export class BouncePunkSceneGroup {
       backLargeCannonMount.castShadow = true;
 
       const backMountRing = this.createRingElement(
-       'backMountRing', cannonGroup, {
+       'mountRing', cannonGroup, {
           innerRad: 0.1,
           ringSize: 0.03,
           segments: latheSegments
@@ -443,7 +623,7 @@ export class BouncePunkSceneGroup {
       backMountRing.position.set(-2, rigSize, -0.5);
 
       const backSmallCannonMount = this.createCylinderElement(
-       'backSmallCannonMount', cannonGroup, {
+       'smallCannonMount', cannonGroup, {
           radius: 0.05,
           height: 0.5,
           segments: latheSegments
@@ -451,125 +631,6 @@ export class BouncePunkSceneGroup {
       backSmallCannonMount.rotateX(Math.PI / 2);
       backSmallCannonMount.position.set(-1, rigSize, -0.35);
       backSmallCannonMount.castShadow = true;
-
-      // Create group for obstacles
-      const obstaclesGroup = new THREE.Group();
-      obstaclesGroup.name = 'obstaclesGroup';
-      rigGroup.add(obstaclesGroup);
-
-      return rigGroup;
-   }
-
-   // Adjust the scenegraph to reflect time.  This may require either forward
-   // or backward movement in time.
-   setOffset(timeStamp) {
-      const {ballRadius, rodRadius, trgDepth, trgRing, wallRing, rigDepth,
-       rigSize, latheSegments, gutterWidth, cannonLength} = BouncePunkSceneGroup;
-      let evts = this.movie.evts;
-      let evt;
-
-      // While the event after evtIdx exists and needs adding to 3DElms
-      while (this.evtIdx + 1 < evts.length
-       && evts[this.evtIdx + 1].time <= timeStamp) {
-         evt = evts[++this.evtIdx];
-
-         // If the event is ball launch, add the ball to the scene
-         if (evt.type === BounceMovie.cBallLaunch) {
-            // Create new ball
-            const ball = this.createSphereElement(
-             `ball ${evt.ballNumber}`, this.rig, {
-                radius: ballRadius,
-                widthSegments: latheSegments,
-                heightSegments: latheSegments / 2
-             }, brassMat);
-            ball.position.set(evt.x, evt.y, 0);
-            this.balls[evt.ballNumber] = this.currentBall = ball;
-         }
-
-         // If the event is obstacle creation, add the obstacle to the scene
-         if (evt.type === BounceMovie.cMakeBarrier
-          || evt.type === BounceMovie.cMakeTarget) {
-            // Add the indicated barrier to the scene
-            const width = evt.hiX - evt.loX;
-            const height = evt.hiY - evt.loY;
-            let objGroup;
-            if (evt.type === BounceMovie.cMakeTarget) {
-               objGroup = this.createObstacle(
-                'target', this.rig, {
-                   width: width,
-                   height: height,
-                   depth: trgDepth,
-                }, brassMat);
-            }
-            else if (evt.type === BounceMovie.cMakeBarrier) {
-               objGroup = this.createObstacle(
-                'barrier', this.rig, {
-                   width: width,
-                   height: height,
-                   depth: trgDepth,
-                }, streakyPlasticMat, new THREE.Vector2(0.1, 0));
-            }
-
-            objGroup.position.set(evt.loX + width / 2, evt.loY + height / 2, 0);
-            this.obstacles[evt.id] = objGroup.getObjectByName(
-             'obstacleMoveGroup');
-         }
-
-         // If the event contains ball position, update the ball's position
-         else if (evt.type === BounceMovie.cBallPosition
-          || evt.type === BounceMovie.cHitBarrier
-          || evt.type === BounceMovie.cHitTarget) {
-            this.balls[evt.ballNumber].position.set(evt.x, evt.y, 0);
-         }
-         if (evt.type === BounceMovie.cObstacleFade) {
-            this.obstacles[evt.targetId].position.z =
-             - gutterWidth * evt.fadeLevel;  // fade position
-         }
-         else if (evt.type === BounceMovie.cBallExit) {
-            this.rig.remove(this.balls[evt.ballNumber]);
-         }
-         else if (evt.type === BounceMovie.cHitEdge) {
-         }
-      }
-
-      // Undo events to move backward in time. (Note that this and the prior
-      // while condition are mutually exclusive.) Assume that barrier and
-      // target creation occur at negative time and thus will not be "backed
-      // over"
-      while (this.evtIdx > 0 && timeStamp < evts[this.evtIdx].time) {
-         evt = evts[this.evtIdx--];
-
-         if (evt.type === BounceMovie.cBallPosition
-          || evt.type === BounceMovie.cHitBarrier
-          || evt.type === BounceMovie.cHitTarget) {
-            this.balls[evt.ballNumber].position.set(evt.x, evt.y, 0);
-         }
-         if (evt.type === BounceMovie.cObstacleFade) {
-            this.obstacles[evt.targetId].position.z =
-             - gutterWidth * evt.fadeLevel;  // fade position
-         }
-         if (evt.type === BounceMovie.cBallLaunch) {
-            this.balls[evt.ballNumber].position.set(0, rigSize, 0);
-            this.rig.remove(this.balls[evt.ballNumber]);
-         }
-         else if (evt.type === BounceMovie.cBallExit) {
-            // Create new ball
-            const ball = this.createSphereElement(
-             `ball ${evt.ballNumber}`, this.rig, {
-                radius: ballRadius,
-                widthSegments: latheSegments,
-                heightSegments: latheSegments / 2
-             }, brassMat);
-            ball.position.set(evt.x, evt.y, 0);
-            this.balls[evt.ballNumber] = ball;
-
-            // If this is the last ball
-            if (evt.ballNumber === this.balls.length - 1)
-               this.currentBall = ball;
-         }
-         else if (evt.type === BounceMovie.cHitEdge)
-            this.currentBall = this.balls[evt.ballNumber];
-      }
    }
 
    createObstacle(name, parent, {width, height, depth}, matPrms, offset) {
@@ -610,17 +671,33 @@ export class BouncePunkSceneGroup {
       const {rodRadius, trgDepth, trgRing, wallRing, rigDepth,
        latheSegments} = BouncePunkSceneGroup;
 
+      // if (!this.mats.supportRods)
+      //    this.mats.supportRods = {
+      //       mat: scuffedMetalMat.slow,
+      //       x: 2 * rodRadius * Math.PI,
+      //       y: rigDepth,
+      //       objs: []
+      //    };
       // Add rod
-      const rod = this.createCylinderElement(
-       'rod', moveParent, {
+      const supportRod = this.createCylinderElement(
+       'supportRod', moveParent, {
           radius: rodRadius,
           height: rigDepth,
           segments: latheSegments
        }, scuffedMetalMat);
-      rod.position.set(x, y, -rigDepth / 2);
-      rod.rotateX(Math.PI / 2);
-      rod.castShadow = true;
+      supportRod.position.set(x, y, -rigDepth / 2);
+      supportRod.rotateX(Math.PI / 2);
+      supportRod.castShadow = true;
+      // this.mats.supportRods.objs.push(supportRod);
 
+
+      if (!this.mats.obstacleRing)
+         this.mats.obstacleRing = {
+            mat: scuffedMetalMat.slow,
+            x: 2 * rodRadius * Math.PI,
+            y: rigDepth,
+            objs: []
+         };
       // Add obstacle ring
       const obstacleRing = this.createRingElement(
        'obstacleRing', moveParent, {
@@ -644,12 +721,36 @@ export class BouncePunkSceneGroup {
       obstacleWallRing.receiveShadow = true;
    }
 
+   createBall(ballNumber, parent) {
+      const {rigSize, cannonLength} = BouncePunkSceneGroup;
+      // Ball dimensions
+      const radius = BouncePunkSceneGroup.ballRadius;
+      const widthSegments = BouncePunkSceneGroup.latheSegments;
+      const heightSegments = BouncePunkSceneGroup.latheSegments / 2;
+
+      const ball = this.createSphereElement(
+       `ball`, parent, {
+          radius,
+          widthSegments,
+          heightSegments
+       }, brassMat);
+      this.balls[ballNumber] = ball;
+      
+      ball.position.set(-cannonLength / 2, rigSize, 0);
+      
+      return ball;
+   }
+
    createCubeElement(name, parent, {width, height, depth}, matPrms, offset) {
       const cube = new THREE.Mesh(
        new THREE.BoxGeometry(width, height, depth),
        new THREE.MeshStandardMaterial(matPrms.fast));
       cube.name = name;
       parent.add(cube);
+
+      width = 1;
+      height = 1;
+      depth = 1;
 
       // Texture sides
       this.pendingPromises.push(matPrms.slow.then(prms => {
@@ -687,7 +788,8 @@ export class BouncePunkSceneGroup {
          y: radius * Math.PI
       }
 
-      this.updateLoadedTexture(matPrms, sphere, desiredRep, offset);
+      // this.updateLoadedTexture(matPrms, sphere, desiredRep, offset);
+      this.addMaterial(sphere, desiredRep, matPrms);
 
       return sphere;
    }
@@ -704,7 +806,8 @@ export class BouncePunkSceneGroup {
          y: height
       };
 
-      this.updateLoadedTexture(matPrms, plane, desiredRep, offset);
+      // this.updateLoadedTexture(matPrms, plane, desiredRep, offset);
+      this.addMaterial(plane, desiredRep, matPrms);
 
       return plane;
    }
@@ -722,7 +825,10 @@ export class BouncePunkSceneGroup {
          y: height
       };
 
-      this.updateLoadedTexture(matPrms, cylinder, desiredRep, offset);
+      
+
+      // this.updateLoadedTexture(matPrms, cylinder, desiredRep, offset);
+      this.addMaterial(cylinder, desiredRep, matPrms);
 
       return cylinder;
    }
@@ -781,6 +887,17 @@ export class BouncePunkSceneGroup {
       }));
    }
 
+   addMaterial(obj, {x, y}, matPrms) {
+      if (!this.mats[obj.name])
+         this.mats[obj.name] = {
+            mat: matPrms.slow,
+            x,
+            y,
+            objs: []
+         };
+      this.mats[obj.name].objs.push(obj);
+   }
+
    // Takes a lathe, and adjusts its UV values to make the texture map evenly,
    // then applies a texture the correct size. 
    fixLatheUVs(lathe, {points, maxRadius, segments}, matPrms, offset) {
@@ -825,7 +942,8 @@ export class BouncePunkSceneGroup {
          y: textureLength
       };
 
-      this.updateLoadedTexture(matPrms, lathe, desiredRep, offset);
+      // this.updateLoadedTexture(matPrms, lathe, desiredRep, offset);
+      this.addMaterial(lathe, desiredRep, matPrms);
    }
 
    generateArcPoints(points, radius, center, angle) {
@@ -835,7 +953,8 @@ export class BouncePunkSceneGroup {
             const y = center.y + radius * Math.sin(i);
             points.push(new THREE.Vector2(x, y));
          }
-      } else {
+      }
+      else {
          for (let i = angle.start; i <= angle.end; i += angle.incr) {
             const x = center.x + radius * Math.cos(i);
             const y = center.y + radius * Math.sin(i);

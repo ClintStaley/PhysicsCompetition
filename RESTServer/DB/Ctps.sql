@@ -1,68 +1,6 @@
 use CmpDB;
 
 insert into CompetitionType (title, codeName, description, prmSchema)
-   VALUES ("Land Grab", "LandGrab", "Claim territory by placing circles",  '{
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "Land Grab",
-      "type": "object",
-      "properties": {
-         "numCircles": {
-            "title": "Number of circles allowed per team",
-            "type": "integer",
-            "minimum": 1
-         },
-         "hints": {
-            "title": "Type of hints used to direct to hints page",
-            "type" : "string"
-         },
-         "goalArea": {
-            "title": "Area of coverage that gets 100%",
-            "type": "number",
-            "minimum": 0.0,
-            "maximum": 10000.0
-         },
-         "obstacles": {
-            "title": "Blocked areas in 100x100 square",
-            "type": "array",
-            "items": {
-               "title": "Blocked rectangle",
-               "type": "object",
-               "properties": {
-                  "loX": {
-                     "title": "Left edge",
-                     "type": "number",
-                     "minimum": 0.0,
-                     "maximum": 100.0
-                  },
-                  "hiX": {
-                     "title": "Right edge",
-                     "type": "number",
-                     "minimum": 0.0,
-                     "maximum": 100.0
-                  },
-                  "loY": {
-                     "title": "Bottom edge",
-                     "type": "number",
-                     "minimum": 0.0,
-                     "maximum": 100.0
-                  }, 
-                  "hiY": {
-                     "title": "Top edge",
-                     "type": "number",
-                     "minimum": 0.0,
-                     "maximum": 100.0
-                  }
-               },
-               "additionalProperties": false,
-               "minProperties": 4
-            }
-         }
-      },
-      "additionalProperties": false,
-      "required": ["numCircles", "goalArea", "obstacles"]
-   }');
-
-insert into CompetitionType (title, codeName, description, prmSchema)
    VALUES ("Bounce", "Bounce","Bounce balls through an obstacle field", '{
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "Bounce",
@@ -151,6 +89,68 @@ insert into CompetitionType (title, codeName, description, prmSchema)
       },
       "additionalProperties": false,
       "required": ["targetTime", "targets", "barriers"]
+   }');
+
+insert into CompetitionType (title, codeName, description, prmSchema)
+   VALUES ("Land Grab", "LandGrab", "Claim territory by placing circles",  '{
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Land Grab",
+      "type": "object",
+      "properties": {
+         "numCircles": {
+            "title": "Number of circles allowed per team",
+            "type": "integer",
+            "minimum": 1
+         },
+         "hints": {
+            "title": "Type of hints used to direct to hints page",
+            "type" : "string"
+         },
+         "goalArea": {
+            "title": "Area of coverage that gets 100%",
+            "type": "number",
+            "minimum": 0.0,
+            "maximum": 10000.0
+         },
+         "obstacles": {
+            "title": "Blocked areas in 100x100 square",
+            "type": "array",
+            "items": {
+               "title": "Blocked rectangle",
+               "type": "object",
+               "properties": {
+                  "loX": {
+                     "title": "Left edge",
+                     "type": "number",
+                     "minimum": 0.0,
+                     "maximum": 100.0
+                  },
+                  "hiX": {
+                     "title": "Right edge",
+                     "type": "number",
+                     "minimum": 0.0,
+                     "maximum": 100.0
+                  },
+                  "loY": {
+                     "title": "Bottom edge",
+                     "type": "number",
+                     "minimum": 0.0,
+                     "maximum": 100.0
+                  }, 
+                  "hiY": {
+                     "title": "Top edge",
+                     "type": "number",
+                     "minimum": 0.0,
+                     "maximum": 100.0
+                  }
+               },
+               "additionalProperties": false,
+               "minProperties": 4
+            }
+         }
+      },
+      "additionalProperties": false,
+      "required": ["numCircles", "goalArea", "obstacles"]
    }');
 
 insert into CompetitionType (title, codeName, description, prmSchema)

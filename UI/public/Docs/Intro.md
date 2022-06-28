@@ -2,30 +2,31 @@
 
 # STEM Competitions
 
-Welcome to STEM Competitions!  This website provides educational STEM design competitions of various types, involving physics, math, and engineering. 
+Welcome to STEM Competitions!  This website provides educational design competitions in physics, math, and engineering. 
 
-## The Big Picture
-To participate, you create a team (including teams of one if you want to work individually), and submit a design.  The site determines if your design is correct, and either gives you hints on what needs fixing, or simulates your design on the problem and gives it a quality score.
 
-### Simulations
+## Simulations
 
-Realistic simulation of each design problem, and of your solution to it, is a
-major feature of the site.  Whether it's a gravitational bounce challenge, an elastic-collisions cannon, or a bridge design, you get both a schematic movie
-of your design being tested, and a CGI 3-D movie of it (with VR enhancement if you have VR goggles).
+Realistic simulation of your designs is a major feature of the site.  You get both a schematic movieof your design being tested, a CGI 3-D movie of it, and
+even a VR view in 3D if you have VR goggles.
 
-### Some Example Design Competitions
-Here are some example competitions
+## Some Example Competitions
+We have a range of design competitions, for instance
 
-#### Bounce
-In this competition you launch balls at speeds you determine in order to hit targets.  The competition involves gravitational kinematics and elastic collisions.  Full details are [here](Cmps/Bounce/Instructions.html)
+### Bounce
+In this competition you launch balls to hit targets.  The competition involves gravitational kinematics and elastic collisions. 
 
-#### Land Grab
-Start with a rectanglar space, filled with rectangular obstacles.  Grab as much of the free space as possible by picking circles of "territory" that fall within the space and avoid the obstacles and each other.
+### Land Grab
+Start with a rectanglar space, filled with rectangular obstacles.  Grab as much of the free space as possible by picking nonoverlapping circles of "territory" that fall within the space.
 
-#### Rebound
-Build a ["Galilean cannon"](https://en.wikipedia.org/wiki/Galilean_cannon) by arranging collisions of different-mass balls to fire the lightest one at the highest possible speed.
+### Rebound
+Build a ["Galilean cannon"](https://en.wikipedia.org/wiki/Galilean_cannon) by arranging collisions of different balls to fire the lightest one at the highest possible speed.
+
+## Tutorial Walkthrough
+
+Our [example walkthrough](Walkthrough.html) of a Bounce competition will show you how this all works.
 
 ## The Details
 
-* You can register at [the competition site](https://www.softwareinventions.com/PhysicsCompetition/#/register)
-* Full details on how to use the site are [here](SiteInstructions.html).
+* Full instructions on how to use the site are [here](SiteInstructions.html).
+

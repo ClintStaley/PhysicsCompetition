@@ -38,7 +38,8 @@ export class Bounce extends Component {
        || newProps.sbm !== oldState.props.sbm) {
          return {
             props: newProps, 
-            movie: new BounceMovie(60, newProps.prms, newProps.sbm, Bounce.ballExitTime)
+            movie: new BounceMovie(60, newProps.prms, newProps.sbm,
+             Bounce.ballExitTime)
          };
       }
       else
@@ -57,7 +58,8 @@ export class Bounce extends Component {
       if (score !== null) {
          testResult.events.forEach((ballArray, ballNum) => {
             hits.push(<h4 key={"Ball #" + ballNum}
-             className={style[colors[ballNum % numColors]]}>Ball #{ballNum+1}</h4>)
+             className={style[colors[ballNum % numColors]]}>Ball #{ballNum+1}
+             </h4>)
 
             ballEvents = [];
 
