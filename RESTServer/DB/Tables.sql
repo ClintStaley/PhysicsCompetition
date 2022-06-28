@@ -89,4 +89,4 @@ create table Membership (
 
 insert into Person (firstName, lastName, email, password, whenRegistered, role)
    VALUES ("Clint", "Staley", "admin@softwareinventions.com",
-    "5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8", NOW(), 1);
+    "bd6070c9346e70f2b603e7512639473f8aea9f45", NOW(), 1);
