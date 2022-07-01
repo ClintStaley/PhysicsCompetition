@@ -9,8 +9,8 @@ import {BouncePunkSceneGroup} from './BouncePunkSceneGroup';
 import {VRMovieController} from '../VRMovieController';
 import {ControllerPickHelper} from '../../Util/ControllerPickHelper';
 import {GUI} from 'dat.gui';
-import { HTMLMesh } from 'three/examples/jsm/interactive/HTMLMesh.js';
-import { InteractiveGroup } from 'three/examples/jsm/interactive/InteractiveGroup.js';
+import {HTMLMesh} from 'three/examples/jsm/interactive/HTMLMesh.js';
+import {InteractiveGroup} from 'three/examples/jsm/interactive/InteractiveGroup.js';
 
 // Display a room with a "rig" on one wall.  The rig has the launcher, targets,
 // obstacles, and ball.  All 3JS units are meters.
@@ -42,65 +42,43 @@ export class BouncePunkVRView extends React.Component {
       const lightColor = 0xFFECE1;
 
       for (let i = 0; i < numOfLights; i++) {
-         let light = new THREE.SpotLight(
-          lightColor, 18, 0, Math.PI / 5, 1, 2);
+         let light = new THREE.PointLight(lightColor);
+         light.decay = 0.2;
          light.castShadow = true;
          light.position.set(
           (i + 0.5) * (roomWidth / numOfLights),
-          roomHeight - 0.5, roomDepth3D - 0.5);
-         light.target.position.set(light.position.x, 5, 0);
-         light.power = 3200 / numOfLights;
-         scene.add(light).add(light.target);
-         light.target.updateMatrixWorld();
-         let lightHelper = new THREE.SpotLightHelper(light);
+          roomHeight - 3, sceneGroup.roomDepth - 1);
+         light.power = 85 / numOfLights;
+         scene.add(light);
+         let lightHelper = new THREE.PointLightHelper(light);
          scene.add(lightHelper);
       }
 
-      // let directionalLight = new THREE.DirectionalLight(lightColor, 1);
-      // directionalLight.position.set(roomWidth - 4, roomHeight - 4, roomDepth3D - 4);
-      // directionalLight.target.position.set(roomWidth / 2, roomHeight / 2, 0);
-      // directionalLight.intensity = 3;
-      // directionalLight.castShadow = true;
-      // scene.add(directionalLight).add(directionalLight.target);
-      // directionalLight.target.updateMatrixWorld();
-      // let directionalLightHelper = new THREE.DirectionalLightHelper(directionalLight);
-      // scene.add(directionalLightHelper);
-
-      // let directionalLight2 = new THREE.DirectionalLight(lightColor, 1);
-      // directionalLight2.position.set(4, roomHeight - 4, roomDepth3D - 4);
-      // directionalLight2.target.position.set(roomWidth / 2, roomHeight / 2, 0);
-      // directionalLight2.intensity = 3;
-      // directionalLight2.castShadow = true;
-      // scene.add(directionalLight2).add(directionalLight2.target);
-      // directionalLight2.target.updateMatrixWorld();
-      // let directionalLightHelper2 = new THREE.DirectionalLightHelper(directionalLight2);
-      // scene.add(directionalLightHelper2);
-
-      let ballLight = new THREE.SpotLight(lightColor);
-      // (, 18, 0, Math.PI / 20, 0.8, 2);
-      ballLight.angle = Math.PI / 30;
-      ballLight.penumbra = 0.8;
-      ballLight.decay = 2;
-      ballLight.name = "ballLight";
-      ballLight.castShadow = true;
-      ballLight.position.set(
-       roomWidth / 2, roomHeight / 2, roomDepth3D - 0.5);
-      ballLight.power = 400;
-      // ballLight.target = sceneGroup.getBall();
-      ballLight.target.position.set(
-       (roomWidth - rigSize) / 2, rigSize, rigDepth);
-      scene.add(ballLight).add(ballLight.target);
-      ballLight.target.updateMatrixWorld();
+      // let ballLight = new THREE.SpotLight(lightColor);
+      // // (, 18, 0, Math.PI / 20, 0.8, 2);
+      // ballLight.angle = Math.PI / 30;
+      // ballLight.penumbra = 0.8;
+      // ballLight.decay = 2;
+      // ballLight.name = "ballLight";
+      // ballLight.castShadow = true;
+      // ballLight.position.set(
+      //  roomWidth / 2, roomHeight / 2, roomDepth3D - 0.5);
+      // ballLight.power = 400;
+      // // ballLight.target = sceneGroup.getBall();
+      // ballLight.target.position.set(
+      //  (roomWidth - rigSize) / 2, rigSize, rigDepth);
+      // scene.add(ballLight).add(ballLight.target);
+      // ballLight.target.updateMatrixWorld();
 
       // Plus general ambient
-      scene.add(new THREE.AmbientLight(lightColor)); // 0x808080
+      scene.add(new THREE.AmbientLight(lightColor));
 
       // CAS Fix: Try moving renderer out of state
       let renderer = new THREE.WebGLRenderer({antialias: true});
-      // renderer.shadowMap.enabled = true;
+      renderer.shadowMap.enabled = true;
       renderer.physicallyCorrectLights = true;
-      renderer.shadowMap.type = THREE.BasicShadowMap;
-      // renderer.shadowMap.type = THREE.PCFShadowMap;
+      // renderer.shadowMap.type = THREE.BasicShadowMap;
+      renderer.shadowMap.type = THREE.PCFShadowMap;
       renderer.xr.enabled = true;
       renderer.xr.setFramebufferScaleFactor(0.8);
 
@@ -148,13 +126,13 @@ export class BouncePunkVRView extends React.Component {
       // Create html gui to control scene
       const gui = new GUI({width: 400});
       gui.add(guiPrms, 'play')
-       .name('Play');
+      .name('Play');
       gui.add(guiPrms, 'playSlow')
-       .name('1/10 Speed');
+      .name('1/10 Speed');
       gui.add(guiPrms, 'pause')
-       .name('Pause');
+      .name('Pause');
       gui.add(movieController, 'currentOffset', 0, movieController.duration)
-       .name('').step(0.01).onChange(() => {
+      .name('').step(0.01).onChange(() => {
           guiPrms.pause();
           movieController.setOffset(movieController.currentOffset);
        });

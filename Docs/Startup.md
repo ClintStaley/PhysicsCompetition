@@ -43,15 +43,16 @@ all missing modules.  Note these are two separate node_modules for two JS apps.
 1. Install MySQL community edition commandline client and server 
 from www.mysql.com.  
 2. Log in to SQL server via mysql as SQL root user.  There are various ways to 
-do this, the simplest being to run mysql -uroot -p and supply the root 
+do this, the simplest being to run `mysql -uroot -p` and supply the root 
 password you configured on install.  
 3. Create a nonroot user for yourself: 
-create user 'newuser'@'localhost' identified with mysql_native_password by 
-'newpassword';  
+`create user 'newuser'@'localhost' identified with mysql_native_password by `
+`'newpassword';` 
 This will let you point the RESTServer to a database under that user, rather 
 than using root privilege.
 4. Grant your new user general permissions for the CmpDB database you will
-shortly create with: GRANT ALL PRIVILEGES ON CmpDB.* TO 'newUser'@'localhost'; 
+shortly create with: 
+`GRANT ALL PRIVILEGES ON CmpDB.* TO 'newUser'@'localhost';` 
 You may also find this guide useful: 
 https://www.digitalocean.com/community/tutorials/how-to-create-a-new-user-and-grant-permissions-in-mysql
 5. For Windows users it may be necessary to change more settings to include
@@ -63,9 +64,10 @@ its properties. Under the Shortcut section, edit the target line and replace
 "-uroot" with "-ucmp", assuming that your nonroot username is cmp.
 6. For your new SQL user, create a CmpDB database by running the 
 RESTServer/DB/All.sql file from the MySQL command client.  The MySQL command
-`source All.sql` will do this if you start the mysql client in the DB 
+`source All.sql;` will do this if you start the mysql client in the DB 
 directory.  Or in Windows, where you can't control the home directory of 
-your MySQL client, you may need `source <full path to All.sql starting from c:>`
+your MySQL client, you may need 
+`source <full path to All.sql starting from c:>;`
 
 
 ## RESTServer setup

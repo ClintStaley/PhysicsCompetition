@@ -1,7 +1,7 @@
 import {BounceMovie} from './BounceMovie';
 import * as THREE from 'three';
 import {brickMat, flatSteelMat, plasterMat, scratchedPlasticMat,
- streakyPlasticMat, brassMat, ballMat, scuffedMetalMat, olderWoodFloorMat,
+ streakyPlasticMat, brassMat, brassRodMat, scuffedMetalMat, olderWoodFloorMat,
  polishedWoodMat} from '../../Util/AsyncMaterials';
 import {cloneMatPrms} from '../../Util/ImageUtil';
 
@@ -41,12 +41,11 @@ export class BouncePunkSceneGroup {
    static gutterDepth = 2.5;   // 2.5m is enough so you can't see the bottom
 
    // Balcony dimensions
-   static balconyHeight = 4;     // Height of balcony top above floor
-   static balconyDepth = 2;      // Comfortably deep enough for player
-   static railRadius = 0.075;    // Balcony rail
-   static railHeight = 1;        // Height above balcony floor
-   static railRodRadius = 0.03;  // 
-
+   static balconyHeight = 4;      // Height of balcony top above floor
+   static balconyDepth = 2;       // Comfortably deep enough for player
+   static railRadius = 0.075;     // Balcony rail
+   static railHeight = 1;         // Height above balcony floor
+   static railRodRadius = 0.025;  // 
 
    // Rig dimensions
    static cannonLength = 1.8;  // 1.5m fits in left margin
@@ -85,8 +84,8 @@ export class BouncePunkSceneGroup {
       this.room = this.makeRoom();       // Room and gutter
       this.rig = this.makeRig();         // Rig, with ball, cannon and targets
 
-      if (isVR)                          // Balcony for VR
-         this.balcony = this.makeBalcony(this.room);
+      // if (isVR)                          // Balcony for VR
+      //    this.balcony = this.makeBalcony(this.room);
       
       this.topGroup.add(this.room);
       this.rig.position.set((roomWidth - rigSize) / 2, 0, rigDepth);
@@ -113,7 +112,7 @@ export class BouncePunkSceneGroup {
    }
 
    makeRoom() {
-      const {roomHeight, roomWidth, roomDepth3D} = BouncePunkSceneGroup;
+      const {roomHeight, roomWidth} = BouncePunkSceneGroup;
 
       // Create group to house room components
       const roomGroup = new THREE.Group();
@@ -131,11 +130,13 @@ export class BouncePunkSceneGroup {
       roof.rotateX(Math.PI / 2);
       roof.position.set(roomWidth / 2, roomHeight, this.roomDepth / 2);
 
-      // Create floor sections
       this.makeFloor(roomGroup, olderWoodFloorMat);
 
-      // Create gutter sections
       this.makeGutter(roomGroup, brickMat, plasterMat);
+
+      // If VR, add balcony
+      if (this.isVR)
+         this.makeBalcony(roomGroup, polishedWoodMat, brassRodMat);
 
       return roomGroup;
    }
@@ -150,12 +151,22 @@ export class BouncePunkSceneGroup {
 
       // Back wall
       const backWall = this.createPlaneElement(
-       'backWall', wallsGroup, {
+       'largeWall', wallsGroup, {
           width: roomWidth, 
           height: roomHeight
        }, wallMat);
       backWall.position.set(roomWidth / 2, roomHeight / 2, 0);
       backWall.receiveShadow = true;
+
+      // If VR, create front wall
+      if (this.isVR) {
+         const frontWall = this.createPlaneElement(
+          'largeWall', wallsGroup, {
+             width: roomWidth,
+             height: roomHeight
+          }, wallMat);
+         frontWall.position.set(roomWidth / 2, roomHeight / 2, this.roomDepth);
+      }
 
       // Left walls
       const leftBackSideWall = this.createPlaneElement(
@@ -487,36 +498,38 @@ export class BouncePunkSceneGroup {
       }
    }
 
-   makeBalcony(parent) {
-      let {roomHeight, roomWidth, roomDepth3D, floorHeight, gutterWidth,
-       gutterDepth, rigDepth, balconyDepth, balconyHeight, railRadius,
-       railHeight, railRodRadius, latheSegments} = BouncePunkSceneGroup; // JSB
+   makeBalcony(parent, woodMat, metalMat) {
+      let {roomWidth, floorHeight, balconyDepth, balconyHeight, railRadius,
+       railHeight, railRodRadius, latheSegments} = BouncePunkSceneGroup;
 
       // Make the floor
       const floorTop = this.createPlaneElement(
        'floorTop', parent, {
-          width: roomWidth,
-          height: balconyDepth
-       }, olderWoodFloorMat);
-      floorTop.rotateX(Math.PI / 2);
+          width: balconyDepth,
+          height: roomWidth
+       }, woodMat);
+       floorTop.rotateX(Math.PI / 2);
+       floorTop.rotateZ(Math.PI / 2);
       floorTop.position.set(
        roomWidth / 2, balconyHeight, this.roomDepth - balconyDepth / 2);
 
       const floorSide = this.createPlaneElement(
        'floorSide', parent, {
-          width: roomWidth,
-          height: floorHeight
-       }, olderWoodFloorMat);
+          width: floorHeight,
+          height: roomWidth
+       }, woodMat);
+      floorSide.rotateZ(Math.PI / 2);
       floorSide.position.set(
        roomWidth / 2, balconyHeight - floorHeight / 2,
        this.roomDepth - balconyDepth);
 
       const floorBottom = this.createPlaneElement(
        'floorBottom', parent, {
-          width: roomWidth,
-          height: balconyDepth
-       }, olderWoodFloorMat);
+          width: balconyDepth,
+          height: roomWidth
+       }, woodMat);
       floorBottom.rotateX(Math.PI / 2);
+      floorBottom.rotateZ(Math.PI / 2);
       floorBottom.position.set(
        roomWidth / 2, balconyHeight - floorHeight,
        this.roomDepth - balconyDepth / 2);
@@ -527,7 +540,7 @@ export class BouncePunkSceneGroup {
           radius: railRadius,
           height: roomWidth,
           segments: latheSegments
-       }, polishedWoodMat);
+       }, woodMat);
       rail.rotateZ(Math.PI / 2);
       rail.position.set(
        roomWidth / 2, balconyHeight + railHeight,
@@ -539,7 +552,7 @@ export class BouncePunkSceneGroup {
           width: roomWidth,
           height: railRadius + railRodRadius,
           depth: railRadius
-       }, brassMat);
+       }, metalMat);
       railBase.position.set(
        roomWidth / 2, balconyHeight + railHeight - railRadius / 2,
        this.roomDepth - balconyDepth + railRadius);
@@ -553,7 +566,7 @@ export class BouncePunkSceneGroup {
              radius: railRodRadius,
              height: railHeight,
              segments: latheSegments
-          }, brassMat);
+          }, metalMat);
          straightRod.rotateY(Math.PI);
          straightRod.position.set(
           (roomWidth - Math.ceil(roomWidth)) / 2 + i,
@@ -561,13 +574,13 @@ export class BouncePunkSceneGroup {
           this.roomDepth - balconyDepth + railRadius);
 
          // Leftmost curved rod
-         const testRod = this.makeCurvedRailRod(parent);
+         const testRod = this.makeCurvedRailRod(parent, metalMat);
          testRod.position.set(
           (roomWidth - Math.ceil(roomWidth)) / 2 + i + 0.25,
           balconyHeight - 0.05,
           this.roomDepth - balconyDepth + railRadius);
          
-         const testRod2 = this.makeCurvedRailRod(parent);
+         const testRod2 = this.makeCurvedRailRod(parent, metalMat);
          testRod2.position.set(
           (roomWidth - Math.ceil(roomWidth)) / 2 + i + 0.75,
           balconyHeight - 0.05,
@@ -576,9 +589,8 @@ export class BouncePunkSceneGroup {
       }
    }
 
-   makeCurvedRailRod(parent) {
-      const {roomWidth, railRadius, railHeight, railRodRadius, latheSegments} =
-       BouncePunkSceneGroup;
+   makeCurvedRailRod(parent, mat) {
+      const {railRodRadius, latheSegments} = BouncePunkSceneGroup;
       class CustonArcTanCurve extends THREE.Curve {
          constructor(scale = 1) {
             super();
@@ -595,12 +607,9 @@ export class BouncePunkSceneGroup {
       }
 
       const path = new CustonArcTanCurve();
-      const geometry = new THREE.TubeGeometry(
-       path, 20, railRodRadius, latheSegments, false);
-      const material = new THREE.MeshBasicMaterial({color: 0x00ff00});
       const rod = new THREE.Mesh(
        new THREE.TubeGeometry(path, 20, railRodRadius, latheSegments, false),
-       material);
+       new THREE.MeshStandardMaterial(mat.fast));
       parent.add(rod);
       rod.rotateZ(Math.PI / 2);
       rod.name = 'curvedRailRod';
@@ -608,7 +617,7 @@ export class BouncePunkSceneGroup {
       this.addMaterial(rod, {
          x: 1.1,
          y: 0.126
-      }, brassMat);
+      }, mat);
 
       return rod;
    }

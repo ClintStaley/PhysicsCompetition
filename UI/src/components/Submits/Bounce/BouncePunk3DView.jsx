@@ -28,24 +28,33 @@ export class BouncePunk3DView extends React.Component {
    static getInitState(movie) {
       const {roomHeight, roomWidth, roomDepth3D, rigSize, rigDepth} = BouncePunkSceneGroup;
       let scene = new THREE.Scene();
-      let sceneGroup = new BouncePunkSceneGroup(movie, true);
+      let sceneGroup = new BouncePunkSceneGroup(movie, false);
       scene.add(sceneGroup.getSceneGroup());
 
       const numOfLights = 2;
       const lightColor = 0xFFECE1;
 
       for (let i = 0; i < numOfLights; i++) {
-         let light = new THREE.SpotLight(
-          lightColor, 18, 0, Math.PI / 5, 1, 2);
+         // let light = new THREE.SpotLight(
+         //  lightColor, 18, 0, Math.PI / 5, 1, 2);
+         // light.castShadow = true;
+         // light.position.set(
+         //  (i + 0.5) * (roomWidth / numOfLights),
+         //  roomHeight - 0.5, roomDepth3D - 0.5);
+         // light.target.position.set(light.position.x, 5, 0);
+         // light.power = 3200 / numOfLights;
+         // scene.add(light).add(light.target);
+         // light.target.updateMatrixWorld();
+         // let lightHelper = new THREE.SpotLightHelper(light);
+         // scene.add(lightHelper);
+         let light = new THREE.PointLight(lightColor, 18, 0, 0.2);
          light.castShadow = true;
          light.position.set(
           (i + 0.5) * (roomWidth / numOfLights),
-          roomHeight - 0.5, roomDepth3D - 0.5);
-         light.target.position.set(light.position.x, 5, 0);
-         light.power = 3200 / numOfLights;
-         scene.add(light).add(light.target);
-         light.target.updateMatrixWorld();
-         let lightHelper = new THREE.SpotLightHelper(light);
+          roomHeight - 2, sceneGroup.roomDepth - 1);
+         light.power = 85 / numOfLights;
+         scene.add(light);
+         let lightHelper = new THREE.PointLightHelper(light);
          scene.add(lightHelper);
       }
 
@@ -69,21 +78,21 @@ export class BouncePunk3DView extends React.Component {
       // let directionalLightHelper2 = new THREE.DirectionalLightHelper(directionalLight2);
       // scene.add(directionalLightHelper2);
 
-      let ballLight = new THREE.SpotLight(lightColor);
-      // (, 18, 0, Math.PI / 20, 0.8, 2);
-      ballLight.angle = Math.PI / 30;
-      ballLight.penumbra = 0.8;
-      ballLight.decay = 2;
-      ballLight.name = "ballLight";
-      ballLight.castShadow = true;
-      ballLight.position.set(
-       roomWidth / 2, roomHeight / 2, roomDepth3D - 0.5);
-      ballLight.power = 400;
-      // ballLight.target = sceneGroup.getBall();
-      ballLight.target.position.set(
-       (roomWidth - rigSize) / 2, rigSize, rigDepth);
-      scene.add(ballLight).add(ballLight.target);
-      ballLight.target.updateMatrixWorld();
+      // let ballLight = new THREE.SpotLight(lightColor);
+      // // (, 18, 0, Math.PI / 20, 0.8, 2);
+      // ballLight.angle = Math.PI / 30;
+      // ballLight.penumbra = 0.8;
+      // ballLight.decay = 2;
+      // ballLight.name = "ballLight";
+      // ballLight.castShadow = true;
+      // ballLight.position.set(
+      //  roomWidth / 2, roomHeight / 2, roomDepth3D - 0.5);
+      // ballLight.power = 400;
+      // // ballLight.target = sceneGroup.getBall();
+      // ballLight.target.position.set(
+      //  (roomWidth - rigSize) / 2, rigSize, rigDepth);
+      // scene.add(ballLight).add(ballLight.target);
+      // ballLight.target.updateMatrixWorld();
 
       // Plus general ambient
       scene.add(new THREE.AmbientLight(lightColor)); // 0x808080
