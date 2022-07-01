@@ -24,77 +24,76 @@ export class BouncePunkVRView extends React.Component {
       this.state = BouncePunkVRView.getInitState(props.movie);
    }
 
-   static makeButton(name, color, x) {
-      const button = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.5, 0.5));
-      button.name = name;
-      button.material.color.setHex(color);
-
-      button.position.x = x;
-      button.position.y = 0;
-      button.position.z = -3;
-
-      return button;
-   }
-
-   static makeControlsGroup() {
-      const controlsGroup = new THREE.Group();
-      controlsGroup.name = 'controlsGroup';
-
-      // Create buttons
-      controlsGroup.add(BouncePunkVRView.makeButton('pauseButton', 0xff0000, -1));
-      controlsGroup.add(BouncePunkVRView.makeButton('slowButton', 0xffff00, 0));
-      controlsGroup.add(BouncePunkVRView.makeButton('playButton', 0x00ff00, 1));
-
-      return controlsGroup;
-   }
-
    // Return state displaying background grid and other fixtures
    // appropriate for |movie|.  
    static getInitState(movie) {
-      const {roomHeight, roomWidth, roomDepthVR, rigDepth} = BouncePunkSceneGroup;
+      const {roomHeight, roomWidth, roomDepthVR, roomDepth3D, rigDepth}
+       = BouncePunkSceneGroup;
       const rigSize = BouncePunkSceneGroup.rigSize;
 
       let scene = new THREE.Scene();
-      let sceneGroup = new BouncePunkSceneGroup(movie);
+      let sceneGroup = new BouncePunkSceneGroup(movie, true);
 
       // Position room so that 0, 0, 0 is back middle of floor
       // sceneGroup.getSceneGroup().position.set(-roomWidth / 2, 0, -roomDepthVR);
       scene.add(sceneGroup.getSceneGroup());
 
       const numOfLights = 2;
+      const lightColor = 0xFFECE1;
 
       for (let i = 0; i < numOfLights; i++) {
          let light = new THREE.SpotLight(
-          0xffffff, 18, 0, Math.PI / 5, 1, 2);
+          lightColor, 18, 0, Math.PI / 5, 1, 2);
          light.castShadow = true;
          light.position.set(
-          (i + 0.5) * (roomWidth / numOfLights), roomHeight - 0.5,
-          roomDepthVR - 0.5);
-         light.target.position.set(light.position.x, 7, 0);
-         light.power = 300;
+          (i + 0.5) * (roomWidth / numOfLights),
+          roomHeight - 0.5, roomDepth3D - 0.5);
+         light.target.position.set(light.position.x, 5, 0);
+         light.power = 3200 / numOfLights;
          scene.add(light).add(light.target);
          light.target.updateMatrixWorld();
-         // let lightHelper = new THREE.SpotLightHelper(light);
-         // scene.add(lightHelper);
+         let lightHelper = new THREE.SpotLightHelper(light);
+         scene.add(lightHelper);
       }
 
-      let ballLight = new THREE.SpotLight(
-       0xffffff, 18, 0, Math.PI / 20, 0.8, 2);
+      // let directionalLight = new THREE.DirectionalLight(lightColor, 1);
+      // directionalLight.position.set(roomWidth - 4, roomHeight - 4, roomDepth3D - 4);
+      // directionalLight.target.position.set(roomWidth / 2, roomHeight / 2, 0);
+      // directionalLight.intensity = 3;
+      // directionalLight.castShadow = true;
+      // scene.add(directionalLight).add(directionalLight.target);
+      // directionalLight.target.updateMatrixWorld();
+      // let directionalLightHelper = new THREE.DirectionalLightHelper(directionalLight);
+      // scene.add(directionalLightHelper);
+
+      // let directionalLight2 = new THREE.DirectionalLight(lightColor, 1);
+      // directionalLight2.position.set(4, roomHeight - 4, roomDepth3D - 4);
+      // directionalLight2.target.position.set(roomWidth / 2, roomHeight / 2, 0);
+      // directionalLight2.intensity = 3;
+      // directionalLight2.castShadow = true;
+      // scene.add(directionalLight2).add(directionalLight2.target);
+      // directionalLight2.target.updateMatrixWorld();
+      // let directionalLightHelper2 = new THREE.DirectionalLightHelper(directionalLight2);
+      // scene.add(directionalLightHelper2);
+
+      let ballLight = new THREE.SpotLight(lightColor);
+      // (, 18, 0, Math.PI / 20, 0.8, 2);
+      ballLight.angle = Math.PI / 30;
+      ballLight.penumbra = 0.8;
+      ballLight.decay = 2;
       ballLight.name = "ballLight";
       ballLight.castShadow = true;
       ballLight.position.set(
-       roomWidth / 2, roomHeight / 2, roomDepthVR - 0.5);
-      ballLight.power = 250;
-      // ballLight.target = sceneGroup.getCurrentBall();
+       roomWidth / 2, roomHeight / 2, roomDepth3D - 0.5);
+      ballLight.power = 400;
+      // ballLight.target = sceneGroup.getBall();
       ballLight.target.position.set(
        (roomWidth - rigSize) / 2, rigSize, rigDepth);
       scene.add(ballLight).add(ballLight.target);
       ballLight.target.updateMatrixWorld();
-      // let ballLightHelper = new THREE.SpotLightHelper(ballLight);
-      // scene.add(ballLightHelper);
 
       // Plus general ambient
-      scene.add(new THREE.AmbientLight(0xffffff)); // 0x808080
+      scene.add(new THREE.AmbientLight(lightColor)); // 0x808080
 
       // CAS Fix: Try moving renderer out of state
       let renderer = new THREE.WebGLRenderer({antialias: true});
@@ -103,10 +102,10 @@ export class BouncePunkVRView extends React.Component {
       renderer.shadowMap.type = THREE.BasicShadowMap;
       // renderer.shadowMap.type = THREE.PCFShadowMap;
       renderer.xr.enabled = true;
+      renderer.xr.setFramebufferScaleFactor(0.8);
 
       // Create button to initiate a VR session
       const button = VRButton.createButton(renderer);
-
 
       const fov = 75;
       const aspect = 2;  // the canvas default
@@ -117,84 +116,63 @@ export class BouncePunkVRView extends React.Component {
 
       const cameraGroup = new THREE.Group();
       cameraGroup.add(camera);
-      cameraGroup.position.set(roomWidth / 2, 5, 10);
+      cameraGroup.position.set(
+       roomWidth / 2, BouncePunkSceneGroup.balconyHeight,
+       BouncePunkSceneGroup.roomDepthVR - 1);
       scene.add(cameraGroup);
 
       const movieController = new VRMovieController(movie, (offset) => {
          sceneGroup.setOffset(offset);
       });
 
-      // Group to contain control objects
-      const controlsGroup = BouncePunkVRView.makeControlsGroup();
-      cameraGroup.add(controlsGroup);
-
-      const params = {
+      const guiPrms = {
+         play: () => {
+            movieController.play(1);
+            console.log('play');
+         },
+         playSlow: () => {
+            movieController.play(0.1);
+            console.log('play slow');
+         },
          pause: () => {
             movieController.pause();
             console.log('pause');
          },
-         slow: () => {
-            movieController.play(0.5);
-            console.log('slow');
-         },
-         play: () => {
-            movieController.play(1);
-            console.log('play');
-         }
       }
 
-      const gui = new GUI();
-      gui.add(params, 'pause');
-      gui.add(params, 'slow');
-      gui.add(params, 'play');
+      // Create controller helper
+      const controllerHelper = new ControllerPickHelper(
+       cameraGroup, renderer, camera, guiPrms);
+      // const controllerToSelection = new Map();
+      
+      // Create html gui to control scene
+      const gui = new GUI({width: 400});
+      gui.add(guiPrms, 'play')
+       .name('Play');
+      gui.add(guiPrms, 'playSlow')
+       .name('1/10 Speed');
+      gui.add(guiPrms, 'pause')
+       .name('Pause');
+      gui.add(movieController, 'currentOffset', 0, movieController.duration)
+       .name('').step(0.01).onChange(() => {
+          guiPrms.pause();
+          movieController.setOffset(movieController.currentOffset);
+       });
       gui.domElement.style.visibility = 'hidden';
 
-      const group = new InteractiveGroup(renderer, camera);
-      controlsGroup.add(group);
+      // Interactive group to hold GUI, attached to left controller
+      const guiGroup = new InteractiveGroup(renderer, camera);
+      controllerHelper.addEventListener('leftControllerConnected', (event) => {
+         event.controllerGrip.add(guiGroup);
+      })
+      // controllerHelper.leftController.controllerGrip.add(guiGroup);
 
-      const mesh = new HTMLMesh(gui.domElement);
-      mesh.position.x = 0;
-      mesh.position.y = 1;
-      mesh.position.z = -1.5;
-      mesh.rotation.x = -Math.PI / 8;
-      mesh.scale.setScalar(5);
-      group.add(mesh);
-
-      // Map of buttons to VRMovieController methods
-      const functionMap = {
-         'pauseButton': () => {
-            movieController.pause();
-         },
-         'slowButton': () => {
-            movieController.play(0.5);
-         },
-         'playButton': () => {
-            movieController.play(1);
-         }
-      };
-
-      // Create controller helper
-      const controllerHelper = new ControllerPickHelper(cameraGroup, renderer);
-      const controllerToSelection = new Map();
-
-      // Event listener to trigger function based on object selected
-      controllerHelper.addEventListener('selectstart', (event) => {
-         const {controller, selectedObject} = event;
-         const existingSelection = controllerToSelection.get(controller);
-         if (!existingSelection) {
-            controllerToSelection.set(controller, selectedObject);
-            functionMap[selectedObject.name]();
-         }
-      });
-
-      controllerHelper.addEventListener('selectend', (event) => {
-         const {controller} = event;
-         const selection = controllerToSelection.get(controller);
-         if (selection) {
-            controllerToSelection.delete(controller);
-         }
-      });
-      
+      // HTML mesh to hold gui
+      const guiMesh = new HTMLMesh(gui.domElement);
+      guiMesh.rotation.x = -Math.PI / 3;
+      guiMesh.rotation.y = Math.PI / 8;
+      guiMesh.position.set(0, 0, -0.2);
+      guiGroup.add(guiMesh);
 
       // Rerender when all pending textures are loaded to show new textures.
       Promise.all(sceneGroup.getPendingPromises()).then(() => {
@@ -210,7 +188,7 @@ export class BouncePunkVRView extends React.Component {
          button,
          movieController,
          movie,
-         controlsGroup,
+         // controlsGroup: guiGroup,
          gui
       };
    }
@@ -258,9 +236,10 @@ export class BouncePunkVRView extends React.Component {
    }
 
    static renderFrame(time, state) {
-      state.controllerHelper.update(state.controlsGroup);
+      // state.controllerHelper.update(state.controlsGroup);
       state.movieController.animate(time);
       state.renderer.render(state.scene, state.camera);
+      state.gui.updateDisplay();
    }
 
 

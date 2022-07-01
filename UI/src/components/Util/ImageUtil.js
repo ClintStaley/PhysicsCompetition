@@ -132,7 +132,7 @@ export function loadAsset(url) {
 // This function requires the textures in the parameters to be loaded
 export function cloneMatPrms(prms, rep, offset) {
    let clonedPrms = {...prms};
-   ['map', 'normalMap', 'displacementMap', 'roughness', 'aoMap']
+   ['map', 'normalMap', 'displacementMap', 'roughnessMap', 'aoMap']
     .forEach(prop => {
       if (prms[prop]) {
          clonedPrms[prop] = prms[prop].clone();
@@ -148,7 +148,7 @@ export function cloneMatPrms(prms, rep, offset) {
          }
          clonedPrms[prop].needsUpdate = true;
       }
-   })
+   });
 
    return clonedPrms;
 }

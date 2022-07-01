@@ -28,29 +28,52 @@ export class BouncePunk3DView extends React.Component {
    static getInitState(movie) {
       const {roomHeight, roomWidth, roomDepth3D, rigSize, rigDepth} = BouncePunkSceneGroup;
       let scene = new THREE.Scene();
-      let sceneGroup = new BouncePunkSceneGroup(movie);
+      let sceneGroup = new BouncePunkSceneGroup(movie, true);
       scene.add(sceneGroup.getSceneGroup());
 
-      const numOfLights = 4;
+      const numOfLights = 2;
+      const lightColor = 0xFFECE1;
 
       for (let i = 0; i < numOfLights; i++) {
          let light = new THREE.SpotLight(
-          0xffffff, 18, 0, Math.PI / 5, 1, 2);
+          lightColor, 18, 0, Math.PI / 5, 1, 2);
          light.castShadow = true;
          light.position.set(
-          1 + i, roomHeight - 0.5, roomDepth3D - 0.5);
-         light.position.x =
-          (i + 0.5) * (roomWidth / numOfLights);
+          (i + 0.5) * (roomWidth / numOfLights),
+          roomHeight - 0.5, roomDepth3D - 0.5);
          light.target.position.set(light.position.x, 5, 0);
-         light.power = 800;
+         light.power = 3200 / numOfLights;
          scene.add(light).add(light.target);
          light.target.updateMatrixWorld();
-         // let lightHelper = new THREE.SpotLightHelper(light);
-         // scene.add(lightHelper);
+         let lightHelper = new THREE.SpotLightHelper(light);
+         scene.add(lightHelper);
       }
 
-      let ballLight = new THREE.SpotLight(
-       0xffffff, 18, 0, Math.PI / 20, 0.8, 2);
+      // let directionalLight = new THREE.DirectionalLight(lightColor, 1);
+      // directionalLight.position.set(roomWidth - 4, roomHeight - 4, roomDepth3D - 4);
+      // directionalLight.target.position.set(roomWidth / 2, roomHeight / 2, 0);
+      // directionalLight.intensity = 3;
+      // directionalLight.castShadow = true;
+      // scene.add(directionalLight).add(directionalLight.target);
+      // directionalLight.target.updateMatrixWorld();
+      // let directionalLightHelper = new THREE.DirectionalLightHelper(directionalLight);
+      // scene.add(directionalLightHelper);
+
+      // let directionalLight2 = new THREE.DirectionalLight(lightColor, 1);
+      // directionalLight2.position.set(4, roomHeight - 4, roomDepth3D - 4);
+      // directionalLight2.target.position.set(roomWidth / 2, roomHeight / 2, 0);
+      // directionalLight2.intensity = 3;
+      // directionalLight2.castShadow = true;
+      // scene.add(directionalLight2).add(directionalLight2.target);
+      // directionalLight2.target.updateMatrixWorld();
+      // let directionalLightHelper2 = new THREE.DirectionalLightHelper(directionalLight2);
+      // scene.add(directionalLightHelper2);
+
+      let ballLight = new THREE.SpotLight(lightColor);
+      // (, 18, 0, Math.PI / 20, 0.8, 2);
+      ballLight.angle = Math.PI / 30;
+      ballLight.penumbra = 0.8;
+      ballLight.decay = 2;
       ballLight.name = "ballLight";
       ballLight.castShadow = true;
       ballLight.position.set(
@@ -63,7 +86,7 @@ export class BouncePunk3DView extends React.Component {
       ballLight.target.updateMatrixWorld();
 
       // Plus general ambient
-      scene.add(new THREE.AmbientLight(0xffffff)); // 0x808080
+      scene.add(new THREE.AmbientLight(lightColor)); // 0x808080
 
       // CAS Fix: Try moving renderer out of state
       let renderer = new THREE.WebGLRenderer({antialias: true});
@@ -73,7 +96,7 @@ export class BouncePunk3DView extends React.Component {
 
       let camera = new THREE.PerspectiveCamera(
        60, 1, .01, 10 * BouncePunkSceneGroup.rigSize);
-      camera.position.set(roomWidth / 2, rigSize / 2, 10);  // Center of near wall
+      camera.position.set(roomWidth / 2, rigSize / 2, 15);  // Center of near wall
 
       // Rerender when all pending textures are loaded to show new textures.
       Promise.all(sceneGroup.getPendingPromises()).then(() => {
