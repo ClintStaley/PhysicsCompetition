@@ -77,7 +77,7 @@ export class BouncePunkVRView extends React.Component {
          backgroundOpacity: 1
       });
       controlsBlock.rotateX(-Math.PI / 2);
-      controlsBlock.position.set(0, 0, -0.3);
+      controlsBlock.position.set(0, 0, -0.18);
 
       // Objects to store button options and state attributes
       const buttonOptions = {
