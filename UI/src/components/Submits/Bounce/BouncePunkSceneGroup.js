@@ -1,8 +1,10 @@
 import {BounceMovie} from './BounceMovie';
 import * as THREE from 'three';
-import {brickMat, flatSteelMat, plasterMat, scratchedPlasticMat,
- streakyPlasticMat, brassMat, brassRodMat, scuffedMetalMat, olderWoodFloorMat,
- polishedWoodMat} from '../../Util/AsyncMaterials';
+import pingAudio from '../../../assets/sound/lowPing.mp3';
+import UIfx from 'uifx';
+import {brickMat, plasterMat, streakyPlasticMat, brassMat, scuffedMetalMat,
+ olderWoodFloorMat, polishedWoodMat, brassRodMat} from
+ '../../Util/AsyncMaterials';
 import {cloneMatPrms} from '../../Util/ImageUtil';
 
 // Create a Group with the following elements:
@@ -73,6 +75,8 @@ export class BouncePunkSceneGroup {
       else
          this.roomDepth = BouncePunkSceneGroup.roomDepth3D;
 
+      this.ping = new UIfx(pingAudio, {volume: 0.5, throttleMs: 100});
+
       this.movie = movie;
       this.topGroup = new THREE.Group(); // Holds pending material promises
       this.pendingPromises = [];
@@ -83,9 +87,6 @@ export class BouncePunkSceneGroup {
 
       this.room = this.makeRoom();       // Room and gutter
       this.rig = this.makeRig();         // Rig, with ball, cannon and targets
-
-      // if (isVR)                          // Balcony for VR
-      //    this.balcony = this.makeBalcony(this.room);
       
       this.topGroup.add(this.room);
       this.rig.position.set((roomWidth - rigSize) / 2, 0, rigDepth);
@@ -204,7 +205,8 @@ export class BouncePunkSceneGroup {
        }, brickMat);
       rightFrontSideWall.rotateY(-Math.PI / 2);
       rightFrontSideWall.position.set(
-       roomWidth, roomHeight / 2, (this.roomDepth + rigDepth + gutterWidth / 2) / 2);
+       roomWidth, roomHeight / 2,
+       (this.roomDepth + rigDepth + gutterWidth / 2) / 2);
 
       // Add walls group to room group
       roomGroup.add(wallsGroup);
@@ -380,8 +382,7 @@ export class BouncePunkSceneGroup {
    // Adjust the scenegraph to reflect time.  This may require either forward
    // or backward movement in time.
    setOffset(timeStamp) {
-      const {ballRadius, rodRadius, trgDepth, trgRing, wallRing, rigDepth,
-       rigSize, latheSegments, gutterWidth, cannonLength} = BouncePunkSceneGroup;
+      const {trgDepth, rigSize, gutterWidth} = BouncePunkSceneGroup;
       let evts = this.movie.evts;
       let evt;
 
@@ -448,6 +449,12 @@ export class BouncePunkSceneGroup {
             }
             else
                console.log('no ball to position');
+         }
+
+         // If the event is obstacle hit, play fx
+         if (evt.type === BounceMovie.cHitBarrier
+          || evt.type === BounceMovie.cHitTarget) {
+            this.ping.play();
          }
          if (evt.type === BounceMovie.cObstacleFade) {
             this.obstacles[evt.targetId].position.z =
@@ -609,7 +616,7 @@ export class BouncePunkSceneGroup {
       const path = new CustonArcTanCurve();
       const rod = new THREE.Mesh(
        new THREE.TubeGeometry(path, 20, railRodRadius, latheSegments, false),
-       new THREE.MeshStandardMaterial(mat.fast));
+       new THREE.MeshLambertMaterial(mat.fast));
       parent.add(rod);
       rod.rotateZ(Math.PI / 2);
       rod.name = 'curvedRailRod';
@@ -860,7 +867,7 @@ export class BouncePunkSceneGroup {
    createBoxElement(name, parent, {width, height, depth}, matPrms, offset) {
       const cube = new THREE.Mesh(
        new THREE.BoxGeometry(width, height, depth),
-       new THREE.MeshStandardMaterial(matPrms.fast));
+       new THREE.MeshLambertMaterial(matPrms.fast));
       cube.name = name;
       parent.add(cube);
 
@@ -880,7 +887,7 @@ export class BouncePunkSceneGroup {
     name, parent, {radius, widthSegments, heightSegments}, matPrms, offset) {
       const sphere = new THREE.Mesh(
        new THREE.SphereGeometry(radius, widthSegments, heightSegments),
-       new THREE.MeshStandardMaterial(matPrms.fast));
+       new THREE.MeshLambertMaterial(matPrms.fast));
       sphere.name = name;
       parent.add(sphere);
 
@@ -915,7 +922,7 @@ export class BouncePunkSceneGroup {
     name, parent, {radius, height, segments}, matPrms, offset) {
       const cylinder = new THREE.Mesh(new THREE.CylinderGeometry(
        radius, radius, height, segments),
-       new THREE.MeshStandardMaterial(matPrms.fast));
+       new THREE.MeshLambertMaterial(matPrms.fast));
       cylinder.name = name;
       parent.add(cylinder);
 
@@ -968,7 +975,7 @@ export class BouncePunkSceneGroup {
     name, parent, {points, maxRadius, segments}, matPrms, offset) {
       const lathe = new THREE.Mesh(
          new THREE.LatheGeometry(points, segments),
-         new THREE.MeshStandardMaterial(matPrms.fast));
+         new THREE.MeshLambertMaterial(matPrms.fast));
       lathe.name = name;
       parent.add(lathe);
   
