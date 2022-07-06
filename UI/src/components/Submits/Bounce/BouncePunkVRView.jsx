@@ -16,6 +16,8 @@ import ThreeMeshUI from 'three-mesh-ui';
 import FontJSON from '../../../assets/fonts/Roboto-msdf.json';
 import FontImage from '../../../assets/fonts/Roboto-msdf.png';
 
+let selectState = false;
+
 // Display a room with a "rig" on one wall.  The rig has the launcher, targets,
 // obstacles, and ball.  All 3JS units are meters.
 export class BouncePunkVRView extends React.Component {
@@ -31,8 +33,7 @@ export class BouncePunkVRView extends React.Component {
    // Return state displaying background grid and other fixtures
    // appropriate for |movie|.  
    static getInitState(movie) {
-      const {roomHeight, roomWidth, roomDepthVR, roomDepth3D, rigDepth, rigSize}
-       = BouncePunkSceneGroup;
+      const {roomWidth} = BouncePunkSceneGroup;
       // const rigSize = BouncePunkSceneGroup.rigSize;
 
       let scene = new THREE.Scene();
@@ -48,6 +49,7 @@ export class BouncePunkVRView extends React.Component {
       renderer.shadowMap.enabled = true;
       renderer.physicallyCorrectLights = true;
       renderer.shadowMap.type = THREE.BasicShadowMap;
+      // renderer.shadowMap.type = THREE.PCFShadowMap;
       renderer.xr.enabled = true;
       renderer.xr.setFramebufferScaleFactor(0.8);
 
@@ -87,17 +89,19 @@ export class BouncePunkVRView extends React.Component {
          },
       }
 
-      const container = new ThreeMeshUI.Block({
+      // Create block and sub-block
+      const controlsBlock = new ThreeMeshUI.Block({
          justifyContent: 'center',
-         contentDirection: 'row-reverse',
+         contentDirection: 'column',
          fontFamily: FontJSON,
          fontTexture: FontImage,
          fontSize: 0.07,
          padding: 0.02,
-         borderRadius: 0.11
+         borderRadius: 0.11,
+         backgroundOpacity: 1
       });
-      container.contentDirection = 'column';
-      container.rotateX(-Math.PI / 4);
+      controlsBlock.rotateX(-Math.PI / 2);
+      controlsBlock.position.set(0, 0, -0.3);
 
       // Objects to store button options and state attributes
       const buttonOptions = {
@@ -106,15 +110,16 @@ export class BouncePunkVRView extends React.Component {
          justifyContent: 'center',
          offset: 0.02,
          margin: 0.02,
-         borderRadius: 0.075
+         borderRadius: 0.075,
+         backgroundOpacity: 1
       };
 
       const hoveredStateAttributes = {
          state: 'hovered',
          attributes: {
-            offset: 0.15,
+            offset: 0.02,
             backgroundColor: new THREE.Color(0x999999),
-            backgroundOpacity: 1,
+            // backgroundOpacity: 1,
             fontColor: new THREE.Color(0xffffff)
          },
       };
@@ -122,9 +127,9 @@ export class BouncePunkVRView extends React.Component {
       const idleStateAttributes = {
          state: 'idle',
          attributes: {
-            offset: 0.15,
+            offset: 0.02,
             backgroundColor: new THREE.Color(0x666666),
-            backgroundOpacity: 0.3,
+            // backgroundOpacity: 1,
             fontColor: new THREE.Color(0xffffff)
          },
       };
@@ -147,12 +152,9 @@ export class BouncePunkVRView extends React.Component {
       buttonPause.add(
          new ThreeMeshUI.Text({content: 'Pause'})
       );
-
-      const controlButtons = [
-         buttonPlay,
-         buttonPlaySlow,
-         buttonPause
-      ];
+      const buttonTest = new ThreeMeshUI.Block(controlsBlock);
+      buttonTest.contentDirection = 'row';
+      buttonTest.padding = 0;
 
       buttonPlay.setupState({
          state: 'selected',
@@ -184,46 +186,119 @@ export class BouncePunkVRView extends React.Component {
       buttonPause.setupState(hoveredStateAttributes);
       buttonPause.setupState(idleStateAttributes);
 
-      container.add(buttonPlay, buttonPlaySlow, buttonPause);
+      controlsBlock.add(buttonPlay, buttonPlaySlow, buttonPause, buttonTest);
+
+      const testButtonOptions = {
+         width: 0.18,
+         height: 0.15,
+         justifyContent: 'center',
+         offset: 0.02,
+         margin: 0.02,
+         borderRadius: 0.075,
+         backgroundOpacity: 1,
+         fontSize: 0.05
+      };
+
+      const testHoveredStateAttributes = {
+         state: 'hovered',
+         attributes: {
+            offset: 0.02,
+            backgroundColor: new THREE.Color(0x999999),
+            // backgroundOpacity: 1,
+            fontColor: new THREE.Color(0xffffff)
+         },
+      };
+
+      const testIdleStateAttributes = {
+         state: 'idle',
+         attributes: {
+            offset: 0.02,
+            backgroundColor: new THREE.Color(0x666666),
+            // backgroundOpacity: 1,
+            fontColor: new THREE.Color(0xffffff)
+         },
+      };
+
+      const testSelectedStateAttributes = {
+         offset: 0.005,
+         backgroundColor: new THREE.Color(0x777777),
+         fontColor: new THREE.Color(0x222222)
+      };
+
+      const testButton1 = new ThreeMeshUI.Block(testButtonOptions);
+      testButton1.add(
+         new ThreeMeshUI.Text({content: 'Up'})
+      );
+      const testButton2 = new ThreeMeshUI.Block(testButtonOptions);
+      testButton2.add(
+         new ThreeMeshUI.Text({content: 'Down'})
+      );
+
+      testButton1.setupState({
+         state: 'selected',
+         attributes: testSelectedStateAttributes,
+         onSet: () => {
+            console.log('Up');
+            cameraGroup.position.y = BouncePunkSceneGroup.balconyHeight;
+         }
+      });
+      testButton1.setupState(testHoveredStateAttributes);
+      testButton1.setupState(testIdleStateAttributes);
+
+      testButton2.setupState({
+         state: 'selected',
+         attributes: testSelectedStateAttributes,
+         onSet: () => {
+            console.log('Down');
+            cameraGroup.position.y = 0;
+         }
+      });
+      testButton2.setupState(testHoveredStateAttributes);
+      testButton2.setupState(testIdleStateAttributes);
+
+      buttonTest.add(testButton1, testButton2);
+
+
+      const controlButtons = [
+         buttonPlay,
+         buttonPlaySlow,
+         buttonPause,
+         testButton1,
+         testButton2
+      ];
+
 
       const vrControl = VRControl(renderer, camera, scene);
       cameraGroup.add(vrControl.controllerGrips[0], vrControl.controllers[0]);
       cameraGroup.add(vrControl.controllerGrips[1], vrControl.controllers[1]);
 
-      vrControl.controllers[0].addEventListener('selectstart', () => {
-         selectState = true;
-      });
-      vrControl.controllers[0].addEventListener('selectend', () => {
-         selectState = false;
-      });
-
+      // Object to hold controllers when they connect
       let controllers = {
          leftController: null,
          rightController: null
       };
 
-      let selectState = false;
-
       function setControllerHandedness(event, index) {
          console.log(event);
          if (event.data.handedness === 'right') {
             controllers.rightController = event.target;
+            controllers.rightController.index = index;
 
-            // // Add line
-            // const line = new THREE.Line(pointerGeometry);
-            // line.material.color.setHex(0xDDDDDD);
-            // line.scale.z = 0.5;
-            // this.rightController.controller.add(line);
-            // this.rightController.line = line;
             vrControl.addPointer(index);
+
+            controllers.rightController.addEventListener('selectstart', () => {
+               selectState = true;
+               console.log('selectstart');
+            });
+            controllers.rightController.addEventListener('selectend', () => {
+               selectState = false;
+               console.log('selectend');
+            });
          }
          else {
             controllers.leftController = event.target;
-            // this.dispatchEvent({
-            //    type: 'leftControllerConnected',
-            //    controllerGrip: controller.controllerGrip
-            // });
-            vrControl.controllerGrips[index].add(container);
+            controllers.leftController.index = index;
+            vrControl.controllerGrips[index].add(controlsBlock);
          }
       }
 
@@ -233,46 +308,6 @@ export class BouncePunkVRView extends React.Component {
       vrControl.controllers[1].addEventListener('connected', (event) => {
          setControllerHandedness(event, 1);
       });
-
-
-      // const controllerToSelection = new Map();
-
-      // controllerHelper.addEventListener('leftControllerConnected', (event) => {
-      //    event.controllerGrip.add(container);
-      // });
-
-      // controllerHelper.addEventListener('leftControllerConnected', (event) => {
-      //    event.controllerGrip.add(container);
-      // })
-
-      // // Create html gui to control scene
-      // const gui = new GUI({width: 400});
-      // gui.add(guiPrms, 'play')
-      // .name('Play');
-      // gui.add(guiPrms, 'playSlow')
-      // .name('1/10 Speed');
-      // gui.add(guiPrms, 'pause')
-      // .name('Pause');
-      // gui.add(movieController, 'currentOffset', 0, movieController.duration)
-      // .name('').step(0.01).onChange(() => {
-      //     guiPrms.pause();
-      //     movieController.setOffset(movieController.currentOffset);
-      //  });
-      // gui.domElement.style.visibility = 'hidden';
-
-      // // Interactive group to hold GUI, attached to left controller
-      // const guiGroup = new InteractiveGroup(renderer, camera);
-      // controllerHelper.addEventListener('leftControllerConnected', (event) => {
-      //    event.controllerGrip.add(guiGroup);
-      // })
-      // // controllerHelper.leftController.controllerGrip.add(guiGroup);
-
-      // // HTML mesh to hold gui
-      // const guiMesh = new HTMLMesh(gui.domElement);
-      // guiMesh.rotation.x = -Math.PI / 3;
-      // guiMesh.rotation.y = Math.PI / 8;
-      // guiMesh.position.set(0, 0, -0.2);
-      // guiGroup.add(guiMesh);
 
       // Rerender when all pending textures are loaded to show new textures.
       Promise.all(sceneGroup.getPendingPromises()).then(() => {
@@ -284,16 +319,12 @@ export class BouncePunkVRView extends React.Component {
          sceneGroup,
          camera,
          renderer,
-         // controllerHelper,
          vrControl,
-         selectState,
          controllers,
          controlButtons,
          enterVRButton,
          movieController,
          movie,
-         // controlsGroup: guiGroup,
-         // gui
       };
    }
 
@@ -382,15 +413,11 @@ export class BouncePunkVRView extends React.Component {
 
    renderFrame(time) {
       ThreeMeshUI.update();
-      // state.controllerHelper.update(state.controlsGroup);
       this.state.movieController.animate(time);
       this.state.renderer.render(this.state.scene, this.state.camera);
-      // state.gui.updateDisplay();
-      this.updateButtons();
+      if (this.state.controllers.leftController) // Controller that holds gui
+         this.updateButtons();
    }
-
-
-
 
    // Advance/retract |state| so that state reflects all and only those events
    // in |movie| with time <= |timeStamp|.  Assume existing |state| was built
@@ -408,28 +435,33 @@ export class BouncePunkVRView extends React.Component {
    }
 
    updateButtons() {
-      console.log('updating buttons!');
-
       let intersect;
 
       const raycaster = new THREE.Raycaster();
 
-      if (this.state.renderer.xr.isPresenting) {
-         this.state.vrControl.setFromController(0, raycaster.ray);
+      if (this.state.controllers.rightController) { // Pointer controller
+         const index = this.state.controllers.rightController.index;
+
+         this.state.vrControl.setFromController(index, raycaster.ray);
          intersect = this.raycast(raycaster);
 
-         // Position the little white dot at the end of the controller pointing ray
-         if (intersect) this.state.vrControl.setPointerAt(0, intersect.point);
+         // Position the white dot at the end of the controller pointing ray
+         if (intersect)
+            this.state.vrControl.setPointerAt(index, intersect.point);
+         else
+            this.state.vrControl.setPointerAt(index, null);
       }
 
       // Update targeted button state (if any)
       if (intersect && intersect.object.isUI) {
-         if (this.state.selectState) {
-            // Component.setState internally call component.set with the options you defined in component.setupState
+         if (selectState) {
+            // Component.setState internally call component.set with the
+            // options you defined in component.setupState
             intersect.object.setState('selected');
          }
          else {
-            // Component.setState internally call component.set with the options you defined in component.setupState
+            // Component.setState internally call component.set with the
+            // options you defined in component.setupState
             intersect.object.setState('hovered');
          }
       }
@@ -438,31 +470,29 @@ export class BouncePunkVRView extends React.Component {
       this.state.controlButtons.forEach((obj) => {
          if ((!intersect || obj !== intersect.object) && obj.isUI) {
 
-            // Component.setState internally call component.set with the options you defined in component.setupState
+            // Component.setState internally call component.set with the
+            // options you defined in component.setupState
             obj.setState('idle');
          }
       });
    }
 
    raycast(raycaster) {
+      return this.state.controlButtons.reduce((closestIntersection, obj) => {
+         const intersection = raycaster.intersectObject(obj, true);
 
-      return this.state.controlButtons.reduce( ( closestIntersection, obj ) => {
-         const intersection = raycaster.intersectObject( obj, true );
-   
-         if ( !intersection[ 0 ] ) return closestIntersection;
-   
-         if ( !closestIntersection || intersection[ 0 ].distance < closestIntersection.distance ) {
-   
-            intersection[ 0 ].object = obj;
-   
-            return intersection[ 0 ];
-   
+         if (!intersection[0])
+            return closestIntersection;
+
+         if (!closestIntersection
+          || intersection[0].distance < closestIntersection.distance) {
+            intersection[0].object = obj;
+
+            return intersection[0];
          }
-   
+
          return closestIntersection;
-   
-      }, null );
-   
+      }, null);
    }
 
    render() {

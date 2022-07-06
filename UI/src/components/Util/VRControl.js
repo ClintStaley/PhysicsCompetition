@@ -148,10 +148,15 @@ export default function VRControl( renderer ) {
    // point.
    function setPointerAt(controllerID, vec) {
       const controller = controllers[controllerID];
-      const localVec = controller.worldToLocal(vec);
+      if (vec) {
+         const localVec = controller.worldToLocal(vec);
 
-      controller.point.position.copy(localVec);
-      controller.point.visible = true;
+         controller.point.position.copy(localVec);
+         controller.point.visible = true;
+      }
+      else {
+         controller.point.visible = false;
+      }
    }
 
    function addPointer(controllerID) {
