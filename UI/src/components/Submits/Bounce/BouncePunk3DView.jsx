@@ -31,7 +31,7 @@ export class BouncePunk3DView extends React.Component {
       let sceneGroup = new BouncePunkSceneGroup(movie, false);
       scene.add(sceneGroup.getSceneGroup());
 
-      const numOfLights = 2;
+      const numOfLights = 1;
       const lightColor = 0xFFECE1;
 
       for (let i = 0; i < numOfLights; i++) {
@@ -54,29 +54,9 @@ export class BouncePunk3DView extends React.Component {
           roomHeight - 2, sceneGroup.roomDepth - 1);
          light.power = 85 / numOfLights;
          scene.add(light);
-         let lightHelper = new THREE.PointLightHelper(light);
-         scene.add(lightHelper);
+         // let lightHelper = new THREE.PointLightHelper(light);
+         // scene.add(lightHelper);
       }
-
-      // let directionalLight = new THREE.DirectionalLight(lightColor, 1);
-      // directionalLight.position.set(roomWidth - 4, roomHeight - 4, roomDepth3D - 4);
-      // directionalLight.target.position.set(roomWidth / 2, roomHeight / 2, 0);
-      // directionalLight.intensity = 3;
-      // directionalLight.castShadow = true;
-      // scene.add(directionalLight).add(directionalLight.target);
-      // directionalLight.target.updateMatrixWorld();
-      // let directionalLightHelper = new THREE.DirectionalLightHelper(directionalLight);
-      // scene.add(directionalLightHelper);
-
-      // let directionalLight2 = new THREE.DirectionalLight(lightColor, 1);
-      // directionalLight2.position.set(4, roomHeight - 4, roomDepth3D - 4);
-      // directionalLight2.target.position.set(roomWidth / 2, roomHeight / 2, 0);
-      // directionalLight2.intensity = 3;
-      // directionalLight2.castShadow = true;
-      // scene.add(directionalLight2).add(directionalLight2.target);
-      // directionalLight2.target.updateMatrixWorld();
-      // let directionalLightHelper2 = new THREE.DirectionalLightHelper(directionalLight2);
-      // scene.add(directionalLightHelper2);
 
       // let ballLight = new THREE.SpotLight(lightColor);
       // // (, 18, 0, Math.PI / 20, 0.8, 2);
@@ -191,7 +171,8 @@ export class BouncePunk3DView extends React.Component {
       this.state.renderer.render(this.state.scene, this.state.camera);
 
       // Update ball spotlight to point to ball
-      if (this.state.sceneGroup.getCurrentBall())
+      if (this.state.sceneGroup.getCurrentBall()
+       && this.state.scene.getObjectByName("ballLight"))
          this.state.scene.getObjectByName("ballLight").target = this.state.sceneGroup.getCurrentBall();
       // console.log(this.state.renderer.info);
       return (
