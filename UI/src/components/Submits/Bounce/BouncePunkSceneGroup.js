@@ -1,8 +1,7 @@
 import {BounceMovie} from './BounceMovie';
 import * as THREE from 'three';
-import {brickMat, flatSteelMat, plasterMat, scratchedPlasticMat,
- streakyPlasticMat, brassMat, brassRodMat, scuffedMetalMat, olderWoodFloorMat,
- polishedWoodMat} from '../../Util/AsyncMaterials';
+import {brickMat, plasterMat, streakyPlasticMat, brassMat, scuffedMetalMat,
+ olderWoodFloorMat, polishedWoodMat, brassRodMat} from '../../Util/AsyncMaterials';
 import {cloneMatPrms} from '../../Util/ImageUtil';
 
 // Create a Group with the following elements:
