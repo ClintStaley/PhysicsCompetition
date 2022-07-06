@@ -1,7 +1,10 @@
 import {BounceMovie} from './BounceMovie';
 import * as THREE from 'three';
+import pingAudio from '../../../assets/sound/lowPing.mp3';
+import UIfx from 'uifx';
 import {brickMat, plasterMat, streakyPlasticMat, brassMat, scuffedMetalMat,
- olderWoodFloorMat, polishedWoodMat, brassRodMat} from '../../Util/AsyncMaterials';
+ olderWoodFloorMat, polishedWoodMat, brassRodMat} from
+ '../../Util/AsyncMaterials';
 import {cloneMatPrms} from '../../Util/ImageUtil';
 
 // Create a Group with the following elements:
@@ -71,6 +74,8 @@ export class BouncePunkSceneGroup {
          this.roomDepth = BouncePunkSceneGroup.roomDepthVR;
       else
          this.roomDepth = BouncePunkSceneGroup.roomDepth3D;
+
+      this.ping = new UIfx(pingAudio, {volume: 0.5, throttleMs: 100});
 
       this.movie = movie;
       this.topGroup = new THREE.Group(); // Holds pending material promises
@@ -200,7 +205,8 @@ export class BouncePunkSceneGroup {
        }, brickMat);
       rightFrontSideWall.rotateY(-Math.PI / 2);
       rightFrontSideWall.position.set(
-       roomWidth, roomHeight / 2, (this.roomDepth + rigDepth + gutterWidth / 2) / 2);
+       roomWidth, roomHeight / 2,
+       (this.roomDepth + rigDepth + gutterWidth / 2) / 2);
 
       // Add walls group to room group
       roomGroup.add(wallsGroup);
@@ -376,8 +382,7 @@ export class BouncePunkSceneGroup {
    // Adjust the scenegraph to reflect time.  This may require either forward
    // or backward movement in time.
    setOffset(timeStamp) {
-      const {ballRadius, rodRadius, trgDepth, trgRing, wallRing, rigDepth,
-       rigSize, latheSegments, gutterWidth, cannonLength} = BouncePunkSceneGroup;
+      const {trgDepth, rigSize, gutterWidth} = BouncePunkSceneGroup;
       let evts = this.movie.evts;
       let evt;
 
@@ -444,6 +449,12 @@ export class BouncePunkSceneGroup {
             }
             else
                console.log('no ball to position');
+         }
+
+         // If the event is obstacle hit, play fx
+         if (evt.type === BounceMovie.cHitBarrier
+          || evt.type === BounceMovie.cHitTarget) {
+            this.ping.play();
          }
          if (evt.type === BounceMovie.cObstacleFade) {
             this.obstacles[evt.targetId].position.z =

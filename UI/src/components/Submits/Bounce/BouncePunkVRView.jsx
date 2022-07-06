@@ -2,16 +2,10 @@ import React from 'react';
 import {BounceMovie} from './BounceMovie';
 import * as THREE from "three";
 import CameraControls from "camera-controls";
-import pingAudio from '../../../assets/sound/ping.mp3';
-import UIfx from 'uifx';
 import {VRButton} from 'three/examples/jsm/webxr/VRButton.js';
 import {BouncePunkSceneGroup} from './BouncePunkSceneGroup';
 import {VRMovieController} from '../VRMovieController';
-import {ControllerPickHelper} from '../../Util/ControllerPickHelper';
 import VRControl from '../../Util/VRControl';
-import {GUI} from 'dat.gui';
-import {HTMLMesh} from 'three/examples/jsm/interactive/HTMLMesh.js';
-import {InteractiveGroup} from 'three/examples/jsm/interactive/InteractiveGroup.js';
 import ThreeMeshUI from 'three-mesh-ui';
 import FontJSON from '../../../assets/fonts/Roboto-msdf.json';
 import FontImage from '../../../assets/fonts/Roboto-msdf.png';
@@ -33,7 +27,8 @@ export class BouncePunkVRView extends React.Component {
    // Return state displaying background grid and other fixtures
    // appropriate for |movie|.  
    static getInitState(movie) {
-      const {roomWidth} = BouncePunkSceneGroup;
+      const {roomWidth, roomDepthVR, balconyDepth, balconyHeight}
+       = BouncePunkSceneGroup;
       // const rigSize = BouncePunkSceneGroup.rigSize;
 
       let scene = new THREE.Scene();
@@ -56,48 +51,29 @@ export class BouncePunkVRView extends React.Component {
       // Create button to initiate a VR session
       const enterVRButton = VRButton.createButton(renderer);
 
-      const fov = 75;
-      const aspect = 2;  // the canvas default
-      const near = 0.1;
-      const far = 50;
-      const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-      camera.position.set(0, 1.6, 0);
+      const camera = new THREE.PerspectiveCamera(75, 2, 0.1, 50);
+      camera.position.set(0, 1.6, 0); // Approximate position of head
 
       const cameraGroup = new THREE.Group();
       cameraGroup.add(camera);
       cameraGroup.position.set(
-       roomWidth / 2, BouncePunkSceneGroup.balconyHeight,
-       BouncePunkSceneGroup.roomDepthVR - 1);
+       roomWidth / 2, balconyHeight, roomDepthVR - 1);
       scene.add(cameraGroup);
 
       const movieController = new VRMovieController(movie, (offset) => {
          sceneGroup.setOffset(offset);
       });
 
-      const guiPrms = {
-         play: () => {
-            movieController.play(1);
-            console.log('play');
-         },
-         playSlow: () => {
-            movieController.play(0.1);
-            console.log('play slow');
-         },
-         pause: () => {
-            movieController.pause();
-            console.log('pause');
-         },
-      }
+      const guiScale = 0.4;
 
-      // Create block and sub-block
+      // Create gui block to hold buttons
       const controlsBlock = new ThreeMeshUI.Block({
          justifyContent: 'center',
          contentDirection: 'column',
          fontFamily: FontJSON,
          fontTexture: FontImage,
-         fontSize: 0.07,
-         padding: 0.02,
-         borderRadius: 0.11,
+         padding: 0.02 * guiScale,
+         borderRadius: 0.11 * guiScale,
          backgroundOpacity: 1
       });
       controlsBlock.rotateX(-Math.PI / 2);
@@ -105,19 +81,21 @@ export class BouncePunkVRView extends React.Component {
 
       // Objects to store button options and state attributes
       const buttonOptions = {
-         width: 0.4,
-         height: 0.15,
+         width: 0.4 * guiScale,
+         height: 0.15 * guiScale,
          justifyContent: 'center',
-         offset: 0.02,
-         margin: 0.02,
-         borderRadius: 0.075,
+         fontSize: 0.07 * guiScale,
+         offset: 0.02 * guiScale,
+         margin: 0.02 * guiScale,
+         borderRadius: 0.075 * guiScale,
          backgroundOpacity: 1
       };
 
+      // State attributes to change appearance when interacted with
       const hoveredStateAttributes = {
          state: 'hovered',
          attributes: {
-            offset: 0.02,
+            offset: buttonOptions.offset,
             backgroundColor: new THREE.Color(0x999999),
             // backgroundOpacity: 1,
             fontColor: new THREE.Color(0xffffff)
@@ -127,7 +105,7 @@ export class BouncePunkVRView extends React.Component {
       const idleStateAttributes = {
          state: 'idle',
          attributes: {
-            offset: 0.02,
+            offset: buttonOptions.offset,
             backgroundColor: new THREE.Color(0x666666),
             // backgroundOpacity: 1,
             fontColor: new THREE.Color(0xffffff)
@@ -135,7 +113,7 @@ export class BouncePunkVRView extends React.Component {
       };
 
       const selectedStateAttributes = {
-         offset: 0.005,
+         offset: buttonOptions.offset / 4,
          backgroundColor: new THREE.Color(0x777777),
          fontColor: new THREE.Color(0x222222)
       };
@@ -152,15 +130,13 @@ export class BouncePunkVRView extends React.Component {
       buttonPause.add(
          new ThreeMeshUI.Text({content: 'Pause'})
       );
-      const buttonTest = new ThreeMeshUI.Block(controlsBlock);
-      buttonTest.contentDirection = 'row';
-      buttonTest.padding = 0;
 
+      // Set up button states
       buttonPlay.setupState({
          state: 'selected',
          attributes: selectedStateAttributes,
          onSet: () => {
-            guiPrms.play();
+            movieController.play(1);
          }
       });
       buttonPlay.setupState(hoveredStateAttributes);
@@ -170,7 +146,7 @@ export class BouncePunkVRView extends React.Component {
          state: 'selected',
          attributes: selectedStateAttributes,
          onSet: () => {
-            guiPrms.playSlow();
+            movieController.play(0.1);
          }
       });
       buttonPlaySlow.setupState(hoveredStateAttributes);
@@ -180,94 +156,97 @@ export class BouncePunkVRView extends React.Component {
          state: 'selected',
          attributes: selectedStateAttributes,
          onSet: () => {
-            guiPrms.pause();
+            movieController.pause();
          }
       });
       buttonPause.setupState(hoveredStateAttributes);
       buttonPause.setupState(idleStateAttributes);
 
-      controlsBlock.add(buttonPlay, buttonPlaySlow, buttonPause, buttonTest);
+      // Sub-block to hold smaller buttons
+      const subBlock = new ThreeMeshUI.Block(controlsBlock);
+      subBlock.contentDirection = 'row';
+      subBlock.padding = 0;
+      subBlock.offset = 0;
 
-      const testButtonOptions = {
-         width: 0.18,
-         height: 0.15,
-         justifyContent: 'center',
-         offset: 0.02,
-         margin: 0.02,
-         borderRadius: 0.075,
-         backgroundOpacity: 1,
-         fontSize: 0.05
-      };
+      // Add buttons and sub-block to gui block
+      controlsBlock.add(buttonPlay, buttonPlaySlow, buttonPause, subBlock);
 
-      const testHoveredStateAttributes = {
-         state: 'hovered',
-         attributes: {
-            offset: 0.02,
-            backgroundColor: new THREE.Color(0x999999),
-            // backgroundOpacity: 1,
-            fontColor: new THREE.Color(0xffffff)
-         },
-      };
+      // Options and states for small buttons
+      const smallButtonOptions = {...buttonOptions}
+      smallButtonOptions.width = buttonOptions.width / 2 - buttonOptions.margin;
+      smallButtonOptions.fontSize /= 1.3;
 
-      const testIdleStateAttributes = {
-         state: 'idle',
-         attributes: {
-            offset: 0.02,
-            backgroundColor: new THREE.Color(0x666666),
-            // backgroundOpacity: 1,
-            fontColor: new THREE.Color(0xffffff)
-         },
-      };
+      // const smallHoveredStateAttributes = {
+      //    state: 'hovered',
+      //    attributes: {
+      //       offset: 0.02,
+      //       backgroundColor: new THREE.Color(0x999999),
+      //       // backgroundOpacity: 1,
+      //       fontColor: new THREE.Color(0xffffff)
+      //    },
+      // };
 
-      const testSelectedStateAttributes = {
-         offset: 0.005,
-         backgroundColor: new THREE.Color(0x777777),
-         fontColor: new THREE.Color(0x222222)
-      };
+      // const smallIdleStateAttributes = {
+      //    state: 'idle',
+      //    attributes: {
+      //       offset: 0.02,
+      //       backgroundColor: new THREE.Color(0x666666),
+      //       // backgroundOpacity: 1,
+      //       fontColor: new THREE.Color(0xffffff)
+      //    },
+      // };
 
-      const testButton1 = new ThreeMeshUI.Block(testButtonOptions);
-      testButton1.add(
+      // const smallSelectedStateAttributes = {
+      //    offset: 0.005,
+      //    backgroundColor: new THREE.Color(0x777777),
+      //    fontColor: new THREE.Color(0x222222)
+      // };
+
+      const smallButtonUp = new ThreeMeshUI.Block(smallButtonOptions);
+      smallButtonUp.add(
          new ThreeMeshUI.Text({content: 'Up'})
       );
-      const testButton2 = new ThreeMeshUI.Block(testButtonOptions);
-      testButton2.add(
+      const smallButtonDown = new ThreeMeshUI.Block(smallButtonOptions);
+      smallButtonDown.add(
          new ThreeMeshUI.Text({content: 'Down'})
       );
 
-      testButton1.setupState({
+      smallButtonUp.setupState({
          state: 'selected',
-         attributes: testSelectedStateAttributes,
+         attributes: selectedStateAttributes,
          onSet: () => {
             console.log('Up');
-            cameraGroup.position.y = BouncePunkSceneGroup.balconyHeight;
+            cameraGroup.position.y = balconyHeight;
+            cameraGroup.position.z = roomDepthVR - balconyDepth + 0.5;
          }
       });
-      testButton1.setupState(testHoveredStateAttributes);
-      testButton1.setupState(testIdleStateAttributes);
+      smallButtonUp.setupState(hoveredStateAttributes);
+      smallButtonUp.setupState(idleStateAttributes);
 
-      testButton2.setupState({
+      smallButtonDown.setupState({
          state: 'selected',
-         attributes: testSelectedStateAttributes,
+         attributes: selectedStateAttributes,
          onSet: () => {
             console.log('Down');
             cameraGroup.position.y = 0;
+            cameraGroup.position.z = roomDepthVR - 2;
          }
       });
-      testButton2.setupState(testHoveredStateAttributes);
-      testButton2.setupState(testIdleStateAttributes);
+      smallButtonDown.setupState(hoveredStateAttributes);
+      smallButtonDown.setupState(idleStateAttributes);
 
-      buttonTest.add(testButton1, testButton2);
+      subBlock.add(smallButtonUp, smallButtonDown);
 
-
+      // Array of objects that can be interacted with, to test for selection
       const controlButtons = [
          buttonPlay,
          buttonPlaySlow,
          buttonPause,
-         testButton1,
-         testButton2
+         smallButtonUp,
+         smallButtonDown
       ];
 
-
+      // Create VR controller to handle controllers and relevant functions
       const vrControl = VRControl(renderer, camera, scene);
       cameraGroup.add(vrControl.controllerGrips[0], vrControl.controllers[0]);
       cameraGroup.add(vrControl.controllerGrips[1], vrControl.controllers[1]);
@@ -278,6 +257,7 @@ export class BouncePunkVRView extends React.Component {
          rightController: null
       };
 
+      // Assigns GUI to left controller, pointer and select listeners to right
       function setControllerHandedness(event, index) {
          console.log(event);
          if (event.data.handedness === 'right') {
@@ -302,6 +282,7 @@ export class BouncePunkVRView extends React.Component {
          }
       }
 
+      // When controllers connect, determine handedness
       vrControl.controllers[0].addEventListener('connected', (event) => {
          setControllerHandedness(event, 0);
       });
@@ -345,12 +326,12 @@ export class BouncePunkVRView extends React.Component {
          light.shadow.mapSize.height = 1024;
          light.shadow.radius = 1;
          scene.add(light);
-         let lightHelper = new THREE.PointLightHelper(light);
-         scene.add(lightHelper);
+         // let lightHelper = new THREE.PointLightHelper(light);
+         // scene.add(lightHelper);
       }
 
+      // // Create spotlight which follows ball
       // let ballLight = new THREE.SpotLight(lightColor);
-      // // (, 18, 0, Math.PI / 20, 0.8, 2);
       // ballLight.angle = Math.PI / 30;
       // ballLight.penumbra = 0.8;
       // ballLight.decay = 2;
@@ -376,9 +357,9 @@ export class BouncePunkVRView extends React.Component {
    // 3. Attach the renderer dom element to the mount.
    // 4. Do a render
    componentDidMount() {
+
       const width = this.mount.clientWidth;
       const height = this.mount.clientHeight;
-      let rigSize = BouncePunkSceneGroup.rigSize;
       // let cameraControls;
 
       this.state.renderer.setSize(width, height);
@@ -400,7 +381,6 @@ export class BouncePunkVRView extends React.Component {
 
    componentWillUnmount() {
       this.state.enterVRButton.remove();
-      // this.state.gui.destroy();
    }
 
    static getDerivedStateFromProps(newProps, oldState) {
