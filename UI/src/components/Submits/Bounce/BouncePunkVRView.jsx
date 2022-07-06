@@ -47,8 +47,7 @@ export class BouncePunkVRView extends React.Component {
       let renderer = new THREE.WebGLRenderer({antialias: true});
       renderer.shadowMap.enabled = true;
       renderer.physicallyCorrectLights = true;
-      // renderer.shadowMap.type = THREE.BasicShadowMap;
-      renderer.shadowMap.type = THREE.PCFShadowMap;
+      renderer.shadowMap.type = THREE.BasicShadowMap;
       renderer.xr.enabled = true;
       renderer.xr.setFramebufferScaleFactor(0.8);
 
@@ -301,8 +300,7 @@ export class BouncePunkVRView extends React.Component {
    static makeLights(scene, lightColor, roomDepth) {
       const {roomHeight, roomWidth} = BouncePunkSceneGroup;
 
-      const numOfLights = 2;
-      // const lightColor = 0xFFECE1;
+      const numOfLights = 1;
 
       for (let i = 0; i < numOfLights; i++) {
          let light = new THREE.PointLight(lightColor);
@@ -312,6 +310,9 @@ export class BouncePunkVRView extends React.Component {
           (i + 0.5) * (roomWidth / numOfLights),
           roomHeight - 3, roomDepth - 1);
          light.power = 85 / numOfLights;
+         light.shadow.mapSize.width = 1024;
+         light.shadow.mapSize.height = 1024;
+         light.shadow.radius = 1;
          scene.add(light);
          let lightHelper = new THREE.PointLightHelper(light);
          scene.add(lightHelper);
