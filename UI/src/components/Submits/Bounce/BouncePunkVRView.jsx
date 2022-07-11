@@ -10,6 +10,7 @@ import ThreeMeshUI from 'three-mesh-ui';
 import FontJSON from '../../../assets/fonts/Roboto-msdf.json';
 import FontImage from '../../../assets/fonts/Roboto-msdf.png';
 
+// JSB - remove from global
 let selectState = false;
 
 // Display a room with a "rig" on one wall.  The rig has the launcher, targets,
@@ -26,10 +27,9 @@ export class BouncePunkVRView extends React.Component {
 
    // Return state displaying background grid and other fixtures
    // appropriate for |movie|.  
-   static getInitState(movie) {
-      const {roomWidth, roomDepthVR, balconyDepth, balconyHeight}
+   static getInitState(movie) { 
+      const {roomWidth, roomDepthVR, balconyHeight}
        = BouncePunkSceneGroup;
-      // const rigSize = BouncePunkSceneGroup.rigSize;
 
       let scene = new THREE.Scene();
       let sceneGroup = new BouncePunkSceneGroup(movie, true);
@@ -64,10 +64,76 @@ export class BouncePunkVRView extends React.Component {
          sceneGroup.setOffset(offset);
       });
 
-      const guiScale = 0.4;
+      const {controlBlock, controlButtons} = BouncePunkVRView.makeControls(
+       0.4, movieController);
 
+      // Create VR controller to handle controllers and relevant functions
+      const vrControl = VRControl(renderer, camera, scene);
+      cameraGroup.add(vrControl.controllerGrips[0], vrControl.controllers[0]);
+      cameraGroup.add(vrControl.controllerGrips[1], vrControl.controllers[1]);
+
+      // Object to hold controllers when they connect
+      let controllers = {
+         leftController: null,
+         rightController: null
+      };
+
+      // Assigns GUI to left controller, pointer and select listeners to right
+      function setControllerHandedness(event, index) {
+         console.log(event);
+         if (event.data.handedness === 'right') {
+            controllers.rightController = event.target;
+            controllers.rightController.index = index;
+
+            vrControl.addPointer(index);
+
+            controllers.rightController.addEventListener('selectstart', () => {
+               selectState = true;
+               console.log('selectstart');
+            });
+            controllers.rightController.addEventListener('selectend', () => {
+               selectState = false;
+               console.log('selectend');
+            });
+         }
+         else {
+            controllers.leftController = event.target;
+            controllers.leftController.index = index;
+            vrControl.controllerGrips[index].add(controlBlock);
+         }
+      }
+
+      // When controllers connect, determine handedness
+      vrControl.controllers[0].addEventListener('connected', (event) => {
+         setControllerHandedness(event, 0);
+      });
+      vrControl.controllers[1].addEventListener('connected', (event) => {
+         setControllerHandedness(event, 1);
+      });
+
+      // Rerender when all pending textures are loaded to show new textures.
+      Promise.all(sceneGroup.getPendingPromises()).then(() => {
+         renderer.render(scene, camera);
+      });
+
+      return {
+         scene,
+         sceneGroup,
+         camera,
+         renderer,
+         vrControl,
+         controllers,
+         controlButtons,
+         enterVRButton,
+         movieController,
+         movie,
+      };
+   }
+
+   // JSB - shorten so under 100 lines
+   static makeControls(guiScale, movieController) {
       // Create gui block to hold buttons
-      const controlsBlock = new ThreeMeshUI.Block({
+      const controlBlock = new ThreeMeshUI.Block({
          justifyContent: 'center',
          contentDirection: 'column',
          fontFamily: FontJSON,
@@ -76,8 +142,8 @@ export class BouncePunkVRView extends React.Component {
          borderRadius: 0.11 * guiScale,
          backgroundOpacity: 1
       });
-      controlsBlock.rotateX(-Math.PI / 2);
-      controlsBlock.position.set(0, 0, -0.18);
+      controlBlock.rotateX(-Math.PI / 2);
+      controlBlock.position.set(0, 0, -0.18);
 
       // Objects to store button options and state attributes
       const buttonOptions = {
@@ -163,44 +229,18 @@ export class BouncePunkVRView extends React.Component {
       buttonPause.setupState(idleStateAttributes);
 
       // Sub-block to hold smaller buttons
-      const subBlock = new ThreeMeshUI.Block(controlsBlock);
+      const subBlock = new ThreeMeshUI.Block(controlBlock);
       subBlock.contentDirection = 'row';
       subBlock.padding = 0;
       subBlock.offset = 0;
 
       // Add buttons and sub-block to gui block
-      controlsBlock.add(buttonPlay, buttonPlaySlow, buttonPause, subBlock);
+      controlBlock.add(buttonPlay, buttonPlaySlow, buttonPause, subBlock);
 
       // Options and states for small buttons
       const smallButtonOptions = {...buttonOptions}
       smallButtonOptions.width = buttonOptions.width / 2 - buttonOptions.margin;
       smallButtonOptions.fontSize /= 1.3;
-
-      // const smallHoveredStateAttributes = {
-      //    state: 'hovered',
-      //    attributes: {
-      //       offset: 0.02,
-      //       backgroundColor: new THREE.Color(0x999999),
-      //       // backgroundOpacity: 1,
-      //       fontColor: new THREE.Color(0xffffff)
-      //    },
-      // };
-
-      // const smallIdleStateAttributes = {
-      //    state: 'idle',
-      //    attributes: {
-      //       offset: 0.02,
-      //       backgroundColor: new THREE.Color(0x666666),
-      //       // backgroundOpacity: 1,
-      //       fontColor: new THREE.Color(0xffffff)
-      //    },
-      // };
-
-      // const smallSelectedStateAttributes = {
-      //    offset: 0.005,
-      //    backgroundColor: new THREE.Color(0x777777),
-      //    fontColor: new THREE.Color(0x222222)
-      // };
 
       const smallButtonUp = new ThreeMeshUI.Block(smallButtonOptions);
       smallButtonUp.add(
@@ -238,74 +278,15 @@ export class BouncePunkVRView extends React.Component {
       subBlock.add(smallButtonUp, smallButtonDown);
 
       // Array of objects that can be interacted with, to test for selection
-      const controlButtons = [
-         buttonPlay,
-         buttonPlaySlow,
-         buttonPause,
-         smallButtonUp,
-         smallButtonDown
-      ];
-
-      // Create VR controller to handle controllers and relevant functions
-      const vrControl = VRControl(renderer, camera, scene);
-      cameraGroup.add(vrControl.controllerGrips[0], vrControl.controllers[0]);
-      cameraGroup.add(vrControl.controllerGrips[1], vrControl.controllers[1]);
-
-      // Object to hold controllers when they connect
-      let controllers = {
-         leftController: null,
-         rightController: null
-      };
-
-      // Assigns GUI to left controller, pointer and select listeners to right
-      function setControllerHandedness(event, index) {
-         console.log(event);
-         if (event.data.handedness === 'right') {
-            controllers.rightController = event.target;
-            controllers.rightController.index = index;
-
-            vrControl.addPointer(index);
-
-            controllers.rightController.addEventListener('selectstart', () => {
-               selectState = true;
-               console.log('selectstart');
-            });
-            controllers.rightController.addEventListener('selectend', () => {
-               selectState = false;
-               console.log('selectend');
-            });
-         }
-         else {
-            controllers.leftController = event.target;
-            controllers.leftController.index = index;
-            vrControl.controllerGrips[index].add(controlsBlock);
-         }
-      }
-
-      // When controllers connect, determine handedness
-      vrControl.controllers[0].addEventListener('connected', (event) => {
-         setControllerHandedness(event, 0);
-      });
-      vrControl.controllers[1].addEventListener('connected', (event) => {
-         setControllerHandedness(event, 1);
-      });
-
-      // Rerender when all pending textures are loaded to show new textures.
-      Promise.all(sceneGroup.getPendingPromises()).then(() => {
-         renderer.render(scene, camera);
-      });
-
       return {
-         scene,
-         sceneGroup,
-         camera,
-         renderer,
-         vrControl,
-         controllers,
-         controlButtons,
-         enterVRButton,
-         movieController,
-         movie,
+         controlBlock,
+         controlButtons: [
+            buttonPlay,
+            buttonPlaySlow,
+            buttonPause,
+            smallButtonUp,
+            smallButtonDown
+         ]
       };
    }
 
@@ -314,6 +295,7 @@ export class BouncePunkVRView extends React.Component {
 
       const numOfLights = 1;
 
+      // Create equally spaced point lights
       for (let i = 0; i < numOfLights; i++) {
          let light = new THREE.PointLight(lightColor);
          light.decay = 0.2;
@@ -326,25 +308,7 @@ export class BouncePunkVRView extends React.Component {
          light.shadow.mapSize.height = 1024;
          light.shadow.radius = 1;
          scene.add(light);
-         // let lightHelper = new THREE.PointLightHelper(light);
-         // scene.add(lightHelper);
       }
-
-      // // Create spotlight which follows ball
-      // let ballLight = new THREE.SpotLight(lightColor);
-      // ballLight.angle = Math.PI / 30;
-      // ballLight.penumbra = 0.8;
-      // ballLight.decay = 2;
-      // ballLight.name = "ballLight";
-      // ballLight.castShadow = true;
-      // ballLight.position.set(
-      //  roomWidth / 2, roomHeight / 2, roomDepth3D - 0.5);
-      // ballLight.power = 400;
-      // // ballLight.target = sceneGroup.getBall();
-      // ballLight.target.position.set(
-      //  (roomWidth - rigSize) / 2, rigSize, rigDepth);
-      // scene.add(ballLight).add(ballLight.target);
-      // ballLight.target.updateMatrixWorld();
 
       // Plus general ambient
       scene.add(new THREE.AmbientLight(lightColor));
@@ -357,10 +321,8 @@ export class BouncePunkVRView extends React.Component {
    // 3. Attach the renderer dom element to the mount.
    // 4. Do a render
    componentDidMount() {
-
       const width = this.mount.clientWidth;
       const height = this.mount.clientHeight;
-      // let cameraControls;
 
       this.state.renderer.setSize(width, height);
 
