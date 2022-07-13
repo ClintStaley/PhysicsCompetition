@@ -776,6 +776,7 @@ export class BouncePunkSceneGroup {
       // Calculate rods needed in x and y direction
       const xRods = 1 + Math.floor(width - 2 * (rodRadius + trgRing));
       const yRods = 1 + Math.floor(height - 2 * (rodRadius + trgRing));
+
       // Loop through to create support rods and rings
       for (let i = 0; i < xRods; i++) {
          for (let j = 0; j < yRods; j++) {
@@ -984,6 +985,7 @@ export class BouncePunkSceneGroup {
       return lathe;
    }
 
+   // CAS FIX: Delete commented code.
    // updateLoadedTexture(matPrms, object, desiredRep, offset) {
    //    this.pendingPromises.push(matPrms.slow.then(prms => {
    //       object.material = new THREE.MeshStandardMaterial(
@@ -1006,6 +1008,7 @@ export class BouncePunkSceneGroup {
 
    // Takes a lathe, and adjusts its UV values to make the texture map evenly,
    // then applies a texture the correct size. 
+   // CAS FIX: Imperative tense in comments.
    fixLatheUVs(lathe, {points, maxRadius, segments}, matPrms, offset) {
       // Go through points array and calculate total length of curve
       let textureLength = 0;
@@ -1018,8 +1021,8 @@ export class BouncePunkSceneGroup {
       }
 
       // Go through Uvs and scale them to total length
-      // Copy array of uvs
       let uvArray = lathe.geometry.getAttribute('uv').array;
+      
       // cycle through uv array and change each v value
       for (let i = 0; i < segments + 1; i++) {
          // Variable to save length from start of curve to current point

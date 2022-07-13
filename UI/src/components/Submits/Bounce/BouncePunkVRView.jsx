@@ -11,12 +11,16 @@ import FontJSON from '../../../assets/fonts/Roboto-msdf.json';
 import FontImage from '../../../assets/fonts/Roboto-msdf.png';
 
 // JSB - remove from global
+// CAS Fix -- Best I can come up with is to make it a static member of
+// BouncePunkVRView, so it's BouncePunkVRView.selected
+
 let selectState = false;
 
 // Display a room with a "rig" on one wall.  The rig has the launcher, targets,
 // obstacles, and ball.  All 3JS units are meters.
 export class BouncePunkVRView extends React.Component {
-   // Props are: {
+   // Props are: {  // CAS FIX: No multiline inline comments.  Put in block
+   // comment at start of function, possibly with footnote link.
    //    movie: movie to display
    // }
    constructor(props) {
@@ -40,11 +44,13 @@ export class BouncePunkVRView extends React.Component {
       BouncePunkVRView.makeLights(scene, 0xFFECE1, sceneGroup.roomDepth);
 
       // CAS Fix: Try moving renderer out of state
+      // CAS FIX: Always eliminate fix comments when they've been done, or if
+      // we've agreed they aren't going to happen.  Reduce clutter!
       let renderer = new THREE.WebGLRenderer({antialias: true});
       renderer.shadowMap.enabled = true;
       renderer.physicallyCorrectLights = true;
       renderer.shadowMap.type = THREE.BasicShadowMap;
-      // renderer.shadowMap.type = THREE.PCFShadowMap;
+      // renderer.shadowMap.type = THREE.PCFShadowMap;  // CAS FIX: Remove commented code.
       renderer.xr.enabled = true;
       renderer.xr.setFramebufferScaleFactor(0.8);
 
@@ -52,7 +58,7 @@ export class BouncePunkVRView extends React.Component {
       const enterVRButton = VRButton.createButton(renderer);
 
       const camera = new THREE.PerspectiveCamera(75, 2, 0.1, 50);
-      camera.position.set(0, 1.6, 0); // Approximate position of head
+      camera.position.set(0, 1.6, 0); // Approximate position of viewers head
 
       const cameraGroup = new THREE.Group();
       cameraGroup.add(camera);
@@ -131,6 +137,7 @@ export class BouncePunkVRView extends React.Component {
    }
 
    // JSB - shorten so under 100 lines
+   // CAS FIX: Yes, please do.  And drop commented lines of code
    static makeControls(guiScale, movieController) {
       // Create gui block to hold buttons
       const controlBlock = new ThreeMeshUI.Block({
@@ -303,7 +310,7 @@ export class BouncePunkVRView extends React.Component {
          light.position.set(
           (i + 0.5) * (roomWidth / numOfLights),
           roomHeight - 3, roomDepth - 1);
-         light.power = 85 / numOfLights;
+         light.power = 85 / numOfLights;  // CAS FIX constants...
          light.shadow.mapSize.width = 1024;
          light.shadow.mapSize.height = 1024;
          light.shadow.radius = 1;
@@ -399,6 +406,9 @@ export class BouncePunkVRView extends React.Component {
          if (selectState) {
             // Component.setState internally call component.set with the
             // options you defined in component.setupState
+            // CAS FIX: Not sure what this comment means, and perhaps better in
+            // a block comment at top of function since it seems to need some 
+            // clarity
             intersect.object.setState('selected');
          }
          else {
