@@ -4,14 +4,10 @@
 */
 
 import * as THREE from 'three';
-import {XRControllerModelFactory} from
- 'three/examples/jsm/webxr/XRControllerModelFactory.js';
 
 export default function VRControl( renderer ) {
    const controllers = [];
    const controllerGrips = [];
-
-   const controllerModelFactory = new XRControllerModelFactory();
 
    //////////////////
    // Lines helpers
@@ -105,25 +101,15 @@ export default function VRControl( renderer ) {
    const controllerGrip1 = renderer.xr.getControllerGrip(0);
    const controllerGrip2 = renderer.xr.getControllerGrip(1);
 
-   if (controller1) controllers.push(controller1);
-   if (controller2) controllers.push(controller2);
+   if (controller1)
+      controllers.push(controller1);
+   if (controller2)
+      controllers.push(controller2);
 
-   if (controllerGrip1) controllerGrips.push(controllerGrip1);
-   if (controllerGrip2) controllerGrips.push(controllerGrip2);
-
-   // controllers.forEach((controller) => {
-   //    const ray = linesHelper.clone();
-   //    const point = pointer.clone();
-
-   //    controller.add(ray, point);
-   //    controller.ray = ray;
-   //    controller.point = point;
-   // });
-
-   // controllerGrips.forEach((controllerGrip) => {
-   //    controllerGrip.add(controllerModelFactory
-   //     .createControllerModel(controllerGrip));
-   // });
+   if (controllerGrip1)
+      controllerGrips.push(controllerGrip1);
+   if (controllerGrip2)
+      controllerGrips.push(controllerGrip2);
 
    //////////////
    // Functions
@@ -149,7 +135,7 @@ export default function VRControl( renderer ) {
    function setPointerAt(controllerID, vec) {
       const controller = controllers[controllerID];
       if (vec) {
-         const localVec = controller.worldToLocal(vec);
+         const localVec = controller.parent.worldToLocal(vec);
 
          controller.point.position.copy(localVec);
          controller.point.visible = true;
@@ -165,9 +151,17 @@ export default function VRControl( renderer ) {
       const ray = linesHelper.clone();
       const point = pointer.clone();
 
-      controller.add(ray, point);
+      controller.add(ray);
+      controller.parent.add(point);
       controller.ray = ray;
       controller.point = point;
+   }
+
+   function positionAtT(inVec, t, p, v, g) {
+      inVec.copy(p);
+      inVec.addScaledVector(v, -t);
+      inVec.addScaledVector(g, 0.5 * t ** 2);
+      return inVec;
    }
 
    //
@@ -177,7 +171,8 @@ export default function VRControl( renderer ) {
       controllerGrips,
       setFromController,
       setPointerAt,
-      addPointer
+      addPointer,
+      positionAtT
    };
 }
 

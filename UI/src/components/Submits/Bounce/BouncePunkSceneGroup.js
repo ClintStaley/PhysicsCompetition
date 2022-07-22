@@ -1,7 +1,6 @@
 import {BounceMovie} from './BounceMovie';
 import * as THREE from 'three';
 import pingAudio from '../../../assets/sound/lowPing.mp3';
-import UIfx from 'uifx';
 import {brickMat, plasterMat, streakyPlasticMat, brassMat, scuffedMetalMat,
  olderWoodFloorMat, polishedWoodMat, brassRodMat} from
  '../../Util/AsyncMaterials';
@@ -43,11 +42,12 @@ export class BouncePunkSceneGroup {
    static gutterDepth = 2.5;   // 2.5m is enough so you can't see the bottom
 
    // Balcony dimensions
+   static balconyNum = 2;         // Number of balconies
    static balconyHeight = 4;      // Height of balcony top above floor
    static balconyDepth = 2;       // Comfortably deep enough for player
    static railRadius = 0.075;     // Balcony rail
    static railHeight = 1;         // Height above balcony floor
-   static railRodRadius = 0.025;  // 
+   static railRodRadius = 0.025;  // Balcony rail support rod
 
    // Rig dimensions
    static cannonLength = 1.8;  // 1.5m fits in left margin
@@ -63,7 +63,7 @@ export class BouncePunkSceneGroup {
    static tubeSegments = 32;
    static bevelRadius = .005;  // Radius of bevel on rings
 
-   constructor(movie, isVR) {
+   constructor(movie, isVR, listener) {
       const {roomWidth, rigSize, rigDepth} = BouncePunkSceneGroup;
 
       // Create materials object
@@ -75,7 +75,14 @@ export class BouncePunkSceneGroup {
       else
          this.roomDepth = BouncePunkSceneGroup.roomDepth3D;
 
-      this.ping = new UIfx(pingAudio, {volume: 0.5, throttleMs: 100});
+      if (listener) {
+         this.ping = new THREE.PositionalAudio(listener);
+
+         const audioLoader = new THREE.AudioLoader();
+         audioLoader.load(pingAudio, (buffer) => {
+            this.ping.setBuffer(buffer);
+         });
+      }
 
       this.movie = movie;
       this.topGroup = new THREE.Group(); // Holds pending material promises
@@ -84,6 +91,7 @@ export class BouncePunkSceneGroup {
       this.obstacles = [];               // Total obstacles in scene
       this.evtIdx = -1;                  // Event index currently displayed
       this.currentBall;                  // Current ball in frame
+      this.colliderMeshes = [];          // Colliders for camera boundary
 
       this.room = this.makeRoom();       // Room and gutter
       this.rig = this.makeRig();         // Rig, with ball, cannon and targets
@@ -130,6 +138,7 @@ export class BouncePunkSceneGroup {
        }, plasterMat);
       roof.rotateX(Math.PI / 2);
       roof.position.set(roomWidth / 2, roomHeight, this.roomDepth / 2);
+      this.colliderMeshes.push(roof);
 
       this.makeFloor(roomGroup, olderWoodFloorMat);
 
@@ -143,8 +152,8 @@ export class BouncePunkSceneGroup {
    }
 
    makeWalls(roomGroup, wallMat) {
-      const {roomHeight, roomWidth, roomDepth3D, floorHeight, gutterWidth,
-       gutterDepth, rigDepth} = BouncePunkSceneGroup; // JSB
+      const {roomHeight, roomWidth, gutterWidth, rigDepth}
+       = BouncePunkSceneGroup; // JSB
 
       // Create walls group
       const wallsGroup = new THREE.Group();
@@ -158,16 +167,15 @@ export class BouncePunkSceneGroup {
        }, wallMat);
       backWall.position.set(roomWidth / 2, roomHeight / 2, 0);
       backWall.receiveShadow = true;
+      this.colliderMeshes.push(backWall);
 
-      // If VR, create front wall
-      if (this.isVR) {
-         const frontWall = this.createPlaneElement(
-          'largeWall', wallsGroup, {
-             width: roomWidth,
-             height: roomHeight
-          }, wallMat);
-         frontWall.position.set(roomWidth / 2, roomHeight / 2, this.roomDepth);
-      }
+      const frontWall = this.createPlaneElement(
+       'largeWall', wallsGroup, {
+          width: roomWidth,
+          height: roomHeight
+       }, wallMat);
+      frontWall.position.set(roomWidth / 2, roomHeight / 2, this.roomDepth);
+      this.colliderMeshes.push(frontWall);
 
       // Left walls
       const leftBackSideWall = this.createPlaneElement(
@@ -178,6 +186,7 @@ export class BouncePunkSceneGroup {
       leftBackSideWall.rotateY(Math.PI / 2);
       leftBackSideWall.position.set(
        0, roomHeight / 2, (rigDepth - gutterWidth / 2) / 2);
+      this.colliderMeshes.push(leftBackSideWall);
 
       const leftFrontSideWall = this.createPlaneElement(
        'frontSideWall', wallsGroup, {
@@ -187,6 +196,7 @@ export class BouncePunkSceneGroup {
       leftFrontSideWall.rotateY(Math.PI / 2);
       leftFrontSideWall.position.set(
        0, roomHeight / 2, (this.roomDepth + rigDepth + gutterWidth / 2) / 2);
+      this.colliderMeshes.push(leftFrontSideWall);
 
       // Right walls
       const rightBackSideWall = this.createPlaneElement(
@@ -197,6 +207,7 @@ export class BouncePunkSceneGroup {
       rightBackSideWall.rotateY(-Math.PI / 2);
       rightBackSideWall.position.set(
        roomWidth, roomHeight / 2, (rigDepth - gutterWidth / 2) / 2);
+      this.colliderMeshes.push(rightBackSideWall);
 
       const rightFrontSideWall = this.createPlaneElement(
        'frontSideWall', wallsGroup, {
@@ -207,6 +218,7 @@ export class BouncePunkSceneGroup {
       rightFrontSideWall.position.set(
        roomWidth, roomHeight / 2,
        (this.roomDepth + rigDepth + gutterWidth / 2) / 2);
+      this.colliderMeshes.push(rightFrontSideWall);
 
       // Add walls group to room group
       roomGroup.add(wallsGroup);
@@ -245,6 +257,7 @@ export class BouncePunkSceneGroup {
       frontFloorTop.rotateX(-Math.PI / 2);
       frontFloorTop.position.set(
        roomWidth / 2, 0, (this.roomDepth + rigDepth + gutterWidth / 2) / 2);
+      this.colliderMeshes.push(frontFloorTop);
 
       const frontFloorSide = this.createPlaneElement(
        'frontFloorSide', floorGroup, {
@@ -347,9 +360,6 @@ export class BouncePunkSceneGroup {
    }
 
    makeRig() {
-      const {cannonLength, cannonRadius, ballRadius, rodRadius, trgDepth,
-       trgRing, wallRing, rigDepth, rigSize, latheSegments}
-       = BouncePunkSceneGroup;
 
       const rigGroup = new THREE.Group();
       rigGroup.name = 'rig';
@@ -454,7 +464,12 @@ export class BouncePunkSceneGroup {
          // If the event is obstacle hit, play fx
          if (evt.type === BounceMovie.cHitBarrier
           || evt.type === BounceMovie.cHitTarget) {
-            this.ping.play();
+            if (this.ping) {
+               // Attach positional ping to stationary part of obstacle
+               this.obstacles[evt.targetId].parent.getObjectByName('wallRing')
+                .add(this.ping);
+               this.ping.play();
+            }
          }
          if (evt.type === BounceMovie.cObstacleFade) {
             this.obstacles[evt.targetId].position.z =
@@ -507,92 +522,95 @@ export class BouncePunkSceneGroup {
 
    makeBalcony(parent, woodMat, metalMat) {
       let {roomWidth, floorHeight, balconyDepth, balconyHeight, railRadius,
-       railHeight, railRodRadius, latheSegments} = BouncePunkSceneGroup;
+       railHeight, railRodRadius, balconyNum, latheSegments}
+       = BouncePunkSceneGroup;
 
-      // Make the floor
-      const floorTop = this.createPlaneElement(
-       'floorTop', parent, {
-          width: balconyDepth,
-          height: roomWidth
-       }, woodMat);
-       floorTop.rotateX(Math.PI / 2);
-       floorTop.rotateZ(Math.PI / 2);
-      floorTop.position.set(
-       roomWidth / 2, balconyHeight, this.roomDepth - balconyDepth / 2);
-
-      const floorSide = this.createPlaneElement(
-       'floorSide', parent, {
-          width: floorHeight,
-          height: roomWidth
-       }, woodMat);
-      floorSide.rotateZ(Math.PI / 2);
-      floorSide.position.set(
-       roomWidth / 2, balconyHeight - floorHeight / 2,
-       this.roomDepth - balconyDepth);
-
-      const floorBottom = this.createPlaneElement(
-       'floorBottom', parent, {
-          width: balconyDepth,
-          height: roomWidth
-       }, woodMat);
-      floorBottom.rotateX(Math.PI / 2);
-      floorBottom.rotateZ(Math.PI / 2);
-      floorBottom.position.set(
-       roomWidth / 2, balconyHeight - floorHeight,
-       this.roomDepth - balconyDepth / 2);
-
-      // Make the rail
-      const rail = this.createCylinderElement(
-       'rail', parent, {
-          radius: railRadius,
-          height: roomWidth,
-          segments: latheSegments
-       }, woodMat);
-      rail.rotateZ(Math.PI / 2);
-      rail.position.set(
-       roomWidth / 2, balconyHeight + railHeight,
-       this.roomDepth - balconyDepth + railRadius);
-
-      // Brass base for rail
-      const railBase = this.createBoxElement(
-       'railBase', parent, {
-          width: roomWidth,
-          height: railRadius + railRodRadius,
-          depth: railRadius
-       }, metalMat);
-      railBase.position.set(
-       roomWidth / 2, balconyHeight + railHeight - railRadius / 2,
-       this.roomDepth - balconyDepth + railRadius);
-
-      // Make support rods
-      // Support rod pattern repeats every meter
-      for (let i = -0.5; i <= roomWidth; i++) {
-         // Leftmost straight rod
-         const straightRod = this.createCylinderElement(
-          'straightRod', parent, {
-             radius: railRodRadius,
-             height: railHeight,
+      for (let i = 1; i <= balconyNum; i++) {
+         // Make the floor
+         const floorTop = this.createPlaneElement(
+          'floorTop', parent, {
+             width: balconyDepth,
+             height: roomWidth
+          }, woodMat);
+         floorTop.rotateX(Math.PI / 2);
+         floorTop.rotateZ(Math.PI / 2);
+         floorTop.position.set(
+          roomWidth / 2, balconyHeight * i, this.roomDepth - balconyDepth / 2);
+   
+         const floorSide = this.createPlaneElement(
+          'floorSide', parent, {
+             width: floorHeight,
+             height: roomWidth
+          }, woodMat);
+         floorSide.rotateZ(Math.PI / 2);
+         floorSide.position.set(
+          roomWidth / 2, balconyHeight * i - floorHeight / 2,
+          this.roomDepth - balconyDepth);
+   
+         const floorBottom = this.createPlaneElement(
+          'floorBottom', parent, {
+             width: balconyDepth,
+             height: roomWidth
+          }, woodMat);
+         floorBottom.rotateX(Math.PI / 2);
+         floorBottom.rotateZ(Math.PI / 2);
+         floorBottom.position.set(
+          roomWidth / 2, balconyHeight * i - floorHeight,
+          this.roomDepth - balconyDepth / 2);
+   
+         // Make the rail
+         const rail = this.createCylinderElement(
+          'rail', parent, {
+             radius: railRadius,
+             height: roomWidth,
              segments: latheSegments
+          }, woodMat);
+         rail.rotateZ(Math.PI / 2);
+         rail.position.set(
+          roomWidth / 2, balconyHeight * i + railHeight,
+          this.roomDepth - balconyDepth + railRadius);
+   
+         // Brass base for rail
+         const railBase = this.createBoxElement(
+          'railBase', parent, {
+             width: roomWidth,
+             height: railRadius + railRodRadius,
+             depth: railRadius
           }, metalMat);
-         straightRod.rotateY(Math.PI);
-         straightRod.position.set(
-          (roomWidth - Math.ceil(roomWidth)) / 2 + i,
-          balconyHeight + railHeight / 2,
+         railBase.position.set(
+          roomWidth / 2, balconyHeight * i + railHeight - railRadius / 2,
           this.roomDepth - balconyDepth + railRadius);
-
-         // Leftmost curved rod
-         const testRod = this.makeCurvedRailRod(parent, metalMat);
-         testRod.position.set(
-          (roomWidth - Math.ceil(roomWidth)) / 2 + i + 0.25,
-          balconyHeight - 0.05,
-          this.roomDepth - balconyDepth + railRadius);
-         
-         const testRod2 = this.makeCurvedRailRod(parent, metalMat);
-         testRod2.position.set(
-          (roomWidth - Math.ceil(roomWidth)) / 2 + i + 0.75,
-          balconyHeight - 0.05,
-          this.roomDepth - balconyDepth + railRadius);
-         testRod2.rotateX(Math.PI);
+   
+         // Make support rods
+         // Support rod pattern repeats every meter
+         for (let j = -0.5; j <= roomWidth; j++) {
+            // Leftmost straight rod
+            const straightRod = this.createCylinderElement(
+             'straightRod', parent, {
+                radius: railRodRadius,
+                height: railHeight,
+                segments: latheSegments
+             }, metalMat);
+            straightRod.rotateY(Math.PI);
+            straightRod.position.set(
+             (roomWidth - Math.ceil(roomWidth)) / 2 + j,
+             balconyHeight * i + railHeight / 2,
+             this.roomDepth - balconyDepth + railRadius);
+   
+            // Leftmost curved rod
+            const testRod = this.makeCurvedRailRod(parent, metalMat);
+            testRod.position.set(
+             (roomWidth - Math.ceil(roomWidth)) / 2 + j + 0.25,
+             balconyHeight * i - 0.05,
+             this.roomDepth - balconyDepth + railRadius);
+            
+            const testRod2 = this.makeCurvedRailRod(parent, metalMat);
+            testRod2.position.set(
+             (roomWidth - Math.ceil(roomWidth)) / 2 + j + 0.75,
+             balconyHeight * i - 0.05,
+             this.roomDepth - balconyDepth + railRadius);
+            testRod2.rotateX(Math.PI);
+         }
       }
    }
 
@@ -630,8 +648,7 @@ export class BouncePunkSceneGroup {
    }
 
    makeCannon(cannonGroup) {
-      const {cannonLength, cannonRadius, ballRadius, rodRadius, trgDepth,
-       trgRing, wallRing, rigDepth, rigSize, latheSegments}
+      const {cannonLength, cannonRadius, ballRadius, rigSize, latheSegments}
        = BouncePunkSceneGroup;
 
       const cannonPoints = [];
@@ -716,9 +733,7 @@ export class BouncePunkSceneGroup {
    }
 
    makeCannonMount(cannonGroup) {
-      const {roomWidth, cannonLength, cannonRadius, ballRadius, rodRadius, trgDepth,
-       trgRing, wallRing, rigDepth, rigSize, latheSegments}
-       = BouncePunkSceneGroup;
+      const {roomWidth, rigSize, latheSegments} = BouncePunkSceneGroup;
 
       for (let i = -1; i < 2; i += 2) {
          const LargeCannonMount = this.createCylinderElement(
@@ -756,8 +771,7 @@ export class BouncePunkSceneGroup {
    }
 
    createObstacle(name, parent, {width, height, depth}, matPrms, offset) {
-      const {ballRadius, rodRadius, trgDepth, trgRing, wallRing, rigDepth,
-       rigSize, latheSegments} = BouncePunkSceneGroup;
+      const {rodRadius, trgRing} = BouncePunkSceneGroup;
 
       // Create group for obstacle
       const obstacleGroup = new THREE.Group();
@@ -794,13 +808,6 @@ export class BouncePunkSceneGroup {
       const {rodRadius, trgDepth, trgRing, wallRing, rigDepth,
        latheSegments} = BouncePunkSceneGroup;
 
-      // if (!this.mats.supportRods)
-      //    this.mats.supportRods = {
-      //       mat: scuffedMetalMat.slow,
-      //       x: 2 * rodRadius * Math.PI,
-      //       y: rigDepth,
-      //       objs: []
-      //    };
       // Add rod
       const supportRod = this.createCylinderElement(
        'supportRod', moveParent, {
@@ -811,7 +818,6 @@ export class BouncePunkSceneGroup {
       supportRod.position.set(x, y, -rigDepth / 2);
       supportRod.rotateX(Math.PI / 2);
       supportRod.castShadow = true;
-      // this.mats.supportRods.objs.push(supportRod);
 
 
       if (!this.mats.obstacleRing)
@@ -865,7 +871,7 @@ export class BouncePunkSceneGroup {
       return ball;
    }
 
-   createBoxElement(name, parent, {width, height, depth}, matPrms, offset) {
+   createBoxElement(name, parent, {width, height, depth}, matPrms) {
       const cube = new THREE.Mesh(
        new THREE.BoxGeometry(width, height, depth),
        new THREE.MeshLambertMaterial(matPrms.fast));
@@ -885,7 +891,7 @@ export class BouncePunkSceneGroup {
    }
 
    createSphereElement(
-    name, parent, {radius, widthSegments, heightSegments}, matPrms, offset) {
+    name, parent, {radius, widthSegments, heightSegments}, matPrms) {
       const sphere = new THREE.Mesh(
        new THREE.SphereGeometry(radius, widthSegments, heightSegments),
        new THREE.MeshLambertMaterial(matPrms.fast));
@@ -897,20 +903,18 @@ export class BouncePunkSceneGroup {
          y: radius * Math.PI
       }
 
-      // this.updateLoadedTexture(matPrms, sphere, desiredRep, offset);
       this.addMaterial(sphere, desiredRep, matPrms);
 
       return sphere;
    }
 
-   createPlaneElement(name, parent, {width, height}, matPrms, offset) {
+   createPlaneElement(name, parent, {width, height}, matPrms) {
       const plane = new THREE.Mesh(
        new THREE.PlaneGeometry(width, height),
        new THREE.MeshLambertMaterial(matPrms.fast));
       plane.name = name;
       parent.add(plane);
 
-      // this.updateLoadedTexture(matPrms, plane, desiredRep, offset);
       this.addMaterial(plane, {
          x: width,
          y: height
@@ -920,7 +924,7 @@ export class BouncePunkSceneGroup {
    }
 
    createCylinderElement(
-    name, parent, {radius, height, segments}, matPrms, offset) {
+    name, parent, {radius, height, segments}, matPrms) {
       const cylinder = new THREE.Mesh(new THREE.CylinderGeometry(
        radius, radius, height, segments),
        new THREE.MeshLambertMaterial(matPrms.fast));
@@ -932,7 +936,6 @@ export class BouncePunkSceneGroup {
          y: height
       };
 
-      // this.updateLoadedTexture(matPrms, cylinder, desiredRep, offset);
       this.addMaterial(cylinder, desiredRep, matPrms);
 
       return cylinder;
@@ -985,14 +988,6 @@ export class BouncePunkSceneGroup {
       return lathe;
    }
 
-   // CAS FIX: Delete commented code.
-   // updateLoadedTexture(matPrms, object, desiredRep, offset) {
-   //    this.pendingPromises.push(matPrms.slow.then(prms => {
-   //       object.material = new THREE.MeshStandardMaterial(
-   //        cloneMatPrms(prms, desiredRep, offset));
-   //    }));
-   // }
-
    addMaterial(obj, {x, y}, matPrms) {
       // If material doesn't exist, create it
       if (!this.mats[obj.name])
@@ -1006,10 +1001,9 @@ export class BouncePunkSceneGroup {
       this.mats[obj.name].objs.push(obj);
    }
 
-   // Takes a lathe, and adjusts its UV values to make the texture map evenly,
-   // then applies a texture the correct size. 
-   // CAS FIX: Imperative tense in comments.
-   fixLatheUVs(lathe, {points, maxRadius, segments}, matPrms, offset) {
+   // Take a lathe, and adjust its UV values to make the texture map evenly,
+   // then apply a texture the correct size.
+   fixLatheUVs(lathe, {points, maxRadius, segments}, matPrms) {
       // Go through points array and calculate total length of curve
       let textureLength = 0;
       for (let i = 0; i < points.length - 1; i++) {
@@ -1051,7 +1045,6 @@ export class BouncePunkSceneGroup {
          y: textureLength
       };
 
-      // this.updateLoadedTexture(matPrms, lathe, desiredRep, offset);
       this.addMaterial(lathe, desiredRep, matPrms);
    }
 
@@ -1083,5 +1076,9 @@ export class BouncePunkSceneGroup {
 
    getPendingPromises() {
       return this.pendingPromises;
+   }
+
+   getColliderMeshes() {
+      return this.colliderMeshes;
    }
 }
