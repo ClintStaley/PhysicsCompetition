@@ -12,18 +12,17 @@ export class LandGrabMovie {
    static cInvalidCircle = 4;
    static cEmptyEvt = 5; // required in the case movie has no other events
 
-   //Constructor with background as indicated, and events drawn from prms and sbm
-   // optional sbm.  (Generate only obstacle creation events w/o sbm)
+   // Constructor with background as indicated, and events drawn from prms and
+   // optional sbm. (Generate only obstacle creation events w/o sbm)
    constructor(frameRate, prms, sbm) {
-      //declare constants
+      // declare constants
       const bkgSize = 100.0;
       const validationPause = .25;
-      const PI = 3.14159265358979
-      //contains Results of circle collisions and radii of collisions
-      //has content only if EVC has returned result
+      // Contains results of circle collisions and radii of collisions
+      // has content only if EVC has returned result
       let circlesResults = sbm && sbm.testResult ? 
        sbm.testResult.circleData : [];
-      //contains location and order of circles
+      // contains location and order of circles
       let circleContent =  sbm && sbm.content ? sbm.content : [];
 
       this.background = {};
@@ -33,8 +32,10 @@ export class LandGrabMovie {
       this.evts = [];
       this.id = 1;
       // obstacles numbered from 0
-      prms.obstacles.forEach((brr, idx) => 
-       this.addMakeObstacleEvt(-1, this.id++, brr.loX, brr.loY, brr.hiX, brr.hiY));
+      prms.obstacles.forEach((brr, idx) => {
+         this.addMakeObstacleEvt(
+          -1, this.id++, brr.loX, brr.loY, brr.hiX, brr.hiY)
+      });
       
        // Evts must always have at least 1 evt for MovieController to work,
        // so if there are no obstacles or circleResults, put empty evt
@@ -45,21 +46,22 @@ export class LandGrabMovie {
 
       let time = 0;
       circlesResults.forEach((circleResult, circleId) => {
-         var circle = circleContent[circleId];
-         var growthTime = 2 // each circle will take 2 seconds to grow
+         let circle = circleContent[circleId];
+         let growthTime = 2 // each circle will take 2 seconds to grow
          /*
          Valid growth time is "shortened" when the badAngle exists 
          (which means it is invalid) and validGrowthTime is the proportional
-         to badAngle/2Pi (as any radius length before badAngle is valid)
+         to badAngle / 2 Pi (as any radius length before badAngle is valid)
          */
-         var validGrowthTime = growthTime;
+         let validGrowthTime = growthTime;
          if (circleResult.badAngle)
-            validGrowthTime = growthTime * (circleResult.badAngle/ (2*PI)); 
+            validGrowthTime = growthTime
+             * (circleResult.badAngle/ (2 * Math.PI)); 
 
          // Grow steadily from terminal angle as valid circle.
          for (let t = 0; t < validGrowthTime; t += 1.0/frameRate)
             this.addCircleGrowthEvt(time + t, this.id++, circle.centerX,
-             circle.centerY, circle.radius, (t/growthTime) * 2 *PI);            
+             circle.centerY, circle.radius, (t / growthTime) * 2 * Math.PI);
 
          time += validGrowthTime;
 
@@ -83,8 +85,8 @@ export class LandGrabMovie {
    addMakeCircleEvt(time, id, x, y, r, badAngle) {
       if (badAngle) 
          this.evts.push(
-          {type: LandGrabMovie.cInvalidCircle, time, id, x, y, r, angle:badAngle
-          });
+          {type: LandGrabMovie.cInvalidCircle, time, id, x, y, r,
+          angle:badAngle});
       else
          this.evts.push({type: LandGrabMovie.cValidCircle, time, id, x, y, r});
    }
