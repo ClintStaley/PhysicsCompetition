@@ -147,6 +147,6 @@ export class SVGUtil{
        <text key={"txt" + evt.time} x={evt.x} y={yTop-evt.y} 
        className={style.LLText}>{`(${evt.x}, ${evt.y})`}</text>
        </g>
-    }
+   }
 }
 
