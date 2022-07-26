@@ -3,7 +3,7 @@ import {BounceMovie} from './BounceMovie';
 import * as THREE from "three";
 import CameraControls from "camera-controls";
 import {VRButton} from 'three/examples/jsm/webxr/VRButton.js';
-import {BouncePunkSceneGroup} from './BouncePunkSceneGroup';
+import {BounceSceneGroup} from './BounceSceneGroup';
 import {VRMovieController} from '../VRMovieController';
 import VRControl from '../../Util/VRControl';
 import ThreeMeshUI from 'three-mesh-ui';
@@ -13,7 +13,7 @@ import { Vector3 } from 'three';
 
 // Display a room with a "rig" on one wall.  The rig has the launcher, targets,
 // obstacles, and ball.  All 3JS units are meters.
-export class BouncePunkVRView extends React.Component {
+export class BounceVRView extends React.Component {
    // Is the controller selecting?
    static selected = false;
 
@@ -23,14 +23,14 @@ export class BouncePunkVRView extends React.Component {
    constructor(props) {
       super(props);
 
-      this.state = BouncePunkVRView.getInitState(props.movie);
+      this.state = BounceVRView.getInitState(props.movie);
    }
 
    // Return state displaying background grid and other fixtures
    // appropriate for |movie|.  
    static getInitState(movie) { 
       const {roomWidth, roomDepthVR, balconyHeight}
-       = BouncePunkSceneGroup;
+       = BounceSceneGroup;
 
       const camera = new THREE.PerspectiveCamera(75, 2, 0.1, 50);
       camera.position.set(0, 1.6, 0); // Approximate position of viewers head
@@ -38,10 +38,10 @@ export class BouncePunkVRView extends React.Component {
       camera.add(listener);
 
       let scene = new THREE.Scene();
-      let sceneGroup = new BouncePunkSceneGroup(movie, true, listener);
+      let sceneGroup = new BounceSceneGroup(movie, true, listener);
       scene.add(sceneGroup.getSceneGroup());
 
-      BouncePunkVRView.makeLights(scene, 0xFFECE1, sceneGroup.roomDepth);
+      BounceVRView.makeLights(scene, 0xFFECE1, sceneGroup.roomDepth);
 
       let renderer = new THREE.WebGLRenderer({antialias: true});
       renderer.shadowMap.enabled = true;
@@ -63,7 +63,7 @@ export class BouncePunkVRView extends React.Component {
          sceneGroup.setOffset(offset);
       });
 
-      const {controlBlock, controlButtons} = BouncePunkVRView.makeControls(
+      const {controlBlock, controlButtons} = BounceVRView.makeControls(
        0.4, movieController, cameraGroup);
 
       // Create VR controller to handle controllers and relevant functions
@@ -86,11 +86,11 @@ export class BouncePunkVRView extends React.Component {
             vrControl.addPointer(index);
 
             controllers.rightController.addEventListener('selectstart', () => {
-               BouncePunkVRView.selected = true;
+               BounceVRView.selected = true;
                console.log('selectstart');
             });
             controllers.rightController.addEventListener('selectend', () => {
-               BouncePunkVRView.selected = false;
+               BounceVRView.selected = false;
                console.log('selectend');
             });
          }
@@ -129,10 +129,10 @@ export class BouncePunkVRView extends React.Component {
    }
 
    // JSB - shorten so under 100 lines
-   // CAS FIX: Yes, please do.  And drop commented lines of code
+   // CAS FIX: Yes, please do.
    static makeControls(guiScale, movieController, cameraGroup) {
       const {balconyNum, balconyHeight, balconyDepth, roomDepthVR, roomWidth}
-       = BouncePunkSceneGroup;
+       = BounceSceneGroup;
 
       // Create gui block to hold buttons
       const controlBlock = new ThreeMeshUI.Block({
@@ -291,7 +291,7 @@ export class BouncePunkVRView extends React.Component {
    }
 
    static makeLights(scene, lightColor, roomDepth) {
-      const {roomHeight, roomWidth} = BouncePunkSceneGroup;
+      const {roomHeight, roomWidth} = BounceSceneGroup;
 
       const numOfLights = 2;
       const totalPower = 85;
@@ -349,8 +349,8 @@ export class BouncePunkVRView extends React.Component {
       let rtn = oldState;
 
       if (newProps.movie !== oldState.movie) // Complete reset
-         rtn = BouncePunkVRView.getInitState(newProps.movie);
-      return BouncePunkVRView.setOffset(rtn, newProps.offset);
+         rtn = BounceVRView.getInitState(newProps.movie);
+      return BounceVRView.setOffset(rtn, newProps.offset);
    }
 
    renderFrame(time) {
@@ -398,7 +398,7 @@ export class BouncePunkVRView extends React.Component {
 
       // Update targeted button state (if any)
       if (intersect && intersect.object.isUI) {
-         if (BouncePunkVRView.selected)
+         if (BounceVRView.selected)
             intersect.object.setState('selected');
          else
             intersect.object.setState('hovered');
@@ -431,7 +431,7 @@ export class BouncePunkVRView extends React.Component {
 
    conditionallyTeleport() {
       const {roomWidth, roomDepthVR, rigDepth, gutterWidth, balconyDepth}
-       = BouncePunkSceneGroup;
+       = BounceSceneGroup;
 
       const vrControl = this.state.vrControl;
       const cameraGroup = this.state.camera.parent;
@@ -480,16 +480,16 @@ export class BouncePunkVRView extends React.Component {
       // Calculate offset between cursor and player's feet
       const offset = new Vector3().subVectors(tpPos, feetPos);
 
-      if (BouncePunkVRView.selected) {
-         BouncePunkVRView.readyToTeleport = true;
+      if (BounceVRView.selected) {
+         BounceVRView.readyToTeleport = true;
          guidingController.point.scale.set(0.075, 0.075, 1);
       }
       else {
          // If select has been released and ready, teleport
-         if (BouncePunkVRView.readyToTeleport)
+         if (BounceVRView.readyToTeleport)
             cameraGroup.position.add(offset);
 
-         BouncePunkVRView.readyToTeleport = false;
+         BounceVRView.readyToTeleport = false;
          guidingController.point.scale.set(0.015, 0.015, 1);
       }
    }

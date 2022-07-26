@@ -32,7 +32,7 @@ import {cloneMatPrms} from '../../Util/ImageUtil';
 // 
 // Center of the room is at the bottom left corner
 
-export class BouncePunkSceneGroup {
+export class BounceSceneGroup {
    // Room and gutter dimensions
    static roomHeight = 12;     // 12m tall, rig reaches up to 10m
    static roomWidth = 14;      // 2m extra on either side of rig
@@ -65,16 +65,16 @@ export class BouncePunkSceneGroup {
    static bevelRadius = .005;  // Radius of bevel on rings
 
    constructor(movie, isVR, listener) {
-      const {roomWidth, rigSize, rigDepth} = BouncePunkSceneGroup;
+      const {roomWidth, rigSize, rigDepth} = BounceSceneGroup;
 
       // Create materials object
       this.mats = {};
 
       this.isVR = isVR;
       if (isVR)
-         this.roomDepth = BouncePunkSceneGroup.roomDepthVR;
+         this.roomDepth = BounceSceneGroup.roomDepthVR;
       else
-         this.roomDepth = BouncePunkSceneGroup.roomDepth3D;
+         this.roomDepth = BounceSceneGroup.roomDepth3D;
 
       if (listener) {
          this.ping = new THREE.PositionalAudio(listener);
@@ -122,7 +122,7 @@ export class BouncePunkSceneGroup {
    }
 
    makeRoom() {
-      const {roomHeight, roomWidth} = BouncePunkSceneGroup;
+      const {roomHeight, roomWidth} = BounceSceneGroup;
 
       // Create group to house room components
       const roomGroup = new THREE.Group();
@@ -154,7 +154,7 @@ export class BouncePunkSceneGroup {
 
    makeWalls(roomGroup, wallMat) {
       const {roomHeight, roomWidth, gutterWidth, rigDepth}
-       = BouncePunkSceneGroup; // JSB
+       = BounceSceneGroup; // JSB
 
       // Create walls group
       const wallsGroup = new THREE.Group();
@@ -227,7 +227,7 @@ export class BouncePunkSceneGroup {
 
    makeFloor(roomGroup, floorMat) {
       const {roomWidth, floorHeight, gutterWidth, rigDepth}
-       = BouncePunkSceneGroup;
+       = BounceSceneGroup;
 
       // Create roof group
       const floorGroup = new THREE.Group();
@@ -274,7 +274,7 @@ export class BouncePunkSceneGroup {
 
    makeGutter(roomGroup, gutterWallMat, gutterRoofMat) {
       const {roomHeight, roomWidth, floorHeight, gutterWidth, gutterDepth,
-       rigDepth} = BouncePunkSceneGroup;
+       rigDepth} = BounceSceneGroup;
 
       // Create gutter group
       const gutterGroup = new THREE.Group();
@@ -395,7 +395,7 @@ export class BouncePunkSceneGroup {
    // Adjust the scenegraph to reflect time.  This may require either forward
    // or backward movement in time.
    setOffset(timeStamp) {
-      const {trgDepth, rigSize, gutterWidth} = BouncePunkSceneGroup;
+      const {trgDepth, rigSize, gutterWidth} = BounceSceneGroup;
       let evts = this.movie.evts;
       let evt;
 
@@ -526,7 +526,7 @@ export class BouncePunkSceneGroup {
    makeBalcony(parent, woodMat, metalMat) {
       let {roomWidth, floorHeight, balconyDepth, balconyHeight, railRadius,
        railHeight, railRodRadius, balconyNum, latheSegments}
-       = BouncePunkSceneGroup;
+       = BounceSceneGroup;
 
       for (let i = 1; i <= balconyNum; i++) {
          // Make the floor
@@ -618,7 +618,7 @@ export class BouncePunkSceneGroup {
    }
 
    makeCurvedRailRod(parent, mat) {
-      const {railRodRadius, latheSegments} = BouncePunkSceneGroup;
+      const {railRodRadius, latheSegments} = BounceSceneGroup;
       class CustonArcTanCurve extends THREE.Curve {
          constructor(scale = 1) {
             super();
@@ -652,7 +652,7 @@ export class BouncePunkSceneGroup {
 
    makeCannon(cannonGroup) {
       const {cannonLength, cannonRadius, ballRadius, rigSize, latheSegments}
-       = BouncePunkSceneGroup;
+       = BounceSceneGroup;
 
       const cannonPoints = [];
 
@@ -736,7 +736,7 @@ export class BouncePunkSceneGroup {
    }
 
    makeCannonMount(cannonGroup) {
-      const {roomWidth, rigSize, latheSegments} = BouncePunkSceneGroup;
+      const {roomWidth, rigSize, latheSegments} = BounceSceneGroup;
 
       for (let i = -1; i < 2; i += 2) {
          const LargeCannonMount = this.createCylinderElement(
@@ -774,7 +774,7 @@ export class BouncePunkSceneGroup {
    }
 
    createObstacle(name, parent, {width, height, depth}, matPrms, offset) {
-      const {rodRadius, trgRing} = BouncePunkSceneGroup;
+      const {rodRadius, trgRing} = BounceSceneGroup;
 
       // Create group for obstacle
       const obstacleGroup = new THREE.Group();
@@ -809,7 +809,7 @@ export class BouncePunkSceneGroup {
 
    createSupportRods(parent, moveParent, {x, y}) {
       const {rodRadius, trgDepth, trgRing, wallRing, rigDepth,
-       latheSegments} = BouncePunkSceneGroup;
+       latheSegments} = BounceSceneGroup;
 
       // Add rod
       const supportRod = this.createCylinderElement(
@@ -854,11 +854,11 @@ export class BouncePunkSceneGroup {
    }
 
    createBall(ballNumber, parent) {
-      const {rigSize, cannonLength} = BouncePunkSceneGroup;
+      const {rigSize, cannonLength} = BounceSceneGroup;
       // Ball dimensions
-      const radius = BouncePunkSceneGroup.ballRadius;
-      const widthSegments = BouncePunkSceneGroup.latheSegments;
-      const heightSegments = BouncePunkSceneGroup.latheSegments / 2;
+      const radius = BounceSceneGroup.ballRadius;
+      const widthSegments = BounceSceneGroup.latheSegments;
+      const heightSegments = BounceSceneGroup.latheSegments / 2;
 
       const ball = this.createSphereElement(
        `ball`, parent, {
@@ -946,7 +946,7 @@ export class BouncePunkSceneGroup {
 
    createRingElement(
     name, parent, {innerRad, ringSize, segments}, matPrms, offset) {
-      const {bevelRadius} = BouncePunkSceneGroup;
+      const {bevelRadius} = BounceSceneGroup;
       const points = [];
       points.push(new THREE.Vector2(innerRad + ringSize, 0));
       this.generateArcPoints(

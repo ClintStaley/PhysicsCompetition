@@ -2,7 +2,7 @@ import React from 'react';
 import {BounceMovie} from './BounceMovie';
 import * as THREE from "three";
 import CameraControls from "camera-controls";
-import {BouncePunkSceneGroup} from './BouncePunkSceneGroup';
+import {BounceSceneGroup} from './BounceSceneGroup';
 
 CameraControls.install({THREE});
 
@@ -11,7 +11,7 @@ CameraControls.install({THREE});
 
 // Display a room with a "rig" on one wall.  The rig has the launcher, targets,
 // obstacles, and ball.  All 3JS units are meters.
-export class BouncePunk3DView extends React.Component {
+export class Bounce3DView extends React.Component {
    // Props are: {
    //    movie: movie to display
    //    offset: time offset from movie start in sec
@@ -19,14 +19,14 @@ export class BouncePunk3DView extends React.Component {
    constructor(props) {
       super(props);
 
-      this.state = BouncePunk3DView.setOffset(
-       BouncePunk3DView.getInitState(props.movie), props.offset);
+      this.state = Bounce3DView.setOffset(
+       Bounce3DView.getInitState(props.movie), props.offset);
    }
 
    // Return state displaying background grid and other fixtures
    // appropriate for |movie|.  
    static getInitState(movie) {
-      const {roomHeight, roomWidth, rigSize} = BouncePunkSceneGroup;
+      const {roomHeight, roomWidth, rigSize} = BounceSceneGroup;
       let scene = new THREE.Scene();
 
       let camera = new THREE.PerspectiveCamera(70);
@@ -34,7 +34,7 @@ export class BouncePunk3DView extends React.Component {
       const listener = new THREE.AudioListener();
       camera.add(listener);
 
-      let sceneGroup = new BouncePunkSceneGroup(movie, false, listener);
+      let sceneGroup = new BounceSceneGroup(movie, false, listener);
       scene.add(sceneGroup.getSceneGroup());
 
       const numOfLights = 1;
@@ -85,7 +85,7 @@ export class BouncePunk3DView extends React.Component {
    // 4. Do a render
    componentDidMount() {
       const {roomWidth, roomHeight, roomDepth3D, rigDepth, rigSize}
-       = BouncePunkSceneGroup;
+       = BounceSceneGroup;
       const width = this.mount.clientWidth;
       const height = this.mount.clientHeight;
       let cameraControls;
@@ -136,8 +136,8 @@ export class BouncePunk3DView extends React.Component {
       let rtn = oldState;
 
       if (newProps.movie !== oldState.movie) // Complete reset
-         rtn = BouncePunk3DView.getInitState(newProps.movie);
-      return BouncePunk3DView.setOffset(rtn, newProps.offset);
+         rtn = Bounce3DView.getInitState(newProps.movie);
+      return Bounce3DView.setOffset(rtn, newProps.offset);
    }
 
 

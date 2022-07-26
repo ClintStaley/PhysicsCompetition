@@ -1,15 +1,12 @@
 import React, {Component} from 'react';
 import {Bounce3DView} from './Bounce3DView';
-import {BounceOld3DView} from './BounceOld3DView';
 import {BounceSVGView} from "./BounceSVGView"; 
-import {BounceVRView} from "./BounceVRView";
-import {BounceOldVRView} from './BounceOldVRView';
+// import {BounceVRView} from "./BounceVRView";
 import {BounceMovie}  from './BounceMovie';
 import {BSubmitModal} from './BounceSubmitModal';
 import {ViewChooser} from '../ViewChooser';
 import {MovieController}  from '../MovieController';
-import {BouncePunk3DView} from './BouncePunk3DView';
-import {BouncePunkVRView} from './BouncePunkVRView';
+import {BounceVRView} from './BounceVRView';
 
 import style from './Bounce.module.css'
 
@@ -121,12 +118,12 @@ export class Bounce extends Component {
       },
       {
          label: "Movie",
-         viewMaker: mv => <MovieController movie={mv} viewCls={BouncePunk3DView}
+         viewMaker: mv => <MovieController movie={mv} viewCls={Bounce3DView}
           duration={mv.lastBallExitTime}/>
       },
       {
          label: "VR",
-         viewMaker: mv => <BouncePunkVRView movie={mv}/>
+         viewMaker: mv => <BounceVRView movie={mv}/>
       }
    ];
 
