@@ -1023,11 +1023,11 @@ export class BouncePunkSceneGroup {
       // CAS FIX: comment only nonobvious.  These seem pretty obvious.
       // cycle through uv array and change each v value
       for (let i = 0; i < segments + 1; i++) {
-         // Variable to save length from start of curve to current point
          let lengthFromStart = 0;
+
          for (let j = 0; j < points.length - 1; j++) {
             const vValue = 2 * (i * points.length + j) + 1;
-            // Constant to save percentage of length from start of curve
+
             const lengthPercent = lengthFromStart / textureLength;
             uvArray[vValue] = lengthPercent;
             const p1 = points[j];
