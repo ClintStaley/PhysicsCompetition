@@ -95,7 +95,7 @@ export class Rebound extends Component {
          />    
          {summary}
          <RbnSubmitModal prms={this.props.prms}
-          submitFn={this.props.sbmFunction}/>;
+          submitFn={this.props.sbmFunction}/>
       </section>);
    }
 }
