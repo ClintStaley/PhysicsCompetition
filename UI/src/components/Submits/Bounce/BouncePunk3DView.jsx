@@ -20,7 +20,7 @@ export class BouncePunk3DView extends React.Component {
       super(props);
 
       this.state = BouncePunk3DView.setOffset(
-         BouncePunk3DView.getInitState(props.movie), props.offset);
+       BouncePunk3DView.getInitState(props.movie), props.offset);
    }
 
    // Return state displaying background grid and other fixtures
@@ -39,10 +39,13 @@ export class BouncePunk3DView extends React.Component {
 
       const numOfLights = 1;
       const lightColor = 0xFFECE1;
+      const lightIntensity = 18;
+      const lightDecay = 0.2;
       const totalPower = 85;
 
       for (let i = 0; i < numOfLights; i++) {
-         let light = new THREE.PointLight(lightColor, 18, 0, 0.2); // CAS FIX:  18??
+         let light = new THREE.PointLight(
+          lightColor, lightIntensity, 0, lightDecay);
          light.castShadow = true;
          light.position.set(
           (i + 0.5) * (roomWidth / numOfLights),  
@@ -52,7 +55,7 @@ export class BouncePunk3DView extends React.Component {
       }
 
       // Plus general ambient
-      scene.add(new THREE.AmbientLight(lightColor)); // 0x808080
+      scene.add(new THREE.AmbientLight(lightColor));
 
       // CAS FIX: Try moving renderer out of state
       let renderer = new THREE.WebGLRenderer({antialias: true});

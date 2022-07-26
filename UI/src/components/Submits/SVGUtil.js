@@ -2,7 +2,7 @@
 
 import React from "react";
 
-export class SVGUtil{
+export class SVGUtil {
    // For all SVG creating functions:
    // style is a css module: a dictionary indexed by generic class names 
    // (e.g. heavyLine) with corresponding values of unique css class names like
@@ -25,8 +25,8 @@ export class SVGUtil{
    // bars immediate children of the returned <g> at negative offsets relative
    // to <g> parent, so the graph origin is always at (0.0) relative to returned
    // <g>.
-   static getGraphGrid(height, width, style, options) { 
-      let svgElms = []; 
+   static getGraphGrid(height, width, style, options) {
+      let svgElms = [];
       let longDim = Math.max(width, height);
       
       // Adjust for default parameters
@@ -80,7 +80,7 @@ export class SVGUtil{
       let height = evt.hiY - evt.loY;
 
       // Left and Right coords lengths (not including outer parenthesis)
-      //textSize is the height of one line, letter width being ~1/2 its height
+      // textSize is the height of one line, letter width being ~1/2 its height
       const leftCoordLength = `${evt.loX.toFixed(2)}, ${evt.hiY.toFixed(2)})`
        .length * textSize / 2;
       const rightCoordLength = `(${evt.hiX.toFixed(2)}, ${evt.hiY.toFixed(2)}`
@@ -137,7 +137,7 @@ export class SVGUtil{
        className={style.LLText}> {`(${evt.x}, ${evt.y})`} </text> </g>
    }
 
-   //Makes a "circle slice" using evt properties
+   // Makes a "circle slice" using evt properties
    static makeCircleSlice(evt, cls, yTop, style) {
       return <g key={"CircleSlice" +evt.id}>
        <path key={"Circ" + evt.time} d={`M ${evt.x},${yTop-evt.y} 

@@ -41,11 +41,11 @@ export class LandGrabSVGView extends React.Component {
    static setOffset(state, timeStamp) {
       let movie = state.movie;
       let evts = movie.evts;
-      
+
       let {growthEvts, evtIdx, svgElms} = state;
       let yTop = movie.background.height;
       let evt;
-      
+
       // Triggered only if there are no evts
       if (evts[0].type === LandGrabMovie.cEmptyEvt)
          return {growthEvts, evtIdx, svgElms, movie};
@@ -69,7 +69,7 @@ export class LandGrabSVGView extends React.Component {
          else if (evt.type === LandGrabMovie.cCircleGrowth) {
             growthEvts[evtIdx] = SVGUtil.makeCircleSlice(evt, "openCircle", 
              yTop, styles);
-            svgElms.push(growthEvts[evtIdx]);     
+            svgElms.push(growthEvts[evtIdx]);
          }
       }
 
@@ -83,18 +83,18 @@ export class LandGrabSVGView extends React.Component {
          if (growthEvts[evtIdx])
             svgElms.push(growthEvts[evtIdx]);
       }
-      
+
 
       return {growthEvts, evtIdx, svgElms, movie};
    }
 
    render() { 
-      let width = this.state.movie.background.width; 
+      let width = this.state.movie.background.width;
       let height = this.state.movie.background.height;
    return  ( 
       <svg key={"svgOuter"} viewBox={`-.1 -.1 ${width + .1} ${height + .1}`}
        width="100%"className="panel">
-         <g key={"svgElms"}>{this.state.svgElms}</g>  
+         <g key={"svgElms"}>{this.state.svgElms}</g>
       </svg>);
    }
 
