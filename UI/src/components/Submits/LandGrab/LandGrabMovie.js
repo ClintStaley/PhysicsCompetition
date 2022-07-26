@@ -15,7 +15,7 @@ export class LandGrabMovie {
    // Constructor with background as indicated, and events drawn from prms and
    // optional sbm. (Generate only obstacle creation events w/o sbm)
    constructor(frameRate, prms, sbm) {
-      // declare constants
+      // declare constants  CAS FIX: Obvious comment...
       const bkgSize = 100.0;
       const validationPause = .25;
       // Contains results of circle collisions and radii of collisions
@@ -31,6 +31,7 @@ export class LandGrabMovie {
       this.background.width = bkgSize;
       this.evts = [];
       this.id = 1;
+
       // obstacles numbered from 0
       prms.obstacles.forEach((brr, idx) => {
          this.addMakeObstacleEvt(
@@ -48,7 +49,8 @@ export class LandGrabMovie {
       circlesResults.forEach((circleResult, circleId) => {
          let circle = circleContent[circleId];
          let growthTime = 2 // each circle will take 2 seconds to grow
-         /*
+         /* CAS FIX: Block comments in header with footnotes.  And please
+         make this one clearer.. 
          Valid growth time is "shortened" when the badAngle exists 
          (which means it is invalid) and validGrowthTime is the proportional
          to badAngle / 2 Pi (as any radius length before badAngle is valid)

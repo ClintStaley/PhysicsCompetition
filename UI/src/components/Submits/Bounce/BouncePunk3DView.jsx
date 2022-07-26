@@ -6,6 +6,9 @@ import {BouncePunkSceneGroup} from './BouncePunkSceneGroup';
 
 CameraControls.install({THREE});
 
+// CAS FIX: Do we need the BounceOld*.jsx files still?  Seems like we left them 
+// behind a while ago....
+
 // Display a room with a "rig" on one wall.  The rig has the launcher, targets,
 // obstacles, and ball.  All 3JS units are meters.
 export class BouncePunk3DView extends React.Component {
@@ -27,7 +30,7 @@ export class BouncePunk3DView extends React.Component {
       let scene = new THREE.Scene();
 
       let camera = new THREE.PerspectiveCamera(70);
-      camera.position.set(roomWidth / 2, rigSize / 2, 15);  // Center of near wall
+      camera.position.set(roomWidth / 2, rigSize / 2, 15);  // Near wall center
       const listener = new THREE.AudioListener();
       camera.add(listener);
 
@@ -39,7 +42,7 @@ export class BouncePunk3DView extends React.Component {
       const totalPower = 85;
 
       for (let i = 0; i < numOfLights; i++) {
-         let light = new THREE.PointLight(lightColor, 18, 0, 0.2);
+         let light = new THREE.PointLight(lightColor, 18, 0, 0.2); // CAS FIX:  18??
          light.castShadow = true;
          light.position.set(
           (i + 0.5) * (roomWidth / numOfLights),  
@@ -51,7 +54,7 @@ export class BouncePunk3DView extends React.Component {
       // Plus general ambient
       scene.add(new THREE.AmbientLight(lightColor)); // 0x808080
 
-      // CAS Fix: Try moving renderer out of state
+      // CAS FIX: Try moving renderer out of state
       let renderer = new THREE.WebGLRenderer({antialias: true});
       renderer.shadowMap.enabled = true;
       renderer.physicallyCorrectLights = true;
@@ -78,7 +81,8 @@ export class BouncePunk3DView extends React.Component {
    // 3. Attach the renderer dom element to the mount.
    // 4. Do a render
    componentDidMount() {
-      const {roomWidth, roomHeight, roomDepth3D, rigDepth, rigSize} = BouncePunkSceneGroup;
+      const {roomWidth, roomHeight, roomDepth3D, rigDepth, rigSize}
+       = BouncePunkSceneGroup;
       const width = this.mount.clientWidth;
       const height = this.mount.clientHeight;
       let cameraControls;
@@ -115,7 +119,8 @@ export class BouncePunk3DView extends React.Component {
          this.state.renderer.render(this.state.scene, this.state.camera);
       }
 
-      cameraControls.setTarget(roomWidth / 2, rigSize / 2, rigDepth);  // Center of rig
+      // Point to center of rig
+      cameraControls.setTarget(roomWidth / 2, rigSize / 2, rigDepth);  
       cameraControls.update();
 
       // Do a render

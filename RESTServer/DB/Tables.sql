@@ -87,6 +87,7 @@ create table Membership (
     Team(id) on delete cascade on update cascade
 );
 
+# Pwd is -pw4AUonPC
 insert into Person (firstName, lastName, email, password, whenRegistered, role)
    VALUES ("Clint", "Staley", "admin@softwareinventions.com",
     "bd6070c9346e70f2b603e7512639473f8aea9f45", NOW(), 1);

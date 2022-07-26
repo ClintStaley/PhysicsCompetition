@@ -6,6 +6,8 @@ import {brickMat, plasterMat, streakyPlasticMat, brassMat, scuffedMetalMat,
  '../../Util/AsyncMaterials';
 import {cloneMatPrms} from '../../Util/ImageUtil';
 
+// CAS FIX: Please review this header comment to be sure it's still accurate.
+
 // Create a Group with the following elements:
 //
 // A room with a coarse oak floor, brick walls, plaster ceiling, of dimensions
@@ -13,10 +15,9 @@ import {cloneMatPrms} from '../../Util/ImageUtil';
 // constants)
 //
 // A rig at back of room, a little in from from back wall.  This includes a
-// wide slot in the 
-// floor and up both walls of the room, centered on the rig, into which 
-// mis-fired balls may fall.  The sides of slot are of the same brick as the
-// wals, with the wood floor perhaps 10cm thick.  The rig also has brass
+// wide slot in the floor and up both walls of the room, centered on the rig, 
+// into which misfired balls may fall.  The sides of slot are of the same brick 
+// as the walls, with the wood floor 10cm thick.  The rig also has brass
 // targets, extended from the back wall by steel rods, with a "collar" at 
 // attachment to target, and a ring at wall in which rod "slides". Targets 
 // extend from back wall to the center of the rig, and retract back to wall 
@@ -388,6 +389,8 @@ export class BouncePunkSceneGroup {
 
       return rigGroup;
    }
+
+   // CAS FIX: I think this one needs to be broken into 2+ functions
 
    // Adjust the scenegraph to reflect time.  This may require either forward
    // or backward movement in time.
@@ -1015,8 +1018,9 @@ export class BouncePunkSceneGroup {
       }
 
       // Go through Uvs and scale them to total length
-      let uvArray = lathe.geometry.getAttribute('uv').array;
+      let uvArray = lathe.geometry.getAttribute('uv').array;      
       
+      // CAS FIX: comment only nonobvious.  These seem pretty obvious.
       // cycle through uv array and change each v value
       for (let i = 0; i < segments + 1; i++) {
          // Variable to save length from start of curve to current point
