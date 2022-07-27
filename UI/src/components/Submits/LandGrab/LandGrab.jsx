@@ -73,7 +73,7 @@ export class LandGrab extends Component {
          />               
          {summary}
          <LGSubmitModal prms={this.props.prms}
-          submitFn={this.props.sbmFunction}/>;
+          submitFn={this.props.sbmFunction}/>
       </section>);
    }
 }
