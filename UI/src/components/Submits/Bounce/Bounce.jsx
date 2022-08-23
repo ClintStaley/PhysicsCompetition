@@ -114,12 +114,12 @@ export class Bounce extends Component {
       {
          label: "Diagram",
          viewMaker: mv => <MovieController movie={mv} viewCls={BounceSVGView}
-          duration={mv.lastBallEdgeTime}/>
+          duration={mv.getLastBallEdgeTime()}/>
       },
       {
          label: "Movie",
          viewMaker: mv => <MovieController movie={mv} viewCls={Bounce3DView}
-          duration={mv.lastBallExitTime}/>
+          duration={mv.getLastBallExitTime()}/>
       },
       {
          label: "VR",
