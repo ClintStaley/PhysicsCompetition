@@ -52,7 +52,7 @@ Parameter Schema
                  }
               },
               "additionalProperties": false,
-    		  "minProperties": 4   
+    		     "minProperties": 4   
            }
         }
     },
@@ -88,8 +88,6 @@ Example Parameter
 }
 
 Submission Schema:
-
-
 {
    "$schema": "http://json-schema.org/draft-07/schema#",
     
@@ -125,7 +123,6 @@ Submission Schema:
 
 
 Example Submission Content
-
 [
   {
     centerX: 50.0,
@@ -145,14 +142,13 @@ Example Submission Content
 ]
 
 Submission Response schema
-
 {
    "$schema": "http://json-schema.org/draft-07/schema#",
     
    "title": "Land Grab Response",
    "type": "object",
    "properties": {
-      "circleStatus" : {
+      "circleData" : {
          "title": "Circle Status",
          "type": "array",
          "items": {
