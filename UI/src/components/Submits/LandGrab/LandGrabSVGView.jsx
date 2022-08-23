@@ -97,5 +97,4 @@ export class LandGrabSVGView extends React.Component {
          <g key={"svgElms"}>{this.state.svgElms}</g>
       </svg>);
    }
-
 }

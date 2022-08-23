@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-// import {LandGrab3DView} from './LandGrab3DView';
+import {LandGrab3DView} from './LandGrab3DView';
 import {LandGrabSVGView} from './LandGrabSVGView';
 import {LandGrabMovie} from './LandGrabMovie';
 import {LGSubmitModal} from './LGSubmitModal';
@@ -45,12 +45,14 @@ export class LandGrab extends Component {
    static viewSpecs = [
       {
          label: "Diagram",
-         viewMaker: mv => <MovieController movie={mv} viewCls={LandGrabSVGView}/>
+         viewMaker: mv => <MovieController movie={mv} viewCls={LandGrabSVGView}
+          duration={mv.getLastCircleEvtTime()}/>
       },
-      // {
-      //    label: "Movie",
-      //    viewMaker: mv => <MovieController movie={mv} viewCls={LandGrab3DView} />
-      // },
+      {
+         label: "Movie",
+         viewMaker: mv => <MovieController movie={mv} viewCls={LandGrab3DView}
+          duration={mv.getLastTime()}/>
+      },
       // {
       //    label: "VR",
       //    viewMaker: mv => <LandGrabVRView movie={mv} />
