@@ -31,7 +31,6 @@ export class BounceMovie {
       this.background.width = bkgSize;
       this.evts = [];
 
-      // CAS Fix: Make these accessor methods, e.g. getLastEdgeTime, getLastExitTime
       this.lastBallEdgeTime = 0;
       this.lastBallExitTime = 0;
 
@@ -55,20 +54,19 @@ export class BounceMovie {
                   this.addHitTargetEvt(time, arc.posX, arc.posY, ballId,
                    arc.obstacleIdx, arc.corner);
 
-                  // Fade trg from 0.0 to 1.0 across |fadeFrames| frames
-                  for (let fadeFrame = 1; fadeFrame <= fadeFrames; fadeFrame++)
-                     this.addObstacleFadeEvt(time + fadeFrame/frameRate,
-                      arc.obstacleIdx, fadeFrame / fadeFrames);
+                  // // Fade trg from 0.0 to 1.0 across |fadeFrames| frames
+                  // for (let fadeFrame = 1; fadeFrame <= fadeFrames; fadeFrame++)
+                  //    this.addObstacleFadeEvt(time + fadeFrame/frameRate,
+                  //     arc.obstacleIdx, fadeFrame / fadeFrames);
                }
                else {                                      // else obstacle
                   this.addHitBarrierEvt(time, arc.posX, arc.posY, ballId,
                    arc.obstacleIdx, arc.corner);
-
-                  // Fade brr from 0.0 to 1.0 across |fadeFrames| frames
-                  for (let fadeFrame = 1; fadeFrame <= fadeFrames; fadeFrame++)
-                     this.addObstacleFadeEvt(time + fadeFrame/frameRate,
-                      arc.obstacleIdx, fadeFrame / fadeFrames);
                }
+               // Fade brr from 0.0 to 1.0 across |fadeFrames| frames
+               for (let fadeFrame = 1; fadeFrame <= fadeFrames; fadeFrame++)
+                  this.addObstacleFadeEvt(time + fadeFrame/frameRate,
+                   arc.obstacleIdx, fadeFrame / fadeFrames);
             }
             else {                                // else it's an exit "arc"
                this.addHitEdgeEvt(time, arc.posX, arc.posY, ballId);
@@ -144,5 +142,13 @@ export class BounceMovie {
 
    addHitEdgeEvt(time, x, y, ballNumber) {
       this.evts.push({type: BounceMovie.cHitEdge, time, x, y, ballNumber});
+   }
+
+   getLastBallExitTime() {
+      return this.lastBallExitTime;
+   }
+
+   getLastBallEdgeTime() {
+      return this.lastBallEdgeTime;
    }
 }
