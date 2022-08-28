@@ -21,7 +21,7 @@ export class LandGrab extends Component {
 
       this.state = {
          sbmConfirm: null, // Function to post current submission
-		}
+      }
    }
 
    static getDerivedStateFromProps(newProps, oldState) {
